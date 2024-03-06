@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/css": "^11.11.2",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@iconify/react": "^4.1.1",
@@ -46,6 +47,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "tailwindcss": "^3.4.1"
   }
 }
