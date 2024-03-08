@@ -3,13 +3,13 @@ import DropDown from "../components/DropDown";
 import NavBar from "../components/NavBar";
 
 const options = [
-  "Chemistry",
-  "Hematology/Coag",
-  "Microbiology",
-  "Serology",
-  "UA/Body Fluids",
-  "Blood Bank",
-  "Molecular",
+  { name: "Chemistry", link: "order_controls" },
+  { name: "Hematology/Coag", link: "" },
+  { name: "Microbiology", link: "" },
+  { name: "Serology", link: "" },
+  { name: "UA/Body Fluids", link: "" },
+  { name: "Blood Bank", link: "" },
+  { name: "Molecular", link: "" },
 ];
 
 const QualityControls = () => {

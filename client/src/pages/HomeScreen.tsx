@@ -5,14 +5,14 @@ import { Link } from "react-router-dom";
 
 const HomeScreen = () => {
   const options = [
-    "QC results",
-    "Chemistry",
-    "Hematology/Coag",
-    "Microbiology",
-    "Serology",
-    "UA/Body Fluids",
-    "Blood Bank",
-    "Molecular"
+    { name: "QC Results", link: "" },
+    { name: "Chemistry", link: "" },
+    { name: "Hematology/Coag", link: "" },
+    { name: "Microbiology", link: "" },
+    { name: "Serology", link: "" },
+    { name: "UA/Body Fluids", link: "" },
+    { name: "Blood Bank", link: "" },
+    { name: "Molecular", link: "" },
   ]
 
   return (

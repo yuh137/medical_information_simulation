@@ -64,8 +64,6 @@ html {
     }
 }
 
-/* .hi-icon-wrap {
-	text-align: center;
-	margin: 0 auto;
-	padding: 2em 0 3em;
-} */
+.order-qc-items-container::-webkit-scrollbar, .selected-qc-items-container::-webkit-scrollbar {
+    display: none !important;
+}
