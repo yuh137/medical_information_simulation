@@ -92,25 +92,25 @@ const OrderControls = () => {
                         >
                         {(drag_provided) => (
                             <div
-                            ref={drag_provided.innerRef}
-                            {...drag_provided.dragHandleProps}
-                            {...drag_provided.draggableProps}
-                            className="order-qc-item bg-[#47669C] p-4 rounded-md text-white"
-                            onClick={() => {
-                                let orderQCs = [...OrderControlsItems];
-                                let selectedQCs = [...SelectedQCItems];
+                              ref={drag_provided.innerRef}
+                              {...drag_provided.dragHandleProps}
+                              {...drag_provided.draggableProps}
+                              className="order-qc-item bg-[#47669C] p-4 rounded-md text-white"
+                              onClick={() => {
+                                  let orderQCs = [...OrderControlsItems];
+                                  let selectedQCs = [...SelectedQCItems];
 
-                                const [deletedQC] = orderQCs.splice(index, 1);
-                                selectedQCs.push(deletedQC);
+                                  const [deletedQC] = orderQCs.splice(index, 1);
+                                  selectedQCs.push(deletedQC);
 
-                                setOrderControlsItems(orderQCs);
-                                setSelectedQCItems(selectedQCs);
-                            }}
+                                  setOrderControlsItems(orderQCs);
+                                  setSelectedQCItems(selectedQCs);
+                              }}
                             >
-                            {item}
-                            {/* <div className="order-qc-item bg-[#47669C] p-4 rounded-md text-white">
-                                {item}
-                            </div> */}
+                              {item}
+                              {/* <div className="order-qc-item bg-[#47669C] p-4 rounded-md text-white">
+                                  {item}
+                              </div> */}
                             </div>
                         )}
                         </Draggable>

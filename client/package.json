@@ -8,6 +8,7 @@
     "@emotion/styled": "^11.11.0",
     "@iconify/react": "^4.1.1",
     "@mui/material": "^5.15.11",
+    "@tanstack/react-table": "^8.13.2",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -15,11 +16,19 @@
     "@types/node": "^16.18.86",
     "@types/react": "^18.2.61",
     "@types/react-dom": "^18.2.19",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "lucide-react": "^0.350.0",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.51.1",
+    "react-markdown": "^9.0.1",
     "react-router-dom": "^6.22.2",
     "react-scripts": "5.0.1",
+    "remark-supersub": "^1.0.0",
+    "tailwind-merge": "^2.2.1",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
@@ -49,6 +58,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@types/draft-js": "^0.11.18",
     "@types/react-beautiful-dnd": "^13.1.8",
     "tailwindcss": "^3.4.1"
   }
