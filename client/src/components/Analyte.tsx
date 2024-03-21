@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useState, useRef, useImperativeHandle } from "react";
 import { renderSubString } from "../utils/utils";
 
 export interface AnalyteProps {
@@ -11,12 +11,18 @@ export interface AnalyteProps {
   handleInputChange: (value: string) => void;
 }
 
-const Analyte = forwardRef<HTMLInputElement, AnalyteProps>(function Analyte(
-  props,
-  ref
-) {
+const Analyte = forwardRef((props: AnalyteProps, ref) => {
 
   const [inputValue, setInputValue] = useState('');
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLDivElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    inputRef,
+    nameRef,
+  }));
+  
   // console.log(props.measUnit)
   return (
     <>
@@ -29,7 +35,7 @@ const Analyte = forwardRef<HTMLInputElement, AnalyteProps>(function Analyte(
       >
         <input
           type="text"
-          ref={ref}
+          ref={inputRef}
           value={inputValue}
           className="text-base sm:w-[4.5rem] sm:h-10 w-16 h-8 absolute rounded-lg text-center top-0 right-0 border border-solid border-[#7F9458]"
           onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -66,6 +72,7 @@ const Analyte = forwardRef<HTMLInputElement, AnalyteProps>(function Analyte(
         <div
           className="analyte-acronym text-2xl font-semibold"
           dangerouslySetInnerHTML={{ __html: renderSubString(props.acronym) }}
+          ref={nameRef}
         />
         <div className="ananlyte-desc">
           <div className="analyte-name">{props.name}</div>

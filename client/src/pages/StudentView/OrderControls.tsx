@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import NavBar from "../components/NavBar";
+import NavBar from "../../components/NavBar";
 import {
   DragDropContext,
   Draggable,

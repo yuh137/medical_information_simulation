@@ -1,6 +1,6 @@
 import React from "react";
-import DropDown from "../components/DropDown";
-import NavBar from "../components/NavBar";
+import DropDown from "../../components/DropDown";
+import NavBar from "../../components/NavBar";
 
 const options = [
   { name: "Chemistry", link: "order_controls" },

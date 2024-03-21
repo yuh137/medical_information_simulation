@@ -5,8 +5,8 @@ export default function initIDB(): Promise<boolean> {
         request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
             const db: IDBDatabase = (event.target as IDBOpenDBRequest).result;
             
-            const adminStore = db.createObjectStore("admins", { keyPath: "id" });
-            const usersStore = db.createObjectStore("students", { keyPath: "id" });
+            const adminStore = db.createObjectStore("admins", { keyPath: "name" });
+            const usersStore = db.createObjectStore("students", { keyPath: "name" });
             const chemistryQCStore = db.createObjectStore("chemistry_qc_store", { keyPath: ["id", "name"] });
         }
 

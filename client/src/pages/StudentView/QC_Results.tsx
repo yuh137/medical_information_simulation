@@ -7,7 +7,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import React, { memo, useState, useEffect } from "react";
-import NavBar from "../components/NavBar";
+import NavBar from "../../components/NavBar";
 import {
   Table,
   TableBody,
@@ -15,11 +15,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../components/ui/table";
+} from "../../components/ui/table";
 import { Button } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
-import { generateRandomId as generateId } from "../utils/utils";
+import { generateRandomId as generateId } from "../../utils/utils";
 
 const qc_items: QCItem[] = [
   {

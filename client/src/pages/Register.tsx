@@ -6,6 +6,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import addData from "../utils/indexedDB/addData";
 import { generateRandomId } from "../utils/utils";
 import { Admin } from "../utils/indexedDB/IDBSchema";
+import { getAdminByName, getAllDataFromStore, getDataByKey } from "../utils/indexedDB/getData";
 
 export interface CredentialsInput {
   username: string;
@@ -18,13 +19,37 @@ const Register = () => {
   const { register, handleSubmit } = useForm<CredentialsInput>();
   const onSubmit: SubmitHandler<CredentialsInput> = async (data) => {
     if (registerOptions === "Admin") {
-      const res = await addData<Admin>("admins", {
-        id: generateRandomId(),
-        name: data.username,
-        password: data.password,
-      });
+      const check = await getAdminByName(data.username);
+      console.log("Check", await check);
 
-      console.log(res);
+      if (await check === null) {
+        const res = await addData<Admin>("admins", {
+          id: generateRandomId(),
+          name: data.username,
+          password: data.password,
+        });
+  
+        console.log(res);
+      } else {
+        console.log(new Error("Username already exists"));
+      }
+
+      // getAdminByName(data.username)
+      //   .then(check => {
+      //     if (check === null) {
+      //       console.log(check);
+      //       const res = addData<Admin>("admins", {
+      //         id: generateRandomId(),
+      //         name: data.username,
+      //         password: data.password,
+      //       });
+
+      //         console.log(res);
+      //     } else {
+      //       console.log(check);
+      //       console.log(new Error("Username already exists"));
+      //     }
+      //   })
     } else if (registerOptions === "Student") {
       const res = await addData<Admin>("students", {
         id: generateRandomId(),
@@ -93,10 +118,9 @@ const Register = () => {
                   {...register("username", { required: true })}
                 />
                 <input
-                  type="text"
+                  type="password"
                   className="min-h-10 placeholder:font-semibold placeholder:text-center text-center"
                   placeholder="Password"
-                  itemType="password"
                   {...register("password", { required: true })}
                 />
                 <Button
@@ -122,15 +146,16 @@ const Register = () => {
                   Change register option
                 </Button>
               </form>
-              <div className="login-link">
-                <Link to="/login">
-                  <div className="login-link-text text-center text-blue-400 ">
-                    Already have an account?
-                  </div>
-                </Link>
-              </div>
+              
             </>
           )}
+          <div className="login-link">
+            <Link to="/login">
+              <div className="login-link-text text-center text-blue-400 ">
+                Already have an account?
+              </div>
+            </Link>
+          </div>
         </div>
       </div>
     </>
