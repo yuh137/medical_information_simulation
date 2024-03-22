@@ -12,11 +12,11 @@ interface NavBarPropsTypes {
 const NavBar = (props: NavBarPropsTypes) => {
   const { theme } = useTheme();
   const navigate = useNavigate();
-  const { isAuthenticated, logout, changeUserType, changeUsername } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   return (
     <>
       <div
-        className={`container bg-[${theme.primaryColor}] relative`}
+        className={`bg-[${theme.primaryColor}] relative`}
         style={{ minWidth: "100svw", minHeight: "10svh" }}
       >
         <div className="navbar-title sm:leading-loose text-center text-white font-bold sm:text-4xl text-3xl my-0 mx-auto max-sm:w-1/2 max-sm:leading-10">
@@ -34,8 +34,6 @@ const NavBar = (props: NavBarPropsTypes) => {
           <div className="logout-icon">
             <Icon icon="mdi:logout" className="absolute text-white sm:text-5xl self-center sm:right-4 sm:top-4 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md p-1" onClick={() => {
               logout();
-              changeUserType(null);
-              changeUsername("");
               navigate("/login");
             }}/>
           </div>

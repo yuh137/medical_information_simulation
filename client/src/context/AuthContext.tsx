@@ -14,6 +14,7 @@ interface AuthContextType {
   changeUserType: (type: UserType | null) => void;
   changeUsername: (name: string) => void;
   checkSession: () => boolean;
+  checkUserType: () => UserType | null;
 }
 
 interface AuthProviderProps {
@@ -70,10 +71,21 @@ export const AuthProvider = (props: AuthProviderProps) => {
         return true;
       }
       return false;
+    };
+
+    function checkUserType(): UserType | null {
+      if (!checkSession()) return null;
+
+      const tokenString = sessionStorage.getItem("token");
+      if (tokenString) {
+        const token: { username: string, userType: UserType } = JSON.parse(tokenString);
+        return token.userType;
+      }
+      return null;
     }
 
     return (
-      <AuthContext.Provider value={{ isAuthenticated, username, type: userType, login, logout, changeUsername, changeUserType, checkSession }}>
+      <AuthContext.Provider value={{ isAuthenticated, username, type: userType, login, logout, changeUsername, changeUserType, checkSession, checkUserType }}>
         {props.children}
       </AuthContext.Provider>
     )

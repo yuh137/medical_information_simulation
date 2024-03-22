@@ -12,12 +12,12 @@ const options = [
   { name: "Molecular", link: "" },
 ];
 
-const QualityControls = () => {
+const StudentQualityControls = () => {
   return (
     <>
       <NavBar name="Quality Control" />
       <div
-        className="container flex items-center justify-center gap-48"
+        className=" flex items-center justify-center gap-48 *:-translate-y-16"
         style={{ minWidth: "100svw", minHeight: "90svh" }}  
       >
         <DropDown name="Order Controls" options={options} />
@@ -27,4 +27,4 @@ const QualityControls = () => {
   );
 };
 
-export default QualityControls;
+export default StudentQualityControls;

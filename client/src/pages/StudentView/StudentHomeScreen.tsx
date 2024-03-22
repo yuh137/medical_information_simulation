@@ -6,7 +6,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 import { Icon } from "@iconify/react";
 
-const HomeScreen = () => {
+const StudentHomeScreen = () => {
   const { isAuthenticated, logout, changeUserType, changeUsername, checkSession } = useAuth();
   const navigate = useNavigate();
   const { theme } = useTheme();
@@ -22,17 +22,15 @@ const HomeScreen = () => {
   ]
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      if (!checkSession()) navigate('/unauthorized');
-    }
+    if (!checkSession()) navigate('/unauthorized');
   }, []);
 
   return (
     <>
       {/* <NavBar name='MIS Home Screen'/> */}
       <div
-        className={`container bg-[${theme.primaryColor}] relative flex`}
-        // className={`container bg-[#744700] relative`}
+        className={` bg-[${theme.primaryColor}] relative flex`}
+        // className={` bg-[#744700] relative`}
         style={{ minWidth: "100svw", minHeight: "10svh" }}
       >
         <div className="navbar-title leading-loose text-center text-white font-bold text-4xl my-0 mx-auto">
@@ -50,7 +48,7 @@ const HomeScreen = () => {
         )}
       </div>
       <div
-        className="container bg-[#fff] flex flex-wrap justify-center px-24 py-24 gap-12"
+        className=" bg-[#fff] flex flex-wrap justify-center px-24 py-24 gap-12"
         style={{ minHeight: "90svh", minWidth: "100svw" }}
       >
         <Link to='/qc'>
@@ -76,4 +74,4 @@ const HomeScreen = () => {
   );
 };
 
-export default HomeScreen;
+export default StudentHomeScreen;

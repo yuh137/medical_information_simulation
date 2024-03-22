@@ -142,7 +142,7 @@ const QC_Results = () => {
   return (
     <>
       <NavBar name="QC Results" />
-      <div className="container relative">
+      <div className="relative">
         <div className="table-container flex flex-col mt-8 sm:w-[75svw] sm:h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA]">
           <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200">
             <TableHeader>

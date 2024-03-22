@@ -10,7 +10,7 @@ import { getAdminByName, getStudentByName } from '../utils/indexedDB/getData';
 const Login = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const { isAuthenticated, username, type, login, checkSession } = useAuth();
+  const { login, checkSession } = useAuth();
   const [loginOptions, setLoginOptions] = useState<"Admin" | "Student" | string>("");
   const { register, handleSubmit } = useForm<CredentialsInput>();
   const onSubmit: SubmitHandler<CredentialsInput> = async (data) => {
@@ -23,11 +23,17 @@ const Login = () => {
       } else {
         console.log(new Error("Invalid credentials"));
       }
-      console.log(username, type);
+      // console.log(username, type);
     } else if (loginOptions === "Student") {
       const check = await getStudentByName(data.username);
 
-      console.log(check);
+      // console.log(check);
+      if (check && check.password === data.password) {
+        login(JSON.stringify({ username: data.username, userType: UserType.Student }), data.username, UserType.Student);
+        navigate('/home');
+      } else {
+        console.log(new Error("Invalid credentials"));
+      }
     } else {
       console.log(new Error("Invalid type"));
     }
@@ -42,7 +48,7 @@ const Login = () => {
   return (
     <>
       <div
-        className="container flex flex-col w-svw bg-[#2f5597]"
+        className=" flex flex-col w-svw bg-[#2f5597] pb-12"
         style={{ minHeight: "100svh", minWidth: "100svw" }}
       >
         <div

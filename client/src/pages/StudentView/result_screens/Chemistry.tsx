@@ -221,7 +221,7 @@ const ChemistryQCResult = () => {
     <>
       <NavBar name="Chemistry QC Results" />
       <div
-        className="container flex flex-col space-y-12 pb-8 justify-center px-[100px] relative"
+        className=" flex flex-col space-y-12 pb-8 justify-center px-[100px] relative"
         style={{ minWidth: "100svw", minHeight: "100svh" }}
       >
         <div className="analyte-list-container flex flex-wrap gap-14 sm:w-[90svw] sm:px-[149.5px] sm:mt-12 max-sm:flex-col mt-8 px-3">

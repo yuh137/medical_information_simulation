@@ -70,7 +70,7 @@ const OrderControls = () => {
       <DragDropContext onDragEnd={onDragEnd}>
         <NavBar name="Order Controls" />
         <div
-          className="container flex justify-center gap-32 items-center"
+          className="flex justify-center gap-32 items-center"
           style={{ minWidth: "100svw", minHeight: "90svh" }}
         >
           <Droppable droppableId="Order_QC" type="group">

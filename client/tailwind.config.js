@@ -1,5 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  purge: {
+    content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+    options: {
+      safelist: [/^sm:h-\[(\d{1,3}|1000)svh\]$/],
+    }
+  },
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],

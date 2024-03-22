@@ -6,7 +6,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import addData from "../utils/indexedDB/addData";
 import { generateRandomId } from "../utils/utils";
 import { Admin } from "../utils/indexedDB/IDBSchema";
-import { getAdminByName, getAllDataFromStore, getDataByKey } from "../utils/indexedDB/getData";
+import { getAdminByName, getAllDataFromStore, getDataByKey, getStudentByName } from "../utils/indexedDB/getData";
 
 export interface CredentialsInput {
   username: string;
@@ -20,7 +20,7 @@ const Register = () => {
   const onSubmit: SubmitHandler<CredentialsInput> = async (data) => {
     if (registerOptions === "Admin") {
       const check = await getAdminByName(data.username);
-      console.log("Check", await check);
+      // console.log("Check", await check);
 
       if (await check === null) {
         const res = await addData<Admin>("admins", {
@@ -33,40 +33,29 @@ const Register = () => {
       } else {
         console.log(new Error("Username already exists"));
       }
-
-      // getAdminByName(data.username)
-      //   .then(check => {
-      //     if (check === null) {
-      //       console.log(check);
-      //       const res = addData<Admin>("admins", {
-      //         id: generateRandomId(),
-      //         name: data.username,
-      //         password: data.password,
-      //       });
-
-      //         console.log(res);
-      //     } else {
-      //       console.log(check);
-      //       console.log(new Error("Username already exists"));
-      //     }
-      //   })
     } else if (registerOptions === "Student") {
-      const res = await addData<Admin>("students", {
-        id: generateRandomId(),
-        name: data.username,
-        password: data.password,
-      });
+      const check = await getStudentByName(data.username);
 
-      console.log(res);
+      if (!check) {
+        const res = await addData<Admin>("students", {
+          id: generateRandomId(),
+          name: data.username,
+          password: data.password,
+        });
+  
+        console.log(res);
+      } else {
+        console.log(new Error("Username taken!"))
+      }
     } else {
-      console.log("Invalid type");
+      console.log(new Error("Invalid type"));
     }
   };
 
   return (
     <>
       <div
-        className="container flex flex-col w-svw bg-[#2f5597]"
+        className=" flex flex-col w-svw bg-[#2f5597] pb-12"
         style={{ minHeight: "100svh", minWidth: "100svw" }}
       >
         <div
