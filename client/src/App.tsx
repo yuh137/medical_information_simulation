@@ -1,20 +1,22 @@
 import React from 'react';
 import { Routes, Route, Navigate, Link, useNavigate } from 'react-router-dom'
 import initIDB from './utils/indexedDB/initIDB';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Login from './components/Login';
+import Register from './components/Register';
 import StudentHomeScreen from './pages/StudentView/StudentHomeScreen';
 import StudentQualityControls from './pages/StudentView/StudentQualityControls';
 import OrderControls from './pages/StudentView/OrderControls';
 import QC_Results from './pages/StudentView/QC_Results';
 import ChemistryQCResult from './pages/StudentView/result_screens/Chemistry';
-import Unauthorized from './pages/Unauthorized';
+import Unauthorized from './components/Unauthorized';
 import { useAuth } from './context/AuthContext';
 import FacultyHomeScreen from './pages/FacultyView/FacultyHomeScreen';
 import FacultyQualityControls from './pages/FacultyView/FacultyQualityControls';
 import QCBuilder from './components/QCBuilderPage';
-import { testTypeLinkList } from './utils/utils';
+import { qcTypeLinkList, testTypeLinkList } from './utils/utils';
 import EditQC from './components/EditQCPage';
+import TestInputPage from './components/TestInputPage';
+import ErrorPage from './components/ErrorPage';
 
 function App() {
   initIDB();
@@ -35,9 +37,15 @@ function App() {
           <Route path={`/${item.link}/qc_builder`} element={<QCBuilder link={item.link} name={item.name} key={item.name}/>}/>
         ))}
         {testTypeLinkList.map(item => (
-          <Route path={`/${item.link}/edit_qc`} element={<EditQC link={item.link} name={item.name} key={item.name}/>}/>
+          <Route path={`/${item.link}/edit_qc`}>
+            <Route path='' element={<EditQC link={item.link} name={item.name} key={item.name}/>}></Route>
+            {qcTypeLinkList.map(subItem => (
+              <Route path={`${subItem.link}`} element={<TestInputPage name={`${subItem.name}`} link='' />} key={subItem.link}></Route>
+            ))}
+          </Route>
         ))}
         <Route path='/unauthorized' element={<Unauthorized />}/>
+        <Route path='*' element={<ErrorPage />}/>
       </Routes>
     </>
   );

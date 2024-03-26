@@ -75,7 +75,8 @@ const Analyte = forwardRef((props: AnalyteProps, ref) => {
           ref={nameRef}
         />
         <div className="ananlyte-desc">
-          <div className="analyte-name">{props.name}</div>
+          <div className="analyte-name peer text-base truncate">{props.name}</div>
+          <div className="absolute invisible transition-all ease-in delay-100 peer-hover:visible text-white text-sm bg-slate-500 max-sm:text-center border border-solid border-gray-300 rounded-lg p-2">{props.name}</div>
           <div className="analyte-range text-xs">
             Level {props.level === 1 ? "I" : "II"} range: {props.range[0]} -{" "}
             {props.range[1]} {props.measUnit}

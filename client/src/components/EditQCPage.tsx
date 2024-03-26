@@ -26,7 +26,7 @@ const EditQC = (props: { name: string; link: string }) => {
               key={item.name}
               className={`!rounded-lg sm:w-64 sm:h-28 sm:!my-12 !border-solid transition ease-in-out ${
                 selectedItem === item.link
-                  ? `!border-[#2F528F] !border-[4px] !bg-[${theme.primaryHoverColor}]`
+                  ? `!border-[#2F528F] !border-[4px] !bg-[#8faadc]`
                   : `!border !bg-[${theme.secondaryColor}] !border-[${theme.primaryBorderColor}]`
               } !px-3`}
               onClick={(e) =>{
@@ -38,12 +38,15 @@ const EditQC = (props: { name: string; link: string }) => {
             </ButtonBase>
           ))}
         </div>
-        <div className="button-container">
-          <Link to={`/${props.link}/${selectedItem}`}>
-              <ButtonBase className="">
+        <div className="top-0 button-container flex justify-center sm:-translate-y-24 sm:space-x-36">
+          <Link to={`/${props.link}/edit_qc/${selectedItem}`}>
+              <ButtonBase className="sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold">
                 Edit QC File
               </ButtonBase>
           </Link>
+          <ButtonBase className="sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold">
+            Delete QC File
+          </ButtonBase>
         </div>
       </div>
     </>

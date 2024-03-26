@@ -6,7 +6,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import addData from "../utils/indexedDB/addData";
 import { generateRandomId } from "../utils/utils";
 import { Admin } from "../utils/indexedDB/IDBSchema";
-import { getAdminByName, getAllDataFromStore, getDataByKey, getStudentByName } from "../utils/indexedDB/getData";
+import { getAdminByName, getStudentByName } from "../utils/indexedDB/getData";
 
 export interface CredentialsInput {
   username: string;

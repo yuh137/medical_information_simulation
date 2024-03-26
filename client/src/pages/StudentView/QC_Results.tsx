@@ -229,7 +229,7 @@ const QC_Results = () => {
           </div>
         </div>
         <Button
-          className="sm:!absolute sm:w-36 sm:h-12 sm:!text-lg !bg-[#DAE3F3] -right-3 -bottom-3 !border !border-solid !border-blue-500 font-medium !text-black"
+          className="sm:!absolute sm:w-36 sm:h-12 sm:!text-lg !bg-[#DAE3F3] right-3 -bottom-3 !border !border-solid !border-blue-500 font-medium !text-black"
           onClick={() => {
             navigate('/chemistry_res');
           }}
