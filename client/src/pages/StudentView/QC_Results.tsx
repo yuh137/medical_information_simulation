@@ -1,11 +1,10 @@
-import {
-  ColumnDef,
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+  import {
+    ColumnDef,
+    flexRender,
+    getCoreRowModel,
+    getPaginationRowModel,
+    useReactTable,
+  } from "@tanstack/react-table";
 import React, { memo, useState, useEffect } from "react";
 import NavBar from "../../components/NavBar";
 import {
@@ -104,7 +103,7 @@ const columns: ColumnDef<QCItem, string>[] = [
   {
     accessorKey: "id",
     header: "ID",
-    cell: (info) => <div>{info.row.getValue("id")}</div>,
+    cell: (info) => <div className='py-2 border border-solid border-black rounded-lg'>{info.row.getValue("id")}</div>,
   },
   {
     accessorKey: "dep",
@@ -135,9 +134,9 @@ const QC_Results = () => {
   });
 
   //   console.log(table.getRowModel());
-  useEffect(() => {
-    console.log(selectedRowData);
-  }, [selectedRowData]);
+  // useEffect(() => {
+  //   console.log(selectedRowData);
+  // }, [selectedRowData]);
 
   return (
     <>
@@ -197,7 +196,7 @@ const QC_Results = () => {
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

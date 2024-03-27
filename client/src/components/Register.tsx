@@ -38,7 +38,7 @@ const Register = () => {
 
       if (!check) {
         const res = await addData<Admin>("students", {
-          id: generateRandomId(),
+          ["id"]: generateRandomId(),
           name: data.username,
           password: data.password,
         });
