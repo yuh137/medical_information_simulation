@@ -7,7 +7,7 @@ export default function initIDB(): Promise<boolean> {
             
             const adminStore = db.createObjectStore("admins", { keyPath: "name" });
             const usersStore = db.createObjectStore("students", { keyPath: "name" });
-            const QCStore = db.createObjectStore("qc_store", { keyPath: "analyteName" });
+            const QCStore = db.createObjectStore("qc_store", { keyPath: "fileName" });
         }
 
         request.onerror = () => {

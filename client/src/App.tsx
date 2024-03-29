@@ -6,8 +6,8 @@ import Register from './components/Register';
 import StudentHomeScreen from './pages/StudentView/StudentHomeScreen';
 import StudentQualityControls from './pages/StudentView/StudentQualityControls';
 import OrderControls from './pages/StudentView/OrderControls';
-import QC_Results from './pages/StudentView/QC_Results';
-import ChemistryQCResult from './pages/StudentView/result_screens/Chemistry';
+import QC_Results from './components/QC_Results';
+import AnalyteInputPage from './components/AnalyteInputPage';
 import Unauthorized from './components/Unauthorized';
 import { useAuth } from './context/AuthContext';
 import FacultyHomeScreen from './pages/FacultyView/FacultyHomeScreen';
@@ -31,8 +31,14 @@ function App() {
         <Route path='/home' element={checkUserType() === 'student' ? <StudentHomeScreen /> : <FacultyHomeScreen />}/>
         <Route path='/qc' element={checkUserType() === 'student' ? <StudentQualityControls /> : <FacultyQualityControls />}/>
         <Route path='/order_controls' element={<OrderControls />}/>
-        <Route path='/qc_results' element={<QC_Results />}/>
-        <Route path='/chemistry_res' element={<ChemistryQCResult />}/>
+        {testTypeLinkList.map(item => (
+          <Route path={`/${item.link}/qc_results`}>
+            <Route path='' element={<QC_Results link={item.link} name={item.name} key={item.name}/>}/>
+            {qcTypeLinkList.map(subItem => (
+              <Route path={`${subItem.link}`} element={<AnalyteInputPage link={subItem.link} name={subItem.name} key={subItem.name}/>}/>
+            ))}
+          </Route>
+        ))}
         {testTypeLinkList.map(item => (
           <Route path={`/${item.link}/qc_builder`} element={<QCBuilder link={item.link} name={item.name} key={item.name}/>}/>
         ))}

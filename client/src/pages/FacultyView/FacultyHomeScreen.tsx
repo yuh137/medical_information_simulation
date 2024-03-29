@@ -5,21 +5,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 import { Icon } from "@iconify/react";
+import { testTypeLinkList } from "../../utils/utils";
 
 const FacultyHomeScreen = () => {
   const { isAuthenticated, logout, checkUserType, checkSession } = useAuth();
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const results_options = [
-    { name: "QC Results", link: "qc_results" },
-    { name: "Chemistry", link: "" },
-    { name: "Hematology/Coag", link: "" },
-    { name: "Microbiology", link: "" },
-    { name: "Serology", link: "" },
-    { name: "UA/Body Fluids", link: "" },
-    { name: "Blood Bank", link: "" },
-    { name: "Molecular", link: "" },
-  ]
+
+  const dropdownOptions = testTypeLinkList.map(({ link, name }) => ({ name, link: link + '/qc_results' }));
 
   useEffect(() => {
     if (!checkSession() || checkUserType() === 'student') navigate('/unauthorized');
@@ -57,7 +50,7 @@ const FacultyHomeScreen = () => {
         <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 sm:!my-12 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
           <div className="button-text font-bold text-2xl">Order Entry</div>
         </ButtonBase>
-        <DropDown name="Results In Progress" options={results_options} />
+        <DropDown name="Results In Progress" options={dropdownOptions} />
         <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 sm:!my-12 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
           <div className="button-text font-bold text-2xl">Patients Reports</div>
         </ButtonBase>

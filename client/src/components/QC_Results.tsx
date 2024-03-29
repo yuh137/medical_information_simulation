@@ -5,8 +5,8 @@
     getPaginationRowModel,
     useReactTable,
   } from "@tanstack/react-table";
-import React, { memo, useState, useEffect } from "react";
-import NavBar from "../../components/NavBar";
+import React, { memo, useState, useEffect, useMemo } from "react";
+import NavBar from "./NavBar";
 import {
   Table,
   TableBody,
@@ -14,69 +14,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/table";
+} from "./ui/table";
 import { Button } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
-import { generateRandomId as generateId } from "../../utils/utils";
+import { generateRandomId } from "../utils/utils";
+import { qcTypeLinkList } from "../utils/utils";
 
-const qc_items: QCItem[] = [
-  {
-    dep: "Chemistry",
-    test: "CMP Level I QC",
-    id: generateId(),
-  },
-  {
-    dep: "Chemistry",
-    test: "CMP Level II QC",
-    id: generateId(),
-  },
-  {
-    dep: "Chemistry",
-    test: "CMP Level II QC",
-    id: generateId(),
-  },
-  {
-    dep: "Chemistry",
-    test: "CMP Level II QC",
-    id: generateId(),
-  },
-  {
-    dep: "Chemistry",
-    test: "CMP Level II QC",
-    id: generateId(),
-  },
-  {
-    dep: "Chemistry",
-    test: "CMP Level II QC",
-    id: generateId(),
-  },
-  {
-    dep: "Chemistry",
-    test: "CMP Level II QC",
-    id: generateId(),
-  },
-  {
-    dep: "Chemistry",
-    test: "CMP Level II QC",
-    id: generateId(),
-  },
-  {
-    dep: "Chemistry",
-    test: "CMP Level II QC",
-    id: generateId(),
-  },
-  {
-    dep: "Chemistry",
-    test: "CMP Level II QC",
-    id: generateId(),
-  },
-  {
-    dep: "Chemistry",
-    test: "CMP Level II QC",
-    id: generateId(),
-  },
-];
+
 
 interface QCItem {
   dep: string;
@@ -103,7 +48,7 @@ const columns: ColumnDef<QCItem, string>[] = [
   {
     accessorKey: "id",
     header: "ID",
-    cell: (info) => <div className='py-2 border border-solid border-black rounded-lg'>{info.row.getValue("id")}</div>,
+    cell: (info) => <div>{info.row.getValue("id")}</div>,
   },
   {
     accessorKey: "dep",
@@ -117,10 +62,16 @@ const columns: ColumnDef<QCItem, string>[] = [
   },
 ];
 
-const QC_Results = () => {
+const QC_Results = (props: { name: string, link: string }) => {
   const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = useState<string | null>();
   const [selectedRowData, setSelectedRowData] = useState<{ [key: string]: any }>();
+
+  const qc_items: QCItem[] = useMemo(() => (qcTypeLinkList.map(({ name }) => ({
+    id: generateRandomId(),
+    dep: props.name,
+    test: name
+  }))), []);
 
   function handleRowClick(key: string) {
     setSelectedRow(key === selectedRow ? null : key);
@@ -140,7 +91,7 @@ const QC_Results = () => {
 
   return (
     <>
-      <NavBar name="QC Results" />
+      <NavBar name={`${props.name} QC Results`} />
       <div className="relative">
         <div className="table-container flex flex-col mt-8 sm:w-[75svw] sm:h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA]">
           <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200">
@@ -148,7 +99,7 @@ const QC_Results = () => {
               {table.getHeaderGroups().map((group) => (
                 <TableRow
                   key={group.id}
-                  className="font-bold text-3xl bg-[#3A62A7] hover:bg-[#3A62A7]"
+                  className="font-bold text-3xl bg-[#3A62A7] hover:bg-[#3A62A7] sticky top-0"
                 >
                   {group.headers.map((header) => (
                     <TableHead
@@ -230,7 +181,8 @@ const QC_Results = () => {
         <Button
           className="sm:!absolute sm:w-36 sm:h-12 sm:!text-lg !bg-[#DAE3F3] right-3 -bottom-3 !border !border-solid !border-blue-500 font-medium !text-black"
           onClick={() => {
-            navigate('/chemistry_res');
+            const qcTypeLink = qcTypeLinkList.find(item => item.name === selectedRowData?.test)?.link;
+            navigate(`/${props.link}/qc_results/${qcTypeLink}`);
           }}
         >
           Select QC

@@ -1,142 +1,150 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
-import Analyte from "../../../components/Analyte";
-import NavBar from "../../../components/NavBar";
+import Analyte from "./Analyte";
+import NavBar from "./NavBar";
 import { Button, Modal } from "@mui/material";
-import { useTheme } from "../../../context/ThemeContext";
-import { renderSubString } from "../../../utils/utils";
+import { useTheme } from "../context/ThemeContext";
+import { renderSubString } from "../utils/utils";
+import { getAllDataFromStore, getQCRangeByName } from "../utils/indexedDB/getData";
+import { QCTemplateBatch } from "../utils/indexedDB/IDBSchema";
+import { useForm, SubmitHandler } from "react-hook-form";
 
-const data: {
-  name: string;
-  acronym: string;
-  electro?: boolean;
-  level: 1 | 2;
-  range: [number, number];
-  measUnit: string;
-}[] = [
-  {
-    acronym: "Na",
-    name: "Sodium",
-    electro: true,
-    range: [136, 145],
-    level: 1,
-    measUnit: "mmol/L",
-  },
-  {
-    acronym: "K",
-    name: "Potassium",
-    electro: true,
-    range: [136, 145],
-    level: 1,
-    measUnit: "mmol/L",
-  },
-  {
-    acronym: "Cl",
-    name: "Chloride",
-    electro: true,
-    range: [136, 145],
-    level: 1,
-    measUnit: "mmol/L",
-  },
-  {
-    acronym: "CO_2",
-    name: "Carbon Dioxide",
-    electro: true,
-    range: [136, 145],
-    level: 1,
-    measUnit: "mmol/L",
-  },
-  {
-    acronym: "BUN",
-    name: "Blood Urea Nitrogen",
-    electro: false,
-    range: [136, 145],
-    level: 1,
-    measUnit: "mmol/L",
-  },
-  {
-    acronym: "CREA",
-    name: "Creatinine",
-    electro: false,
-    range: [136, 145],
-    level: 1,
-    measUnit: "mmol/L",
-  },
-  {
-    acronym: "CA",
-    name: "Calcium",
-    electro: false,
-    range: [136, 145],
-    level: 1,
-    measUnit: "mmol/L",
-  },
-  {
-    acronym: "GLU",
-    name: "Glucose",
-    electro: false,
-    range: [136, 145],
-    level: 1,
-    measUnit: "mmol/L",
-  },
-  {
-    acronym: "ALB",
-    name: "Albumin",
-    electro: false,
-    range: [136, 145],
-    level: 1,
-    measUnit: "mmol/L",
-  },
-  {
-    acronym: "ALT",
-    name: "Alanine Aminotransferase",
-    electro: false,
-    range: [136, 145],
-    level: 1,
-    measUnit: "mmol/L",
-  },
-  {
-    acronym: "AST",
-    name: "Aspartate Aminotransferase",
-    electro: false,
-    range: [136, 145],
-    level: 1,
-    measUnit: "mmol/L",
-  },
-  {
-    acronym: "ALP",
-    name: "Alkaline Phosphatase ",
-    electro: false,
-    range: [136, 145],
-    level: 1,
-    measUnit: "mmol/L",
-  },
-  {
-    acronym: "BIL",
-    name: "Bilirubin",
-    electro: false,
-    range: [136, 145],
-    level: 1,
-    measUnit: "mmol/L",
-  },
-  {
-    acronym: "TP",
-    name: "Total Protein",
-    electro: false,
-    range: [136, 145],
-    level: 1,
-    measUnit: "mmol/L",
-  },
-];
+// const data: {
+//   name: string;
+//   acronym: string;
+//   electro?: boolean;
+//   level: 1 | 2;
+//   range: [number, number];
+//   measUnit: string;
+// }[] = [
+//   {
+//     acronym: "Na",
+//     name: "Sodium",
+//     electro: true,
+//     range: [136, 145],
+//     level: 1,
+//     measUnit: "mmol/L",
+//   },
+//   {
+//     acronym: "K",
+//     name: "Potassium",
+//     electro: true,
+//     range: [136, 145],
+//     level: 1,
+//     measUnit: "mmol/L",
+//   },
+//   {
+//     acronym: "Cl",
+//     name: "Chloride",
+//     electro: true,
+//     range: [136, 145],
+//     level: 1,
+//     measUnit: "mmol/L",
+//   },
+//   {
+//     acronym: "CO_2",
+//     name: "Carbon Dioxide",
+//     electro: true,
+//     range: [136, 145],
+//     level: 1,
+//     measUnit: "mmol/L",
+//   },
+//   {
+//     acronym: "BUN",
+//     name: "Blood Urea Nitrogen",
+//     electro: false,
+//     range: [136, 145],
+//     level: 1,
+//     measUnit: "mmol/L",
+//   },
+//   {
+//     acronym: "CREA",
+//     name: "Creatinine",
+//     electro: false,
+//     range: [136, 145],
+//     level: 1,
+//     measUnit: "mmol/L",
+//   },
+//   {
+//     acronym: "CA",
+//     name: "Calcium",
+//     electro: false,
+//     range: [136, 145],
+//     level: 1,
+//     measUnit: "mmol/L",
+//   },
+//   {
+//     acronym: "GLU",
+//     name: "Glucose",
+//     electro: false,
+//     range: [136, 145],
+//     level: 1,
+//     measUnit: "mmol/L",
+//   },
+//   {
+//     acronym: "ALB",
+//     name: "Albumin",
+//     electro: false,
+//     range: [136, 145],
+//     level: 1,
+//     measUnit: "mmol/L",
+//   },
+//   {
+//     acronym: "ALT",
+//     name: "Alanine Aminotransferase",
+//     electro: false,
+//     range: [136, 145],
+//     level: 1,
+//     measUnit: "mmol/L",
+//   },
+//   {
+//     acronym: "AST",
+//     name: "Aspartate Aminotransferase",
+//     electro: false,
+//     range: [136, 145],
+//     level: 1,
+//     measUnit: "mmol/L",
+//   },
+//   {
+//     acronym: "ALP",
+//     name: "Alkaline Phosphatase ",
+//     electro: false,
+//     range: [136, 145],
+//     level: 1,
+//     measUnit: "mmol/L",
+//   },
+//   {
+//     acronym: "BIL",
+//     name: "Bilirubin",
+//     electro: false,
+//     range: [136, 145],
+//     level: 1,
+//     measUnit: "mmol/L",
+//   },
+//   {
+//     acronym: "TP",
+//     name: "Total Protein",
+//     electro: false,
+//     range: [136, 145],
+//     level: 1,
+//     measUnit: "mmol/L",
+//   },
+// ];
 
-const ChemistryQCResult = () => {
+const AnalyteInputPage = (props: { name: string, link: string }) => {
   const { theme } = useTheme();
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const analyteNameRefs = useRef<HTMLDivElement[]>([]);
+  const { register, handleSubmit } = useForm();
+  const onSubmit: SubmitHandler<any> = async (data) => {
+
+  }
 
   const [isValid, setIsValid] = useState<boolean>(false);
   const [isInputFull, setIsInputFull] = useState<boolean>(false);
   const [analyteValues, setAnalyteValues] = useState<string[]>([]);
   const [invalidIndexes, setInvalidIndexes] = useState<Set<number> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [QCData, setQCData] = useState<QCTemplateBatch>();
 
   const invalidIndexArray: number[] | null = useMemo(() => {
     if (!invalidIndexes) return null;
@@ -145,12 +153,15 @@ const ChemistryQCResult = () => {
     return newArray;
   }, [invalidIndexes])
 
-  // const invalidIndexes: number[] = useMemo(
-  //   () => {
-  //     analyteValues
-  //   },
-  //   [analyteValues]
-  // )
+  function detectLevel(str: string): number {
+      if (str.endsWith("I")) {
+          return 1;
+      } else if (str.endsWith("II")) {
+          return 2;
+      } else {
+        return 0;
+      }
+  }
 
   function handleKeyPress(event: React.KeyboardEvent, index: number) {
     // console.log("From handleKeyPress function: ", inputRefs.current[index]);
@@ -175,18 +186,17 @@ const ChemistryQCResult = () => {
     setIsValid(
       newValues.every(
         (val) =>
-          !isNaN(parseFloat(val)) &&
-          parseFloat(val) > min &&
-          parseFloat(val) < max &&
-          typeof val != "undefined" &&
-          newValues.length === data.length
+          // !isNaN(parseFloat(val)) &&
+          parseFloat(val) >= min &&
+          parseFloat(val) <= max &&
+          newValues.length === QCData?.analytes.length
       )
     );
     // newValues.forEach(val => {
     if (
       isNaN(parseFloat(value)) ||
-      parseFloat(value) < min ||
-      parseFloat(value) > max ||
+      parseFloat(value) <= min ||
+      parseFloat(value) >= max ||
       typeof value === "undefined" 
       // newValues.length != data.length
     ) {
@@ -206,41 +216,49 @@ const ChemistryQCResult = () => {
       // setInvalidIndexes(newInvalidIndexes);
     };
     // })
-    setIsInputFull(newValues.length === data.length && newValues.length > 0);
+    setIsInputFull(newValues.length === QCData?.analytes.length && newValues.length > 0);
   }
 
   useEffect(() => {
-    console.log(analyteNameRefs);
-  }, [analyteNameRefs])
+    (async () => {
+      const res = await getQCRangeByName(props.name);
 
-  // useEffect(() => {
-  //   console.log(inputRefs);
-  // }, [inputRefs])
+      if (res) setQCData(res);
+    })();
+  }, [])
+
+  useEffect(() => {
+    console.log(analyteValues, isValid)
+  }, [analyteValues])
 
   return (
     <>
-      <NavBar name="Chemistry QC Results" />
-      <div
+      <NavBar name={`${props.name} QC Results`} />
+      {!QCData ? <div>No data recorded</div> : <></>}
+      {QCData && <div
         className=" flex flex-col space-y-12 pb-8 justify-center px-[100px] relative"
         style={{ minWidth: "100svw", minHeight: "100svh" }}
       >
         <div className="analyte-list-container flex flex-wrap gap-14 sm:w-[90svw] sm:px-[149.5px] sm:mt-12 max-sm:flex-col mt-8 px-3">
-          {data.map((item, index) => (
+          {QCData?.analytes.map((item, index) => (
             <div
               onKeyDown={(event) => {
                 handleKeyPress(event, index);
               }}
-              key={item.name}
+              key={item.analyteName}
             >
               <Analyte
-                name={item.name}
-                acronym={item.acronym}
-                electro={item.electro}
-                range={item.range}
-                level={item.level}
-                measUnit={item.measUnit}
-                handleInputChange={(val) =>
-                  handleInputChange(index, val, item.range[0], item.range[1])
+                name={item.analyteName}
+                acronym={item.analyteAcronym}
+                electro={item.electrolyte}
+                min_level={+item.min_level}
+                max_level={+item.max_level}
+                level={detectLevel(props.name)}
+                measUnit={item.unit_of_measure}
+                handleInputChange={(val) => {
+                    if (item.min_level != "" && item.max_level != "") handleInputChange(index, val, +item.min_level, +item.max_level)
+                    else handleInputChange(index, val, -1, 9999)
+                  }
                 }
                 ref={(childRef: { inputRef: { current: HTMLInputElement | null }, nameRef: { current: HTMLDivElement | null } }) => {
                   // console.log(childRef);
@@ -301,7 +319,7 @@ const ChemistryQCResult = () => {
             <div className="non-analyte-text sm:h-full self-center">Non-Electrolyte Element</div>
           </div>
         </div>
-      </div>
+      </div>}
       <Modal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -327,4 +345,4 @@ const ChemistryQCResult = () => {
   );
 };
 
-export default ChemistryQCResult;
+export default AnalyteInputPage;
