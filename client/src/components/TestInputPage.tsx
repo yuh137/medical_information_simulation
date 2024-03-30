@@ -448,16 +448,16 @@ const TestInputPage = (props: { name: string; link: string }) => {
                     <div>{((+row.min_level + +row.max_level)/2 - (+row.max_level - +row.min_level)/4).toFixed(2)}</div>
                   </TableCell>
                   <TableCell className="sd+2 sm:w-20">
-                    <div>{Math.ceil((+row.min_level + +row.max_level)/2) + Math.ceil((+row.max_level - +row.min_level)/4) * 2}</div>
+                    <div>{((+row.min_level + +row.max_level)/2 + ((+row.max_level - +row.min_level)/4) * 2).toFixed(2)}</div>
                   </TableCell>
                   <TableCell className="sd-2 sm:w-20">
-                    <div>{Math.ceil((+row.min_level + +row.max_level)/2) - Math.ceil((+row.max_level - +row.min_level)/4) * 2}</div>
+                    <div>{((+row.min_level + +row.max_level)/2 - ((+row.max_level - +row.min_level)/4) * 2).toFixed(2)}</div>
                   </TableCell>
                   <TableCell className="sd+3 sm:w-20">
-                    <div>{Math.ceil((+row.min_level + +row.max_level)/2) + Math.ceil((+row.max_level - +row.min_level)/4) * 3}</div>
+                    <div>{((+row.min_level + +row.max_level)/2 + ((+row.max_level - +row.min_level)/4) * 3).toFixed(2)}</div>
                   </TableCell>
                   <TableCell className="sd-3 sm:w-20">
-                    <div>{Math.ceil((+row.min_level + +row.max_level)/2) - Math.ceil((+row.max_level - +row.min_level)/4) * 3}</div>
+                    <div>{((+row.min_level + +row.max_level)/2 - ((+row.max_level - +row.min_level)/4) * 3).toFixed(2)}</div>
                   </TableCell>
                 </TableRow>
               ))}
