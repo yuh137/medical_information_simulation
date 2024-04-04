@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { CompactTable } from "@table-library/react-table-library/compact";
-import NavBar from "./NavBar";
 import {
   ColumnDef,
   RowData,
@@ -255,7 +253,7 @@ const TestInputPage = (props: { name: string; link: string }) => {
             </TableHeader>
             <TableBody onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                const minInputArray = inputRefs.current.filter(item => inputRefs.current.indexOf(item) % 3 === 1);
+                const minInputArray = inputRefs.current.filter(item => inputRefs.current.indexOf(item) % 4 === 1);
 
                 // console.log(minInputArray);
 
@@ -317,23 +315,6 @@ const TestInputPage = (props: { name: string; link: string }) => {
                   
                 </TableRow>
               ))} */}
-              {/* {table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  className="text-center sm:h-[10%] border-none"
-                  onClick={() => console.log(row.getVisibleCells().find(cell => cell.id.includes("analyteName"))?.getValue())}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                  
-                </TableRow>
-              ))} */}
               {QCElements.map((row, index) => (
                 <TableRow key={row.analyteName} className="text-center sm:h-[10%] border-none">
                   <TableCell>
@@ -356,7 +337,7 @@ const TestInputPage = (props: { name: string; link: string }) => {
                     <div dangerouslySetInnerHTML={{ __html: renderSubString(row.analyteAcronym) }} />
                   </TableCell>
                   <TableCell className="unit_of_measure">
-                    <input ref={el => {if (el && inputRefs.current.length < QCElements.length * 3) {inputRefs.current[index * 3] = el}}} type="text" className="sm:w-24 p-1 border border-solid border-[#548235] rounded-lg text-center" value={row.unit_of_measure === "" ? "" : row.unit_of_measure.toString()} onChange={(e) => {
+                    <input ref={el => {if (el && inputRefs.current.length < QCElements.length * 4) {inputRefs.current[index * 4] = el}}} type="text" className="sm:w-24 p-1 border border-solid border-[#548235] rounded-lg text-center" value={row.unit_of_measure === "" ? "" : row.unit_of_measure.toString()} onChange={(e) => {
                       e.preventDefault();
 
                       setQCElements(prevState => {
@@ -371,7 +352,7 @@ const TestInputPage = (props: { name: string; link: string }) => {
                     }}/>
                   </TableCell>
                   <TableCell className="min_level">
-                    <input type="text" ref={el => {if (el && inputRefs.current.length < QCElements.length * 3) {inputRefs.current[index * 3 + 1] = el}}} className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center" value={row.min_level || ''} onChange={(e) => {
+                    <input type="text" ref={el => {if (el && inputRefs.current.length < QCElements.length * 4) {inputRefs.current[index * 4 + 1] = el}}} className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center" value={row.min_level || ''} onChange={(e) => {
                       e.preventDefault();
 
                       setQCElements(prevState => {
@@ -404,7 +385,7 @@ const TestInputPage = (props: { name: string; link: string }) => {
                     }}/>
                   </TableCell>
                   <TableCell className="max_level">
-                    <input type="text" ref={el => {if (el && inputRefs.current.length < QCElements.length * 3) {inputRefs.current[index * 3 + 2] = el}}} className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center" value={row.max_level || ''} onChange={(e) => {
+                    <input type="text" ref={el => {if (el && inputRefs.current.length < QCElements.length * 4) {inputRefs.current[index * 4 + 2] = el}}} className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center" value={row.max_level || ''} onChange={(e) => {
                       e.preventDefault();
 
                       setQCElements(prevState => {
@@ -436,28 +417,57 @@ const TestInputPage = (props: { name: string; link: string }) => {
                     }}/>
                   </TableCell>
                   <TableCell className="mean">
-                    <div>{((+row.min_level + +row.max_level)/2).toFixed(2)}</div>
+                  <input type="text" ref={el => {if (el && inputRefs.current.length < QCElements.length * 4) {inputRefs.current[index * 4 + 3] = el}}} className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center" value={row.mean || ''} onChange={(e) => {
+                      e.preventDefault();
+
+                      setQCElements(prevState => {
+                          const newState = prevState.map(item => {
+                              if (item.analyteName === row.analyteName && /^\d*\.?\d*$/.test(e.target.value))
+                                  return { ...item, mean: e.target.value }
+                              else return item
+                          })
+          
+                          return newState
+                      })
+                    }}
+                    onKeyDown={(e) => {
+                      // e.preventDefault();
+                      if (e.key === 'Enter') {
+                        console.log(e.currentTarget.value)
+                          setQCElements(prevState => {
+                            const newState = prevState.map(item => {
+                                if (item.analyteName === row.analyteName) {
+                                  const new_level = (+item.mean).toFixed(2).replace(/^0+(?!\.|$)/, "");
+                                  return { ...item, mean: new_level }
+                                }
+                                else return item
+                            })
+            
+                            return newState
+                        })
+                      }
+                    }}/>
                   </TableCell>
                   <TableCell className="standard-deviation sm:w-32">
                     <div>{((+row.max_level - +row.min_level)/4).toFixed(2)}</div>
                   </TableCell>
                   <TableCell className="sd+1 sm:w-20">
-                    <div>{((+row.min_level + +row.max_level)/2 + (+row.max_level - +row.min_level)/4).toFixed(2)}</div>
+                    <div>{(+row.mean + (+row.max_level - +row.min_level)/4).toFixed(2)}</div>
                   </TableCell>
                   <TableCell className="sd-1 sm:w-20">
-                    <div>{((+row.min_level + +row.max_level)/2 - (+row.max_level - +row.min_level)/4).toFixed(2)}</div>
+                    <div>{(+row.mean - (+row.max_level - +row.min_level)/4).toFixed(2)}</div>
                   </TableCell>
                   <TableCell className="sd+2 sm:w-20">
-                    <div>{((+row.min_level + +row.max_level)/2 + ((+row.max_level - +row.min_level)/4) * 2).toFixed(2)}</div>
+                    <div>{(+row.mean + ((+row.max_level - +row.min_level)/4) * 2).toFixed(2)}</div>
                   </TableCell>
                   <TableCell className="sd-2 sm:w-20">
-                    <div>{((+row.min_level + +row.max_level)/2 - ((+row.max_level - +row.min_level)/4) * 2).toFixed(2)}</div>
+                    <div>{(+row.mean - ((+row.max_level - +row.min_level)/4) * 2).toFixed(2)}</div>
                   </TableCell>
                   <TableCell className="sd+3 sm:w-20">
-                    <div>{((+row.min_level + +row.max_level)/2 + ((+row.max_level - +row.min_level)/4) * 3).toFixed(2)}</div>
+                    <div>{(+row.mean + ((+row.max_level - +row.min_level)/4) * 3).toFixed(2)}</div>
                   </TableCell>
                   <TableCell className="sd-3 sm:w-20">
-                    <div>{((+row.min_level + +row.max_level)/2 - ((+row.max_level - +row.min_level)/4) * 3).toFixed(2)}</div>
+                    <div>{(+row.mean - ((+row.max_level - +row.min_level)/4) * 3).toFixed(2)}</div>
                   </TableCell>
                 </TableRow>
               ))}
