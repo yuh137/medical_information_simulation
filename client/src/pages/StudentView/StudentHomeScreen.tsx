@@ -51,7 +51,12 @@ const StudentHomeScreen = () => {
         <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 sm:!my-12 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px]`}>
           <div className="button-text font-bold text-2xl">Order Entry</div>
         </ButtonBase>
-        <DropDown name="Results In Progress" options={dropdownOptions} />
+        {/* <DropDown name="Results In Progress" options={dropdownOptions} /> */}
+        <Link to="/results">
+          <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 sm:!my-12 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px]`}>
+            <div className="button-text font-bold text-2xl">Results In Progress</div>
+          </ButtonBase>
+        </Link>
         <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 sm:!my-12 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px]`}>
           <div className="button-text font-bold text-2xl">Patients Reports</div>
         </ButtonBase>

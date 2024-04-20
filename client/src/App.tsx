@@ -2,21 +2,22 @@ import React from 'react';
 import { Routes, Route, Navigate, Link, useNavigate } from 'react-router-dom'
 import initIDB from './utils/indexedDB/initIDB';
 import Login from './components/Login';
-import Register from './components/Register';
+import Register from './pages/Register';
 import StudentHomeScreen from './pages/StudentView/StudentHomeScreen';
 import StudentQualityControls from './pages/StudentView/StudentQualityControls';
 import OrderControls from './pages/StudentView/OrderControls';
-import QC_Results from './components/QC_Results';
-import AnalyteInputPage from './components/AnalyteInputPage';
-import Unauthorized from './components/Unauthorized';
+import QC_Results from './pages/QC_Results';
+import AnalyteInputPage from './pages/AnalyteInputPage';
+import Unauthorized from './pages/Unauthorized';
 import { useAuth } from './context/AuthContext';
 import FacultyHomeScreen from './pages/FacultyView/FacultyHomeScreen';
 import FacultyQualityControls from './pages/FacultyView/FacultyQualityControls';
-import QCBuilder from './components/QCBuilderPage';
+import QCBuilder from './pages/QCBuilderPage';
 import { qcTypeLinkList, testTypeLinkList } from './utils/utils';
-import EditQC from './components/EditQCPage';
-import TestInputPage from './components/TestInputPage';
-import ErrorPage from './components/ErrorPage';
+import EditQC from './pages/EditQCPage';
+import TestInputPage from './pages/TestInputPage';
+import ErrorPage from './pages/ErrorPage';
+import ResultsInProgress from './pages/ResultsInProgress';
 
 function App() {
   initIDB();
@@ -30,6 +31,7 @@ function App() {
         <Route path='/register' element={<Register />}/>
         <Route path='/home' element={checkUserType() === 'student' ? <StudentHomeScreen /> : <FacultyHomeScreen />}/>
         <Route path='/qc' element={checkUserType() === 'student' ? <StudentQualityControls /> : <FacultyQualityControls />}/>
+        <Route path='/results' element={<ResultsInProgress />} />
         <Route path='/order_controls' element={<OrderControls />}/>
         {testTypeLinkList.map(item => (
           <Route path={`/${item.link}/qc_results`}>

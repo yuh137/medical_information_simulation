@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@mui/material";
 import { useTheme } from "../context/ThemeContext";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { CredentialsInput } from './Register';
+import { CredentialsInput } from '../pages/Register';
 import { UserType, useAuth } from '../context/AuthContext';
 import { getAdminByName, getStudentByName } from '../utils/indexedDB/getData';
 
