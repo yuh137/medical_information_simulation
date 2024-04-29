@@ -1,4 +1,7 @@
 using Medical_Information.API.Data;
+using Medical_Information.API.Mappings;
+using Medical_Information.API.Repositories.Interfaces;
+using Medical_Information.API.Repositories.SQLImplementation;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +15,13 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MedicalInformationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("MedicalInformationConnectionString")));
+
+builder.Services.AddScoped<IAdminRepository, SQLAdminRepository>();
+builder.Services.AddScoped<IStudentRepository, SQLStudentRepository>();
+builder.Services.AddScoped<IAdminQCLotRepository, SQLAdminQCLotRepository>();
+builder.Services.AddScoped<IAnalyteRepository, SQLAnalyteRepository>();
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 var app = builder.Build();
 

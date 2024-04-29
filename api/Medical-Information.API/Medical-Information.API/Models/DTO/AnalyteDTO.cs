@@ -1,11 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Medical_Information.API.Models.Domain;
 
-namespace Medical_Information.API.Models.Domain
+namespace Medical_Information.API.Models.DTO
 {
-    public class Analyte
+    public class AnalyteDTO
     {
-        [Key]
         public Guid AnalyteID { get; set; }
         public string AnalyteName { get; set; }
         public string AnalyteAcronym { get; set; }
@@ -15,8 +13,7 @@ namespace Medical_Information.API.Models.Domain
         public float Mean { get; set; }
         public float StdDevi { get; set; }
         public bool Electrolyte { get; set; }
-        [ForeignKey("AdminQCLotID")]
         public Guid AdminQCLotID { get; set; }
-        public AdminQCLot AdminQCLot { get; set; }
+        public AdminQCLotDTO AdminQCLotDTO { get; set; }
     }
 }
