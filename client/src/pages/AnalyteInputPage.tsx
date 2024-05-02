@@ -4,17 +4,95 @@ import NavBar from "../components/NavBar";
 import { Button, ButtonBase, Modal } from "@mui/material";
 import { useTheme } from "../context/ThemeContext";
 import { renderSubString } from "../utils/utils";
-import { getAllDataFromStore, getQCRangeByName } from "../utils/indexedDB/getData";
+import { getQCRangeByName } from "../utils/indexedDB/getData";
 import { QCTemplateBatch } from "../utils/indexedDB/IDBSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
+import {
+  Document,
+  Page,
+  StyleSheet,
+  Text,
+  View,
+  pdf,
+} from "@react-pdf/renderer";
+import { createTw } from "react-pdf-tailwind";
+import { useAuth } from "../context/AuthContext";
 
 const AnalyteInputPage = (props: { name: string, link: string }) => {
   const { theme } = useTheme();
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const analyteNameRefs = useRef<HTMLDivElement[]>([]);
-  const { register, handleSubmit } = useForm();
-  const onSubmit: SubmitHandler<any> = async (data) => {
 
+  const { username } = useAuth();
+
+  const reportPDF = (analyteValues?: string[], QCData?: QCTemplateBatch) => {
+    const currentDate = new Date();
+
+    const tw = createTw({
+      theme: {},
+      extend: {},
+    });
+
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June", "July",
+      "August", "September", "October", "November", "December"
+    ];
+
+    return (
+      <>
+        <Document style={tw("border border-sold border-black")}>
+          <Page style={tw("py-8 px-16 border border-sold border-black")}>
+            <Text style={tw("sm:text-[24px] text-center")}>Quality Controls Report</Text>
+            <Text style={tw("mt-8 mb-2 text-[13px]")}>Date: {monthNames[currentDate.getMonth()]} {currentDate.getDate()}, {currentDate.getFullYear()}</Text>
+            <Text style={tw("mb-2 text-[13px]")}>Lot Number: {QCData?.lotNumber || "error"}</Text>
+            <Text style={tw("mb-8 text-[13px]")}>QC Duration: {QCData?.openDate || "undetermined"} - {QCData?.closedDate || "undetermined"}</Text>
+            <Text style={tw("text-[22px] mb-8 text-center")}>{props.name} QC</Text>
+            <View style={tw("flex-row justify-around")}>
+              <Text style={tw("font-[700] text-[15px]")}>Analytes</Text>
+              <Text style={tw("font-[700] text-[15px]")}>Value</Text>
+              <Text style={tw("font-[700] text-[15px]")}>Level {detectLevel(props.name) === 1 ? "I" : "II"} Range</Text>
+            </View>
+            <View style={tw("w-full h-[1px] bg-black mt-2")}/>
+            <View style={tw("flex-row justify-between p-5")}>
+              <View>
+                {analyteValues?.map((value, index) => (
+                  <Text style={tw(`mb-2 text-[13px] ${invalidIndexArray?.includes(index) ? "text-red-500" : ""}`)} key={index}>{QCData?.analytes[index].analyteName}</Text>
+                ))}
+              </View>
+              <View>
+                {analyteValues?.map((value, index) => (
+                  <Text style={tw(`mb-2 text-[13px] ${invalidIndexArray?.includes(index) ? "text-red-500" : ""}`)} key={index}>{parseFloat(value)} {QCData?.analytes[index].unit_of_measure}</Text>
+                ))}
+              </View>
+              <View>
+                {analyteValues?.map((value, index) => (
+                  <Text style={tw(`mb-2 text-[13px] ${invalidIndexArray?.includes(index) ? "text-red-500" : ""}`)} key={index}>{QCData?.analytes[index].min_level} - {QCData?.analytes[index].max_level} {QCData?.analytes[index].unit_of_measure}</Text>
+                ))}
+              </View>
+            </View>
+            <View style={tw("w-full h-[1px] bg-black mt-2")}/>
+            <Text style={tw("mt-2")}>QC Comments:</Text>
+            <View>
+              {modalData.map((item, index) => (
+                <View style={tw("flex-row items-center")}>
+                  <View style={tw("self-center w-[4px] h-[4px] bg-black rounded-full")} />
+                  <Text style={tw("text-[13px] w-full px-6 text-justify text-wrap mt-2")} key={index}>{QCData?.analytes[item.invalidIndex].analyteName}: {item.comment}</Text>
+                </View>
+              ))}
+            </View>
+            <Text style={tw("mt-8 text-[13px]")}>Approved by: {username}</Text>
+            <Text style={tw("mt-2 text-[13px]")}>Date: {currentDate.getMonth() + 1}/{currentDate.getDate()}/{currentDate.getFullYear()}</Text>
+            <Text style={tw("mt-2 text-[13px]")}>Time: {currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</Text>
+          </Page>
+        </Document>
+      </>
+    )
+  }
+
+  const openPDF = async () => {
+    const blob = await pdf(reportPDF(analyteValues, QCData)).toBlob();
+    const pdfUrl = URL.createObjectURL(blob);
+    window.open(pdfUrl, "_blank");
   }
 
   // const [isValid, setIsValid] = useState<boolean>(false);
@@ -23,6 +101,7 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
   const [invalidIndexes, setInvalidIndexes] = useState<Set<number> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [QCData, setQCData] = useState<QCTemplateBatch>();
+  const [modalData, setModalData] = useState<{ invalidIndex: number, comment: string }[]>([]);
 
   const invalidIndexArray: number[] | null = useMemo(() => {
     if (!invalidIndexes) return null;
@@ -35,6 +114,7 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
     if ((!invalidIndexes || invalidIndexes.size === 0) && analyteValues.length === QCData?.analytes.length) return true;
     else return false;
   }, [analyteValues])
+  const [isValidManual, setIsValidManual] = useState<boolean>(false);
 
   function detectLevel(str: string): number {
       if (str.endsWith("I")) {
@@ -57,6 +137,17 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
     }
   }
 
+  function handleTextareaChange(index: number, invalidIndex: number, value: string) {
+    setModalData(prevValues => {
+      const updatedValues = [...prevValues];
+      updatedValues[index] = { invalidIndex: 0, comment: "" }
+      // console.log(updatedValues)
+      updatedValues[index].invalidIndex = invalidIndex;
+      updatedValues[index].comment = value;
+      return updatedValues;
+    })
+  }
+
   function handleInputChange(
     index: number,
     value: string,
@@ -66,20 +157,6 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
     const newValues = [...analyteValues];
     newValues[index] = value;
     setAnalyteValues(newValues);
-    // if (parseFloat(value) < min || parseFloat(value) > max) setIsValid(false);
-    // setIsValid(
-    //   newValues.every(
-    //     (val) => {
-    //       console.log("From handleInputChange function: " + parseFloat(val) + " " + (parseFloat(val) >= min && parseFloat(val) <= max))
-    //       return (
-    //         // !isNaN(parseFloat(val)) &&
-    //         parseFloat(val) >= min &&
-    //         parseFloat(val) <= max &&
-    //         newValues.length === QCData?.analytes.length
-    //       )
-    //     }
-    //   )
-    // );
     
     // newValues.forEach(val => {
     if (
@@ -188,11 +265,12 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
             </Button>
             <Button
               className={`sm:w-32 sm:h-[50px] !font-semibold !border !border-solid !border-[#6781AF] max-sm:w-full ${
-                isValid
+                isValid || isValidManual
                   ? "!bg-[#DAE3F3] !text-black"
                   : "!bg-[#AFABAB] !text-white"
               }`}
-              disabled={!isValid}
+              disabled={!isValidManual && !isValid}
+              onClick={() => openPDF()}
             >
               Print QC
             </Button>
@@ -230,13 +308,17 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
             {invalidIndexArray && invalidIndexArray.length > 0 && (
               <>
                 <div className="invalid-items-comments flex flex-col sm:space-y-6">
-                  {invalidIndexArray.map(invalidItem => (
+                  {invalidIndexArray.map((invalidItem, index) => (
                     <div className="comment flex sm:space-x-12 h-fit" key={invalidItem}>
                       <div className="comment-name w-[5%] sm:text-xl font-semibold self-center" dangerouslySetInnerHTML={{ __html: renderSubString(analyteNameRefs.current[invalidItem].innerHTML) }} />
-                      <textarea ref={el => console.log(el)} name="" id="" className="grow sm:h-16 p-1" required></textarea>
+                      <textarea className="grow sm:h-16 p-1" value={modalData[index]?.comment || ""} onChange={(e) => handleTextareaChange(index, invalidItem, e.target.value)} required></textarea>
                     </div>
                   ))}
-                  <ButtonBase className={`!rounded-lg sm!my-10 sm:!py-6 sm:!px-10 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] sm:w-1/2 self-center`}>Apply Comments</ButtonBase>
+                  <ButtonBase className={`!rounded-lg sm!my-10 sm:!py-6 sm:!px-10 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] sm:w-1/2 self-center`} onClick={(e => {
+                    e.preventDefault()
+                    // console.log(modalData)
+                    setIsValidManual(modalData.every(item => item.comment !== ""))
+                  })}>Apply Comments</ButtonBase>
                 </div>
               </>
             )}

@@ -71,10 +71,6 @@
       "RelativeMoniker": "D:0:0:{A047BC67-EDA3-426F-BFB9-4EFD2C8AE9D5}|Medical-Information.API\\Medical-Information.API.csproj|solutionrelative:medical-information.api\\repositories\\interfaces\\ianalyterepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\Migrations\\20240428173506_Seed data for Analytes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Medical-Information.API\\Migrations\\20240428173506_Seed data for Analytes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A047BC67-EDA3-426F-BFB9-4EFD2C8AE9D5}|Medical-Information.API\\Medical-Information.API.csproj|d:\\work\\web\\medical_information_simulation\\api\\medical-information.api\\medical-information.api\\repositories\\sqlimplementation\\sqlstudentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A047BC67-EDA3-426F-BFB9-4EFD2C8AE9D5}|Medical-Information.API\\Medical-Information.API.csproj|solutionrelative:medical-information.api\\repositories\\sqlimplementation\\sqlstudentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -133,6 +129,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{A047BC67-EDA3-426F-BFB9-4EFD2C8AE9D5}|Medical-Information.API\\Medical-Information.API.csproj|d:\\work\\web\\medical_information_simulation\\api\\medical-information.api\\medical-information.api\\migrations\\20240417074113_initial migration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A047BC67-EDA3-426F-BFB9-4EFD2C8AE9D5}|Medical-Information.API\\Medical-Information.API.csproj|solutionrelative:medical-information.api\\migrations\\20240417074113_initial migration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A047BC67-EDA3-426F-BFB9-4EFD2C8AE9D5}|Medical-Information.API\\Medical-Information.API.csproj|d:\\work\\web\\medical_information_simulation\\api\\medical-information.api\\medical-information.api\\migrations\\20240428173506_seed data for analytes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A047BC67-EDA3-426F-BFB9-4EFD2C8AE9D5}|Medical-Information.API\\Medical-Information.API.csproj|solutionrelative:medical-information.api\\migrations\\20240428173506_seed data for analytes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -154,8 +154,7 @@
               "RelativeToolTip": "Medical-Information.API\\Controllers\\AdminsController.cs",
               "ViewState": "AQIAAF0AAAAAAAAAAAAowFcAAABiAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-17T08:03:24.838Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-17T08:03:24.838Z"
             },
             {
               "$type": "Document",
@@ -167,8 +166,7 @@
               "RelativeToolTip": "Medical-Information.API\\Models\\DTO\\AddAdminQCLotRequestDTO.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAyAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-28T18:32:59.194Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-28T18:32:59.194Z"
             },
             {
               "$type": "Document",
@@ -180,8 +178,7 @@
               "RelativeToolTip": "Medical-Information.API\\Models\\Domain\\AdminQCLot.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAyAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-16T04:38:32.021Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-16T04:38:32.021Z"
             },
             {
               "$type": "Document",
@@ -193,8 +190,7 @@
               "RelativeToolTip": "Medical-Information.API\\Models\\Domain\\Analyte.cs",
               "ViewState": "AQIAAAsAAAAAAAAAAAAgwAcAAAAMAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-16T05:13:36.966Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-16T05:13:36.966Z"
             },
             {
               "$type": "Document",
@@ -206,8 +202,7 @@
               "RelativeToolTip": "Medical-Information.API\\Data\\MedicalInformationDbContext.cs",
               "ViewState": "AQIAANYAAAAAAAAAAAAAAO0AAABDAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-16T06:51:46.953Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-16T06:51:46.953Z"
             },
             {
               "$type": "Document",
@@ -217,7 +212,7 @@
               "RelativeDocumentMoniker": "Medical-Information.API\\Repositories\\SQLImplementation\\SQLAdminQCLotRepository.cs",
               "ToolTip": "D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\Repositories\\SQLImplementation\\SQLAdminQCLotRepository.cs",
               "RelativeToolTip": "Medical-Information.API\\Repositories\\SQLImplementation\\SQLAdminQCLotRepository.cs",
-              "ViewState": "AQIAABcAAAAAAAAAAAAgwCQAAABMAAAA",
+              "ViewState": "AQIAAA8AAAAAAAAAAAA1wCQAAABMAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-04-28T08:45:02.442Z",
               "EditorCaption": ""
@@ -232,8 +227,7 @@
               "RelativeToolTip": "Medical-Information.API\\Controllers\\AnalytesController.cs",
               "ViewState": "AQIAAAIAAAAAAAAAAAAiwCsAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-28T17:43:56.664Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-28T17:43:56.664Z"
             },
             {
               "$type": "Document",
@@ -245,8 +239,7 @@
               "RelativeToolTip": "Medical-Information.API\\Controllers\\StudentsController.cs",
               "ViewState": "AQIAAC4AAAAAAAAAAAAmwF8AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-28T04:54:21.842Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-28T04:54:21.842Z"
             },
             {
               "$type": "Document",
@@ -258,8 +251,7 @@
               "RelativeToolTip": "Medical-Information.API\\Controllers\\AdminQCLotsController.cs",
               "ViewState": "AQIAAAgAAAAAAAAAAAAuwCkAAABYAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-28T08:13:13.829Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-28T08:13:13.829Z"
             },
             {
               "$type": "Document",
@@ -271,8 +263,7 @@
               "RelativeToolTip": "Medical-Information.API\\Repositories\\Interfaces\\IAdminQCLotRepository.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAuwAgAAAApAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-28T08:42:31.207Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-28T08:42:31.207Z"
             },
             {
               "$type": "Document",
@@ -284,8 +275,7 @@
               "RelativeToolTip": "Medical-Information.API\\Mappings\\AutoMapperProfiles.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAAgAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-28T08:54:50.892Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-28T08:54:50.892Z"
             },
             {
               "$type": "Document",
@@ -297,8 +287,7 @@
               "RelativeToolTip": "Medical-Information.API\\Program.cs",
               "ViewState": "AQIAAAwAAAAAAAAAAAAAABUAAABHAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-16T07:55:57.357Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-16T07:55:57.357Z"
             },
             {
               "$type": "Document",
@@ -310,8 +299,7 @@
               "RelativeToolTip": "Medical-Information.API\\Models\\DTO\\AddAnalyteRequestDTO.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAuAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-28T17:54:36.959Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-28T17:54:36.959Z"
             },
             {
               "$type": "Document",
@@ -323,8 +311,7 @@
               "RelativeToolTip": "Medical-Information.API\\Models\\DTO\\AdminQCLotDTO.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAABDAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-28T08:13:48.997Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-28T08:13:48.997Z"
             },
             {
               "$type": "Document",
@@ -336,8 +323,7 @@
               "RelativeToolTip": "Medical-Information.API\\Repositories\\SQLImplementation\\SQLAnalyteRepository.cs",
               "ViewState": "AQIAAAkAAAAAAAAAAAAAwBgAAAA6AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-28T17:46:06.258Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-28T17:46:06.258Z"
             },
             {
               "$type": "Document",
@@ -349,8 +335,7 @@
               "RelativeToolTip": "Medical-Information.API\\Repositories\\SQLImplementation\\SQLAdminRepository.cs",
               "ViewState": "AQIAABAAAAAAAAAAAAAQwCYAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-25T17:32:58.519Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-25T17:32:58.519Z"
             },
             {
               "$type": "Document",
@@ -362,12 +347,11 @@
               "RelativeToolTip": "Medical-Information.API\\Repositories\\Interfaces\\IAnalyteRepository.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAA7AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-28T17:44:46.149Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-28T17:44:46.149Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 32,
               "Title": "20240428173506_Seed data for Analytes.cs",
               "DocumentMoniker": "D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\Migrations\\20240428173506_Seed data for Analytes.cs",
               "RelativeDocumentMoniker": "Medical-Information.API\\Migrations\\20240428173506_Seed data for Analytes.cs",
@@ -375,12 +359,11 @@
               "RelativeToolTip": "Medical-Information.API\\Migrations\\20240428173506_Seed data for Analytes.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-28T17:35:08.706Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-28T17:35:08.706Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 17,
               "Title": "SQLStudentRepository.cs",
               "DocumentMoniker": "D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\Repositories\\SQLImplementation\\SQLStudentRepository.cs",
               "RelativeDocumentMoniker": "Medical-Information.API\\Repositories\\SQLImplementation\\SQLStudentRepository.cs",
@@ -392,7 +375,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 18,
               "Title": "DepartmentEnum.cs",
               "DocumentMoniker": "D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\Enums\\DepartmentEnum.cs",
               "RelativeDocumentMoniker": "Medical-Information.API\\Enums\\DepartmentEnum.cs",
@@ -404,7 +387,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 19,
               "Title": "Admin.cs",
               "DocumentMoniker": "D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\Models\\Domain\\Admin.cs",
               "RelativeDocumentMoniker": "Medical-Information.API\\Models\\Domain\\Admin.cs",
@@ -416,7 +399,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 20,
               "Title": "AnalyteDTO.cs",
               "DocumentMoniker": "D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\Models\\DTO\\AnalyteDTO.cs",
               "RelativeDocumentMoniker": "Medical-Information.API\\Models\\DTO\\AnalyteDTO.cs",
@@ -428,7 +411,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 21,
               "Title": "IStudentRepository.cs",
               "DocumentMoniker": "D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\Repositories\\Interfaces\\IStudentRepository.cs",
               "RelativeDocumentMoniker": "Medical-Information.API\\Repositories\\Interfaces\\IStudentRepository.cs",
@@ -440,7 +423,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 22,
               "Title": "IAdminRepository.cs",
               "DocumentMoniker": "D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\Repositories\\Interfaces\\IAdminRepository.cs",
               "RelativeDocumentMoniker": "Medical-Information.API\\Repositories\\Interfaces\\IAdminRepository.cs",
@@ -452,7 +435,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 25,
               "Title": "UpdatePasswordDTO.cs",
               "DocumentMoniker": "D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\Models\\DTO\\UpdatePasswordDTO.cs",
               "RelativeDocumentMoniker": "Medical-Information.API\\Models\\DTO\\UpdatePasswordDTO.cs",
@@ -464,7 +447,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 23,
               "Title": "AdminDTO.cs",
               "DocumentMoniker": "D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\Models\\DTO\\AdminDTO.cs",
               "RelativeDocumentMoniker": "Medical-Information.API\\Models\\DTO\\AdminDTO.cs",
@@ -476,7 +459,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 24,
               "Title": "appsettings.json",
               "DocumentMoniker": "D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\appsettings.json",
               "RelativeDocumentMoniker": "Medical-Information.API\\appsettings.json",
@@ -488,7 +471,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 29,
               "Title": "Student.cs",
               "DocumentMoniker": "D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\Models\\Domain\\Student.cs",
               "RelativeDocumentMoniker": "Medical-Information.API\\Models\\Domain\\Student.cs",
@@ -500,7 +483,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 28,
               "Title": "AddStudentRequestDTO.cs",
               "DocumentMoniker": "D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\Models\\DTO\\AddStudentRequestDTO.cs",
               "RelativeDocumentMoniker": "Medical-Information.API\\Models\\DTO\\AddStudentRequestDTO.cs",
@@ -512,7 +495,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 26,
               "Title": "StudentDTO.cs",
               "DocumentMoniker": "D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\Models\\DTO\\StudentDTO.cs",
               "RelativeDocumentMoniker": "Medical-Information.API\\Models\\DTO\\StudentDTO.cs",
@@ -524,7 +507,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 27,
               "Title": "AddAdminRequestDTO.cs",
               "DocumentMoniker": "D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\Models\\DTO\\AddAdminRequestDTO.cs",
               "RelativeDocumentMoniker": "Medical-Information.API\\Models\\DTO\\AddAdminRequestDTO.cs",
@@ -536,7 +519,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 31,
               "Title": "20240417074113_Initial Migration.cs",
               "DocumentMoniker": "D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\Migrations\\20240417074113_Initial Migration.cs",
               "RelativeDocumentMoniker": "Medical-Information.API\\Migrations\\20240417074113_Initial Migration.cs",
@@ -548,7 +531,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 30,
               "Title": "20240417074924_Added lots, analytes and students tables.cs",
               "DocumentMoniker": "D:\\Work\\Web\\Medical_information_simulation\\api\\Medical-Information.API\\Medical-Information.API\\Migrations\\20240417074924_Added lots, analytes and students tables.cs",
               "RelativeDocumentMoniker": "Medical-Information.API\\Migrations\\20240417074924_Added lots, analytes and students tables.cs",
