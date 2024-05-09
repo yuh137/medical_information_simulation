@@ -45,13 +45,14 @@ function App() {
         {testTypeLinkList.map(item => (
           <Route path={`/${item.link}/qc_builder`} element={<QCBuilder link={item.link} name={item.name} key={item.name}/>}/>
         ))}
-        {testTypeLinkList.map(item => (
+       {testTypeLinkList.map(item => (
           <Route path={`/${item.link}/edit_qc`}>
             <Route path='' element={<EditQC link={item.link} name={item.name} key={item.name}/>}></Route>
             {qcTypeLinkList.map(subItem => (
               <Route path={`${subItem.link}`} element={<TestInputPage name={`${subItem.name}`} link='' />} key={subItem.link}></Route>
             ))}
           </Route>
+          
         ))}
         {testTypeLinkList.map(item => (
           <Route path={`/${item.link}/build_qc`}>
