@@ -18,6 +18,7 @@ import EditQC from './pages/EditQCPage';
 import TestInputPage from './pages/TestInputPage';
 import ErrorPage from './pages/ErrorPage';
 import ResultsInProgress from './pages/ResultsInProgress';
+import CustomQCBuild from './pages/CustomQCBuild';
 
 function App() {
   initIDB();
@@ -51,6 +52,11 @@ function App() {
               <Route path={`${subItem.link}`} element={<TestInputPage name={`${subItem.name}`} link='' />} key={subItem.link}></Route>
             ))}
           </Route>
+        ))}
+        {testTypeLinkList.map(item => (
+          <Route path={`/${item.link}/build_qc`}>
+            <Route path='' element={<CustomQCBuild name={`${item.name}`} link='' />} key={item.link}></Route>
+            </Route>
         ))}
         <Route path='/unauthorized' element={<Unauthorized />}/>
         <Route path='*' element={<ErrorPage />}/>
