@@ -25,6 +25,7 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
 
   const { username } = useAuth();
 
+  // Function to print out the report pdf file
   const reportPDF = (analyteValues?: string[], QCData?: QCTemplateBatch) => {
     const currentDate = new Date();
 
@@ -157,16 +158,13 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
     const newValues = [...analyteValues];
     newValues[index] = value;
     setAnalyteValues(newValues);
-    
-    // newValues.forEach(val => {
     if (
       isNaN(parseFloat(value)) ||
       parseFloat(value) < min ||
       parseFloat(value) > max ||
       typeof value === "undefined" 
-      // newValues.length != data.length
+      // newValues.length !== data.length
     ) {
-      // let newInvalidIndexes;
       if (!invalidIndexes) {
         let newInvalidIndexes = new Set<number>();
         newInvalidIndexes.add(index);
@@ -177,15 +175,11 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
         newInvalidIndexes.add(index);
         setInvalidIndexes(newInvalidIndexes);
       }
-      
-      // newInvalidIndexes.push(newValues.indexOf(val));
-      // setInvalidIndexes(newInvalidIndexes);
     } else {
       let newInvalidIndexes = new Set<number>(invalidIndexes);
       newInvalidIndexes.delete(index);
       setInvalidIndexes(newInvalidIndexes);
     }
-    // })
     setIsInputFull(newValues.length === QCData?.analytes.length && newValues.length > 0);
   }
 
@@ -226,7 +220,7 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
                 level={detectLevel(props.name)}
                 measUnit={item.unit_of_measure}
                 handleInputChange={(val) => {
-                    if (item.min_level != "" && item.max_level != "") {
+                    if (item.min_level !== "" && item.max_level !== "") {
                       // console.log("First condition");
                       handleInputChange(index, val, +item.min_level, +item.max_level)
                     }

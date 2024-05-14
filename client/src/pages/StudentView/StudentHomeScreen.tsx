@@ -21,7 +21,7 @@ const StudentHomeScreen = () => {
     <>
       {/* <NavBar name='MIS Home Screen'/> */}
       <div
-        className={` bg-[${theme.primaryColor}] relative flex`}
+        className={` bg-[${theme.primaryColor}] relative flex items-center`}
         // className={` bg-[#744700] relative`}
         style={{ minWidth: "100svw", minHeight: "10svh" }}
       >

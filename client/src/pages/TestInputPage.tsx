@@ -189,7 +189,7 @@ const TestInputPage = (props: { name: string; link: string }) => {
     (async () => {
       const res = await getDataByKey<QCTemplateBatch>("qc_store", props.name);
 
-      if (res && typeof res != "string") setQCElements(res.analytes)
+      if (res && typeof res !== "string") setQCElements(res.analytes)
     })()
   }, [])
 
@@ -200,7 +200,7 @@ const TestInputPage = (props: { name: string; link: string }) => {
   return (
     <>
       <div
-        className={`bg-[${theme.primaryColor}] relative`}
+        className={`bg-[${theme.primaryColor}] relative flex items-center`}
         style={{ minWidth: "100svw", minHeight: "10svh" }}
       >
         <Icon
@@ -312,7 +312,6 @@ const TestInputPage = (props: { name: string; link: string }) => {
                       })
                     }}/>
                   </TableCell>
-                  
                 </TableRow>
               ))} */}
               {QCElements.map((row, index) => (

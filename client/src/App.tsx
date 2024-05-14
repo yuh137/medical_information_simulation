@@ -57,7 +57,7 @@ function App() {
         {testTypeLinkList.map(item => (
           <Route path={`/${item.link}/build_qc`}>
             <Route path='' element={<CustomQCBuild name={`${item.name}`} link='' />} key={item.link}></Route>
-            </Route>
+          </Route>
         ))}
         <Route path='/unauthorized' element={<Unauthorized />}/>
         <Route path='*' element={<ErrorPage />}/>

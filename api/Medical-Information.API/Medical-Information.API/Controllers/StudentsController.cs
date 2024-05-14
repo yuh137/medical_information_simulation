@@ -49,7 +49,7 @@ namespace Medical_Information.API.Controllers
         {
             var existingStudent = await studentRepository.GetStudentByNameAsync(addStudentRequestDTO.Username);
 
-            if (existingStudent != null)
+            if (existingStudent !== null)
             {
                 return Conflict(new
                 {

@@ -52,7 +52,7 @@ export const AuthProvider = (props: AuthProviderProps) => {
 
     // useEffect(() => {
     //   const tokenString = sessionStorage.getItem("token");
-    //   if (tokenString && tokenString !== "") {
+    //   if (tokenString && tokenString !=== "") {
     //     setIsAuthenticated(true);
     //     const token = JSON.parse(tokenString);
 
