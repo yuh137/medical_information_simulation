@@ -1,5 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
+import { Component } from "lucide-react";
 import { twMerge } from "tailwind-merge"
+
 
 export const testTypeLinkList = [
   {link: "chemistry", name: "Chemistry"},
@@ -10,12 +12,11 @@ export const testTypeLinkList = [
   {link: "blood_bank", name: "Blood Bank"},
   {link: "molecular", name: "Molecular"},
 ];
-
 export const qcTypeLinkList = [
-  {name:"CMP Level I", link: "cmp_1"},
-  {name:"CMP Level II", link: "cmp_2"},
-  {name:"Cardiac Level I", link: "cardiac_1"},
-  {name:"Cardiac Level II", link: "cardiac_2"},
+  {name:"CMP Level I", link:'Cmp_1', component: 'TestInputPage'},
+  {name:"CMP Level II", link: "cmp_2", component: 'TestInputPage'},
+  {name:"Cardiac Level I", link: "cardiac_1", component: 'TestInputPageCardic'},
+  {name:"Cardiac Level II", link: "cardiac_2", component: 'TestInputPageCardic'},
   {name:"Thyroid Level I", link: "thyroid_1"},
   {name:"Thyroid Level II", link: "thyroid_2"},
   {name:"Liver Level I", link: "liver_1"},

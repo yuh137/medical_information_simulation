@@ -6,6 +6,15 @@ import { useAuth } from "../context/AuthContext";
 import { qcTypeLinkList } from "../utils/utils";
 import { ButtonBase } from "@mui/material";
 
+
+
+
+
+
+
+
+
+
 const EditQC = (props: { name: string; link: string }) => {
   const { theme } = useTheme();
   const navigate = useNavigate();

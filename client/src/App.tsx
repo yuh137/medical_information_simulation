@@ -15,7 +15,7 @@ import FacultyQualityControls from './pages/FacultyView/FacultyQualityControls';
 import QCBuilder from './pages/QCBuilderPage';
 import { qcTypeLinkList, testTypeLinkList } from './utils/utils';
 import EditQC from './pages/EditQCPage';
-import TestInputPage from './pages/TestInputPage';
+import {TestInputPage} from './pages/TestInputPage';
 import ErrorPage from './pages/ErrorPage';
 import ResultsInProgress from './pages/ResultsInProgress';
 import CustomQCBuild from './pages/CustomQCBuild';
@@ -45,14 +45,32 @@ function App() {
         {testTypeLinkList.map(item => (
           <Route path={`/${item.link}/qc_builder`} element={<QCBuilder link={item.link} name={item.name} key={item.name}/>}/>
         ))}
-       {testTypeLinkList.map(item => (
-          <Route path={`/${item.link}/edit_qc`}>
-            <Route path='' element={<EditQC link={item.link} name={item.name} key={item.name}/>}></Route>
-            {qcTypeLinkList.map(subItem => (
-              <Route path={`${subItem.link}`} element={<TestInputPage name={`${subItem.name}`} link='' />} key={subItem.link}></Route>
+        {testTypeLinkList.map(item => (
+  <Route path={`/${item.link}/edit_qc`}>
+    <Route path='' element={<EditQC link={item.link} name={item.name} />}></Route>
+    {qcTypeLinkList.map(subItem => (
+      <Route
+        path={`${subItem.link}`}
+        element={
+          <TestInputPage
+            name={subItem.name}
+            link={subItem.link}
+            dataType={
+              subItem.name.includes('Cardiac') ? 'Cardiac' :
+              subItem.name.includes('Lipid') ? 'Lipid' :
+              subItem.name.includes('Liver') ? 'Liver' :
+              subItem.name.includes('Thyroid') ? 'Thyroid' :
+              subItem.name.includes('Iron') ? 'Iron' :
+              subItem.name.includes('Drug') ? 'Drug' :
+              subItem.name.includes('Hormone') ? 'Hormone' :
+              'General'
+            }
+          />
+        }
+        key={subItem.link}
+      />
             ))}
           </Route>
-          
         ))}
         {testTypeLinkList.map(item => (
           <Route path={`/${item.link}/build_qc`}>

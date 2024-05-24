@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
-import { mock } from "../utils/MOCK_DATA";
+import { CMP,Cardiac, Thyroid, Liver, Lipid, Iron, Drug, Hormone} from "../utils/MOCK_DATA";
 import { renderSubString } from "../utils/utils";
 import { ButtonBase, Checkbox, Drawer } from "@mui/material";
 import { Icon } from "@iconify/react";
@@ -38,11 +38,23 @@ interface QCRangeElements {
   electrolyte: boolean;
 }
 
-const TestInputPage = (props: { name: string; link: string }) => {
+
+export const TestInputPage = (props: { name: string; link: string, dataType?: string  }) => {
   const navigate = useNavigate();
   const { checkSession, checkUserType, isAuthenticated, logout } = useAuth();
   const { theme } = useTheme();
-  const [QCElements, setQCElements] = useState<QCRangeElements[]>(mock);
+  const { dataType } = props;
+  const initialData = 
+    dataType === 'Cardiac' ? Cardiac :
+    dataType === 'Lipid' ? Lipid :
+    dataType === 'Thyroid' ? Thyroid :
+    dataType === 'Liver' ? Liver :
+    dataType === 'Iron' ? Iron :
+    dataType === 'Drug' ? Drug:
+    dataType === 'Hormone' ? Hormone :
+    CMP;
+
+  const [QCElements, setQCElements] = useState<QCRangeElements[]>(initialData);
   const [isValid, setIsValid] = useState<boolean>(false);
   const [isDrawerOpen, openDrawer] = useState<boolean>(false);
   const { register, handleSubmit } = useForm<QCTemplateBatch>();
@@ -510,5 +522,3 @@ const TestInputPage = (props: { name: string; link: string }) => {
     </>
   );
 };
-
-export default TestInputPage;

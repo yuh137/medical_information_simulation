@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
-import { mock } from "../utils/MOCK_DATA";
+import { CMP, Cardiac, Thyroid } from "../utils/MOCK_DATA";
 import { renderSubString } from "../utils/utils";
 import { ButtonBase, Checkbox, Drawer } from "@mui/material";
 import { Icon } from "@iconify/react";
@@ -40,16 +40,18 @@ interface QCRangeElements {
 
 const CustomQCBuild = (props: { name: string; link: string }) => {
   const navigate = useNavigate();
-  const [showControls, setShowControls] = useState(true); // New state to control visibility of the dropdown button
+  const [showControls, setShowControls] = useState(true); 
 
-  const [numRows, setNumRows] = useState(0); // State to track the number of rows
-  const [dropdownVisible, setDropdownVisible] = useState(false); // New state for dropdown visibility
+  const [numRows, setNumRows] = useState(0);
+  const [dropdownVisible, setDropdownVisible] = useState(false); 
   const { checkSession, checkUserType, isAuthenticated, logout } = useAuth();
   const { theme } = useTheme();
-  const [QCElements, setQCElements] = useState<QCRangeElements[]>(mock);
+  const [QCElements, setQCElements] = useState<QCRangeElements[]>(CMP);
   const [isValid, setIsValid] = useState<boolean>(false);
   const [isDrawerOpen, openDrawer] = useState<boolean>(false);
   const { register, handleSubmit } = useForm<QCTemplateBatch>();
+  const [showFinalTable, setShowFinalTable] = useState(false); 
+  const [showInputForm, setShowInputForm] = useState(true); 
   const saveQC: SubmitHandler<QCTemplateBatch> = async (data) => {
     const check = await getDataByKey<QCTemplateBatch>("qc_store", props.name);
 
@@ -124,9 +126,7 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
       accessorKey: "analyteAcronym",
       header: "Abbreviation",
       cell: (info) => (
-        <div
-          dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
-        />
+        <></>
       ),
     },
     {
@@ -212,7 +212,7 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
       new Array(numRows)
         .fill({})
         .map(() => ({
-          analyteName: "ashdasda",
+          analyteName: "",
           analyteAcronym: "",
           unit_of_measure: "",
           min_level: "",
@@ -229,19 +229,26 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
       navigate("/unauthorized");
   }, []);
 
+
+
   const handleDropdownChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const value = parseInt(event.target.value, 10);
     setNumRows(value);
-    setShowControls(false); // Hide the controls when a number is selected
-
-    setDropdownVisible(false); // Hide dropdown after selection
+    setShowControls(false); 
+    setDropdownVisible(false); 
   };
 
   const toggleDropdown = () => {
-    setDropdownVisible(!dropdownVisible); // Toggle visibility of the dropdown
+    setDropdownVisible(!dropdownVisible); 
   };
+
+
+
+
+
+
 
   useEffect(() => {
     (async () => {
@@ -290,6 +297,8 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
           </div>
         )}
       </div>
+
+      
       <div className="relative mt-8 sm:w-[94svw] sm:mx-auto bg-[#CFD5EA]">
         {" "}
         {/* This container should be relative */}
@@ -326,7 +335,75 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
         )}
       </div>
 
-      {numRows !== 0 && <div className="basic-container relative sm:space-y-4 pb-24">
+
+      
+      {numRows !== 0 && showInputForm &&(
+        <div className="basic-container relative sm:space-y-4 pb-24">
+          <div className="table-container flex flex-col mt-8 sm:w-[40svw] sm:mx-auto w-[46svw] bg-[#CFD5EA] relative">
+            <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200 w-full">
+              <TableHeader>
+                <TableRow className="font-bold text-base bg-[#3A62A7] hover:bg-[#3A62A7]">
+                  <TableHead className="text-white text-center">
+                    Analyte Name
+                  </TableHead>
+                  <TableHead className="text-white text-center">
+                    Analyte Abbreviation
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+             <TableBody
+            >
+                {Array(numRows).fill(null).map((_, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <input
+                        type="text"
+                        className="w-full p-2 border border-solid border-gray-300 rounded-md"
+                        value={QCElements[index]?.analyteName || ""}
+                        onChange={(e) => {
+                          const newQCElements = [...QCElements];
+                          newQCElements[index].analyteName = e.target.value;
+                          setQCElements(newQCElements);
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <input
+                        type="text"
+                        className="w-full p-2 border border-solid border-gray-300 rounded-md"
+                        value={QCElements[index]?.analyteAcronym || ""}
+                        onChange={(e) => {
+                          const newQCElements = [...QCElements];
+                          newQCElements[index ].analyteAcronym = e.target.value;
+                          setQCElements(newQCElements);
+                        }}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          
+         <ButtonBase
+            onClick={() => {
+              setShowFinalTable(true);  
+              setShowInputForm(false);  
+            }}
+          className="Proceed-button !absolute left-1/2 -translate-x-1/2 sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold"
+          >
+            Proceed       
+         </ButtonBase>
+        </div>
+      )}
+
+
+
+
+
+
+
+      { numRows !==0  && showFinalTable && (<div className="final-container relative sm:space-y-4 pb-24">
         <div className="table-container flex flex-col mt-8 sm:w-[94svw] sm:max-h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA] relative">
           <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200">
             <TableHeader>
@@ -405,37 +482,13 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
                   >
                     No data
                   </TableCell>
+                  
+                  
                 </TableRow>
               ) : (
                 <></>
               )}
-              {/* {table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  className="text-center sm:h-[10%] border-none"
-                  onClick={() => console.log(row.getVisibleCells().find(cell => cell.id.includes("analyteName"))?.getValue())}
-                >
-                  <TableCell>
-                    <div>{row.getVisibleCells().find(cell => cell.id.includes("analyteName"))?.getValue<string>()}</div>
-                  </TableCell>
-                  <TableCell>
-                    <input type="text" className="sm:w-24 p-1 border border-solid border-[#548235] rounded-lg text-center" value={QCElements.find(item => item.analyteName === row.getVisibleCells().find(cell => cell.id.includes("analyteName"))?.getValue())?.analyteAcronym || ""} onChange={(e) => {
-                      e.preventDefault();
-
-                      setQCElements(prevState => {
-                          const newState = prevState.map(item => {
-                              if (item.analyteName === row.getAllCells().find(subItem => subItem.id.includes("analyteName"))?.getValue())
-                                  return { ...item, analyteAcronym: e.target.value }
-                              else return item
-                          })
-          
-                          return newState
-                      })
-                    }}/>
-                  </TableCell>
-                  
-                </TableRow>
-              ))} */}
+            
               {QCElements.map((row, index) => (
                 <TableRow
                   key={row.analyteName}
@@ -725,7 +778,9 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
         >
           Save QC File
         </ButtonBase>
-      </div>}
+      </div>)}
+
+
       <Drawer
         anchor="left"
         open={isDrawerOpen}
