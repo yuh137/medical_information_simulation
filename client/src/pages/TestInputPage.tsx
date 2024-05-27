@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { DatePicker, DatePickerProps } from "antd";
 import {
   ColumnDef,
   RowData,
@@ -92,12 +93,16 @@ export const TestInputPage = (props: { name: string; link: string, dataType?: st
     }
   }
 
+  const onDateChange: DatePickerProps['onChange'] = (date, dateString) => {
+    console.log(date, dateString);
+  };
+
   const columns: ColumnDef<QCRangeElements, string>[] = [
-    {
-      accessorKey: 'electrolyte',
-      header: 'Electrolyte',
-      cell: (info) => <></>
-    },
+    // {
+    //   accessorKey: 'electrolyte',
+    //   header: 'Electrolyte',
+    //   cell: (info) => <></>
+    // },
     {
       accessorKey: "analyteName",
       header: "Name",
@@ -215,9 +220,12 @@ export const TestInputPage = (props: { name: string; link: string, dataType?: st
         className={`bg-[${theme.primaryColor}] relative flex items-center`}
         style={{ minWidth: "100svw", minHeight: "10svh" }}
       >
+        <button className="absolute text-white sm:left-2 text-5xl hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md" onClick={() => navigate(-1)}>
+          <Icon icon="material-symbols:arrow-left-alt-rounded" />
+        </button>
         <Icon
           icon="fa6-solid:bars"
-          className="absolute px-2 text-white text-5xl top-[20%] left-4 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
+          className="absolute px-2 text-white text-5xl left-14 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
           onClick={() => openDrawer(true)}
         />
         <div className="navbar-title sm:leading-loose text-center text-white font-bold sm:text-4xl text-3xl my-0 mx-auto max-sm:w-1/2 max-sm:leading-10">
@@ -328,7 +336,7 @@ export const TestInputPage = (props: { name: string; link: string, dataType?: st
               ))} */}
               {QCElements.map((row, index) => (
                 <TableRow key={row.analyteName} className="text-center sm:h-[10%] border-none">
-                  <TableCell>
+                  {/* <TableCell>
                     <Checkbox sx={{ '&.Mui-checked': {color: '#3A62A7'} }} checked={row.electrolyte} onChange={(e) => {
                       setQCElements(prevState => {
                           const newState = prevState.map(item => {
@@ -340,7 +348,7 @@ export const TestInputPage = (props: { name: string; link: string, dataType?: st
                           return newState
                       })
                     }}/>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
                     <div>{row.analyteName}</div>
                   </TableCell>
@@ -510,10 +518,12 @@ export const TestInputPage = (props: { name: string; link: string, dataType?: st
               <div className="expiration-input sm:space-y-2">
                 <div className="open-title text-center sm:text-lg text-white">Open Date</div>
                 <input type="text" className="p-1 rounded-lg border border-solid border-[#000] text-center" {...register("openDate")}/>
+                {/* <DatePicker onChange={onDateChange} getPopupContainer={(n) => console.log(n)}/> */}
               </div>
               <div className="expiration-input sm:space-y-2">
                 <div className="closed-title text-center sm:text-lg text-white">Closed Date</div>
                 <input type="text" className="p-1 rounded-lg border border-solid border-[#000] text-center" {...register("closedDate")}/>
+                {/* <DatePicker onChange={onDateChange}/> */}
               </div>
             </div>
           </div>

@@ -19,6 +19,10 @@ namespace Medical_Information.API.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<AdminQCLot>().HasMany(p => p.Analytes).WithOne(e => e.AdminQCLot).HasForeignKey(e => e.AdminQCLotID);
+
+            modelBuilder.Entity<Analyte>().HasOne(e => e.AdminQCLot).WithMany(e => e.Analytes).HasForeignKey(e => e.AdminQCLotID);
+
             //Seed data for Analytes
             var mockQCLot = new AdminQCLot()
             {
@@ -43,7 +47,7 @@ namespace Medical_Information.API.Data
                     StdDevi = 0,
                     Electrolyte = true,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
-                    AdminQCLot = mockQCLot,
+                    //AdminQCLot = mockQCLot,
                 },
                 new Analyte
                 {
@@ -57,7 +61,7 @@ namespace Medical_Information.API.Data
                     StdDevi = 0,
                     Electrolyte = true,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
-                    AdminQCLot = mockQCLot,
+                    //AdminQCLot = mockQCLot,
                 },
                 new Analyte
                 {
@@ -71,7 +75,7 @@ namespace Medical_Information.API.Data
                     StdDevi = 0,
                     Electrolyte = true,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
-                    AdminQCLot = mockQCLot,
+                    //AdminQCLot = mockQCLot,
                 },
                 new Analyte
                 {
@@ -85,7 +89,7 @@ namespace Medical_Information.API.Data
                     StdDevi = 0,
                     Electrolyte = true,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
-                    AdminQCLot = mockQCLot,
+                    //AdminQCLot = mockQCLot,
                 },
                 new Analyte
                 {
@@ -99,7 +103,7 @@ namespace Medical_Information.API.Data
                     StdDevi = 0,
                     Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
-                    AdminQCLot = mockQCLot,
+                    //AdminQCLot = mockQCLot,
                 },
                 new Analyte
                 {
@@ -113,7 +117,7 @@ namespace Medical_Information.API.Data
                     StdDevi = 0,
                     Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
-                    AdminQCLot = mockQCLot,
+                    //AdminQCLot = mockQCLot,
                 },
                 new Analyte
                 {
@@ -127,7 +131,7 @@ namespace Medical_Information.API.Data
                     StdDevi = 0,
                     Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
-                    AdminQCLot = mockQCLot,
+                    //AdminQCLot = mockQCLot,
                 },
                 new Analyte
                 {
@@ -141,7 +145,7 @@ namespace Medical_Information.API.Data
                     StdDevi = 0,
                     Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
-                    AdminQCLot = mockQCLot,
+                    //AdminQCLot = mockQCLot,
                 },
                 new Analyte
                 {
@@ -155,7 +159,7 @@ namespace Medical_Information.API.Data
                     StdDevi = 0,
                     Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
-                    AdminQCLot = mockQCLot,
+                    //AdminQCLot = mockQCLot,
                 },
                 new Analyte
                 {
@@ -169,7 +173,7 @@ namespace Medical_Information.API.Data
                     StdDevi = 0,
                     Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
-                    AdminQCLot = mockQCLot,
+                    //AdminQCLot = mockQCLot,
                 },
                 new Analyte
                 {
@@ -183,7 +187,7 @@ namespace Medical_Information.API.Data
                     StdDevi = 0,
                     Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
-                    AdminQCLot = mockQCLot,
+                    //AdminQCLot = mockQCLot,
                 },
                 new Analyte
                 {
@@ -197,7 +201,7 @@ namespace Medical_Information.API.Data
                     StdDevi = 0,
                     Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
-                    AdminQCLot = mockQCLot,
+                    //AdminQCLot = mockQCLot,
                 },
                 new Analyte
                 {
@@ -211,7 +215,7 @@ namespace Medical_Information.API.Data
                     StdDevi = 0,
                     Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
-                    AdminQCLot = mockQCLot,
+                    //AdminQCLot = mockQCLot,
                 },
                 new Analyte
                 {
@@ -225,19 +229,15 @@ namespace Medical_Information.API.Data
                     StdDevi = 0,
                     Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
-                    AdminQCLot = mockQCLot,
+                    //AdminQCLot = mockQCLot,
                 },
             };
 
-            mockQCLot.Analytes = new List<Analyte>(analytes);
+            //mockQCLot.Analytes = new List<Analyte>(analytes);
 
-            modelBuilder.Entity<AdminQCLot>().HasMany(p => p.Analytes).WithOne(e => e.AdminQCLot).HasForeignKey(e => e.AdminQCLotID);
+            modelBuilder.Entity<AdminQCLot>().HasData(mockQCLot);
 
-            modelBuilder.Entity<Analyte>().HasOne(e => e.AdminQCLot).WithMany(e => e.Analytes).HasForeignKey(e => e.AdminQCLotID);
-
-            //modelBuilder.Entity<AdminQCLot>().HasData(mockQCLot);
-
-            //modelBuilder.Entity<Analyte>().HasData(analytes);
+            modelBuilder.Entity<Analyte>().HasData(analytes);
 
             //ICollection<Analyte> analytesInQCLot = new List<Analyte>(analytes);
         }

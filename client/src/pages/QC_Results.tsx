@@ -93,7 +93,7 @@ const QC_Results = (props: { name: string, link: string }) => {
     <>
       <NavBar name={`${props.name} QC Results`} />
       <div className="relative">
-        <div className="table-container flex flex-col mt-8 sm:w-[75svw] sm:max-h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA]">
+        <div className="table-container flex flex-col mt-8 sm:max-w-[75svw] sm:max-h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA]">
           <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200">
             <TableHeader>
               {table.getHeaderGroups().map((group) => (

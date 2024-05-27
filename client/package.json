@@ -11,6 +11,7 @@
     "@react-pdf/renderer": "^3.4.4",
     "@table-library/react-table-library": "^4.1.7",
     "@tanstack/react-table": "^8.13.2",
+    "antd": "^5.17.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "dotenv": "^16.4.5",

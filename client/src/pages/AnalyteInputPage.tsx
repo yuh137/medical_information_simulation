@@ -203,7 +203,7 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
         className=" flex flex-col space-y-12 pb-8 justify-center px-[100px] relative"
         style={{ minWidth: "100svw", minHeight: "100svh" }}
       >
-        <div className="analyte-list-container flex flex-wrap gap-14 sm:w-[90svw] sm:px-[149.5px] sm:mt-12 max-sm:flex-col mt-8 px-3">
+        <div className="analyte-list-container flex flex-wrap gap-14 sm:w-[90svw] sm:px-[149.5px] max-sm:flex-col mt-8 px-3 justify-center">
           {QCData?.analytes.map((item, index) => (
             <div
               onKeyDown={(event) => {
@@ -278,16 +278,6 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
              >
               Accept QC
             </Button>
-          </div>
-        </div>
-        <div className="legends sm:absolute sm:bottom-4 sm:left-[35%] sm:space-y-4 sm:px-3 sm:py-2 border border-solid border-[#6781AF] relative max-sm:top-0">
-          <div className="analyte-info flex sm:space-x-4">
-            <div className="analyte-box sm:w-16 sm:h-8 bg-[#FFFF00] border border-solid border-[#6781AF]"/>
-            <div className="analyte-text sm:h-full self-center">Electrolyte Element</div>
-          </div>
-          <div className="non-analyte-info flex sm:space-x-4">
-            <div className="non-analyte-box sm:w-16 sm:h-8 bg-[#B4C7E7] border border-solid border-[#6781AF]" />
-            <div className="non-analyte-text sm:h-full self-center">Non-Electrolyte Element</div>
           </div>
         </div>
       </div>}
