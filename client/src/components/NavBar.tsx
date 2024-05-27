@@ -19,6 +19,9 @@ const NavBar = (props: NavBarPropsTypes) => {
         className={`bg-[${theme.primaryColor}] relative flex items-center`}
         style={{ minWidth: "100svw", minHeight: "10svh" }}
       >
+        <button className="absolute text-white sm:left-2 text-5xl hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md" onClick={() => navigate(-1)}>
+          <Icon icon="material-symbols:arrow-left-alt-rounded" />
+        </button>
         <div className="navbar-title sm:leading-loose text-center text-white font-bold sm:text-4xl text-3xl my-0 mx-auto max-sm:w-1/2 max-sm:leading-10">
           {props.name}
         </div>

@@ -30,7 +30,7 @@ const Analyte = forwardRef((props: AnalyteProps, ref) => {
       <div
         className={`
             analyte-container sm:w-56 sm:h-fit px-4 sm:space-y-3 w-48 space-y-2
-            ${props.electro ? "bg-[#FFFF00]" : "bg-[#B4C7E7]"} 
+            bg-[#B4C7E7]
             border-2 border-solid border-[#7F9458] rounded-xl relative
         `}
       >

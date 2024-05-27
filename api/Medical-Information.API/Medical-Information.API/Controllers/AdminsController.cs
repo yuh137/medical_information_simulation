@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Medical_Information.API.CustomActionFilter;
 using Medical_Information.API.Data;
 using Medical_Information.API.Models.Domain;
 using Medical_Information.API.Models.DTO;
@@ -67,6 +68,7 @@ namespace Medical_Information.API.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> CreateNewAdmin([FromBody] AddAdminRequestDTO request)
         {
             //var newAdmin = new Admin()
