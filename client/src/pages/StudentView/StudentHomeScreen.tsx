@@ -8,7 +8,7 @@ import { Icon } from "@iconify/react";
 import { testTypeLinkList } from "../../utils/utils";
 
 const StudentHomeScreen = () => {
-  const { isAuthenticated, logout, changeUserType, changeUsername, checkSession } = useAuth();
+  const { isAuthenticated, logout, username, checkSession, checkUserType } = useAuth();
   const navigate = useNavigate();
   const { theme } = useTheme();
   const dropdownOptions = testTypeLinkList.map(({ link, name }) => ({ name, link: link + '/qc_results' }));
@@ -25,19 +25,31 @@ const StudentHomeScreen = () => {
         // className={` bg-[#744700] relative`}
         style={{ minWidth: "100svw", minHeight: "10svh" }}
       >
+        <button className="absolute text-white sm:left-2 text-5xl hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md" onClick={() => navigate(-1)}>
+          <Icon icon="material-symbols:arrow-left-alt-rounded" />
+        </button>
         <div className="navbar-title leading-loose text-center text-white font-bold text-4xl my-0 mx-auto">
           MIS Home Screen
         </div>
-        {isAuthenticated && (
-          <>
-            <Icon icon="mdi:logout" className="absolute text-white sm:text-5xl self-center sm:right-4 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md p-1" onClick={() => {
+        <div className="user-info group absolute sm:top-[55%] sm:-translate-y-[55%] sm:right-[1.25svw] sm:p-3 flex sm:gap-x-2 sm:py-2 sm:px-3 border-2 border-solid border-white rounded-xl drop-shadow-xl hover:bg-[#2F528F] hover:cursor-pointer transition delay-75">
+          <div className="text-white">
+            <div className="sm:max-w-1/2 truncate">{username}</div>
+            <div className="text-right">{checkUserType() === "admin" ? "Admin" : "Student"}</div>
+          </div>
+          <img src="/user.png" alt="" className="sm:w-[42px] sm:h-[42px]"/>
+          <Icon icon="bxs:left-arrow" className="text-white self-center group-hover:-rotate-90 transition duration-150"/>
+          <div className="user-info-actions absolute w-full bg-white sm:py-2 sm:px-3 hidden group-hover:flex group-focus:flex flex-col top-full left-0 sm:gap-y-2 rounded-lg sm:translate-y-2 before:content-[''] before:absolute before:left-0 before:-top-2 before:w-full before:h-2">
+            
+            <div className="flex sm:gap-x-2 text-black items-center justify-center hover:bg-black/30 hover:cursor-pointer transition delay-75 sm:min-h-8 rounded-lg" onClick={() => {
               logout();
-              changeUserType(null);
-              changeUsername("");
               navigate("/login");
-            }}/>
-          </>
-        )}
+            }}>
+              <div>Logout</div>
+              <Icon icon="mdi:logout" />
+            </div>
+          </div>
+        </div>
+        
       </div>
       <div
         className=" bg-[#fff] flex flex-wrap justify-center px-24 py-24 gap-12"

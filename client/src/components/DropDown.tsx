@@ -34,9 +34,11 @@ const DropDown = (props: DropDownProps) => {
   return (
     <div className="dropdown-container relative">
       <ButtonBase
-        className={`!rounded-lg sm:w-80 sm:h-36 sm:!mt-12 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[4px]`}
+        className={`!rounded-lg sm:w-80 sm:h-36 sm:!mt-12 !bg-[${theme.secondaryColor}] relative !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[4px] before:content-[''] before:absolute before:sm:w-full before:sm:h-12 before:left-0 before:top-full`}
         style={{}}
         onClick={handleClick}
+        // onMouseEnter={() => setOpen(true)}
+        // onMouseLeave={() => setOpen(false)}
       >
         <div className="button-text font-bold text-2xl">{props.name}</div>
       </ButtonBase>
