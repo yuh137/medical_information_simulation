@@ -1,5 +1,7 @@
 import React, { useState, useCallback } from "react";
 import NavBar from "../../components/NavBar";
+import { qcTypeLinkList } from "../../utils/utils"; 
+
 import {
   DragDropContext,
   Draggable,
@@ -10,24 +12,9 @@ import { ButtonBase } from "@mui/material"
 
 const OrderControls = () => {
   const [SelectedQCItems, setSelectedQCItems] = useState<string[]>([]);
-  const [OrderControlsItems, setOrderControlsItems] = useState<string[]>([
-    "CMP Level I QC",
-    "CMP Level II QC",
-    "Cardiac Level I QC",
-    "Cardiac Level II QC",
-    "Thyroid Level I QC",
-    "Thyroid Level II QC",
-    "Liver Level I QC",
-    "Liver Level II QC",
-    "Lipid Level I QC",
-    "Lipid Level II QC",
-    "Iron Studies Level I QC",
-    "Iron Studies Level II QC",
-    "Drug Screen Level I QC",
-    "Drug Screen Level II QC",
-    "Hormone Level I QC",
-    "Hormone Level II QC",
-  ]);
+  const [OrderControlsItems, setOrderControlsItems] = useState<string[]>(
+    qcTypeLinkList.map(qc => qc.name) // I change this to qctypelinklist from utils from manually defining each draggable
+  );
 
   const onDragEnd = (results: DropResult) => {
     // console.log(results);
@@ -64,6 +51,17 @@ const OrderControls = () => {
       }
     }
   };
+
+  const handleClearSelection = () => {
+    const newOrderControlsItems = [...OrderControlsItems, ...SelectedQCItems];
+  
+    setOrderControlsItems(newOrderControlsItems);
+    setSelectedQCItems([]);
+  };
+
+  const handleOrderSelectedQC = () => {
+    localStorage.setItem('selectedQCItems', JSON.stringify(SelectedQCItems));
+};
 
   return (
     <>
@@ -122,10 +120,10 @@ const OrderControls = () => {
             )}
           </Droppable>
           <div className="control-buttons flex flex-col gap-10">
-            <ButtonBase>
+            <ButtonBase onClick= {handleClearSelection}>
                 <div className="!rounded-lg sm:w-36 sm:h-16 !bg-[#dae3f3] !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[2px] font-semibold leading-[4rem]">Clear Selection</div>
             </ButtonBase>
-            <ButtonBase>
+            <ButtonBase onClick={handleOrderSelectedQC}>
                 <div className="!rounded-lg sm:w-36 sm:h-16 !bg-[#dae3f3] !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[2px] font-semibold leading-[4rem]">Order Selected QC</div>
             </ButtonBase>
           </div>

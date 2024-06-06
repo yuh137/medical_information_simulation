@@ -17,7 +17,7 @@ import {
 } from "../components/ui/table";
 import { Button } from "@mui/material";
 import { Icon } from "@iconify/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { generateRandomId } from "../utils/utils";
 import { qcTypeLinkList } from "../utils/utils";
 
@@ -66,12 +66,26 @@ const QC_Results = (props: { name: string, link: string }) => {
   const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = useState<string | null>();
   const [selectedRowData, setSelectedRowData] = useState<{ [key: string]: any }>();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const [selectedQCs, setSelectedQCs] = useState<string[]>([]);
 
-  const qc_items: QCItem[] = useMemo(() => (qcTypeLinkList.map(({ name }) => ({
-    id: generateRandomId(),
-    dep: props.name,
-    test: name
-  }))), []);
+
+  useEffect(() => {
+    const storedQCs = localStorage.getItem('selectedQCItems');
+    if (storedQCs) {
+        setSelectedQCs(JSON.parse(storedQCs));
+    }
+}, []);
+
+const qc_items = useMemo(() => (
+  qcTypeLinkList.filter(qc => selectedQCs.includes(qc.name)).map(qc => ({
+      id: generateRandomId(),
+      dep: props.name,
+      test: qc.name
+  }))
+), [selectedQCs]);
+
 
   function handleRowClick(key: string) {
     setSelectedRow(key === selectedRow ? null : key);

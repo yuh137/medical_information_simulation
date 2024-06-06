@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { DatePicker, DatePickerProps } from "antd";
 import {
   ColumnDef,
   RowData,
@@ -92,10 +91,6 @@ export const TestInputPage = (props: { name: string; link: string, dataType?: st
       else return;
     }
   }
-
-  const onDateChange: DatePickerProps['onChange'] = (date, dateString) => {
-    console.log(date, dateString);
-  };
 
   const columns: ColumnDef<QCRangeElements, string>[] = [
     // {
