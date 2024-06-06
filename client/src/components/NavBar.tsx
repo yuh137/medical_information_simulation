@@ -32,8 +32,15 @@ const NavBar = (props: NavBarPropsTypes) => {
         </div>
         <Icon
           icon={userIcon}
-          className="absolute p-1 text-white text-5xl top-[20%] sm:right-[5vw] hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
-        />
+          className="absolute p-1 text-white text-5xl top-[20%] sm:right-[7vw] hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
+        /> <div className="home-icon">
+        <Link to="/home">
+          <Icon
+            icon="material-symbols:home"
+            className="absolute p-1 text-white text-5xl top-[20%] sm:right-[4svw] hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
+          />
+        </Link>
+      </div>
         {isAuthenticated && (
           <div className="logout-icon">
             <Icon icon="mdi:logout" className="absolute text-white sm:text-5xl sm:right-[1.25vw] sm:top-1/2 -translate-y-1/2 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md p-1" onClick={() => {

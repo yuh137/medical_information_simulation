@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
-import { CMP,Cardiac, Thyroid, Liver, Lipid, Iron, Drug, Hormone} from "../utils/MOCK_DATA";
+import { CMP,Cardiac, Thyroid, Liver, Lipid, Iron, Drug, Hormone, Cancer, Pancreatic, Vitamins, Diabetes} from "../utils/MOCK_DATA";
 import { renderSubString } from "../utils/utils";
 import { ButtonBase, Checkbox, Drawer } from "@mui/material";
 import { Icon } from "@iconify/react";
@@ -52,7 +52,12 @@ export const TestInputPage = (props: { name: string; link: string, dataType?: st
     dataType === 'Iron' ? Iron :
     dataType === 'Drug' ? Drug:
     dataType === 'Hormone' ? Hormone :
+    dataType === 'Cancer' ? Cancer :
+    dataType === 'Pancreatic' ? Pancreatic :
+    dataType === 'Vitamins' ? Vitamins :
+    dataType === 'Diabetes' ? Diabetes :
     CMP;
+    console.log("DataType:", dataType);
 
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(initialData);
   const [isValid, setIsValid] = useState<boolean>(false);

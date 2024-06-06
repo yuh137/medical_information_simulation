@@ -63,6 +63,11 @@ function App() {
               subItem.name.includes('Iron') ? 'Iron' :
               subItem.name.includes('Drug') ? 'Drug' :
               subItem.name.includes('Hormone') ? 'Hormone' :
+              subItem.name.includes('Pancreatic') ? 'Pancreatic' :
+              subItem.name.includes('Vitamins') ? 'Vitamins' :
+              subItem.name.includes('Diabetes') ? 'Diabetes' :
+              subItem.name.includes('Cancer') ? 'Cancer' :
+              
               'General'
             }
           />
@@ -73,7 +78,7 @@ function App() {
           </Route>
         ))}
         {testTypeLinkList.map(item => (
-          <Route path={`/${item.link}/build_qc`}>
+          <Route path={`/${item.link}/build_qc/:type`}>
             <Route path='' element={<CustomQCBuild name={`${item.name}`} link='' />} key={item.link}></Route>
           </Route>
         ))}

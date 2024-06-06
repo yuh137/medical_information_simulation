@@ -5,7 +5,7 @@ import { useTheme } from '../context/ThemeContext'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import DropDown from '../components/DropDown';
-import { qcTypeLinkList } from "../utils/utils"
+import { qcTypeLinkList, CMPLevelList, CardiacLevelList } from "../utils/utils"; // Import the lists
 
 const QCBuilder = (props: { name: string, link: string }) => {
   const navigate = useNavigate();
@@ -14,9 +14,11 @@ const QCBuilder = (props: { name: string, link: string }) => {
 
   const QCBuildOptions = qcTypeLinkList.map(type => ({
     name: type.name,
-    link: `${props.link}/build_qc`
+    link: `${props.link}/build_qc/${type.link}`  // Make sure this corresponds to the route expected in CustomQCBuild
   }));
+  
 
+  
 
   useEffect(() => {
     if (!checkSession() || checkUserType() === 'student') navigate("/unauthorized");
@@ -34,7 +36,7 @@ const QCBuilder = (props: { name: string, link: string }) => {
             <div className="button-text font-bold text-2xl">QC Panels</div>
           </ButtonBase>
         </Link>
-        <DropDown name="Custom QC Panels" options={QCBuildOptions} />
+        <DropDown name="Custom QC Panels" options={QCBuildOptions}  />
       </div>
     
     </>
