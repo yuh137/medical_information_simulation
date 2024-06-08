@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { ButtonBase, Drawer } from "@mui/material";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
-import { Dropdown, MenuProps } from "antd";
 
 interface NavBarPropsTypes {
   name: string;
@@ -20,7 +19,7 @@ const NavBar = (props: NavBarPropsTypes) => {
     <>
       <div
         className={`bg-[${theme.primaryColor}] relative flex items-center`}
-        style={{ minWidth: "100vw", minHeight: "10vh" }}
+        style={{ minWidth: "100svw", minHeight: "10svh" }}
       >
         <button className="absolute text-white sm:left-2 text-5xl hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md" onClick={() => navigate(-1)}>
           <Icon icon="material-symbols:arrow-left-alt-rounded" />
@@ -56,17 +55,10 @@ const NavBar = (props: NavBarPropsTypes) => {
             </div>
           </div>
         </div>
-        <div className="home-icon">
-          <Link to="/home">
-            <Icon
-              icon="material-symbols:home"
-              className="absolute p-1 text-white text-5xl sm:top-1/2 sm:-translate-y-1/2 sm:right-[13.5svw] hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
-            />
-          </Link>
-        </div>
+     
         {/* {isAuthenticated && (
           <div className="logout-icon">
-            <Icon icon="mdi:logout" className="absolute text-white sm:text-5xl sm:right-[1.25vw] sm:top-1/2 -translate-y-1/2 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md p-1" onClick={() => {
+            <Icon icon="mdi:logout" className="absolute text-white sm:text-5xl sm:right-[1.25svw] sm:top-1/2 -translate-y-1/2 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md p-1" onClick={() => {
               logout();
               navigate("/login");
             }}/>

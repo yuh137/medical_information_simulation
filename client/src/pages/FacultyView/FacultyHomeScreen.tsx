@@ -6,7 +6,6 @@ import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 import { Icon } from "@iconify/react";
 import { testTypeLinkList } from "../../utils/utils";
-import NavBar from "../../components/NavBar";
 
 const FacultyHomeScreen = () => {
   const { isAuthenticated, username, logout, checkUserType, checkSession } = useAuth();
@@ -23,6 +22,9 @@ const FacultyHomeScreen = () => {
     <>
       {/* <NavBar name='MIS Home Screen'/> */}
       <div
+        className={` bg-[${theme.primaryColor}] relative flex items-center`}
+        // className={` bg-[#744700] relative`}
+        style={{ minWidth: "100svw", minHeight: "10svh" }}
       >
         <button className="absolute text-white sm:left-2 text-5xl hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md" onClick={() => navigate(-1)}>
           <Icon icon="material-symbols:arrow-left-alt-rounded" />
