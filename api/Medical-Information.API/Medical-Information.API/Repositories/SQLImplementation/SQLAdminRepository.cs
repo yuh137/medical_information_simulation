@@ -37,9 +37,16 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             return existingAdmin;
         }
 
-        public async Task<List<Admin>> GetAdminAsync()
+        public async Task<List<Admin>> GetAdminAsync(string? filterQuery)
         {
-            return await dbContext.Admins.ToListAsync();
+            var admins = dbContext.Admins.AsQueryable();
+
+            if (string.IsNullOrWhiteSpace(filterQuery) == false)
+            {
+                admins = admins.Where(admin => admin.Username.Contains(filterQuery));
+            }
+
+            return await admins.ToListAsync();
         }
 
         public async Task<Admin?> GetAdminByIdAsync(Guid id)
