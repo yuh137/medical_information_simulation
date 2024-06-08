@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
 using Medical_Information.API.CustomActionFilter;
-using Medical_Information.API.Data;
 using Medical_Information.API.Models.Domain;
 using Medical_Information.API.Models.DTO;
 using Medical_Information.API.Repositories.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Medical_Information.API.Controllers
@@ -23,20 +21,9 @@ namespace Medical_Information.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAdmins()
+        public async Task<IActionResult> GetAllAdmins([FromQuery] string? filterQuery)
         {
-            var adminsDomain = await adminRepository.GetAdminAsync();
-
-            //var adminsDTO = new List<AdminDTO>();
-            //foreach (var admin in adminsDomain)
-            //{
-            //    adminsDTO.Add(new AdminDTO()
-            //    {
-            //        AdminID = admin.AdminID,
-            //        Username = admin.Username,
-            //        Password = admin.Password,
-            //    });
-            //}
+            var adminsDomain = await adminRepository.GetAdminAsync(filterQuery);
 
             var adminsDTO = mapper.Map<List<AdminDTO>>(adminsDomain);
 
@@ -47,20 +34,12 @@ namespace Medical_Information.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetAdminById([FromRoute] Guid id)
         {
-            //var admin = dbContext.Admins.Find(id);
             var adminDomain = await adminRepository.GetAdminByIdAsync(id);
 
             if (adminDomain == null)
             {
                 return NotFound();
             }
-
-            //var adminDTO = new AdminDTO()
-            //{
-            //    AdminID = adminDomain.AdminID,
-            //    Username = adminDomain.Username,
-            //    Password = adminDomain.Password,
-            //};
 
             var adminDTO = mapper.Map<AdminDTO>(adminDomain);
 
@@ -71,20 +50,10 @@ namespace Medical_Information.API.Controllers
         [ValidateModel]
         public async Task<IActionResult> CreateNewAdmin([FromBody] AddAdminRequestDTO request)
         {
-            //var newAdmin = new Admin()
-            //{
-            //    Username = request.Username,
-            //    Password = request.Password,
-            //};
             var newAdmin = mapper.Map<Admin>(request);
 
             await adminRepository.CreateAdminAsync(newAdmin);
 
-            //var adminDTO = new AdminDTO
-            //{
-            //    Username = newAdmin.Username,
-            //    Password = newAdmin.Password,
-            //};
             var adminDTO = mapper.Map<AdminDTO>(newAdmin);
 
             return CreatedAtAction(nameof(GetAdminById), new { id = adminDTO.AdminID }, adminDTO);
@@ -101,14 +70,6 @@ namespace Medical_Information.API.Controllers
                 return NotFound("Admin not found");
             }
 
-            //adminDomain.Password = updatePasswordDTO.Password;
-            //await dbContext.SaveChangesAsync();
-
-            //var adminDTO = new AdminDTO
-            //{
-            //    Username = adminDomain.Username,
-            //    Password = adminDomain.Password
-            //};
             var adminDTO = mapper.Map<AdminDTO>(adminDomain);
 
             return Ok(adminDTO);
@@ -125,14 +86,6 @@ namespace Medical_Information.API.Controllers
                 return NotFound("Admin does not exist");
             }
 
-            //dbContext.Admins.Remove(adminModel);
-            //await dbContext.SaveChangesAsync();
-
-            //var adminDTO = new AdminDTO
-            //{
-            //    Username = adminModel.Username,
-            //    Password = adminModel.Password,
-            //};
             var adminDTO = mapper.Map<AdminDTO>(adminModel);
 
             return Ok(adminDTO);
