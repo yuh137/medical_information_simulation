@@ -9,7 +9,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   type: UserType | null;
   username: string;
-  login: (token: string, username: string, userType: UserType) => void;
+  initials: string;
+  login: (token: string, initials: string, username: string, userType: UserType) => void;
   logout: () => void;
   changeUserType: (type: UserType | null) => void;
   changeUsername: (name: string) => void;
@@ -27,11 +28,13 @@ export const AuthProvider = (props: AuthProviderProps) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [userType, setUserType] = useState<UserType | null>(null);
     const [username, setUsername] = useState<string>("");
+    const [initials, setInitials] = useState<string>("");
 
-    function login(token: string, username: string, userType: UserType) {
+    function login(token: string, initials: string, username: string, userType: UserType) {
       setIsAuthenticated(true);
       setUserType(userType);
       setUsername(username);
+      setInitials(initials);
       sessionStorage.setItem("token", token);
     }
 
@@ -39,6 +42,7 @@ export const AuthProvider = (props: AuthProviderProps) => {
       setIsAuthenticated(false);
       setUserType(null);
       setUsername("");
+      setInitials("");
       sessionStorage.removeItem("token");
     }
 
@@ -50,22 +54,12 @@ export const AuthProvider = (props: AuthProviderProps) => {
       setUsername(name);
     }
 
-    // useEffect(() => {
-    //   const tokenString = sessionStorage.getItem("token");
-    //   if (tokenString && tokenString !=== "") {
-    //     setIsAuthenticated(true);
-    //     const token = JSON.parse(tokenString);
-
-    //     console.log(token);
-    //   }
-    // }, [isAuthenticated])
-
     function checkSession(): boolean {
       const tokenString = sessionStorage.getItem("token");
       if (tokenString && tokenString !== "") {
         // setIsAuthenticated(true);
         const token = JSON.parse(tokenString);
-        login(tokenString, token.username, token.userType);
+        login(tokenString, token.initials, token.username, token.userType);
 
         // console.log(token);
         return true;
@@ -85,7 +79,7 @@ export const AuthProvider = (props: AuthProviderProps) => {
     }
 
     return (
-      <AuthContext.Provider value={{ isAuthenticated, username, type: userType, login, logout, changeUsername, changeUserType, checkSession, checkUserType }}>
+      <AuthContext.Provider value={{ isAuthenticated, initials, username, type: userType, login, logout, changeUsername, changeUserType, checkSession, checkUserType }}>
         {props.children}
       </AuthContext.Provider>
     )

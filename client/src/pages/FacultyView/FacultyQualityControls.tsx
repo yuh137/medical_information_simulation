@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import DropDown from "../../components/DropDown";
 import NavBar from "../../components/NavBar";
 import { testTypeLinkList } from "../../utils/utils";
@@ -20,6 +20,8 @@ const QB_options: { name: string, link: string }[] = testTypeLinkList.map(item =
 const FacultyQualityControls = () => {
   const navigate = useNavigate();
   const { checkSession, checkUserType } = useAuth();
+
+  const [selectedDropdown, setSelectedDropdown] = useState<string>("");
 
   useEffect(() => {
     if (!checkSession() || checkUserType() === 'student') navigate("/unauthorized");

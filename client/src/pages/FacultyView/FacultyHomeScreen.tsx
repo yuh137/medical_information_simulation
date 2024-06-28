@@ -6,9 +6,10 @@ import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 import { Icon } from "@iconify/react";
 import { testTypeLinkList } from "../../utils/utils";
+import NavBar from "../../components/NavBar";
 
 const FacultyHomeScreen = () => {
-  const { isAuthenticated, username, logout, checkUserType, checkSession } = useAuth();
+  const { initials, username, logout, checkUserType, checkSession } = useAuth();
   const navigate = useNavigate();
   const { theme } = useTheme();
 
@@ -21,7 +22,7 @@ const FacultyHomeScreen = () => {
   return (
     <>
       {/* <NavBar name='MIS Home Screen'/> */}
-      <div
+      {/* <div
         className={` bg-[${theme.primaryColor}] relative flex items-center`}
         // className={` bg-[#744700] relative`}
         style={{ minWidth: "100svw", minHeight: "10svh" }}
@@ -34,7 +35,7 @@ const FacultyHomeScreen = () => {
         </div>
         <div className="user-info group absolute sm:top-[55%] sm:-translate-y-[55%] sm:right-[1.25svw] sm:p-3 flex sm:gap-x-2 sm:py-2 sm:px-3 border-2 border-solid border-white rounded-xl drop-shadow-xl hover:bg-[#2F528F] hover:cursor-pointer transition delay-75">
           <div className="text-white">
-            <div className="sm:max-w-1/2 truncate">{username}</div>
+            <div className="sm:max-w-1/2 truncate">User Initials: {initials}</div>
             <div className="text-right">{checkUserType() === "admin" ? "Admin" : "Student"}</div>
           </div>
           <img src="/user.png" alt="" className="sm:w-[42px] sm:h-[42px]"/>
@@ -50,36 +51,35 @@ const FacultyHomeScreen = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
+      <NavBar name="MIS Home Screen" />
       <div
-        className=" bg-[#fff] flex flex-wrap justify-center px-24 py-12 sm:gap-6"
-        style={{ minHeight: "90svh", minWidth: "100svw" }}
+        className=" bg-[#fff] flex flex-wrap justify-center px-24 py-12 sm:gap-x-6 sm:max-w-[1460px] my-0 mx-auto"
+        style={{ minHeight: "90svh" }}
       >
-        <Link to='/qc'>
-          <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 sm:!my-12 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
-            <div className="button-text font-bold text-2xl">Quality Controls</div>
-          </ButtonBase>
-        </Link>
-        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 sm:!my-12 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
+        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`} onClick={() => navigate("/qc")}>
+          <div className="button-text font-bold text-2xl">Quality Controls</div>
+        </ButtonBase>
+        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
           <div className="button-text font-bold text-2xl">Order Entry</div>
         </ButtonBase>
         <DropDown name="Results In Progress" options={dropdownOptions} />
-        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 sm:!my-12 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
+        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
           <div className="button-text font-bold text-2xl">Patients Reports</div>
         </ButtonBase>
-        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 sm:!my-12 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
+        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
           <div className="button-text font-bold text-2xl">Quizzes</div>
         </ButtonBase>
-        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 sm:!my-12 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
+        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
           <div className="button-text font-bold text-2xl">Case Studies</div>
         </ButtonBase>
-        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 sm:!my-12 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
+        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
           <div className="button-text font-bold text-2xl">Student Report Submissions</div>
         </ButtonBase>
-        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 sm:!my-12 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
+        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
           <div className="button-text font-bold text-2xl">Reference Files</div>
         </ButtonBase>
-        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 sm:!my-12 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
+        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
           <div className="button-text font-bold text-2xl">Student Roster</div>
         </ButtonBase>
       </div>
