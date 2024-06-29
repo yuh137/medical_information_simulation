@@ -1,39 +1,30 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import NavBar from '../components/NavBar';
 import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
+  ColumnDef, flexRender, getCoreRowModel, useReactTable,
 } from "@tanstack/react-table";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "../components/ui/table";
-import { CMP, Cardiac, Thyroid, Iron, Lipid, Liver, Drug, Hormone, Pancreatic, Diabetes, Cancer, Vitamins } from "../utils/MOCK_DATA";
-import { renderSubString } from "../utils/utils";
-import { CMPLevelList, CardiacLevelList, HormoneLevelList, ThyroidLevelList, LipidLevelList, LiverLevelList, IronLevelList, DrugLevelList, PancreaticLevelList, DiabetesLevelList, CancerLevelList, VitaminsLevelList } from "../utils/utils";
-import { ButtonBase, Checkbox, Drawer } from "@mui/material";
-import { Icon } from "@iconify/react";
-import { useTheme } from "../context/ThemeContext";
-import addData from "../utils/indexedDB/addData";
-import { QCTemplateBatch } from "../utils/indexedDB/IDBSchema";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { getDataByKey } from "../utils/indexedDB/getData";
-import { deleteData } from "../utils/indexedDB/deleteData";
 import {
-  DragDropContext,
-  Draggable,
-  DropResult,
-  Droppable,
+  CMP, Cardiac, Thyroid, Iron, Lipid, Liver, Drug, Hormone, Pancreatic, Diabetes, Cancer, Vitamins
+} from "../utils/MOCK_DATA";
+import { renderSubString } from "../utils/utils";
+import {
+  CMPLevelList, CardiacLevelList, HormoneLevelList, ThyroidLevelList, LipidLevelList,
+  LiverLevelList, IronLevelList, DrugLevelList, PancreaticLevelList, DiabetesLevelList,
+  CancerLevelList, VitaminsLevelList
+} from "../utils/utils";
+import { ButtonBase, Drawer } from "@mui/material";
+import { useTheme } from "../context/ThemeContext";
+import { useForm, SubmitHandler } from "react-hook-form";
+import {
+  DragDropContext, Draggable, DropResult, Droppable,
 } from "react-beautiful-dnd";
 
-interface QCRangeElements {
+export interface QCRangeElements {
   analyteName: string;
   analyteAcronym: string;
   unit_of_measure: string;
@@ -43,9 +34,18 @@ interface QCRangeElements {
   std_devi: string;
   electrolyte: boolean;
 }
+
 interface DraggableItem {
   name: string;
   acronymName: string;
+}
+
+export interface QCTemplateBatch {
+  fileName: string;
+  lotNumber: string;
+  openDate: string;
+  closedDate: string;
+  analytes: QCRangeElements[];
 }
 
 const CustomQCBuild = (props: { name: string; link: string }) => {
@@ -57,21 +57,102 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
   const [showTable, setShowTable] = useState(false);
   const [showDrag, setShowDrag] = useState(true);
 
-  const { checkSession, checkUserType, isAuthenticated, logout } = useAuth();
+  const { checkSession, checkUserType } = useAuth();
   const { theme } = useTheme();
   const [QCElements, setQCElements] = useState<QCRangeElements[]>([]);
   const [isValid, setIsValid] = useState<boolean>(false);
   const [isDrawerOpen, openDrawer] = useState<boolean>(false);
   const { register, handleSubmit } = useForm<QCTemplateBatch>();
 
-  const saveQC: SubmitHandler<QCTemplateBatch> = async (data) => {
-    const check = await getDataByKey<QCTemplateBatch>("qc_store", props.name);
-
-    if (check) {
-      const deleteStatus = await deleteData("qc_store", props.name);
-      console.log(deleteStatus ? "Delete success" : "Delete failed");
+  useEffect(() => {
+    if (!checkSession() || checkUserType() === "student") {
+      navigate("/unauthorized");
     }
+  }, [checkSession, checkUserType, navigate]);
 
+  useEffect(() => {
+    switch (type) {
+      case 'Cmp_1':
+      case 'cmp_2':
+        setOrderControlsItems(CMPLevelList.map(item => item.name));
+        setDraggableItems(CMPLevelList);
+        setQCElements(CMP);
+        break;
+      case 'cardiac_1':
+      case 'cardiac_2':
+        setOrderControlsItems(CardiacLevelList.map(item => item.name));
+        setDraggableItems(CardiacLevelList);
+        setQCElements(Cardiac);
+        break;
+      case 'thyroid_1':
+      case 'thyroid_2':
+        setOrderControlsItems(ThyroidLevelList.map(item => item.name));
+        setDraggableItems(ThyroidLevelList);
+        setQCElements(Thyroid);
+        break;
+      case 'lipid_1':
+      case 'lipid_2':
+        setOrderControlsItems(LipidLevelList.map(item => item.name));
+        setDraggableItems(LipidLevelList);
+        setQCElements(Lipid);
+        break;
+      case 'liver_1':
+      case 'liver_2':
+        setOrderControlsItems(LiverLevelList.map(item => item.name));
+        setDraggableItems(LiverLevelList);
+        setQCElements(Liver);
+        break;
+      case 'iron_1':
+      case 'iron_2':
+        setOrderControlsItems(IronLevelList.map(item => item.name));
+        setDraggableItems(IronLevelList);
+        setQCElements(Iron);
+        break;
+      case 'drug_1':
+      case 'drug_2':
+        setOrderControlsItems(DrugLevelList.map(item => item.name));
+        setDraggableItems(DrugLevelList);
+        setQCElements(Drug);
+        break;
+      case 'hormone_1':
+      case 'hormone_2':
+        setOrderControlsItems(HormoneLevelList.map(item => item.name));
+        setDraggableItems(HormoneLevelList);
+        setQCElements(Hormone);
+        break;
+      case 'pancreatic_1':
+      case 'pancreatic_2':
+        setOrderControlsItems(PancreaticLevelList.map(item => item.name));
+        setDraggableItems(PancreaticLevelList);
+        setQCElements(Pancreatic);
+        break;
+      case 'diabetes_1':
+      case 'diabetes_2':
+        setOrderControlsItems(DiabetesLevelList.map(item => item.name));
+        setDraggableItems(DiabetesLevelList);
+        setQCElements(Diabetes);
+        break;
+      case 'cancer_1':
+      case 'cancer_2':
+        setOrderControlsItems(CancerLevelList.map(item => item.name));
+        setDraggableItems(CancerLevelList);
+        setQCElements(Cancer);
+        break;
+      case 'vitamins_1':
+      case 'vitamins_2':
+        setOrderControlsItems(VitaminsLevelList.map(item => item.name));
+        setDraggableItems(VitaminsLevelList);
+        setQCElements(Vitamins);
+        break;
+
+      default:
+        setOrderControlsItems([]);
+        setDraggableItems([]);
+        setQCElements([]);
+    }
+  }, [type]);
+
+  const saveQC: SubmitHandler<QCTemplateBatch> = async (data) => {
     const savedAnalyte = QCElements.map(
       ({
         analyteName,
@@ -94,15 +175,21 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
       })
     );
 
-    const res = await addData<QCTemplateBatch>("qc_store", {
+    const newQCData = {
       fileName: props.name,
       lotNumber: data.lotNumber || "",
       openDate: data.openDate || "",
       closedDate: data.closedDate || "",
       analytes: [...savedAnalyte],
-    });
+    };
 
-    console.log("Save result: ", res);
+    const existingQCData = JSON.parse(localStorage.getItem("customQCData") || "[]");
+    localStorage.setItem("customQCData", JSON.stringify([...existingQCData, newQCData]));
+
+    setShowTable(false);
+    setShowDrag(true);
+    setSelectedQCItems([]);
+    navigate('/qc_builder');
   };
 
   const inputRefs = useRef<HTMLInputElement[]>([]);
@@ -124,7 +211,6 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
   }
 
   const columns: ColumnDef<QCRangeElements, string>[] = [
-    
     {
       accessorKey: "analyteName",
       header: "Name",
@@ -406,94 +492,6 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  useEffect(() => {
-    if (!checkSession() || checkUserType() === "student") {
-      navigate("/unauthorized");
-    }
-  }, []);
-
-  useEffect(() => {
-    switch (type) {
-      case 'Cmp_1':
-      case 'cmp_2':
-        setOrderControlsItems(CMPLevelList.map(item => item.name));
-        setDraggableItems(CMPLevelList);
-        setQCElements(CMP);
-        break;
-      case 'cardiac_1':
-      case 'cardiac_2':
-        setOrderControlsItems(CardiacLevelList.map(item => item.name));
-        setDraggableItems(CardiacLevelList);
-        setQCElements(Cardiac);
-        break;
-        case 'thyroid_1':
-        case 'thyroid_2':
-          setOrderControlsItems(ThyroidLevelList.map(item => item.name));
-          setDraggableItems(ThyroidLevelList);
-          setQCElements(Thyroid);
-          break;
-        case 'lipid_1':
-        case 'lipid_2':
-          setOrderControlsItems(LipidLevelList.map(item => item.name));
-          setDraggableItems(LipidLevelList);
-          setQCElements(Lipid);
-          break;
-        case 'liver_1':
-        case 'liver_2':
-          setOrderControlsItems(LiverLevelList.map(item => item.name));
-          setDraggableItems(LiverLevelList);
-          setQCElements(Liver);
-          break;
-        case 'iron_1':
-        case 'iron_2':
-          setOrderControlsItems(IronLevelList.map(item => item.name));
-          setDraggableItems(IronLevelList);
-          setQCElements(Iron);
-          break;
-        case 'drug_1':
-        case 'drug_2':
-          setOrderControlsItems(DrugLevelList.map(item => item.name));
-          setDraggableItems(DrugLevelList);
-          setQCElements(Drug);
-          break;
-        case 'hormone_1':
-        case 'hormone_2':
-          setOrderControlsItems(HormoneLevelList.map(item => item.name));
-          setDraggableItems(HormoneLevelList);
-          setQCElements(Hormone);
-          break;
-        case 'pancreatic_1':
-        case 'pancreatic_2':
-          setOrderControlsItems(PancreaticLevelList.map(item => item.name));
-          setDraggableItems(PancreaticLevelList);
-          setQCElements(Pancreatic);
-          break;
-        case 'diabetes_1':
-        case 'diabetes_2':
-          setOrderControlsItems(DiabetesLevelList.map(item => item.name));
-          setDraggableItems(DiabetesLevelList);
-          setQCElements(Diabetes);
-          break;
-        case 'cancer_1':
-        case 'cancer_2':
-          setOrderControlsItems(CancerLevelList.map(item => item.name));
-          setDraggableItems(CancerLevelList);
-          setQCElements(Cancer);
-          break;
-        case 'vitamins_1':
-        case 'vitamins_2':
-          setOrderControlsItems(VitaminsLevelList.map(item => item.name));
-          setDraggableItems(VitaminsLevelList);
-          setQCElements(Vitamins);
-          break;
-          
-      default:
-        setOrderControlsItems([]);
-        setDraggableItems([]);
-        setQCElements([]);
-    }
-  }, [type]);
-
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
     if (!destination) return;
@@ -519,53 +517,21 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
     setOrderControlsItems([...OrderControlsItems, ...SelectedQCItems]);
     setSelectedQCItems([]);
   };
-  
+
   const handleChooseAll = () => {
     setSelectedQCItems([...SelectedQCItems, ...OrderControlsItems]);
     setOrderControlsItems([]);
   };
-  
+
   const handleOrderSelectedQC = () => {
     localStorage.setItem('selectedQCItems', JSON.stringify(SelectedQCItems));
     setShowTable(true);
     setShowDrag(false);
   };
-  
+
   return (
     <>
-      <div
-        className={`bg-[${theme.primaryColor}] relative`}
-        style={{ minWidth: "100svw", minHeight: "10svh" }}
-      >
-        <Icon
-          icon="fa6-solid:bars"
-          className="absolute px-2 text-white text-5xl top-[20%] left-4 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
-          onClick={() => openDrawer(true)}
-        />
-        <div className="navbar-title sm:leading-loose text-center text-white font-bold sm:text-4xl text-3xl my-0 mx-auto max-sm:w-1/2 max-sm:leading-10">
-         {/* {props.name} */} Custom QC Builder
-        </div>
-        <div className="home-icon">
-          <Link to="/home">
-            <Icon
-              icon="material-symbols:home"
-              className="absolute p-1 text-white text-5xl top-[20%] right-16 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
-            />
-          </Link>
-        </div>
-        {isAuthenticated && (
-          <div className="logout-icon">
-            <Icon
-              icon="mdi:logout"
-              className="absolute text-white sm:text-5xl self-center sm:right-4 sm:top-4 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md p-1"
-              onClick={() => {
-                logout();
-                navigate("/login");
-              }}
-            />
-          </div>
-        )}
-      </div>
+      <NavBar name={`${props.name} Custom Build`} />
       
       {showDrag && (
         <DragDropContext onDragEnd={onDragEnd}>
@@ -613,11 +579,11 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
               )}
             </Droppable>
             <div className="control-buttons flex flex-col gap-10">
-              <ButtonBase onClick= {handleClearSelection}>
+              <ButtonBase onClick={handleClearSelection}>
                 <div className="!rounded-lg sm:w-36 sm:h-16 !bg-[#dae3f3] !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[2px] font-semibold leading-[4rem]">Clear Selection</div>
               </ButtonBase>
               <ButtonBase onClick={handleChooseAll}>
-              <div className="!rounded-lg sm:w-36 sm:h-16 !bg-[#dae3f3] !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[2px] font-semibold leading-[4rem]">Choose All</div>
+                <div className="!rounded-lg sm:w-36 sm:h-16 !bg-[#dae3f3] !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[2px] font-semibold leading-[4rem]">Choose All</div>
               </ButtonBase>
               <ButtonBase onClick={handleOrderSelectedQC}>
                 <div className="!rounded-lg sm:w-36 sm:h-16 !bg-[#dae3f3] !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[2px] font-semibold leading-[4rem]">Select</div>

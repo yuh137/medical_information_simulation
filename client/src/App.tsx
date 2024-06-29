@@ -19,6 +19,9 @@ import {TestInputPage} from './pages/TestInputPage';
 import ErrorPage from './pages/ErrorPage';
 import ResultsInProgress from './pages/ResultsInProgress';
 import CustomQCBuild from './pages/CustomQCBuild';
+import CustomTests from './pages/CustomTests';
+import Student_QC_Review from './pages/StudentView/StudentReviewControls';
+import Faculty_QC_Review from './pages/StudentView/FacultyReviewControls';
 
 function App() {
   initIDB();
@@ -28,62 +31,73 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={checkSession() ? <Navigate to="/home" /> : <Navigate to="/login" />} />
-        <Route path='/login' element={<Login />}/>
-        <Route path='/register' element={<Register />}/>
-        <Route path='/home' element={checkUserType() === 'student' ? <StudentHomeScreen /> : <FacultyHomeScreen />}/>
-        <Route path='/qc' element={checkUserType() === 'student' ? <StudentQualityControls /> : <FacultyQualityControls />}/>
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+        <Route path='/home' element={checkUserType() === 'student' ? <StudentHomeScreen /> : <FacultyHomeScreen />} />
+        <Route path='/qc' element={checkUserType() === 'student' ? <StudentQualityControls /> : <FacultyQualityControls />} />
+        <Route path="/review_controls" element={checkUserType() === 'student' ? <Student_QC_Review name="Student" link="student" /> : <Faculty_QC_Review name="Faculty" link="faculty" />} />
+
+        <Route path ='/' element={<Navigate to='/unauthorized' />} />Q
         <Route path='/results' element={<ResultsInProgress />} />
-        <Route path='/order_controls' element={<OrderControls />}/>
+        <Route path='/order_controls' element={<OrderControls />} />
+        
         {testTypeLinkList.map(item => (
-          <Route path={`/${item.link}/qc_results`}>
-            <Route path='' element={<QC_Results link={item.link} name={item.name} key={item.name}/>}/>
+          <Route key={item.link} path={`/${item.link}/qc_results`}>
+            <Route path='' element={<QC_Results link={item.link} name={item.name} />} />
             {qcTypeLinkList.map(subItem => (
-              <Route path={`${subItem.link}`} element={<AnalyteInputPage link={subItem.link} name={subItem.name} key={subItem.name}/>}/>
+              <Route key={subItem.link} path={`${subItem.link}`} element={<AnalyteInputPage link={subItem.link} name={subItem.name} />} />
             ))}
           </Route>
         ))}
+
         {testTypeLinkList.map(item => (
-          <Route path={`/${item.link}/qc_builder`} element={<QCBuilder link={item.link} name={item.name} key={item.name}/>}/>
+          <Route key={item.link} path={`/${item.link}/qc_builder`} element={<QCBuilder link={item.link} name={item.name} />} />
         ))}
+
         {testTypeLinkList.map(item => (
-  <Route path={`/${item.link}/edit_qc`}>
-    <Route path='' element={<EditQC link={item.link} name={item.name} />}></Route>
-    {qcTypeLinkList.map(subItem => (
-      <Route
-        path={`${subItem.link}`}
-        element={
-          <TestInputPage
-            name={subItem.name}
-            link={subItem.link}
-            dataType={
-              subItem.name.includes('Cardiac') ? 'Cardiac' :
-              subItem.name.includes('Lipid') ? 'Lipid' :
-              subItem.name.includes('Liver') ? 'Liver' :
-              subItem.name.includes('Thyroid') ? 'Thyroid' :
-              subItem.name.includes('Iron') ? 'Iron' :
-              subItem.name.includes('Drug') ? 'Drug' :
-              subItem.name.includes('Hormone') ? 'Hormone' :
-              subItem.name.includes('Pancreatic') ? 'Pancreatic' :
-              subItem.name.includes('Vitamins') ? 'Vitamins' :
-              subItem.name.includes('Diabetes') ? 'Diabetes' :
-              subItem.name.includes('Cancer') ? 'Cancer' :
-              
-              'General'
-            }
-          />
-        }
-        key={subItem.link}
-      />
+          <Route key={item.link} path={`/${item.link}/edit_qc`}>
+            <Route path='' element={<EditQC link={item.link} name={item.name} />} />
+            {qcTypeLinkList.map(subItem => (
+              <Route
+                key={subItem.link}
+                path={`${subItem.link}`}
+                element={
+                  <TestInputPage
+                    name={subItem.name}
+                    link={subItem.link}
+                    dataType={
+                      subItem.name.includes('Cardiac') ? 'Cardiac' :
+                      subItem.name.includes('Lipid') ? 'Lipid' :
+                      subItem.name.includes('Liver') ? 'Liver' :
+                      subItem.name.includes('Thyroid') ? 'Thyroid' :
+                      subItem.name.includes('Iron') ? 'Iron' :
+                      subItem.name.includes('Drug') ? 'Drug' :
+                      subItem.name.includes('Hormone') ? 'Hormone' :
+                      subItem.name.includes('Pancreatic') ? 'Pancreatic' :
+                      subItem.name.includes('Vitamins') ? 'Vitamins' :
+                      subItem.name.includes('Diabetes') ? 'Diabetes' :
+                      subItem.name.includes('Cancer') ? 'Cancer' :
+                      'General'
+                    }
+                  />
+                }
+              />
             ))}
           </Route>
         ))}
+
         {testTypeLinkList.map(item => (
-          <Route path={`/${item.link}/build_qc/:type`}>
-            <Route path='' element={<CustomQCBuild name={`${item.name}`} link='' />} key={item.link}></Route>
+          <Route key={item.link} path={`/${item.link}/build_qc/:type`}>
+            <Route path='' element={<CustomQCBuild name={item.name} link='' />} />
           </Route>
         ))}
-        <Route path='/unauthorized' element={<Unauthorized />}/>
-        <Route path='*' element={<ErrorPage />}/>
+
+        {testTypeLinkList.map(item => (
+          <Route key={item.link} path={`/${item.link}/custom_tests`} element={<CustomTests name={`${item.name} Custom Tests`} />} />
+        ))}
+
+        <Route path='/unauthorized' element={<Unauthorized />} />
+        <Route path='*' element={<ErrorPage />} />
       </Routes>
     </>
   );

@@ -12,6 +12,15 @@ const options = [
   { name: "Molecular", link: "" },
 ];
 
+const ReviewOptions = [
+  { name: "Chemistry", link: "review_controls" },
+  { name: "Hematology/Coag", link: "" },
+  { name: "Microbiology", link: "" },
+  { name: "Serology", link: "" },
+  { name: "UA/Body Fluids", link: "" },
+  { name: "Blood Bank", link: "" },
+  { name: "Molecular", link: "" },
+];
 const StudentQualityControls = () => {
   return (
     <>
@@ -21,7 +30,7 @@ const StudentQualityControls = () => {
         style={{ minWidth: "100svw", minHeight: "90svh" }}  
       >
         <DropDown name="Order Controls" options={options} />
-        <DropDown name="Review Controls" options={options} />
+        <DropDown name="Review Controls" options={ReviewOptions} />
       </div>
     </>
   );
