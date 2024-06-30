@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { Icon } from "@iconify/react";
-import { Link, useNavigate } from "react-router-dom";
-import { ButtonBase, Drawer } from "@mui/material";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Drawer, Divider } from "@mui/material";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
-import { Dropdown, MenuProps } from "antd";
 
 interface NavBarPropsTypes {
   name: string;
@@ -14,7 +13,8 @@ const NavBar = (props: NavBarPropsTypes) => {
   const [isDrawerOpen, openDrawer] = useState<boolean>(false);
   const { theme } = useTheme();
   const navigate = useNavigate();
-  const { isAuthenticated, logout, username, checkUserType } = useAuth();
+  const location = useLocation();
+  const { initials, logout, username, checkUserType } = useAuth();
 
   return (
     <>
@@ -35,7 +35,7 @@ const NavBar = (props: NavBarPropsTypes) => {
         </div>
         <div className="user-info group absolute sm:top-[55%] sm:-translate-y-[55%] sm:right-[1.25svw] sm:p-3 flex sm:gap-x-2 sm:py-2 sm:px-3 border-2 border-solid border-white rounded-xl drop-shadow-xl hover:bg-[#2F528F] hover:cursor-pointer transition delay-75">
           <div className="text-white">
-            <div className="sm:max-w-1/2 truncate">{username}</div>
+            <div className="sm:max-w-1/2 truncate">User Initials: {initials}</div>
             <div className="text-right">{checkUserType() === "admin" ? "Admin" : "Student"}</div>
           </div>
           <img src="/user.png" alt="" className="sm:w-[42px] sm:h-[42px]"/>
@@ -55,30 +55,43 @@ const NavBar = (props: NavBarPropsTypes) => {
               <Icon icon="mdi:logout" />
             </div>
           </div>
+          {location.pathname !== "/home" && <div className="home-icon">
+            <Link to="/home">
+              <Icon
+                icon="material-symbols:home"
+                className="absolute sm:p-1 text-white sm:text-5xl sm:top-1/2 sm:-translate-y-1/2 sm:-left-[56px] hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
+              />
+            </Link>
+          </div>}
         </div>
-        <div className="home-icon">
-          <Link to="/home">
-            <Icon
-              icon="material-symbols:home"
-              className="absolute p-1 text-white text-5xl sm:top-1/2 sm:-translate-y-1/2 sm:right-[13.5svw] hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
-            />
-          </Link>
-        </div>
-        {/* {isAuthenticated && (
-          <div className="logout-icon">
-            <Icon icon="mdi:logout" className="absolute text-white sm:text-5xl sm:right-[1.25svw] sm:top-1/2 -translate-y-1/2 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md p-1" onClick={() => {
-              logout();
-              navigate("/login");
-            }}/>
-          </div>
-        )} */}
         <Drawer
           anchor='left'
           open={isDrawerOpen}
           onClose={() => openDrawer(false)}
         >
-          <div className="drawer-container sm:w-[15svw] sm:h-full bg-[#CFD5EA] flex flex-col items-center py-4 sm:space-y-6">
-            
+          <div className="drawer-container sm:w-[15svw] sm:h-full bg-[#CFD5EA] flex flex-col items-center sm:space-y-6">
+            <ul className="sm:w-full">
+              <li className="sidebar-item flex items-center justify-center sm:py-4 sm:gap-x-2 hover:cursor-pointer hover:bg-black/30 transition delay-75" onClick={() => navigate("/home")}>
+                <Icon icon="fa6-solid:house" className="sm:text-xl"/>
+                <div className="sm:text-lg sm:translate-y-[2px]">Home</div>
+              </li>
+              <Divider />
+              <li className="sidebar-item flex items-center justify-center sm:py-4 sm:gap-x-2 hover:cursor-pointer hover:bg-black/30 transition delay-75" onClick={() => navigate("/home")}>
+                <Icon icon="fa6-solid:house" className="sm:text-xl"/>
+                <div className="sm:text-lg sm:translate-y-[2px]">Home</div>
+              </li>
+              <Divider />
+              <li className="sidebar-item flex items-center justify-center sm:py-4 sm:gap-x-2 hover:cursor-pointer hover:bg-black/30 transition delay-75" onClick={() => navigate("/home")}>
+                <Icon icon="fa6-solid:house" className="sm:text-xl"/>
+                <div className="sm:text-lg sm:translate-y-[2px]">Home</div>
+              </li>
+              <Divider />
+              <li className="sidebar-item flex items-center justify-center sm:py-4 sm:gap-x-2 hover:cursor-pointer hover:bg-black/30 transition delay-75" onClick={() => navigate("/home")}>
+                <Icon icon="fa6-solid:house" className="sm:text-xl"/>
+                <div className="sm:text-lg sm:translate-y-[2px]">Home</div>
+              </li>
+              <Divider />
+            </ul>
           </div>
         </Drawer>
       </div>

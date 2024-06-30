@@ -9,7 +9,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   type: UserType | null;
   username: string;
-  login: (token: string, username: string, userType: UserType) => void;
+  initials: string;
+  login: (token: string, initials: string, username: string, userType: UserType) => void;
   logout: () => void;
   changeUserType: (type: UserType | null) => void;
   changeUsername: (name: string) => void;
@@ -24,41 +25,47 @@ interface AuthProviderProps {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = (props: AuthProviderProps) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [userType, setUserType] = useState<UserType | null>(null);
-  const [username, setUsername] = useState<string>("");
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    const [userType, setUserType] = useState<UserType | null>(null);
+    const [username, setUsername] = useState<string>("");
+    const [initials, setInitials] = useState<string>("");
 
-  function login(token: string, username: string, userType: UserType) {
-    setIsAuthenticated(true);
-    setUserType(userType);
-    setUsername(username);
-    sessionStorage.setItem("token", JSON.stringify({ token, username, userType }));
-  }
+    function login(token: string, initials: string, username: string, userType: UserType) {
+      setIsAuthenticated(true);
+      setUserType(userType);
+      setUsername(username);
+      setInitials(initials);
+      sessionStorage.setItem("token", token);
+    }
 
-  function logout() {
-    setIsAuthenticated(false);
-    setUserType(null);
-    setUsername("");
-    sessionStorage.removeItem("token");
-  }
+    function logout() {
+      setIsAuthenticated(false);
+      setUserType(null);
+      setUsername("");
+      setInitials("");
+      sessionStorage.removeItem("token");
+    }
 
   function changeUserType(type: UserType | null) {
     setUserType(type);
   }
 
-  function changeUsername(name: string) {
-    setUsername(name);
-  }
-
-  function checkSession(): boolean {
-    const tokenString = sessionStorage.getItem("token");
-    if (tokenString && tokenString !== "") {
-      const token = JSON.parse(tokenString);
-      login(token.token, token.username, token.userType);
-      return true;
+    function changeUsername(name: string) {
+      setUsername(name);
     }
-    return false;
-  }
+
+    function checkSession(): boolean {
+      const tokenString = sessionStorage.getItem("token");
+      if (tokenString && tokenString !== "") {
+        // setIsAuthenticated(true);
+        const token = JSON.parse(tokenString);
+        login(tokenString, token.initials, token.username, token.userType);
+
+        // console.log(token);
+        return true;
+      }
+      return false;
+    };
 
   function checkUserType(): UserType | null {
     if (!checkSession()) return null;
@@ -71,12 +78,12 @@ export const AuthProvider = (props: AuthProviderProps) => {
     return null;
   }
 
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, username, type: userType, login, logout, changeUsername, changeUserType, checkSession, checkUserType }}>
-      {props.children}
-    </AuthContext.Provider>
-  );
-};
+    return (
+      <AuthContext.Provider value={{ isAuthenticated, initials, username, type: userType, login, logout, changeUsername, changeUserType, checkSession, checkUserType }}>
+        {props.children}
+      </AuthContext.Provider>
+    )
+  }
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);

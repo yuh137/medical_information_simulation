@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate, Link, useNavigate } from 'react-router-dom'
 import initIDB from './utils/indexedDB/initIDB';
-import Login from './components/Login';
+import Login from './pages/Login';
 import Register from './pages/Register';
 import StudentHomeScreen from './pages/StudentView/StudentHomeScreen';
 import StudentQualityControls from './pages/StudentView/StudentQualityControls';

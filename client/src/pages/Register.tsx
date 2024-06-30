@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "@mui/material";
+import { Button, Backdrop } from "@mui/material";
 import { useTheme } from "../context/ThemeContext";
 import { useForm, SubmitHandler } from "react-hook-form";
 import addData from "../utils/indexedDB/addData";
@@ -11,24 +11,46 @@ import { getAdminByName, getStudentByName } from "../utils/indexedDB/getData";
 export interface CredentialsInput {
   username: string;
   password: string;
+  firstname: string;
+  lastname: string;
+  initials: string;
 }
 
 const Register = () => {
   const { theme } = useTheme();
-  const [registerOptions, setRegisterOptions] = useState<"Admin" | "Student" | string>("");
+  const [registerOptions, setRegisterOptions] = useState<
+    "Admin" | "Student" | string
+  >("");
+  const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState(false);
+
+  useEffect(() => {
+    //If notification is enabled, disable after 3 seconds
+    if (isFeedbackNotiOpen) {
+      setTimeout(() => {
+        setFeedbackNotiOpen(false);
+      }, 3000);
+    }
+  }, [isFeedbackNotiOpen])
+  
   const { register, handleSubmit } = useForm<CredentialsInput>();
+
+  //Register form logic handling
   const onSubmit: SubmitHandler<CredentialsInput> = async (data) => {
     if (registerOptions === "Admin") {
+      console.log("Data object: ", data);
       const check = await getAdminByName(data.username);
       // console.log("Check", await check);
 
-      if (await check === null) {
+      if ((await check) === null) {
         const res = await addData<Admin>("admins", {
-          id: generateRandomId(),
-          name: data.username,
+          ["id"]: generateRandomId(),
+          username: data.username,
           password: data.password,
+          firstname: data.firstname,
+          lastname: data.lastname,
+          initials: data.initials,
         });
-  
+
         console.log(res);
       } else {
         console.log(new Error("Username already exists"));
@@ -39,16 +61,22 @@ const Register = () => {
       if (!check) {
         const res = await addData<Admin>("students", {
           ["id"]: generateRandomId(),
-          name: data.username,
+          username: data.username,
           password: data.password,
+          firstname: data.firstname,
+          lastname: data.lastname,
+          initials: data.initials,
         });
-  
+
         console.log(res);
+        setFeedbackNotiOpen(true);
       } else {
-        console.log(new Error("Username taken!"))
+        console.log(new Error("Username taken!"));
+        setFeedbackNotiOpen(true);
       }
     } else {
       console.log(new Error("Invalid type"));
+      setFeedbackNotiOpen(true);
     }
   };
 
@@ -66,78 +94,102 @@ const Register = () => {
             Medical Information Simulations
           </div>
         </div>
-        <div className="login-form sm:w-1/4 w-3/4 mb-0 mt-24 mx-auto bg-slate-100 flex flex-col gap-4 py-10 px-4 bg-local bg-cover">
-          {!registerOptions && (
-            <div className="option-buttons flex flex-col sm:space-y-4">
-              <Button
-                variant="outlined"
-                className={`!text-black !bg-[${theme.secondaryColor}] !border !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F]`}
-                onClick={() => {
-                  setRegisterOptions("Admin");
-                }}
-              >
-                Register as Admin
-              </Button>
-              <Button
-                variant="outlined"
-                className={`!text-black !bg-[${theme.secondaryColor}] !border !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F]`}
-                onClick={() => {
-                  setRegisterOptions("Student");
-                }}
-              >
-                Register as Student
-              </Button>
+        <div className="register-form sm:w-1/4 w-3/4 mb-0 mt-24 mx-auto bg-slate-100 flex flex-col gap-4 py-10 px-4 bg-local bg-cover">
+          <div className="register-form-container rounded-xl sm:space-y-2">
+            <div className="login-title text-center sm:text-2xl font-semibold">
+              Choose Account Type
             </div>
-          )}
-          {registerOptions && (
-            <>
-              <div className="login-title text-center text-3xl font-semibold">
-                Sign up as {registerOptions}
-              </div>
-              <form
-                action=""
-                className="flex flex-col gap-6"
-                onSubmit={handleSubmit(onSubmit)}
+            <div className="user-type flex sm:gap-x-2 box-border">
+              <div
+                className={`student-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${
+                  registerOptions === "Student"
+                    ? "border-2 !border-[#2f5597]"
+                    : ""
+                }`}
+                onClick={() => {
+                  setRegisterOptions((prevState) =>
+                    prevState === "Student" ? "" : "Student"
+                  );
+                }}
               >
-                {/* <TextField variant='outlined' /> */}
-                <input
-                  type="text"
-                  className="min-h-10 placeholder:font-semibold placeholder:text-center text-center"
-                  placeholder="Username"
-                  {...register("username", { required: true })}
-                />
-                <input
-                  type="password"
-                  className="min-h-10 placeholder:font-semibold placeholder:text-center text-center"
-                  placeholder="Password"
-                  {...register("password", { required: true })}
-                />
-                <Button
-                  variant="outlined"
-                  onClick={handleSubmit(onSubmit)}
-                  className={`!text-black !bg-[${theme.secondaryColor}] !border !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F]`}
-                >
-                  Register
-                </Button>
-                <Button
-                  variant="outlined"
-                  onClick={() => {
-                    if (registerOptions === "Admin") {
-                      setRegisterOptions("Student");
-                    } else if (registerOptions === "Student") {
-                      setRegisterOptions("Admin");
-                    } else {
-                      setRegisterOptions("");
-                    }
-                  }}
-                  className={`!text-black !bg-[${theme.secondaryColor}] !border !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F]`}
-                >
-                  Change register option
-                </Button>
-              </form>
-              
-            </>
-          )}
+                <img src="/student-icon.png" alt="" />
+                <div className="self-center font-semibold text-xl">Student</div>
+              </div>
+              <div
+                className={`admin-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${
+                  registerOptions === "Admin"
+                    ? "border-2 !border-[#2f5597]"
+                    : ""
+                }`}
+                onClick={() => {
+                  setRegisterOptions((prevState) =>
+                    prevState === "Admin" ? "" : "Admin"
+                  );
+                }}
+              >
+                <img src="/admin-icon.png" alt="" />
+                <div className="self-center font-semibold text-xl">Admin</div>
+              </div>
+            </div>
+            <form
+              action=""
+              className="flex flex-col gap-6"
+              onSubmit={handleSubmit(onSubmit)}
+            >
+              <input
+                type="text"
+                className="min-h-10 placeholder:font-semibold placeholder:text-center text-center"
+                placeholder="Username"
+                {...register("username", { required: true })}
+              />
+              <input
+                type="password"
+                className="min-h-10 placeholder:font-semibold placeholder:text-center text-center"
+                placeholder="Password"
+                {...register("password", { required: true })}
+              />
+              <input
+                type="text"
+                className="min-h-10 placeholder:font-semibold placeholder:text-center text-center"
+                placeholder="First Name"
+                {...register("firstname", { required: true })}
+              />
+              <input
+                type="text"
+                className="min-h-10 placeholder:font-semibold placeholder:text-center text-center"
+                placeholder="Last Name"
+                {...register("lastname", { required: true })}
+              />
+              <input
+                type="text"
+                className="min-h-10 placeholder:font-semibold placeholder:text-center text-center"
+                placeholder="Initials"
+                {...register("initials", { required: true })}
+              />
+              <Button
+                variant="outlined"
+                onClick={handleSubmit(onSubmit)}
+                className={`!text-black !bg-[${theme.secondaryColor}] !border !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F]`}
+              >
+                Register
+              </Button>
+              {/* <Button
+                variant="outlined"
+                onClick={() => {
+                  if (registerOptions === "Admin") {
+                    setRegisterOptions("Student");
+                  } else if (registerOptions === "Student") {
+                    setRegisterOptions("Admin");
+                  } else {
+                    setRegisterOptions("");
+                  }
+                }}
+                className={`!text-black !bg-[${theme.secondaryColor}] !border !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F]`}
+              >
+                Change register option
+              </Button> */}
+            </form>
+          </div>
           <div className="login-link">
             <Link to="/login">
               <div className="login-link-text text-center text-blue-400 ">
@@ -147,6 +199,15 @@ const Register = () => {
           </div>
         </div>
       </div>
+      <Backdrop
+        open={isFeedbackNotiOpen}
+        
+        onClick={() => {
+          setFeedbackNotiOpen(false);
+        }}
+      >
+        <div className="bg-white sm:w-[500px] sm:h-[300px] rounded-xl"></div>
+      </Backdrop>
     </>
   );
 };
