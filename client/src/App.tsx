@@ -22,6 +22,10 @@ import CustomQCBuild from './pages/CustomQCBuild';
 import CustomTests from './pages/CustomTests';
 import Student_QC_Review from './pages/StudentView/StudentReviewControls';
 import Faculty_QC_Review from './pages/StudentView/FacultyReviewControls';
+import QCTypeButtonsPage from './pages/QCTypeSelection';
+
+
+
 
 function App() {
   initIDB();
@@ -85,16 +89,19 @@ function App() {
             ))}
           </Route>
         ))}
+{testTypeLinkList.map(item => (
+  <Route key={item.link} path={`/${item.link}/build_qc/:type`} element={<CustomQCBuild name={item.name} link='' />} />
+))}
+
+{testTypeLinkList.map(item => (
+  <Route key={item.link} path={`/${item.link}/custom_tests`} element={<CustomTests name={`${item.name} Custom Tests`} />} />
+))}
 
         {testTypeLinkList.map(item => (
-          <Route key={item.link} path={`/${item.link}/build_qc/:type`}>
-            <Route path='' element={<CustomQCBuild name={item.name} link='' />} />
-          </Route>
+          <Route key={item.link} path={`/${item.link}/qc_types`} element={<QCTypeButtonsPage name={item.name} link={item.link} />} />
         ))}
 
-        {testTypeLinkList.map(item => (
-          <Route key={item.link} path={`/${item.link}/custom_tests`} element={<CustomTests name={`${item.name} Custom Tests`} />} />
-        ))}
+
 
         <Route path='/unauthorized' element={<Unauthorized />} />
         <Route path='*' element={<ErrorPage />} />
