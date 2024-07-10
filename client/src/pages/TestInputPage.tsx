@@ -26,6 +26,7 @@ import { QCTemplateBatch } from "../utils/indexedDB/IDBSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { getDataByKey } from "../utils/indexedDB/getData";
 import { deleteData } from "../utils/indexedDB/deleteData";
+import NavBar from "../components/NavBar";
 
 interface QCRangeElements {
   analyteName: string;
@@ -123,19 +124,6 @@ export const TestInputPage = (props: { name: string; link: string, dataType?: st
       accessorKey: "unit_of_measure",
       header: "Units of Measure",
       cell: (info) => (
-        // <input type="text" className="sm:w-24 p-1 border border-solid border-[#548235] rounded-lg text-center" value={QCElements.find((item) => item.unit_of_measure === info.getValue())?.unit_of_measure || ''} onChange={(e) => { 
-        //     e.preventDefault();
-
-        //     setQCElements(prevState => {
-        //         const newState = prevState.map(item => {
-        //             if (item.analyteName === info.row.getAllCells().find(subItem => subItem.id.includes("analyteName"))?.getValue())
-        //                 return { ...item, unit_of_measure: e.target.value }
-        //             else return item
-        //         })
-
-        //         return newState
-        //     })
-        // }}/>
         <></>
       ),
     },
@@ -216,39 +204,24 @@ export const TestInputPage = (props: { name: string; link: string, dataType?: st
 
   return (
     <>
-      <div
-        className={`bg-[${theme.primaryColor}] relative flex items-center`}
-        style={{ minWidth: "100svw", minHeight: "10svh" }}
-      >
-        <button className="absolute text-white sm:left-2 text-5xl hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md" onClick={() => navigate(-1)}>
-          <Icon icon="material-symbols:arrow-left-alt-rounded" />
-        </button>
-        <Icon
-          icon="fa6-solid:bars"
-          className="absolute px-2 text-white text-5xl left-14 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
-          onClick={() => openDrawer(true)}
-        />
-        <div className="navbar-title sm:leading-loose text-center text-white font-bold sm:text-4xl text-3xl my-0 mx-auto max-sm:w-1/2 max-sm:leading-10">
-          {props.name} QC Builder
-        </div>
-        <div className="home-icon">
-          <Link to="/home">
-            <Icon
-              icon="material-symbols:home"
-              className="absolute p-1 text-white text-5xl top-[20%] right-16 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
-            />
-          </Link>
-        </div>
-        {isAuthenticated && (
-          <div className="logout-icon">
-            <Icon icon="mdi:logout" className="absolute text-white sm:text-5xl self-center sm:right-4 sm:top-4 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md p-1" onClick={() => {
-              logout();
-              navigate("/login");
-            }}/>
-          </div>
-        )}
-      </div>
+      <NavBar name={`${props.name} QC Builder`} />
       <div className="basic-container relative sm:space-y-4 pb-24">
+        <div className="input-container flex justify-center">
+          <div className="drawer-container sm:h-full flex items-center py-4 sm:space-x-12">
+            <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
+              <div className="lotnumber-label sm:text-xl font-semibold text-white">QC Lot Number</div>
+              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center" {...register("lotNumber")}/>
+            </div>
+            <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
+              <div className="lotnumber-label sm:text-xl font-semibold text-white">Expiration Date</div>
+              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center" {...register("closedDate")}/>
+            </div>
+            <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
+              <div className="lotnumber-label sm:text-xl font-semibold text-white">File Date</div>
+              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center"/>
+            </div>
+          </div>
+        </div>
         <div className="table-container flex flex-col mt-8 sm:w-[94svw] sm:h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA] relative">
           <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200">
             <TableHeader>
@@ -497,16 +470,14 @@ export const TestInputPage = (props: { name: string; link: string, dataType?: st
           Save QC File
         </ButtonBase>
       </div>
-      <Drawer
+      {/* <Drawer
         anchor='left'
         open={isDrawerOpen}
         onClose={() => openDrawer(false)}
       >
         <div className="drawer-container sm:w-[18svw] sm:h-full bg-[#CFD5EA] flex flex-col items-center py-4 sm:space-y-6">
           <div className="filename-label sm:text-3xl font-semibold">{props.name}</div>
-          {/* <div className="filename-input sm:w-[70%] flex flex-col items-center sm:space-y-2">
-            <input type="text" name="filename" className="p-2 rounded-lg border border-solid border-[#548235] text-center"/>
-          </div> */}
+          
           <div className="lotnumber-input flex flex-col items-center sm:w-[86%] py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2">
             <div className="lotnumber-label sm:text-xl font-semibold text-white">QC Lot Number</div>
             <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] text-center" {...register("lotNumber")}/>
@@ -518,17 +489,17 @@ export const TestInputPage = (props: { name: string; link: string, dataType?: st
               <div className="expiration-input sm:space-y-2">
                 <div className="open-title text-center sm:text-lg text-white">Open Date</div>
                 <input type="text" className="p-1 rounded-lg border border-solid border-[#000] text-center" {...register("openDate")}/>
-                {/* <DatePicker onChange={onDateChange} getPopupContainer={(n) => console.log(n)}/> */}
+                
               </div>
               <div className="expiration-input sm:space-y-2">
                 <div className="closed-title text-center sm:text-lg text-white">Closed Date</div>
                 <input type="text" className="p-1 rounded-lg border border-solid border-[#000] text-center" {...register("closedDate")}/>
-                {/* <DatePicker onChange={onDateChange}/> */}
+                
               </div>
             </div>
           </div>
         </div>
-      </Drawer>
+      </Drawer> */}
     </>
   );
 };

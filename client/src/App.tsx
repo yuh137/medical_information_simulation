@@ -23,6 +23,7 @@ import CustomTests from './pages/CustomTests';
 import Student_QC_Review from './pages/StudentView/StudentReviewControls';
 import Faculty_QC_Review from './pages/StudentView/FacultyReviewControls';
 import QCTypeButtonsPage from './pages/QCTypeSelection';
+import { getQCRangeByName } from './utils/indexedDB/getData';
 
 
 
@@ -46,7 +47,9 @@ function App() {
         <Route path='/order_controls' element={<OrderControls />} />
         
         {testTypeLinkList.map(item => (
-          <Route key={item.link} path={`/${item.link}/qc_results`}>
+          <Route key={item.link} path={`/${item.link}/qc_results`} loader={async () => {
+            const data = await getQCRangeByName(item.name);
+          }}>
             <Route path='' element={<QC_Results link={item.link} name={item.name} />} />
             {qcTypeLinkList.map(subItem => (
               <Route key={subItem.link} path={`${subItem.link}`} element={<AnalyteInputPage link={subItem.link} name={subItem.name} />} />
