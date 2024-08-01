@@ -29,11 +29,11 @@ const EditQC = (props: { name: string; link: string }) => {
     <>
       <NavBar name={`Edit ${props.name} QC`} />
       <div className="basic-container">
-        <div className={`edit-qc-options flex flex-wrap sm:justify-center px-24 sm:h-[150svh] sm:w-[100svw] gap-6 mx-auto`}>
+        <div className={`edit-qc-options flex flex-wrap sm:justify-center sm:p-24 sm:h-[150svh] sm:w-[100svw] sm:gap-x-4 mx-auto`}>
           {qcTypeLinkList.map((item) => (
             <ButtonBase
               key={item.name}
-              className={`!rounded-lg sm:w-64 sm:h-28 sm:!my-12 !border-solid transition ease-in-out ${
+              className={`!rounded-lg sm:w-64 sm:h-28 !border-solid transition ease-in-out ${
                 selectedItem === item.link
                   ? `!border-[#2F528F] !border-[4px] !bg-[#8faadc]`
                   : `!border !bg-[${theme.secondaryColor}] !border-[${theme.primaryBorderColor}]`
