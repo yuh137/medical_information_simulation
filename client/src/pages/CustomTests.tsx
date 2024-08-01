@@ -31,7 +31,6 @@ const CustomTests = (props: { name: string }) => {
   const [currentPanelIndex, setCurrentPanelIndex] = useState<number | null>(null);
   const [customPanels, setCustomPanels] = useState<CustomPanel[]>([]);
   const [isTableDialogOpen, setIsTableDialogOpen] = useState<boolean>(false);
-  const { register, handleSubmit } = useForm<QCTemplateBatch>();
   const { theme } = useTheme();
 
   useEffect(() => {
