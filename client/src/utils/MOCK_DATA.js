@@ -228,8 +228,8 @@ export const CMP = [
 
 export const Cardiac = [
 {
-  analyteName: "Trroponin-I",
-  analyteAcronym: "T",
+  analyteName: "Troponin-I",
+  analyteAcronym: "cTnl",
   unit_of_measure: "ng/mL",
   min_level: "0",
   max_level: "0",
@@ -244,7 +244,7 @@ export const Cardiac = [
   electrolyte: true,
 },
 {
-  analyteName: "Creatine kinase",
+  analyteName: "Creatine Kinase",
   analyteAcronym: "CK",
   unit_of_measure: "U/L",
   min_level: "0",
@@ -260,7 +260,7 @@ export const Cardiac = [
   electrolyte: true,
 },
 {
-  analyteName: "Creatine kinase-MB",
+  analyteName: "Creatine Kinase-MB",
   analyteAcronym: "CK-MB",
   unit_of_measure: "%",
   min_level: "0",
@@ -292,7 +292,7 @@ export const Cardiac = [
   electrolyte: true,
 },
 {
-  analyteName: "High-sensitivity C-reactive protein",
+  analyteName: "High-sensitivity C-reactive Protein",
   analyteAcronym: "hsCRP",
   unit_of_measure: "mg/dL",
   min_level: "0",
@@ -316,7 +316,7 @@ export const Cardiac = [
 
 export const Thyroid = [
   {
-    analyteName: "Thyroid-stimulating hormone",
+    analyteName: "Thyroid-Stimulating Hormone",
     analyteAcronym: " TSH",
     unit_of_measure: "µIU/mL",
     min_level: "0",
@@ -332,8 +332,8 @@ export const Thyroid = [
     electrolyte: true,
   },
   {
-    analyteName: "Tiiiodothyronine, Total",
-    analyteAcronym: "T₃",
+    analyteName: "Tiiodothyronine, Total",
+    analyteAcronym: "T3",
     unit_of_measure: "ng/dL",
     min_level: "0",
     max_level: "0",
@@ -348,9 +348,9 @@ export const Thyroid = [
     electrolyte: true,
   },
   {
-    analyteName: "Thyrooxine,Total",
-    analyteAcronym: "T₄",
-    unit_of_measure: "ng/dL",
+    analyteName: "Thyroxine,Total",
+    analyteAcronym: "T4",
+    unit_of_measure: "µg/dL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -364,9 +364,9 @@ export const Thyroid = [
     electrolyte: true,
   },
   {
-    analyteName: "tiiiodothyronine, Free",
+    analyteName: "Triiodothyronine, Free",
     analyteAcronym: "FT₃",
-    unit_of_measure: "mEq/L",
+    unit_of_measure: "pg/dL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -380,9 +380,9 @@ export const Thyroid = [
     electrolyte: true,
   },
   {
-    analyteName: "Thyroxiine, Free",
+    analyteName: "Thyroxine, Free",
     analyteAcronym: "FT₄",
-    unit_of_measure: "mg/dL",
+    unit_of_measure: "ng/dL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -396,9 +396,9 @@ export const Thyroid = [
     electrolyte: false,
   },
   {
-    analyteName: "Anti-Thyroperoxidase",
+    analyteName: "Anti-Thyroid Peroxidase",
     analyteAcronym: "TPOAb",
-    unit_of_measure: "mg/dL",
+    unit_of_measure: "IU/mL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -414,7 +414,7 @@ export const Thyroid = [
   {
     analyteName: "Anti-Thyroglobulin",
     analyteAcronym: "TgAB",
-    unit_of_measure: "mg/dL",
+    unit_of_measure: "ng/mL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -470,7 +470,7 @@ export const Liver = [
     electrolyte: true,
   },
   {
-    analyteName: "Akaline Phosphatse",
+    analyteName: "Akaline Phosphatase",
     analyteAcronym: "ALP",
     unit_of_measure: "U/L",
     min_level: "0",
@@ -486,7 +486,7 @@ export const Liver = [
     electrolyte: true,
   },
   {
-    analyteName: "Gamma-glutamyl transferase",
+    analyteName: "Gamma Glutamyl transferase",
     analyteAcronym: "GGT",
     unit_of_measure: "U/L",
     min_level: "0",
@@ -569,8 +569,8 @@ export const Liver = [
 
 export const Lipid = [
   {
-    analyteName: "Cholestoral",
-    analyteAcronym: " CholL",
+    analyteName: "Cholestoral, Total",
+    analyteAcronym: " Chol",
     unit_of_measure: "mg/dL",
     min_level: "0",
     max_level: "0",
@@ -585,7 +585,7 @@ export const Lipid = [
     electrolyte: true,
   },
   {
-    analyteName: "High-Density Lipoprotein",
+    analyteName: "High-Density Lipoproteins",
     analyteAcronym: "HDL",
     unit_of_measure: "mg/dL",
     min_level: "0",
@@ -601,9 +601,9 @@ export const Lipid = [
     electrolyte: true,
   },
   {
-    analyteName: "Low-Density Lipoprotein",
+    analyteName: "Low-Density Lipoproteins",
     analyteAcronym: "LDL",
-    unit_of_measure: "mg/dl",
+    unit_of_measure: "mg/dL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -619,7 +619,7 @@ export const Lipid = [
   {
     analyteName: "Triglycerides, Total",
     analyteAcronym: "Trig",
-    unit_of_measure: "mg/dl",
+    unit_of_measure: "mg/dL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -679,7 +679,7 @@ export const Iron = [
   {
     analyteName: "Transferrin Saturation",
     analyteAcronym: "TS",
-    unit_of_measure: "mg/dl",
+    unit_of_measure: "mg/dL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -695,7 +695,7 @@ export const Iron = [
   {
     analyteName: "Ferritin",
     analyteAcronym: "Ferr",
-    unit_of_measure: "ng/dl",
+    unit_of_measure: "ng/dL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -720,7 +720,7 @@ export const Iron = [
 
 export const Drug = [
   {
-    analyteName: "Ampetamines",
+    analyteName: "Amphetamines",
     analyteAcronym: " AMP",
     unit_of_measure: "ng/mL",
     min_level: "0",
@@ -785,7 +785,7 @@ export const Drug = [
   },
   {
     analyteName: "Phencyclidine",
-    analyteAcronym: " pcp",
+    analyteAcronym: " PCP",
     unit_of_measure: "ng/mL",
     min_level: "0",
     max_level: "0",
@@ -866,7 +866,7 @@ export const Drug = [
   {
     analyteName: "Ethanol",
     analyteAcronym: "ETOH",
-    unit_of_measure: "ng/mL",
+    unit_of_measure: "mg/dL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -893,7 +893,7 @@ export const Drug = [
 
 export const Hormone = [
   {
-    analyteName: "Total Testosterone",
+    analyteName: "total Testosterone",
     analyteAcronym: " TEST",
     unit_of_measure: "ng/dL",
     min_level: "0",
@@ -909,7 +909,7 @@ export const Hormone = [
     electrolyte: true,
   },
   {
-    analyteName: "Free Testosterone",
+    analyteName: "free Testosterone",
     analyteAcronym: "fTEST",
     unit_of_measure: "pg/mL",
     min_level: "0",
@@ -925,7 +925,7 @@ export const Hormone = [
     electrolyte: true,
   },
   {
-    analyteName: "Prostate-specific Antigen-Total",
+    analyteName: "Prostate Specific Antigen-Total",
     analyteAcronym: "tPSA",
     unit_of_measure: "ng/mL",
     min_level: "0",
@@ -941,7 +941,7 @@ export const Hormone = [
     electrolyte: true,
   },
   {
-    analyteName: "Prostate-specific Antigen-Free",
+    analyteName: "Prostate Specific Antigen-Free",
     analyteAcronym: "fPSA",
     unit_of_measure: "%",
     min_level: "0",
@@ -973,7 +973,7 @@ export const Hormone = [
     electrolyte: true,
   },
   {
-    analyteName: "Follicle-Stimulating Hormone",
+    analyteName: "Follicle Stimulating Hormone",
     analyteAcronym: "FSH",
     unit_of_measure: "mIU/mL",
     min_level: "0",
@@ -1060,7 +1060,7 @@ export const Pancreatic = [
   {
     analyteName: "Amylase",
     analyteAcronym: " AMY",
-    unit_of_measure: "ng/dL",
+    unit_of_measure: "U/L",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -1074,9 +1074,9 @@ export const Pancreatic = [
     electrolyte: true,
   },
   {
-    analyteName: "Lactase",
+    analyteName: "Lipase",
     analyteAcronym: "LIP",
-    unit_of_measure: "pg/mL",
+    unit_of_measure: "U/L",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -1092,7 +1092,7 @@ export const Pancreatic = [
   {
     analyteName: "Lactate Dehydrogenase",
     analyteAcronym: "LDH",
-    unit_of_measure: "ng/mL",
+    unit_of_measure: "U/L",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -1113,7 +1113,7 @@ export const Diabetes = [
   {
     analyteName: "Glycated Hemoglobin",
     analyteAcronym: " HgbA1c",
-    unit_of_measure: "ng/dL",
+    unit_of_measure: "% of total Hb",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -1129,7 +1129,7 @@ export const Diabetes = [
   {
     analyteName: "Magnesium",
     analyteAcronym: "MG",
-    unit_of_measure: "pg/mL",
+    unit_of_measure: "mEq/L",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -1145,7 +1145,7 @@ export const Diabetes = [
   {
     analyteName: "Phosphorous",
     analyteAcronym: "Phos",
-    unit_of_measure: "ng/mL",
+    unit_of_measure: "mg/dL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -1168,7 +1168,7 @@ export const Cancer = [
   {
     analyteName: "Carcinoembryonic Antigen",
     analyteAcronym: " CEA",
-    unit_of_measure: "ng/dL",
+    unit_of_measure: "ng/mL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -1184,7 +1184,7 @@ export const Cancer = [
   {
     analyteName: "Cancer Antigen 125",
     analyteAcronym: "CA 125",
-    unit_of_measure: "pg/mL",
+    unit_of_measure: "U/mL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -1200,7 +1200,7 @@ export const Cancer = [
   {
     analyteName: "Carbohydrate Antigen 19-9",
     analyteAcronym: "CA 19-9",
-    unit_of_measure: "ng/mL",
+    unit_of_measure: "U/mL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -1216,7 +1216,7 @@ export const Cancer = [
   {
     analyteName: "Cancer Antigen 15-3",
     analyteAcronym: "CA 15-3",
-    unit_of_measure: "%",
+    unit_of_measure: "U/mL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -1232,7 +1232,7 @@ export const Cancer = [
   {
     analyteName: "Cancer Antigen 27.29",
     analyteAcronym: "CA 27.29",
-    unit_of_measure: "pg/mL",
+    unit_of_measure: "U/mL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -1252,7 +1252,7 @@ export const Vitamins = [
   {
     analyteName: "Vitamin B12",
     analyteAcronym: " B12",
-    unit_of_measure: "ng/dL",
+    unit_of_measure: "pg/mL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -1268,7 +1268,7 @@ export const Vitamins = [
   {
     analyteName: "Vitamin B6",
     analyteAcronym: "B6",
-    unit_of_measure: "pg/mL",
+    unit_of_measure: "ng/mL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -1300,7 +1300,7 @@ export const Vitamins = [
   {
     analyteName: "Vitamin A",
     analyteAcronym: "Vit A",
-    unit_of_measure: "%",
+    unit_of_measure: "µg/dL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -1316,7 +1316,7 @@ export const Vitamins = [
   {
     analyteName: "Vitamin C",
     analyteAcronym: "Vit C",
-    unit_of_measure: "pg/mL",
+    unit_of_measure: "mg/dL",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -1332,7 +1332,7 @@ export const Vitamins = [
   {
     analyteName: "Homocysteine",
     analyteAcronym: "HCY",
-    unit_of_measure: "mIU/mL",
+    unit_of_measure: "µmol/L",
     min_level: "0",
     max_level: "0",
     mean: "0",
@@ -1348,7 +1348,7 @@ export const Vitamins = [
   {
     analyteName: " Folate",
     analyteAcronym: "FOL",
-    unit_of_measure: "IU/L",
+    unit_of_measure: "ng/mL",
     min_level: "0",
     max_level: "0",
     mean: "0",
