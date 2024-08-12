@@ -96,7 +96,7 @@ export const CMP = [
     electrolyte: false,
   },
   {
-    analyteName: "Calcium",
+    analyteName: "Calcium, Total",
     analyteAcronym: "CA",
     unit_of_measure: "mg/dL",
     min_level: "0",
@@ -192,8 +192,8 @@ export const CMP = [
     electrolyte: false,
   },
   {
-    analyteName: "Bilirubin",
-    analyteAcronym: "BIL",
+    analyteName: "Bilirubin, Total",
+    analyteAcronym: "tBIL",
     unit_of_measure: "mg/dL",
     min_level: "0",
     max_level: "0",
@@ -332,7 +332,7 @@ export const Thyroid = [
     electrolyte: true,
   },
   {
-    analyteName: "Tiiodothyronine, Total",
+    analyteName: "Triiodothyronine, Total",
     analyteAcronym: "T3",
     unit_of_measure: "ng/dL",
     min_level: "0",
@@ -518,8 +518,8 @@ export const Liver = [
     electrolyte: false,
   },
   {
-    analyteName: "Bilirubin",
-    analyteAcronym: "BIL",
+    analyteName: "Bilirubin, Total",
+    analyteAcronym: "tBIL",
     unit_of_measure: "mg/dL",
     min_level: "0",
     max_level: "0",
@@ -569,7 +569,7 @@ export const Liver = [
 
 export const Lipid = [
   {
-    analyteName: "Cholestoral, Total",
+    analyteName: "Cholestorol, Total",
     analyteAcronym: " Chol",
     unit_of_measure: "mg/dL",
     min_level: "0",
@@ -1128,7 +1128,7 @@ export const Diabetes = [
   },
   {
     analyteName: "Magnesium",
-    analyteAcronym: "MG",
+    analyteAcronym: "Mg",
     unit_of_measure: "mEq/L",
     min_level: "0",
     max_level: "0",

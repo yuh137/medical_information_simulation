@@ -32,6 +32,7 @@ import {
   DropResult,
   Droppable,
 } from "react-beautiful-dnd";
+import NavBar from "../components/NavBar";
 
 interface QCRangeElements {
   analyteName: string;
@@ -568,9 +569,8 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
           className="absolute px-2 text-white text-5xl top-[20%] left-4 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
           onClick={() => openDrawer(true)}
         />
-        <div className="navbar-title sm:leading-loose text-center text-white font-bold sm:text-4xl text-3xl my-0 mx-auto max-sm:w-1/2 max-sm:leading-10">
-          Custom QC Builder
-        </div>
+      <NavBar name="Custom QC Builder" />
+     
         <div className="home-icon">
           <Link to="/home">
             <Icon
