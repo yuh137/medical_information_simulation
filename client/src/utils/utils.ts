@@ -128,7 +128,7 @@ export const CMPLevelList = [
   { name: "Albumin", acronymName: "ALB" },
   { name: "Alanine Aminotransferase", acronymName: "ALT" },
   { name: "Aspartate Aminotransferase", acronymName: "AST" },
-  { name: "Akaline Phosphatase", acronymName: "ALP" },
+  { name: "Alkaline Phosphatase", acronymName: "ALP" },
   { name: "Bilirubin", acronymName: "BIL" },
   { name: "Total Protein", acronymName: "TP" }
 ];
