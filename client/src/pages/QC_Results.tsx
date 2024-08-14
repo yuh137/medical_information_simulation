@@ -17,43 +17,27 @@ import {
 } from "../components/ui/table";
 import { Button } from "@mui/material";
 import { Icon } from "@iconify/react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useLoaderData } from "react-router-dom";
 import { generateRandomId } from "../utils/utils";
 import { qcTypeLinkList } from "../utils/utils";
-
-
+import { QCTemplateBatch } from "../utils/indexedDB/IDBSchema";
 
 interface QCItem {
-  dep: string;
+  lotnum: string;
   test: string;
-  id: string;
+  expdate: string;
 }
 
-// const columns = [
-//     columnHelper.accessor('id', {
-//         header: () => (<div>ID</div>),
-//         cell: info => (<div>{info.getValue()}</div>)
-//     }),
-//     columnHelper.accessor('test', {
-//         header: () => (<div>Test</div>),
-//         cell: info => (<div>{info.getValue()}</div>)
-//     }),
-//     columnHelper.accessor('dep', {
-//         header: () => (<div>Department</div>),
-//         cell: info => (<div>{info.getValue()}</div>)
-//     }),
-// ]
-
-const columns: ColumnDef<QCItem, string>[] = [
+const columns: ColumnDef<QCItem | undefined, string>[] = [
   {
-    accessorKey: "id",
-    header: "ID",
-    cell: (info) => <div>{info.row.getValue("id")}</div>,
+    accessorKey: "lotnum",
+    header: "Lot number",
+    cell: (info) => <div>{info.row.getValue("lotnum")}</div>,
   },
   {
-    accessorKey: "dep",
-    header: "Department",
-    cell: (info) => <div>{info.row.getValue("dep")}</div>,
+    accessorKey: "expdate",
+    header: "Expiration Date",
+    cell: (info) => <div>{info.row.getValue("expdate")}</div>,
   },
   {
     accessorKey: "test",
@@ -70,20 +54,27 @@ const QC_Results = (props: { name: string, link: string }) => {
   const searchParams = new URLSearchParams(location.search);
   const [selectedQCs, setSelectedQCs] = useState<string[]>([]);
 
+  const data = useLoaderData() as QCTemplateBatch[] | undefined;
 
   useEffect(() => {
     const storedQCs = localStorage.getItem('selectedQCItems');
     if (storedQCs) {
         setSelectedQCs(JSON.parse(storedQCs));
     }
+    console.log("loader data: ", data);
 }, []);
 
 const qc_items = useMemo(() => (
   qcTypeLinkList.filter(qc => selectedQCs.includes(qc.name)).map(qc => ({
-      id: generateRandomId(),
-      dep: props.name,
+      lotnum: "11111111",
+      expdate: "12/12/2012",
       test: qc.name
   }))
+  // data && data.map(test => ({
+  //   lotnum: test.lotNumber,
+  //   expdate: test.closedDate,
+  //   test: test.fileName
+  // }))
 ), [selectedQCs]);
 
 
