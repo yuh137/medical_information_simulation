@@ -14,12 +14,8 @@ const root = ReactDOM.createRoot(
 
 root.render(
   // <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-          <ThemeProvider>
-            <App />
-          </ThemeProvider>
-      </AuthProvider>
-    </BrowserRouter>
+  <AuthProvider>
+    <App />
+  </AuthProvider>
   // </React.StrictMode>
 );

@@ -560,39 +560,7 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
 
   return (
     <>
-      <div
-        className={`bg-[${theme.primaryColor}] relative`}
-        style={{ minWidth: "100svw", minHeight: "10svh" }}
-      >
-        <Icon
-          icon="fa6-solid:bars"
-          className="absolute px-2 text-white text-5xl top-[20%] left-4 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
-          onClick={() => openDrawer(true)}
-        />
       <NavBar name="Custom QC Builder" />
-     
-        <div className="home-icon">
-          <Link to="/home">
-            <Icon
-              icon="material-symbols:home"
-              className="absolute p-1 text-white text-5xl top-[20%] right-16 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
-            />
-          </Link>
-        </div>
-        {isAuthenticated && (
-          <div className="logout-icon">
-            <Icon
-              icon="mdi:logout"
-              className="absolute text-white sm:text-5xl self-center sm:right-4 sm:top-4 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md p-1"
-              onClick={() => {
-                logout();
-                navigate("/login");
-              }}
-            />
-          </div>
-        )}
-      </div>
-
       {showDrag && (
         <DragDropContext onDragEnd={onDragEnd}>
           <div
