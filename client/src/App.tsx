@@ -1,70 +1,238 @@
-import React from 'react';
-import { Routes, Route, Navigate, Link, useNavigate } from 'react-router-dom'
-import initIDB from './utils/indexedDB/initIDB';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import StudentHomeScreen from './pages/StudentView/StudentHomeScreen';
-import StudentQualityControls from './pages/StudentView/StudentQualityControls';
-import OrderControls from './pages/StudentView/OrderControls';
-import QC_Results from './pages/QC_Results';
-import AnalyteInputPage from './pages/AnalyteInputPage';
-import Unauthorized from './pages/Unauthorized';
-import { useAuth } from './context/AuthContext';
-import FacultyHomeScreen from './pages/FacultyView/FacultyHomeScreen';
-import FacultyQualityControls from './pages/FacultyView/FacultyQualityControls';
-import QCBuilder from './pages/QCBuilderPage';
-import { qcTypeLinkList, testTypeLinkList } from './utils/utils';
-import EditQC from './pages/EditQCPage';
-import {TestInputPage} from './pages/TestInputPage';
-import ErrorPage from './pages/ErrorPage';
-import ResultsInProgress from './pages/ResultsInProgress';
-import CustomQCBuild from './pages/CustomQCBuild';
-import CustomTests from './pages/CustomTests';
-import Student_QC_Review from './pages/StudentView/StudentReviewControls';
-import Faculty_QC_Review from './pages/StudentView/FacultyReviewControls';
-import QCTypeButtonsPage from './pages/QCTypeSelection';
-import { getQCRangeByName } from './utils/indexedDB/getData';
-
-
-
+import React from "react";
+import { Routes, Route, Navigate, Link, useNavigate, createBrowserRouter, RouterProvider } from "react-router-dom";
+import initIDB from "./utils/indexedDB/initIDB";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import StudentHomeScreen from "./pages/StudentView/StudentHomeScreen";
+import StudentQualityControls from "./pages/StudentView/StudentQualityControls";
+import OrderControls from "./pages/StudentView/OrderControls";
+import QC_Results from "./pages/QC_Results";
+import AnalyteInputPage from "./pages/AnalyteInputPage";
+import Unauthorized from "./pages/Unauthorized";
+import { useAuth } from "./context/AuthContext";
+import FacultyHomeScreen from "./pages/FacultyView/FacultyHomeScreen";
+import FacultyQualityControls from "./pages/FacultyView/FacultyQualityControls";
+import QCBuilder from "./pages/QCBuilderPage";
+import { qcTypeLinkList, testTypeLinkList } from "./utils/utils";
+import EditQC from "./pages/EditQCPage";
+import { TestInputPage } from "./pages/TestInputPage";
+import ErrorPage from "./pages/ErrorPage";
+import ResultsInProgress from "./pages/ResultsInProgress";
+import CustomQCBuild from "./pages/CustomQCBuild";
+import CustomTests from "./pages/CustomTests";
+import Student_QC_Review from "./pages/StudentView/StudentReviewControls";
+import Faculty_QC_Review from "./pages/StudentView/FacultyReviewControls";
+import QCTypeButtonsPage from "./pages/QCTypeSelection";
+import { getAllDataFromStore, getQCRangeByName } from "./utils/indexedDB/getData";
+import Layout from "./utils/Layout";
 
 function App() {
   initIDB();
   const { checkSession, checkUserType } = useAuth();
 
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: <Layout />,
+      children: [
+        {
+          index: true,
+          element: checkSession() ? <Navigate to="/home" /> : <Navigate to="/login" />,
+        },
+        { path: 'login', element: <Login /> },
+        { path: 'register', element: <Register /> },
+        {
+          path: 'home',
+          element: checkUserType() === 'student' ? <StudentHomeScreen /> : <FacultyHomeScreen />,
+        },
+        {
+          path: 'qc',
+          element: checkUserType() === 'student' ? <StudentQualityControls /> : <FacultyQualityControls />,
+        },
+        {
+          path: 'review_controls',
+          element: checkUserType() === 'student' ? <Student_QC_Review name="Student" link="student" /> : <Faculty_QC_Review name="Faculty" link="faculty" />,
+        },
+        { path: 'results', element: <ResultsInProgress /> },
+        { path: 'order_controls', element: <OrderControls /> },
+        ...testTypeLinkList.map((item) => (
+          {
+            path: `${item.link}/qc_results`,
+            children: [
+              {
+                index: true,
+                element: <QC_Results link={item.link} name={item.name} />,
+                loader: async () => {
+                  const data = await getAllDataFromStore("qc_store");
+                  return data;
+                },
+              },
+              ...qcTypeLinkList.map((subItem) => ({
+                path: subItem.link,
+                element: <AnalyteInputPage link={subItem.link} name={subItem.name} />,
+              })),
+            ],
+          }
+        )),
+        ...testTypeLinkList.map((item) => (
+          {
+            path: `${item.link}/qc_builder`,
+            element: <QCBuilder link={item.link} name={item.name} />,
+          }
+        )),
+        ...testTypeLinkList.map((item) => (
+          {
+            path: `${item.link}/edit_qc`,
+            children: [
+              {
+                index: true,
+                element: <EditQC link={item.link} name={item.name} />,
+              },
+              ...qcTypeLinkList.map((subItem) => ({
+                path: subItem.link,
+                element: (
+                  <TestInputPage
+                    name={subItem.name}
+                    link={subItem.link}
+                    dataType={
+                      subItem.name.includes('Cardiac')
+                        ? 'Cardiac'
+                        : subItem.name.includes('Lipid')
+                        ? 'Lipid'
+                        : subItem.name.includes('Liver')
+                        ? 'Liver'
+                        : subItem.name.includes('Thyroid')
+                        ? 'Thyroid'
+                        : subItem.name.includes('Iron')
+                        ? 'Iron'
+                        : subItem.name.includes('Drug')
+                        ? 'Drug'
+                        : subItem.name.includes('Hormone')
+                        ? 'Hormone'
+                        : subItem.name.includes('Pancreatic')
+                        ? 'Pancreatic'
+                        : subItem.name.includes('Vitamins')
+                        ? 'Vitamins'
+                        : subItem.name.includes('Diabetes')
+                        ? 'Diabetes'
+                        : subItem.name.includes('Cancer')
+                        ? 'Cancer'
+                        : 'General'
+                    }
+                  />
+                ),
+              })),
+            ],
+          }
+        )),
+        ...testTypeLinkList.map((item) => (
+          {
+            path: `${item.link}/build_qc/:type`,
+            element: <CustomQCBuild name={item.name} link="" />,
+          }
+        )),
+        ...testTypeLinkList.map((item) => (
+          {
+            path: `${item.link}/custom_tests`,
+            element: <CustomTests name={`${item.name} Custom Tests`} />,
+          }
+        )),
+        ...testTypeLinkList.map((item) => (
+          {
+            path: `${item.link}/qc_types`,
+            element: <QCTypeButtonsPage name={item.name} link={item.link} />,
+          }
+        )),
+        { path: 'unauthorized', element: <Unauthorized /> },
+        { path: '*', element: <ErrorPage /> },
+      ],
+    },
+  ]);
+
   return (
     <>
-      <Routes>
-        <Route path="/" element={checkSession() ? <Navigate to="/home" /> : <Navigate to="/login" />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />} />
-        <Route path='/home' element={checkUserType() === 'student' ? <StudentHomeScreen /> : <FacultyHomeScreen />} />
-        <Route path='/qc' element={checkUserType() === 'student' ? <StudentQualityControls /> : <FacultyQualityControls />} />
-        <Route path="/review_controls" element={checkUserType() === 'student' ? <Student_QC_Review name="Student" link="student" /> : <Faculty_QC_Review name="Faculty" link="faculty" />} />
-
-        <Route path ='/' element={<Navigate to='/unauthorized' />} />Q
-        <Route path='/results' element={<ResultsInProgress />} />
-        <Route path='/order_controls' element={<OrderControls />} />
-        
-        {testTypeLinkList.map(item => (
-          <Route key={item.link} path={`/${item.link}/qc_results`} loader={async () => {
-            const data = await getQCRangeByName(item.name);
-          }}>
-            <Route path='' element={<QC_Results link={item.link} name={item.name} />} />
-            {qcTypeLinkList.map(subItem => (
-              <Route key={subItem.link} path={`${subItem.link}`} element={<AnalyteInputPage link={subItem.link} name={subItem.name} />} />
+      {/* <Routes>
+        <Route
+          path="/"
+          element={
+            checkSession() ? <Navigate to="/home" /> : <Navigate to="/login" />
+          }
+        />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/home"
+          element={
+            checkUserType() === "student" ? (
+              <StudentHomeScreen />
+            ) : (
+              <FacultyHomeScreen />
+            )
+          }
+        />
+        <Route
+          path="/qc"
+          element={
+            checkUserType() === "student" ? (
+              <StudentQualityControls />
+            ) : (
+              <FacultyQualityControls />
+            )
+          }
+        />
+        <Route
+          path="/review_controls"
+          element={
+            checkUserType() === "student" ? (
+              <Student_QC_Review name="Student" link="student" />
+            ) : (
+              <Faculty_QC_Review name="Faculty" link="faculty" />
+            )
+          }
+        />
+        <Route path="/" element={<Navigate to="/unauthorized" />} />Q
+        <Route path="/results" element={<ResultsInProgress />} />
+        <Route path="/order_controls" element={<OrderControls />} />
+        {testTypeLinkList.map((item) => (
+          <Route
+            key={item.link}
+            path={`/${item.link}/qc_results`}
+            
+          >
+            <Route
+              path=""
+              index={true}
+              element={<QC_Results link={item.link} name={item.name} />}
+              loader={async () => {
+                const data = await getQCRangeByName(item.name);
+                console.log(data);
+              }}
+            />
+            {qcTypeLinkList.map((subItem) => (
+              <Route
+                key={subItem.link}
+                path={`${subItem.link}`}
+                element={
+                  <AnalyteInputPage link={subItem.link} name={subItem.name} />
+                }
+              />
             ))}
           </Route>
         ))}
-
-        {testTypeLinkList.map(item => (
-          <Route key={item.link} path={`/${item.link}/qc_builder`} element={<QCBuilder link={item.link} name={item.name} />} />
+        {testTypeLinkList.map((item) => (
+          <Route
+            key={item.link}
+            path={`/${item.link}/qc_builder`}
+            element={<QCBuilder link={item.link} name={item.name} />}
+          />
         ))}
-
-        {testTypeLinkList.map(item => (
+        {testTypeLinkList.map((item) => (
           <Route key={item.link} path={`/${item.link}/edit_qc`}>
-            <Route path='' element={<EditQC link={item.link} name={item.name} />} />
-            {qcTypeLinkList.map(subItem => (
+            <Route
+              path=""
+              element={<EditQC link={item.link} name={item.name} />}
+            />
+            {qcTypeLinkList.map((subItem) => (
               <Route
                 key={subItem.link}
                 path={`${subItem.link}`}
@@ -73,18 +241,29 @@ function App() {
                     name={subItem.name}
                     link={subItem.link}
                     dataType={
-                      subItem.name.includes('Cardiac') ? 'Cardiac' :
-                      subItem.name.includes('Lipid') ? 'Lipid' :
-                      subItem.name.includes('Liver') ? 'Liver' :
-                      subItem.name.includes('Thyroid') ? 'Thyroid' :
-                      subItem.name.includes('Iron') ? 'Iron' :
-                      subItem.name.includes('Drug') ? 'Drug' :
-                      subItem.name.includes('Hormone') ? 'Hormone' :
-                      subItem.name.includes('Pancreatic') ? 'Pancreatic' :
-                      subItem.name.includes('Vitamins') ? 'Vitamins' :
-                      subItem.name.includes('Diabetes') ? 'Diabetes' :
-                      subItem.name.includes('Cancer') ? 'Cancer' :
-                      'General'
+                      subItem.name.includes("Cardiac")
+                        ? "Cardiac"
+                        : subItem.name.includes("Lipid")
+                        ? "Lipid"
+                        : subItem.name.includes("Liver")
+                        ? "Liver"
+                        : subItem.name.includes("Thyroid")
+                        ? "Thyroid"
+                        : subItem.name.includes("Iron")
+                        ? "Iron"
+                        : subItem.name.includes("Drug")
+                        ? "Drug"
+                        : subItem.name.includes("Hormone")
+                        ? "Hormone"
+                        : subItem.name.includes("Pancreatic")
+                        ? "Pancreatic"
+                        : subItem.name.includes("Vitamins")
+                        ? "Vitamins"
+                        : subItem.name.includes("Diabetes")
+                        ? "Diabetes"
+                        : subItem.name.includes("Cancer")
+                        ? "Cancer"
+                        : "General"
                     }
                   />
                 }
@@ -92,23 +271,31 @@ function App() {
             ))}
           </Route>
         ))}
-{testTypeLinkList.map(item => (
-  <Route key={item.link} path={`/${item.link}/build_qc/:type`} element={<CustomQCBuild name={item.name} link='' />} />
-))}
-
-{testTypeLinkList.map(item => (
-  <Route key={item.link} path={`/${item.link}/custom_tests`} element={<CustomTests name={`${item.name} Custom Tests`} />} />
-))}
-
-        {testTypeLinkList.map(item => (
-          <Route key={item.link} path={`/${item.link}/qc_types`} element={<QCTypeButtonsPage name={item.name} link={item.link} />} />
+        {testTypeLinkList.map((item) => (
+          <Route
+            key={item.link}
+            path={`/${item.link}/build_qc/:type`}
+            element={<CustomQCBuild name={item.name} link="" />}
+          />
         ))}
-
-
-
-        <Route path='/unauthorized' element={<Unauthorized />} />
-        <Route path='*' element={<ErrorPage />} />
-      </Routes>
+        {testTypeLinkList.map((item) => (
+          <Route
+            key={item.link}
+            path={`/${item.link}/custom_tests`}
+            element={<CustomTests name={`${item.name} Custom Tests`} />}
+          />
+        ))}
+        {testTypeLinkList.map((item) => (
+          <Route
+            key={item.link}
+            path={`/${item.link}/qc_types`}
+            element={<QCTypeButtonsPage name={item.name} link={item.link} />}
+          />
+        ))}
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="*" element={<ErrorPage />} />
+      </Routes> */}
+      <RouterProvider router={router} />
     </>
   );
 }

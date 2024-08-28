@@ -56,12 +56,12 @@ export function generateRandomId(): string {
 }
 
 export const HormoneLevelList = [
-  { name: "Total Testosterone", acronymName: "TEST" },
-  { name: "Free Testosterone", acronymName: "fTEST" },
-  { name: "Prostate-specific Antigen-Total", acronymName: "tPSA" },
-  { name: "Prostate-specific Antigen-Free", acronymName: "fPSA" },
+  { name: "total Testosterone", acronymName: "TEST" },
+  { name: "free Testosterone", acronymName: "fTEST" },
+  { name: "Prostate Specific Antigen-Total", acronymName: "tPSA" },
+  { name: "Prostate Specific Antigen-Free", acronymName: "fPSA" },
   { name: "Estradiol", acronymName: "E2" },
-  { name: "Follicle-Stimulating Hormone", acronymName: "FSH" },
+  { name: "Follicle Stimulating Hormone", acronymName: "FSH" },
   { name: "Luteinizing Hormone", acronymName: "LH" },
   { name: "Progesterone", acronymName: "PROG" },
   { name: "Sex Hormone Binding Globulin", acronymName: "SHBG" },
@@ -86,35 +86,35 @@ export const IronLevelList = [
   { name: "Ferritin", acronymName: "Ferr" }
 ];
 export const LipidLevelList = [
-  { name: "Cholesterol", acronymName: "CholL" },
-  { name: "High-Density Lipoprotein", acronymName: "HDL" },
-  { name: "Low-Density Lipoprotein", acronymName: "LDL" },
+  { name: "Cholesterol", acronymName: "Chol" },
+  { name: "High-Density Lipoproteins", acronymName: "HDL" },
+  { name: "Low-Density Lipoproteins", acronymName: "LDL" },
   { name: "Triglycerides, Total", acronymName: "Trig" }
 ];
 export const LiverLevelList = [
   { name: "Alanine Aminotransferase", acronymName: "ALT" },
   { name: "Aspartate Aminotransferase", acronymName: "AST" },
   { name: "Alkaline Phosphatase", acronymName: "ALP" },
-  { name: "Gamma-glutamyl transferase", acronymName: "GGT" },
+  { name: "Gamma Glutamyl transferase", acronymName: "GGT" },
   { name: "Albumin", acronymName: "ALB" },
   { name: "Bilirubin", acronymName: "BIL" },
   { name: "Total Protein", acronymName: "TP" }
 ];
 export const ThyroidLevelList = [
-  { name: "Thyroid-stimulating hormone", acronymName: "TSH" },
-  { name: "Triiodothyronine, Total", acronymName: "T₃" },
-  { name: "Thyroxine, Total", acronymName: "T₄" },
+  { name: "Thyroid-Stimulating hormone", acronymName: "TSH" },
+  { name: "TIiodothyronine, Total", acronymName: "T3" },
+  { name: "Thyroxine, Total", acronymName: "T4" },
   { name: "Triiodothyronine, Free", acronymName: "FT₃" },
   { name: "Thyroxine, Free", acronymName: "FT₄" },
-  { name: "Anti-Thyroperoxidase", acronymName: "TPOAb" },
+  { name: "Anti-Thyroid Peroxidase", acronymName: "TPOAb" },
   { name: "Anti-Thyroglobulin", acronymName: "TgAB" }
 ];
 export const CardiacLevelList = [
-  { name: "Trroponin-I", acronymName: "T" },
-  { name: "Creatine kinase", acronymName: "CK" },
-  { name: "Creatine kinase-MB", acronymName: "CK-MB" },
+  { name: "Troponin-I", acronymName: "cTnl" },
+  { name: "Creatine Kinase", acronymName: "CK" },
+  { name: "Creatine Kinase-MB", acronymName: "CK-MB" },
   { name: "Myoglobin", acronymName: "MYO" },
-  { name: "High-sensitivity C-reactive protein", acronymName: "hsCRP" }
+  { name: "High-sensitivity C-reactive Protein", acronymName: "hsCRP" }
 ];
 export const CMPLevelList = [
   { name: "Sodium", acronymName: "Na" },
@@ -128,21 +128,21 @@ export const CMPLevelList = [
   { name: "Albumin", acronymName: "ALB" },
   { name: "Alanine Aminotransferase", acronymName: "ALT" },
   { name: "Aspartate Aminotransferase", acronymName: "AST" },
-  { name: "Akaline Phosphatase", acronymName: "ALP" },
+  { name: "Alkaline Phosphatase", acronymName: "ALP" },
   { name: "Bilirubin", acronymName: "BIL" },
   { name: "Total Protein", acronymName: "TP" }
 ];
 
 export const PancreaticLevelList = [
   { name: "Amylase", acronymName: "AMY" },
-  { name: "Lactase", acronymName: "LIP" },
+  { name: "Lipase", acronymName: "LIP" },
   { name: "Lactate Dehydrogenase", acronymName: "LDH" },
 ];
 
 export const DiabetesLevelList = [
   { name: "Glycated Hemoglobin", acronymName: "HgbA1c" },
-  { name: "Magnesium", acronymName: "MG" },
-  { name: "Phosphorous", acronymName: "Phos" },
+  { name: "Magnesium", acronymName: "Mg" },
+  { name: "Phosphorus", acronymName: "Phos" },
 ];
 
 export const CancerLevelList = [

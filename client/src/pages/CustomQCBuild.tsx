@@ -32,6 +32,7 @@ import {
   DropResult,
   Droppable,
 } from "react-beautiful-dnd";
+import NavBar from "../components/NavBar";
 
 interface QCRangeElements {
   analyteName: string;
@@ -559,40 +560,7 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
 
   return (
     <>
-      <div
-        className={`bg-[${theme.primaryColor}] relative`}
-        style={{ minWidth: "100svw", minHeight: "10svh" }}
-      >
-        <Icon
-          icon="fa6-solid:bars"
-          className="absolute px-2 text-white text-5xl top-[20%] left-4 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
-          onClick={() => openDrawer(true)}
-        />
-        <div className="navbar-title sm:leading-loose text-center text-white font-bold sm:text-4xl text-3xl my-0 mx-auto max-sm:w-1/2 max-sm:leading-10">
-          Custom QC Builder
-        </div>
-        <div className="home-icon">
-          <Link to="/home">
-            <Icon
-              icon="material-symbols:home"
-              className="absolute p-1 text-white text-5xl top-[20%] right-16 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
-            />
-          </Link>
-        </div>
-        {isAuthenticated && (
-          <div className="logout-icon">
-            <Icon
-              icon="mdi:logout"
-              className="absolute text-white sm:text-5xl self-center sm:right-4 sm:top-4 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md p-1"
-              onClick={() => {
-                logout();
-                navigate("/login");
-              }}
-            />
-          </div>
-        )}
-      </div>
-
+      <NavBar name="Custom QC Builder" />
       {showDrag && (
         <DragDropContext onDragEnd={onDragEnd}>
           <div
