@@ -61,7 +61,6 @@ export const AuthProvider = (props: AuthProviderProps) => {
         const token = JSON.parse(tokenString);
         login(tokenString, token.initials, token.username, token.userType);
 
-        // console.log(token);
         return true;
       }
       return false;

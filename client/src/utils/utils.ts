@@ -1,5 +1,5 @@
 import { clsx, type ClassValue } from "clsx"
-import { Component } from "lucide-react";
+import { Component, MonitorCheck } from "lucide-react";
 import { twMerge } from "tailwind-merge"
 
 
@@ -13,30 +13,30 @@ export const testTypeLinkList = [
   {link: "molecular", name: "Molecular"},
 ];
 export const qcTypeLinkList = [
-  {name:"CMP Level I", link:'Cmp_1', component: 'TestInputPage'},
-  {name:"CMP Level II", link: "cmp_2", component: 'TestInputPage'},
-  {name:"Cardiac Level I", link: "cardiac_1", component: 'TestInputPageCardic'},
-  {name:"Cardiac Level II", link: "cardiac_2", component: 'TestInputPageCardic'},
-  {name:"Thyroid Level I", link: "thyroid_1"},
-  {name:"Thyroid Level II", link: "thyroid_2"},
-  {name:"Liver Level I", link: "liver_1"},
-  {name:"Liver Level II", link: "liver_2"},
-  {name:"Lipid Level I", link: "lipid_1"},
-  {name:"Lipid Level II", link: "lipid_2"},
-  {name:"Iron Studies Level I", link: "iron_1"},
-  {name:"Iron Studies Level II", link: "iron_2"},
-  {name:"Drug Screen Level I", link: "drug_1"},
-  {name:"Drug Screen Level II", link: "drug_2"},
-  {name:"Hormone Level I", link: "hormone_1"},
-  {name:"Hormone Level II", link: "hormone_2"},
-  {name: "Pancreatic Level I" , link: "pancreatic_1"},
-  {name: "Pancreatic Level II", link: "pancreatic_2"},
-  {name: "Vitamins Level I", link: "vitamins_1"},
-  {name: "Vitamins Level II", link: "vitamins_2"},
-  {name: "Diabetes Level I", link: "Diabetes_1"},
-  {name: "Diabetes Level II", link: "Diabetes_2"},
-  {name: "Cancer Level I", link: "Cancer_1"},
-  {name: "Cancer Level II", link: "Cancer_2"},
+  {name:"CMP Level I", link:'Cmp_1', component: 'TestInputPage', mockData : 'CMP'},
+  {name:"CMP Level II", link: "cmp_2", component: 'TestInputPage', mockData : 'CMP'},
+  {name:"Cardiac Level I", link: "cardiac_1", component: 'TestInputPageCardic', mockData : 'Cardiac'},
+  {name:"Cardiac Level II", link: "cardiac_2", component: 'TestInputPageCardic', mockData : 'Cardiac'},
+  {name:"Thyroid Level I", link: "thyroid_1", mockData : 'Thyroid'},
+  {name:"Thyroid Level II", link: "thyroid_2", mockData : 'Thyroid'},
+  {name:"Liver Level I", link: "liver_1", mockData : 'Liver'},
+  {name:"Liver Level II", link: "liver_2", mockData : 'Liver'},
+  {name:"Lipid Level I", link: "lipid_1", mockData : 'Lipid'},
+  {name:"Lipid Level II", link: "lipid_2", MockData : 'Lipid'},
+  {name:"Iron Studies Level I", link: "iron_1", mockData : 'Iron'},
+  {name:"Iron Studies Level II", link: "iron_2",mockData : 'Iron'},
+  {name:"Drug Screen Level I", link: "drug_1", mockData: 'Drug'},
+  {name:"Drug Screen Level II", link: "drug_2", mockData: 'Drug'},
+  {name:"Hormone Level I", link: "hormone_1", mockData: 'Hormone'},
+  {name:"Hormone Level II", link: "hormone_2", mockData: 'Hormone'},
+  {name: "Pancreatic Level I" , link: "pancreatic_1", mockData: 'Pancreatic'},
+  {name: "Pancreatic Level II", link: "pancreatic_2", mockData: 'Pancreatic'},
+  {name: "Vitamins Level I", link: "vitamins_1", mockData: 'Vitamins'},
+  {name: "Vitamins Level II", link: "vitamins_2", mockData: 'Vitamins'},
+  {name: "Diabetes Level I", link: "Diabetes_1", mockData: 'Diabetes'},
+  {name: "Diabetes Level II", link: "Diabetes_2", mockData: 'Diabetes'},
+  {name: "Cancer Level I", link: "Cancer_1", mockData: 'Cancer'},
+  {name: "Cancer Level II", link: "Cancer_2", mockData: 'Cancer'},
 
 ];
 

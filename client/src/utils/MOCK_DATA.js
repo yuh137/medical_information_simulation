@@ -638,11 +638,6 @@ export const Lipid = [
 
 
 
-
-
-
-
-
 export const Iron = [
   {
     analyteName: "Iron, Total",

@@ -51,18 +51,16 @@ const OrderControls = () => {
       }
     }
   };
-
-  const handleClearSelection = () => {
-    const newOrderControlsItems = [...OrderControlsItems, ...SelectedQCItems];
-  
-    setOrderControlsItems(newOrderControlsItems);
-    setSelectedQCItems([]);
-  };
-
   const handleOrderSelectedQC = () => {
     localStorage.setItem('selectedQCItems', JSON.stringify(SelectedQCItems));
-};
-
+    console.log("QC Items ordered: ", SelectedQCItems);
+  };
+  
+  const handleClearSelection = () => {
+    setSelectedQCItems([]);
+    localStorage.removeItem('selectedQCItems');  // Clear local storage
+  };
+  
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>

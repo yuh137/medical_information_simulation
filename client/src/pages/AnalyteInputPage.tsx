@@ -1,11 +1,12 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import Analyte from "../components/Analyte";
 import NavBar from "../components/NavBar";
+import { getQCRangeByDetails } from "../utils/indexedDB/getData";
 import { Button, ButtonBase, Modal } from "@mui/material";
 import { useTheme } from "../context/ThemeContext";
 import { renderSubString } from "../utils/utils";
-import { getQCRangeByName } from "../utils/indexedDB/getData";
 import { QCTemplateBatch } from "../utils/indexedDB/IDBSchema";
+import { saveToDB } from "../utils/indexedDB/getData";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
   Document,
@@ -17,14 +18,17 @@ import {
 } from "@react-pdf/renderer";
 import { createTw } from "react-pdf-tailwind";
 import { useAuth } from "../context/AuthContext";
+import { useParams } from "react-router-dom";
 
-const AnalyteInputPage = (props: { name: string, link: string }) => {
+const AnalyteInputPage = (props: { name: string, link: string } ) => {
   const { theme } = useTheme();
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const analyteNameRefs = useRef<HTMLDivElement[]>([]);
 
+  const [records, setRecords] = useState([]);
+  const [selectedRecord, setSelectedRecord] = useState(null);
   const { username } = useAuth();
-
+ 
   // Function to print out the report pdf file
   const reportPDF = (analyteValues?: string[], QCData?: QCTemplateBatch) => {
     const currentDate = new Date();
@@ -90,19 +94,20 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
     )
   }
 
-  const openPDF = async () => {
+ /*const openPDF = async () => {
     const blob = await pdf(reportPDF(analyteValues, QCData)).toBlob();
     const pdfUrl = URL.createObjectURL(blob);
     window.open(pdfUrl, "_blank");
-  }
+  }*/
 
   // const [isValid, setIsValid] = useState<boolean>(false);
   const [isInputFull, setIsInputFull] = useState<boolean>(false);
   const [analyteValues, setAnalyteValues] = useState<string[]>([]);
   const [invalidIndexes, setInvalidIndexes] = useState<Set<number> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [QCData, setQCData] = useState<QCTemplateBatch>();
   const [modalData, setModalData] = useState<{ invalidIndex: number, comment: string }[]>([]);
+  const { fileName, lotNumber, closedDate } = useParams<{ fileName: string, lotNumber: string, closedDate: string }>();
+  const [QCData, setQCData] = useState<QCTemplateBatch | null>(null);
 
   const invalidIndexArray: number[] | null = useMemo(() => {
     if (!invalidIndexes) return null;
@@ -148,7 +153,41 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
       return updatedValues;
     })
   }
+  
+  
+  const handleAcceptQC = async () => {
+    if (!QCData) {
+        console.error("No QC data available to save.");
+        return;
+    }
 
+    // Prepare the data to be saved
+    const qcDataToSave: QCTemplateBatch = {
+      ...QCData,
+      analytes: QCData.analytes.map((analyte, index) => ({
+          ...analyte,
+          value: analyteValues[index], // Ensure this is the correct format and key
+      })),
+  };
+  
+
+    console.log("Data to save:", qcDataToSave); // Debug log
+
+    try {
+        await saveToDB("qc_store", qcDataToSave);
+        console.log("QC data saved successfully.");
+
+        // Optionally, you might want to reset or clear the form after saving
+        setAnalyteValues([]);
+        setInvalidIndexes(null);
+        setModalData([]);
+        setIsModalOpen(false);
+    } catch (error) {
+        console.error("Error saving QC data:", error);
+    }
+};
+
+  
   function handleInputChange(
     index: number,
     value: string,
@@ -183,13 +222,15 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
     setIsInputFull(newValues.length === QCData?.analytes.length && newValues.length > 0);
   }
 
-  useEffect(() => {
-    (async () => {
-      const res = await getQCRangeByName(props.name);
+useEffect(() => {
+  const storedQCData = localStorage.getItem('selectedQCData');
+  if (storedQCData) {
+    setQCData(JSON.parse(storedQCData));
+  } else {
+    console.error("No QC data found.");
+  }
+}, []);
 
-      if (res) setQCData(res);
-    })();
-  }, [])
 
   useEffect(() => {
     console.log(invalidIndexes, invalidIndexArray, isValid)
@@ -264,7 +305,7 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
                   : "!bg-[#AFABAB] !text-white"
               }`}
               disabled={!isValidManual && !isValid}
-              onClick={() => openPDF()}
+            //  onClick={() => openPDF()}
             >
               Print QC
             </Button>
@@ -275,6 +316,7 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
                   : "!bg-[#AFABAB] !text-white"
               }`}
               disabled={!isValid}
+              onClick= {() => handleAcceptQC()}
              >
               Accept QC
             </Button>
