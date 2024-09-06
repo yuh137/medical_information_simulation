@@ -9,7 +9,6 @@ function initIDB() {
                 db.deleteObjectStore("qc_store");
             }
             var qcStore = db.createObjectStore("qc_store", { keyPath: ["fileName", "lotNumber", "closedDate"] });
-            qcStore.createIndex("by_fileName", "fileName", { unique: false });
         };
         request.onerror = function () {
             console.error("Database initialization failed", request.error);

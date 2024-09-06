@@ -192,7 +192,7 @@ export function getStudentByName(name: string): Promise<Student | null> {
     })
 }
 
-export function getQCRangeByName(name: string): Promise<QCTemplateBatch | null> {
+/*export function getQCRangeByName(name: string): Promise<QCTemplateBatch | null> {
     return new Promise((resolve) => {
         let request = indexedDB.open("MIS_database");
 
@@ -221,7 +221,7 @@ export function getQCRangeByName(name: string): Promise<QCTemplateBatch | null> 
             }
         }
     })
-}
+}*/
 export function getAllDataByFileName(storeName: string, fileName: string): Promise<QCTemplateBatch[]> {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open("MIS_database");

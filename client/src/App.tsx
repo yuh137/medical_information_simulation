@@ -63,11 +63,10 @@ function App() {
         { path: 'order_controls', element: <OrderControls /> },
         {
           path: '/simple-analyte-input-page',
-          element: <SimpleAnalyteInputPage name="Some Name" />,  // Ensure 'name' is provided
+          element: <SimpleAnalyteInputPage name="Some Name" />,  
         },
         
         
-        // Mapping over testTypeLinkList to create routes dynamically
         ...testTypeLinkList.map((item) => ({
           path: `${item.link}/qc_results`,
           children: [
@@ -75,7 +74,6 @@ function App() {
               index: true,
               element: <QC_Results link={item.link} name={item.name} />,
             },
-          // Ensure this route is included in your router setup
           ],
           }
         )),

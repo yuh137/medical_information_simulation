@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.saveToDB = exports.getQCRangeByDetails = exports.getAllDataByFileName = exports.getQCRangeByName = exports.getStudentByName = exports.getAdminByName = exports.getDataByKey = exports.getDataByCompositeKey = exports.getAllDataFromStore = void 0;
+exports.saveToDB = exports.getQCRangeByDetails = exports.getAllDataByFileName = exports.getStudentByName = exports.getAdminByName = exports.getDataByKey = exports.getDataByCompositeKey = exports.getAllDataFromStore = void 0;
 function getAllDataFromStore(storeName) {
     return new Promise(function (resolve) {
         var request = indexedDB.open("MIS_database");
@@ -212,36 +212,36 @@ function getStudentByName(name) {
     });
 }
 exports.getStudentByName = getStudentByName;
-function getQCRangeByName(name) {
-    return new Promise(function (resolve) {
-        var request = indexedDB.open("MIS_database");
-        request.onsuccess = function () {
+/*export function getQCRangeByName(name: string): Promise<QCTemplateBatch | null> {
+    return new Promise((resolve) => {
+        let request = indexedDB.open("MIS_database");
+
+        request.onsuccess = () => {
             console.log("Request success - getQCRangeByName");
-            var db = request.result;
-            var trans = db.transaction("qc_store", "readonly");
-            var store = trans.objectStore("qc_store");
-            var res = store.get(name);
-            res.onsuccess = function () {
+            const db = request.result;
+            const trans = db.transaction("qc_store", "readonly");
+            const store = trans.objectStore("qc_store");
+            const res = store.get(name);
+
+            res.onsuccess = () => {
                 console.log("getQCRangeByName success");
                 resolve(res.result);
-            };
-            res.onerror = function () {
-                var _a;
-                var error = (_a = res.error) === null || _a === void 0 ? void 0 : _a.message;
+            }
+
+            res.onerror = () => {
+                const error = res.error?.message;
                 console.log("getQCRangeByName - error");
                 if (error) {
                     console.log(error);
                     resolve(null);
-                }
-                else {
+                } else {
                     console.log("Data does not exist");
                     resolve(null);
                 }
-            };
-        };
-    });
-}
-exports.getQCRangeByName = getQCRangeByName;
+            }
+        }
+    })
+}*/
 function getAllDataByFileName(storeName, fileName) {
     return new Promise(function (resolve, reject) {
         var request = indexedDB.open("MIS_database");

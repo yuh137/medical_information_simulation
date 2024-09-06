@@ -7,7 +7,6 @@ export default function initIDB(): Promise<boolean> {
                 db.deleteObjectStore("qc_store");
             }
             const qcStore = db.createObjectStore("qc_store", { keyPath: ["fileName", "lotNumber", "closedDate"] });
-            qcStore.createIndex("by_fileName", "fileName", { unique: false });
         };
   
         request.onerror = () => {
