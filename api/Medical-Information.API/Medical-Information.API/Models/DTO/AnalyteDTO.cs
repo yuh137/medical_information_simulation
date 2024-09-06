@@ -12,7 +12,6 @@ namespace Medical_Information.API.Models.DTO
         public float MaxLevel { get; set; }
         public float Mean { get; set; }
         public float StdDevi { get; set; }
-        public bool Electrolyte { get; set; }
         public Guid AdminQCLotID { get; set; }
         public AdminQCLotDTO AdminQCLotDTO { get; set; }
     }

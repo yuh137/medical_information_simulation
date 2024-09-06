@@ -8,10 +8,12 @@ namespace Medical_Information.API.Repositories.SQLImplementation
     public class SQLAdminQCLotRepository : IAdminQCLotRepository
     {
         private readonly MedicalInformationDbContext dbContext;
+        private readonly MedicalInformationAuthDbContext authContext;
 
-        public SQLAdminQCLotRepository(MedicalInformationDbContext dbContext)
+        public SQLAdminQCLotRepository(MedicalInformationDbContext dbContext, MedicalInformationAuthDbContext authContext)
         {
             this.dbContext = dbContext;
+            this.authContext = authContext;
         }
         public async Task<AdminQCLot> CreateQCLotAsync(AdminQCLot qclot)
         {

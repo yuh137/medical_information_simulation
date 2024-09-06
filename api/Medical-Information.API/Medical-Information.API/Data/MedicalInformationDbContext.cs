@@ -1,11 +1,12 @@
 ﻿using Medical_Information.API.Models.Domain;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Medical_Information.API.Data
 {
     public class MedicalInformationDbContext : DbContext
     {
-        public MedicalInformationDbContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
+        public MedicalInformationDbContext(DbContextOptions<MedicalInformationDbContext> dbContextOptions) : base(dbContextOptions)
         {
             
         }
@@ -14,6 +15,8 @@ namespace Medical_Information.API.Data
         public DbSet<AdminQCLot> AdminQCLots { get; set; }
         public DbSet<Analyte> Analytes { get; set; }
         public DbSet<Student> Students { get; set; }
+        public DbSet<StudentReport> StudentReports { get; set; }
+        public DbSet<AnalyteInput> AnalyteInputs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,7 +48,6 @@ namespace Medical_Information.API.Data
                     MaxLevel = 0,
                     Mean = 0,
                     StdDevi = 0,
-                    Electrolyte = true,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
                     //AdminQCLot = mockQCLot,
                 },
@@ -59,7 +61,6 @@ namespace Medical_Information.API.Data
                     MaxLevel = 0,
                     Mean = 0,
                     StdDevi = 0,
-                    Electrolyte = true,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
                     //AdminQCLot = mockQCLot,
                 },
@@ -73,7 +74,6 @@ namespace Medical_Information.API.Data
                     MaxLevel = 0,
                     Mean = 0,
                     StdDevi = 0,
-                    Electrolyte = true,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
                     //AdminQCLot = mockQCLot,
                 },
@@ -87,7 +87,6 @@ namespace Medical_Information.API.Data
                     MaxLevel = 0,
                     Mean = 0,
                     StdDevi = 0,
-                    Electrolyte = true,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
                     //AdminQCLot = mockQCLot,
                 },
@@ -101,7 +100,6 @@ namespace Medical_Information.API.Data
                     MaxLevel = 0,
                     Mean = 0,
                     StdDevi = 0,
-                    Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
                     //AdminQCLot = mockQCLot,
                 },
@@ -115,7 +113,6 @@ namespace Medical_Information.API.Data
                     MaxLevel = 0,
                     Mean = 0,
                     StdDevi = 0,
-                    Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
                     //AdminQCLot = mockQCLot,
                 },
@@ -129,7 +126,6 @@ namespace Medical_Information.API.Data
                     MaxLevel = 0,
                     Mean = 0,
                     StdDevi = 0,
-                    Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
                     //AdminQCLot = mockQCLot,
                 },
@@ -143,7 +139,6 @@ namespace Medical_Information.API.Data
                     MaxLevel = 0,
                     Mean = 0,
                     StdDevi = 0,
-                    Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
                     //AdminQCLot = mockQCLot,
                 },
@@ -157,7 +152,6 @@ namespace Medical_Information.API.Data
                     MaxLevel = 0,
                     Mean = 0,
                     StdDevi = 0,
-                    Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
                     //AdminQCLot = mockQCLot,
                 },
@@ -171,7 +165,6 @@ namespace Medical_Information.API.Data
                     MaxLevel = 0,
                     Mean = 0,
                     StdDevi = 0,
-                    Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
                     //AdminQCLot = mockQCLot,
                 },
@@ -185,7 +178,6 @@ namespace Medical_Information.API.Data
                     MaxLevel = 0,
                     Mean = 0,
                     StdDevi = 0,
-                    Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
                     //AdminQCLot = mockQCLot,
                 },
@@ -199,7 +191,6 @@ namespace Medical_Information.API.Data
                     MaxLevel = 0,
                     Mean = 0,
                     StdDevi = 0,
-                    Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
                     //AdminQCLot = mockQCLot,
                 },
@@ -213,7 +204,6 @@ namespace Medical_Information.API.Data
                     MaxLevel = 0,
                     Mean = 0,
                     StdDevi = 0,
-                    Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
                     //AdminQCLot = mockQCLot,
                 },
@@ -227,7 +217,6 @@ namespace Medical_Information.API.Data
                     MaxLevel = 0,
                     Mean = 0,
                     StdDevi = 0,
-                    Electrolyte = false,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
                     //AdminQCLot = mockQCLot,
                 },

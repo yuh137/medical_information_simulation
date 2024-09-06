@@ -3,12 +3,14 @@ using Medical_Information.API.CustomActionFilter;
 using Medical_Information.API.Models.Domain;
 using Medical_Information.API.Models.DTO;
 using Medical_Information.API.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Medical_Information.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class AdminsController : ControllerBase
     {
         private readonly IAdminRepository adminRepository;
@@ -21,6 +23,7 @@ namespace Medical_Information.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllAdmins([FromQuery] string? filterQuery)
         {
             var adminsDomain = await adminRepository.GetAdminAsync(filterQuery);
@@ -32,6 +35,7 @@ namespace Medical_Information.API.Controllers
 
         [HttpGet]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAdminById([FromRoute] Guid id)
         {
             var adminDomain = await adminRepository.GetAdminByIdAsync(id);
@@ -61,6 +65,7 @@ namespace Medical_Information.API.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateAdmin([FromRoute] Guid id, [FromBody] UpdatePasswordDTO updatePasswordDTO)
         {
             var adminDomain = await adminRepository.UpdateAdminPasswordAsync(id, updatePasswordDTO);
@@ -77,6 +82,7 @@ namespace Medical_Information.API.Controllers
 
         [HttpDelete]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAdmin([FromRoute] Guid id)
         {
             var adminModel = await adminRepository.DeleteAdminAsync(id);
