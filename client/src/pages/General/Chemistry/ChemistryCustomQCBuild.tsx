@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 import {
   ColumnDef,
   flexRender,
@@ -14,25 +14,25 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../components/ui/table";
-import { CMP, Cardiac, Thyroid, Iron, Lipid, Liver, Drug, Hormone, Pancreatic, Diabetes, Cancer, Vitamins } from "../utils/MOCK_DATA";
-import { renderSubString } from "../utils/utils";
-import { CMPLevelList, CardiacLevelList, HormoneLevelList, ThyroidLevelList, LipidLevelList, LiverLevelList, IronLevelList, DrugLevelList, PancreaticLevelList, DiabetesLevelList, CancerLevelList, VitaminsLevelList } from "../utils/utils";
+} from "../../../components/ui/table";
+import { CMP, Cardiac, Thyroid, Iron, Lipid, Liver, Drug, Hormone, Pancreatic, Diabetes, Cancer, Vitamins } from "../../../utils/MOCK_DATA";
+import { renderSubString } from "../../../utils/utils";
+import { CMPLevelList, CardiacLevelList, HormoneLevelList, ThyroidLevelList, LipidLevelList, LiverLevelList, IronLevelList, DrugLevelList, PancreaticLevelList, DiabetesLevelList, CancerLevelList, VitaminsLevelList } from "../../../utils/utils";
 import { ButtonBase, Checkbox, Drawer } from "@mui/material";
 import { Icon } from "@iconify/react";
-import { useTheme } from "../context/ThemeContext";
-import addData from "../utils/indexedDB/addData";
-import { QCTemplateBatch } from "../utils/indexedDB/IDBSchema";
+import { useTheme } from "../../../context/ThemeContext";
+import addData from "../../../utils/indexedDB/addData";
+import { QCTemplateBatch } from "../../../utils/indexedDB/IDBSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { getDataByKey } from "../utils/indexedDB/getData";
-import { deleteData } from "../utils/indexedDB/deleteData";
+import { getDataByKey } from "../../../utils/indexedDB/getData";
+import { deleteData } from "../../../utils/indexedDB/deleteData";
 import {
   DragDropContext,
   Draggable,
   DropResult,
   Droppable,
 } from "react-beautiful-dnd";
-import NavBar from "../components/NavBar";
+import NavBar from "../../../components/NavBar";
 
 interface QCRangeElements {
   analyteName: string;
@@ -56,9 +56,9 @@ interface DraggableItem {
   acronymName: string;
 }
 
-const CustomQCBuild = (props: { name: string; link: string }) => {
+const ChemistryCustomQCBuild = (props: { name: string }) => {
   const navigate = useNavigate();
-  const { type } = useParams();
+  const { item } = useParams();
   const [draggableItems, setDraggableItems] = useState<DraggableItem[]>([]);
   const [SelectedQCItems, setSelectedQCItems] = useState<string[]>([]);
   const [OrderControlsItems, setOrderControlsItems] = useState<string[]>([]);
@@ -441,7 +441,7 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
   }, []);
 
   useEffect(() => {
-    switch (type) {
+    switch (item) {
       case "Cmp_1":
       case "cmp_2":
         setOrderControlsItems(CMPLevelList.map((item) => item.name));
@@ -519,7 +519,7 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
         setDraggableItems([]);
         setQCElements([]);
     }
-  }, [type]);
+  }, [item]);
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
@@ -745,7 +745,7 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
       >
         <div className="drawer-container sm:w-[18svw] sm:h-full bg-[#CFD5EA] flex flex-col items-center py-4 sm:space-y-6">
           <div className="filename-label sm:text-3xl font-semibold">
-            {props.name}
+            Chemistry
           </div>
           <div className="lotnumber-input flex flex-col items-center sm:w-[86%] py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2">
             <div className="lotnumber-label sm:text-xl font-semibold text-white">
@@ -791,4 +791,4 @@ const CustomQCBuild = (props: { name: string; link: string }) => {
   );
 };
 
-export default CustomQCBuild;
+export default ChemistryCustomQCBuild;

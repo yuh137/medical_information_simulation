@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
-import NavBar from "../../components/NavBar";
-import { qcTypeLinkList } from "../../utils/utils"; 
+import NavBar from "../../../components/NavBar";
+import { qcTypeLinkList } from "../../../utils/utils"; 
 
 import {
   DragDropContext,
@@ -10,7 +10,7 @@ import {
 } from "react-beautiful-dnd";
 import { ButtonBase } from "@mui/material"
 
-const OrderControls = () => {
+const ChemistryOrderControls = () => {
   const [SelectedQCItems, setSelectedQCItems] = useState<string[]>([]);
   const [OrderControlsItems, setOrderControlsItems] = useState<string[]>(
     qcTypeLinkList.map(qc => qc.name) // I change this to qctypelinklist from utils from manually defining each draggable
@@ -66,7 +66,7 @@ const OrderControls = () => {
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
-        <NavBar name="Order Controls" />
+        <NavBar name="Chesmistry Order Controls" />
         <div
           className="flex justify-center gap-32 items-center"
           style={{ minWidth: "100svw", minHeight: "90svh" }}
@@ -181,4 +181,4 @@ const OrderControls = () => {
   );
 };
 
-export default OrderControls;
+export default ChemistryOrderControls;

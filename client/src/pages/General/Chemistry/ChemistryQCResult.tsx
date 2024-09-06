@@ -1,4 +1,4 @@
-  import {
+import {
     ColumnDef,
     flexRender,
     getCoreRowModel,
@@ -6,7 +6,7 @@
     useReactTable,
   } from "@tanstack/react-table";
 import React, { memo, useState, useEffect, useMemo } from "react";
-import NavBar from "../components/NavBar";
+import NavBar from "../../../components/NavBar";
 import {
   Table,
   TableBody,
@@ -14,13 +14,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../components/ui/table";
+} from "../../../components/ui/table";
 import { Button } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useNavigate, useLocation, useLoaderData } from "react-router-dom";
-import { generateRandomId } from "../utils/utils";
-import { qcTypeLinkList } from "../utils/utils";
-import { QCTemplateBatch } from "../utils/indexedDB/IDBSchema";
+import { generateRandomId } from "../../../utils/utils";
+import { qcTypeLinkList } from "../../../utils/utils";
+import { QCTemplateBatch } from "../../../utils/indexedDB/IDBSchema";
 
 interface QCItem {
   lotnum: string;
@@ -46,7 +46,7 @@ const columns: ColumnDef<QCItem | undefined, string>[] = [
   },
 ];
 
-const QC_Results = (props: { name: string, link: string }) => {
+const ChemistryQCResult = (props: { name: string, link: string }) => {
   const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = useState<string | null>();
   const [selectedRowData, setSelectedRowData] = useState<{ [key: string]: any }>();
@@ -197,4 +197,4 @@ const qc_items = useMemo(() => (
   );
 };
 
-export default QC_Results;
+export default ChemistryQCResult;

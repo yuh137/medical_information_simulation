@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
 import {
   ColumnDef,
   RowData,
@@ -15,18 +15,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../components/ui/table";
-import { CMP,Cardiac, Thyroid, Liver, Lipid, Iron, Drug, Hormone, Cancer, Pancreatic, Vitamins, Diabetes} from "../utils/MOCK_DATA";
-import { renderSubString } from "../utils/utils";
+} from "../../../components/ui/table";
+import { CMP,Cardiac, Thyroid, Liver, Lipid, Iron, Drug, Hormone, Cancer, Pancreatic, Vitamins, Diabetes} from "../../../utils/MOCK_DATA";
+import { renderSubString } from "../../../utils/utils";
 import { ButtonBase, Checkbox, Drawer } from "@mui/material";
 import { Icon } from "@iconify/react";
-import { useTheme } from "../context/ThemeContext";
-import addData from "../utils/indexedDB/addData";
-import { QCTemplateBatch } from "../utils/indexedDB/IDBSchema";
+import { useTheme } from "../../../context/ThemeContext";
+import addData from "../../../utils/indexedDB/addData";
+import { QCTemplateBatch } from "../../../utils/indexedDB/IDBSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { getDataByKey } from "../utils/indexedDB/getData";
-import { deleteData } from "../utils/indexedDB/deleteData";
-import NavBar from "../components/NavBar";
+import { getDataByKey } from "../../../utils/indexedDB/getData";
+import { deleteData } from "../../../utils/indexedDB/deleteData";
+import NavBar from "../../../components/NavBar";
 
 interface QCRangeElements {
   analyteName: string;
@@ -40,29 +40,29 @@ interface QCRangeElements {
 }
 
 
-export const TestInputPage = (props: { name: string; link: string, dataType?: string  }) => {
+export const ChemistryTestInputPage = (props: { name: string }) => {
   const navigate = useNavigate();
+  const { item } = useParams();
   const { checkSession, checkUserType, isAuthenticated, logout } = useAuth();
   const { theme } = useTheme();
-  const { dataType } = props;
   const initialData = 
-    dataType === 'Cardiac' ? Cardiac :
-    dataType === 'Lipid' ? Lipid :
-    dataType === 'Thyroid' ? Thyroid :
-    dataType === 'Liver' ? Liver :
-    dataType === 'Iron' ? Iron :
-    dataType === 'Drug' ? Drug:
-    dataType === 'Hormone' ? Hormone :
-    dataType === 'Cancer' ? Cancer :
-    dataType === 'Pancreatic' ? Pancreatic :
-    dataType === 'Vitamins' ? Vitamins :
-    dataType === 'Diabetes' ? Diabetes :
+    item?.includes('cardiac') ? Cardiac :
+    item?.includes('lipid') ? Lipid :
+    item?.includes('thyroid') ? Thyroid :
+    item?.includes('liver') ? Liver :
+    item?.includes('iron') ? Iron :
+    item?.includes('drug') ? Drug:
+    item?.includes('hormone') ? Hormone :
+    item?.includes('cancer') ? Cancer :
+    item?.includes('pancreatic') ? Pancreatic :
+    item?.includes('vitamins') ? Vitamins :
+    item?.includes('diabetes') ? Diabetes :
     CMP;
-    console.log("DataType:", dataType);
+    console.log("DataType:", item);
 
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(initialData);
   const [isValid, setIsValid] = useState<boolean>(false);
-  const [isDrawerOpen, openDrawer] = useState<boolean>(false);
+  // const [isDrawerOpen, openDrawer] = useState<boolean>(false);
   const { register, handleSubmit } = useForm<QCTemplateBatch>();
   const saveQC: SubmitHandler<QCTemplateBatch> = async (data) => {
     const check = await getDataByKey<QCTemplateBatch>("qc_store", props.name);
@@ -247,8 +247,6 @@ export const TestInputPage = (props: { name: string; link: string, dataType?: st
             <TableBody onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 const minInputArray = inputRefs.current.filter(item => inputRefs.current.indexOf(item) % 4 === 1);
-
-                // console.log(minInputArray);
 
                 minInputArray.forEach(item => {
                   if (+inputRefs.current[inputRefs.current.indexOf(item) + 1].value < +item.value || item.value === '' || (inputRefs.current[inputRefs.current.indexOf(item) + 1].value === '0' && item.value === '0')) {
@@ -470,36 +468,6 @@ export const TestInputPage = (props: { name: string; link: string, dataType?: st
           Save QC File
         </ButtonBase>
       </div>
-      {/* <Drawer
-        anchor='left'
-        open={isDrawerOpen}
-        onClose={() => openDrawer(false)}
-      >
-        <div className="drawer-container sm:w-[18svw] sm:h-full bg-[#CFD5EA] flex flex-col items-center py-4 sm:space-y-6">
-          <div className="filename-label sm:text-3xl font-semibold">{props.name}</div>
-          
-          <div className="lotnumber-input flex flex-col items-center sm:w-[86%] py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2">
-            <div className="lotnumber-label sm:text-xl font-semibold text-white">QC Lot Number</div>
-            <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] text-center" {...register("lotNumber")}/>
-          </div>
-          <div className="expiration-box sm:w-[86%] sm:h-64 bg-[#3A6CC6] rounded-xl">
-            <div className="expiration-title w-full text-center font-semibold text-lg text-white py-1 bg-[#3A62A7] rounded-t-xl">Expiration date</div>
-            <div className="divider-line w-full h-[1px] bg-black" />
-            <div className="expiration-fields flex flex-col items-center py-2 sm:space-y-4">
-              <div className="expiration-input sm:space-y-2">
-                <div className="open-title text-center sm:text-lg text-white">Open Date</div>
-                <input type="text" className="p-1 rounded-lg border border-solid border-[#000] text-center" {...register("openDate")}/>
-                
-              </div>
-              <div className="expiration-input sm:space-y-2">
-                <div className="closed-title text-center sm:text-lg text-white">Closed Date</div>
-                <input type="text" className="p-1 rounded-lg border border-solid border-[#000] text-center" {...register("closedDate")}/>
-                
-              </div>
-            </div>
-          </div>
-        </div>
-      </Drawer> */}
     </>
   );
 };

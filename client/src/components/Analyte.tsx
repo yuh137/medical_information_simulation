@@ -5,7 +5,7 @@ export interface AnalyteProps {
   name: string;
   acronym: string;
   electro?: boolean;
-  level: number;
+  // level: number;
   min_level: number;
   max_level: number;
   measUnit: string;
@@ -81,8 +81,9 @@ const Analyte = forwardRef((props: AnalyteProps, ref) => {
           <div className="analyte-name peer text-base truncate">{props.name}</div>
           <div className="absolute invisible transition-all ease-in delay-100 peer-hover:visible text-white text-sm bg-slate-500 max-sm:text-center border border-solid border-gray-300 rounded-lg p-2">{props.name}</div>
           <div className="analyte-range text-xs">
-            {props.level === 1 || props.level === 2 ? `Level ${props.level === 1 ? "I" : "II"} range: ${props.min_level} -${" "}
-            ${props.max_level} ${props.measUnit}` : `Range: ${props.min_level} -${" "} ${props.max_level} ${props.measUnit}`}
+            {/* {props.level === 1 || props.level === 2 ? `Level ${props.level === 1 ? "I" : "II"} range: ${props.min_level} -${" "}
+            ${props.max_level} ${props.measUnit}` : `Range: ${props.min_level} -${" "} ${props.max_level} ${props.measUnit}`} */}
+            Range: {props.min_level} - {props.max_level} {props.measUnit}
           </div>
         </div>
       </div>

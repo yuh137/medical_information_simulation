@@ -1,11 +1,11 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
-import Analyte from "../components/Analyte";
-import NavBar from "../components/NavBar";
+import Analyte from "../../../components/Analyte";
+import NavBar from "../../../components/NavBar";
 import { Button, ButtonBase, Modal } from "@mui/material";
-import { useTheme } from "../context/ThemeContext";
-import { renderSubString } from "../utils/utils";
-import { getQCRangeByName } from "../utils/indexedDB/getData";
-import { QCTemplateBatch } from "../utils/indexedDB/IDBSchema";
+import { useTheme } from "../../../context/ThemeContext";
+import { renderSubString } from "../../../utils/utils";
+import { getQCRangeByName } from "../../../utils/indexedDB/getData";
+import { QCTemplateBatch } from "../../../utils/indexedDB/IDBSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
   Document,
@@ -16,9 +16,11 @@ import {
   pdf,
 } from "@react-pdf/renderer";
 import { createTw } from "react-pdf-tailwind";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
+import { useParams } from "react-router-dom";
 
-const AnalyteInputPage = (props: { name: string, link: string }) => {
+const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
+  const { link } = useParams();
   const { theme } = useTheme();
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const analyteNameRefs = useRef<HTMLDivElement[]>([]);
@@ -197,7 +199,7 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
 
   return (
     <>
-      <NavBar name={`${props.name} QC Results`} />
+      <NavBar name={`Chemistry QC Results`} />
       {!QCData ? <div>No data recorded</div> : <></>}
       {QCData && <div
         className=" flex flex-col space-y-12 pb-8 justify-center px-[100px] relative"
@@ -217,7 +219,7 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
                 electro={item.electrolyte}
                 min_level={+item.min_level}
                 max_level={+item.max_level}
-                level={detectLevel(props.name)}
+                // level={detectLevel(props.name)}
                 measUnit={item.unit_of_measure}
                 handleInputChange={(val) => {
                     if (item.min_level !== "" && item.max_level !== "") {
@@ -313,4 +315,4 @@ const AnalyteInputPage = (props: { name: string, link: string }) => {
   );
 };
 
-export default AnalyteInputPage;
+export default ChemistryAnalyteInputPage;

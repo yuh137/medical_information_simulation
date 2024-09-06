@@ -1,21 +1,12 @@
 import React, { useEffect, useState } from "react";
-import NavBar from "../components/NavBar";
-import { useTheme } from "../context/ThemeContext";
+import NavBar from "../../../components/NavBar";
+import { useTheme } from "../../../context/ThemeContext";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { qcTypeLinkList } from "../utils/utils";
+import { useAuth } from "../../../context/AuthContext";
+import { qcTypeLinkList } from "../../../utils/utils";
 import { ButtonBase } from "@mui/material";
 
-
-
-
-
-
-
-
-
-
-const EditQC = (props: { name: string; link: string }) => {
+const ChemistryEditQC = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const { checkSession, checkUserType } = useAuth();
@@ -27,7 +18,7 @@ const EditQC = (props: { name: string; link: string }) => {
 
   return (
     <>
-      <NavBar name={`Edit ${props.name} QC`} />
+      <NavBar name={`Edit Chemistry QC`} />
       <div className="basic-container">
         <div className={`edit-qc-options flex flex-wrap sm:justify-center sm:p-24 sm:h-[150svh] sm:w-[100svw] sm:gap-x-4 mx-auto`}>
           {qcTypeLinkList.map((item) => (
@@ -48,7 +39,7 @@ const EditQC = (props: { name: string; link: string }) => {
           ))}
         </div>
         <div className="button-container flex justify-center sm:-translate-y-12 sm:space-x-36 sm:pb-6">
-          <Link to={`/${props.link}/edit_qc/${selectedItem}`}>
+          <Link to={`/chemistry/edit_qc/${selectedItem}`}>
               <ButtonBase className="sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold">
                 Edit QC File
               </ButtonBase>
@@ -62,4 +53,4 @@ const EditQC = (props: { name: string; link: string }) => {
   );
 };
 
-export default EditQC;
+export default ChemistryEditQC;

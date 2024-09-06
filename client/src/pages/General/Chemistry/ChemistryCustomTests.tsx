@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table";
 import { ButtonBase, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { QCTemplateBatch } from "../utils/indexedDB/IDBSchema";
-import NavBar from "../components/NavBar";
-import { useTheme } from "../context/ThemeContext";
+import { QCTemplateBatch } from "../../../utils/indexedDB/IDBSchema";
+import NavBar from "../../../components/NavBar";
+import { useTheme } from "../../../context/ThemeContext";
 
 interface QCRangeElements {
   analyteName: string;
@@ -24,7 +24,7 @@ interface CustomPanel {
   isOngoing: boolean;
 }
 
-const CustomTests = (props: { name: string }) => {
+const ChemistryCustomTests = () => {
   const [contextMenu, setContextMenu] = useState<{ visible: boolean; x: number; y: number; index: number | null }>({ visible: false, x: 0, y: 0, index: null });
   const [panelName, setPanelName] = useState<string>('');
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
@@ -206,4 +206,4 @@ const CustomTests = (props: { name: string }) => {
   );
 };
 
-export default CustomTests;
+export default ChemistryCustomTests;

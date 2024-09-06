@@ -5,15 +5,15 @@ import { testTypeLinkList } from "../../utils/utils";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
-const OC_options = [
-  { name: "Chemistry", link: "order_controls" },
-  { name: "Hematology/Coag", link: "" },
-  { name: "Microbiology", link: "" },
-  { name: "Serology", link: "" },
-  { name: "UA/Body Fluids", link: "" },
-  { name: "Blood Bank", link: "" },
-  { name: "Molecular", link: "" },
-];
+// const OC_options = [
+//   { name: "Chemistry", link: "order_controls" },
+//   { name: "Hematology/Coag", link: "" },
+//   { name: "Microbiology", link: "" },
+//   { name: "Serology", link: "" },
+//   { name: "UA/Body Fluids", link: "" },
+//   { name: "Blood Bank", link: "" },
+//   { name: "Molecular", link: "" },
+// ];
 
 
 const QC_ReviewOptions = [
@@ -26,6 +26,7 @@ const QC_ReviewOptions = [
   { name: "Molecular", link: "" },
 ];
 
+const OC_options: { name: string, link: string }[] = testTypeLinkList.map(item => Object({ name: item.name, link: item.link + "/order_controls" }));
 const QB_options: { name: string, link: string }[] = testTypeLinkList.map(item => Object({ name: item.name, link: item.link + "/qc_builder" }));
 
 const FacultyQualityControls = () => {
