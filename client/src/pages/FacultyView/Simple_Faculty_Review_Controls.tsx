@@ -92,7 +92,7 @@ const Simple_Faculty_QC_Review = () => {
 
   function handleLeveyJenningsClick() {
     if (selectedRowData && selectedAnalyte) {
-      navigate(`/levey-jennings/${selectedRowData.fileName}/${selectedRowData.lotNumber}/${selectedAnalyte}`);
+      navigate(`/chemistry/levey-jennings/${selectedRowData.fileName}/${selectedRowData.lotNumber}/${selectedAnalyte}`);
     }
   }
   

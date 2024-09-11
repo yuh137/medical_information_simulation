@@ -167,38 +167,5 @@ namespace Medical_Information.API.Controllers.Auth
 
             return BadRequest("User does not exist");
         }
-
-        [HttpGet]
-        [Route("ValidateToken")]
-        public async Task<IActionResult> ValidateToken()
-        {
-            try
-            {
-                // Extract the token from the Authorization header
-                var authHeader = Request.Headers["Authorization"].FirstOrDefault();
-
-                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
-                {
-                    return BadRequest(new { error = "Authorization header missing or invalid" });
-                }
-
-                var jwtToken = authHeader.Substring("Bearer ".Length).Trim();
-
-                // Call the token validation service
-                JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(jwtToken);
-
-                if (tokenRepository.IsTokenValid(jwtToken))
-                {
-                    return Ok("Token Valid");
-                }
-
-                return BadRequest("Token Invalid");
-            }
-            catch (Exception ex)
-            {
-                // Catch any token parsing errors or unexpected exceptions
-                return StatusCode(500, new { error = "An error occurred during token validation", details = ex.Message });
-            }
-        }
     }
 }

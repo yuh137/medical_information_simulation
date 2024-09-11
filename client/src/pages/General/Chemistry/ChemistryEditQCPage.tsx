@@ -13,7 +13,7 @@ const ChemistryEditQC = () => {
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
   useEffect(() => {
-    // if (!checkSession() || checkUserType() === "student") navigate("/unauthorized");
+    if (!checkSession() || checkUserType() === "Student") navigate("/unauthorized");
   }, []);
 
   useEffect(() => {

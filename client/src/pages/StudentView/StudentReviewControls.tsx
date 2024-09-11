@@ -29,21 +29,6 @@ test: string;
 id: string;
 }
 
-// const columns = [
-//     columnHelper.accessor('id', {
-//         header: () => (<div>ID</div>),
-//         cell: info => (<div>{info.getValue()}</div>)
-//     }),
-//     columnHelper.accessor('test', {
-//         header: () => (<div>Test</div>),
-//         cell: info => (<div>{info.getValue()}</div>)
-//     }),
-//     columnHelper.accessor('dep', {
-//         header: () => (<div>Department</div>),
-//         cell: info => (<div>{info.getValue()}</div>)
-//     }),
-// ]
-
 const columns: ColumnDef<QCItem, string>[] = [
 {
   accessorKey: "id",
@@ -62,7 +47,7 @@ const columns: ColumnDef<QCItem, string>[] = [
 },
 ];
 
-const Student_QC_Review = (props: { name: string, link: string }) => {
+const Student_QC_Review = () => {
 const navigate = useNavigate();
 const [selectedRow, setSelectedRow] = useState<string | null>();
 const [selectedRowData, setSelectedRowData] = useState<{ [key: string]: any }>();
@@ -79,11 +64,11 @@ useEffect(() => {
 }, []);
 
 const qc_items = useMemo(() => (
-qcTypeLinkList.filter(qc => selectedQCs.includes(qc.name)).map(qc => ({
-    id: generateRandomId(),
-    dep: props.name,
-    test: qc.name
-}))
+  qcTypeLinkList.filter(qc => selectedQCs.includes(qc.name)).map(qc => ({
+      id: generateRandomId(),
+      dep: "Student",
+      test: qc.name
+  }))
 ), [selectedQCs]);
 
 
@@ -105,7 +90,7 @@ const table = useReactTable({
 
 return (
   <>
-    <NavBar name={`${props.name} selected QC Review`} />
+    <NavBar name={`Student selected QC Review`} />
     <div className="relative">
       <div className="table-container flex flex-col mt-8 sm:max-w-[75svw] sm:max-h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA]">
         <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200">
@@ -196,7 +181,7 @@ return (
         className="sm:!absolute sm:w-36 sm:h-12 sm:!text-lg !bg-[#DAE3F3] right-3 -bottom-3 !border !border-solid !border-blue-500 font-medium !text-black"
         onClick={() => {
           const qcTypeLink = qcTypeLinkList.find(item => item.name === selectedRowData?.test)?.link;
-          navigate(`/${props.link}/qc_results/${qcTypeLink}`);
+          navigate(`/student/qc_results/${qcTypeLink}`);
         }}
       >
         Select QC

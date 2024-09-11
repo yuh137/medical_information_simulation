@@ -13,7 +13,7 @@ export const testTypeLinkList = [
   {link: "molecular", name: "Molecular"},
 ];
 export const qcTypeLinkList = [
-  {name:"CMP Level I", link:'Cmp_1', component: 'TestInputPage', mockData : 'CMP'},
+  {name:"CMP Level I", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
   {name:"CMP Level II", link: "cmp_2", component: 'TestInputPage', mockData : 'CMP'},
   {name:"Cardiac Level I", link: "cardiac_1", component: 'TestInputPageCardic', mockData : 'Cardiac'},
   {name:"Cardiac Level II", link: "cardiac_2", component: 'TestInputPageCardic', mockData : 'Cardiac'},

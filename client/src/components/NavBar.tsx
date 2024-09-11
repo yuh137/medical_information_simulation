@@ -18,15 +18,17 @@ const NavBar = (props: NavBarPropsTypes) => {
   const { logout, checkUserType } = useAuth();
 
   const [initials, setInitials] = useState<string>("");
+  const [userRole, setUserRole] = useState<string>("");
 
   const loggedinUser: Promise<Admin | Student | null> = useMemo(async () => {
     const token = localStorage.getItem("token");
     if (token) {
       const authToken: AuthToken = JSON.parse(token);
-      const role = authToken.roles[0] + "s";
+      const role = authToken.roles[0];
+      setUserRole(role.toLowerCase());
       
       try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/${role}/${authToken.userID}`, {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/${role + "s"}/${authToken.userID}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -62,11 +64,11 @@ const NavBar = (props: NavBarPropsTypes) => {
           className="absolute px-2 text-white text-5xl sm:left-14 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
           onClick={() => openDrawer(true)}
         />
-        {location.pathname !== "/home" &&
+        {location.pathname !== `/${userRole}-home` &&
           <Icon
             icon="material-symbols:home"
             className="absolute sm:p-1 text-white sm:text-5xl sm:top-1/2 sm:-translate-y-1/2 sm:left-24 hover:bg-blue-900/75 hover:cursor-pointer transition ease-in-out delay-75 rounded-md"
-            onClick={() => navigate("/home")}
+            onClick={() => navigate(`/${userRole}-home`)}
           />
         }
         <div className="navbar-title sm:leading-loose text-center text-white font-bold sm:text-4xl text-3xl my-0 mx-auto max-sm:w-1/2 max-sm:leading-10">

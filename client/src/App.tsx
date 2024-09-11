@@ -17,14 +17,14 @@ import ChemistryQCBuilder from "./pages/General/Chemistry/ChesmistryQCBuilderPag
 import ChemistryEditQC from "./pages/General/Chemistry/ChemistryEditQCPage";
 import { ChemistryTestInputPage } from "./pages/General/Chemistry/ChemistryTestInputPage";
 import ErrorPage from "./pages/ErrorPage";
-import ResultsInProgress from "./pages/ResultsInProgress";
+import StudentResultsInProgress from "./pages/StudentView/StudentResultsInProgress";
 import ChemistryCustomQCBuild from "./pages/General/Chemistry/ChemistryCustomQCBuild";
 import ChemistryCustomTests from "./pages/General/Chemistry/ChemistryCustomTests";
 import Student_QC_Review from "./pages/StudentView/StudentReviewControls";
 import Faculty_QC_Review from "./pages/FacultyView/FacultyReviewControls";
 import ChemistryQCTypeButtonsPage from "./pages/General/Chemistry/ChemistryQCTypeSelection";
 import Layout from "./utils/Layout";
-import LeveyJennings from "./pages/General/Chemistry/ChemistryLeveyJennings";
+import ChemistryLeveyJennings from "./pages/General/Chemistry/ChemistryLeveyJennings";
 import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInputPage";
 import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
 import { getAllDataFromStore } from "./utils/indexedDB/getData";
@@ -68,18 +68,14 @@ function AppWithRouter() {
           },
           {
             path: 'student-review_controls',
-            element: <Student_QC_Review name="Student" link="student" />,
+            element: <Student_QC_Review />,
           },
           {
             path: 'admin-review_controls',
             element: <Simple_Faculty_QC_Review />,
           },
-          {
-            path: 'levey-jennings/:fileName/:lotNumber/:analyteName',
-            element: <LeveyJennings />,
-          },
           
-          { path: 'results', element: <ResultsInProgress /> },
+          { path: 'student-results', element: <StudentResultsInProgress /> },
           
           // CHEMISTRY PATHS
           { 
@@ -110,6 +106,10 @@ function AppWithRouter() {
               {
                 path: "qc_builder",
                 element: <ChemistryQCBuilder />,
+              },
+              {
+                path: 'levey-jennings/:fileName/:lotNumber/:analyteName',
+                element: <ChemistryLeveyJennings />,
               },
               {
                 path: "edit_qc",

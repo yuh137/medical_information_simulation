@@ -21,7 +21,7 @@ const FacultyHomeScreen = () => {
 
     console.log("Session state: ", status);
 
-    // if (!status || checkUserType() === 'student') navigate('/unauthorized');
+    if (!status || checkUserType() === 'Student') navigate('/unauthorized');
   }
 
   useEffect(() => {

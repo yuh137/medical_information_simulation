@@ -1,7 +1,7 @@
 import React from 'react'
-import NavBar from '../components/NavBar';
-import DropDown from '../components/DropDown';
-import { testTypeLinkList } from '../utils/utils';
+import NavBar from '../../components/NavBar';
+import DropDown from '../../components/DropDown';
+import { testTypeLinkList } from '../../utils/utils';
 
 // const options = [
 //     { name: "Chemistry", link: "order_controls" },
@@ -15,7 +15,7 @@ import { testTypeLinkList } from '../utils/utils';
 
 const options = testTypeLinkList.map(item => ({ name: item.name, link: item.link + '/qc_results' }));
 
-const ResultsInProgress = () => {
+const StudentResultsInProgress = () => {
   return (
     <>
         <NavBar name="Results In Progress" />
@@ -24,10 +24,10 @@ const ResultsInProgress = () => {
             style={{ minWidth: "100svw", minHeight: "90svh" }}  
         >
             <DropDown name="QC Results" options={options} />
-            <DropDown name="Patients Results" options={options} />
+            <DropDown name="Patient Results" options={options} />
         </div>
     </>
   )
 }
 
-export default ResultsInProgress
+export default StudentResultsInProgress

@@ -9,13 +9,13 @@ import { testTypeLinkList } from "../../utils/utils";
 import NavBar from "../../components/NavBar";
 
 const StudentHomeScreen = () => {
-  const { isAuthenticated, logout, username, checkSession, checkUserType } = useAuth();
+  const { checkSession } = useAuth();
   const navigate = useNavigate();
   const { theme } = useTheme();
   const dropdownOptions = testTypeLinkList.map(({ link, name }) => ({ name, link: link + '/qc_results' }));
 
   useEffect(() => {
-    // if (!checkSession()) navigate('/unauthorized');
+    if (!checkSession()) navigate('/unauthorized');
   }, []);
 
   return (
@@ -31,7 +31,7 @@ const StudentHomeScreen = () => {
         <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px]`}>
           <div className="button-text font-bold text-2xl">Order Entry</div>
         </ButtonBase>
-        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px]`} onClick={() => navigate("/results")}>
+        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px]`} onClick={() => navigate("/student-results")}>
           <div className="button-text font-bold text-2xl">Results In Progress</div>
         </ButtonBase>
         <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px]`}>

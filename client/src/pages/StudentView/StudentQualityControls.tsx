@@ -1,26 +1,11 @@
 import React from "react";
 import DropDown from "../../components/DropDown";
 import NavBar from "../../components/NavBar";
+import { testTypeLinkList } from "../../utils/utils";
 
-const options = [
-  { name: "Chemistry", link: "order_controls" },
-  { name: "Hematology/Coag", link: "" },
-  { name: "Microbiology", link: "" },
-  { name: "Serology", link: "" },
-  { name: "UA/Body Fluids", link: "" },
-  { name: "Blood Bank", link: "" },
-  { name: "Molecular", link: "" },
-];
+const OC_options: { name: string, link: string }[] = testTypeLinkList.map(item => Object({ name: item.name, link: item.link + "/order_controls" }));
+const RC_options: { name: string, link: string }[] = testTypeLinkList.map(item => Object({ name: item.name, link: "student-review_controls" }));
 
-const ReviewOptions = [
-  { name: "Chemistry", link: "review_controls" },
-  { name: "Hematology/Coag", link: "" },
-  { name: "Microbiology", link: "" },
-  { name: "Serology", link: "" },
-  { name: "UA/Body Fluids", link: "" },
-  { name: "Blood Bank", link: "" },
-  { name: "Molecular", link: "" },
-];
 const StudentQualityControls = () => {
   return (
     <>
@@ -29,8 +14,8 @@ const StudentQualityControls = () => {
         className=" flex items-center justify-center gap-48 *:-translate-y-16"
         style={{ minWidth: "100svw", minHeight: "90svh" }}  
       >
-        <DropDown name="Order Controls" options={options} />
-        <DropDown name="Review Controls" options={ReviewOptions} />
+        <DropDown name="Order Controls" options={OC_options} />
+        <DropDown name="Review Controls" options={RC_options} />
       </div>
     </>
   );
