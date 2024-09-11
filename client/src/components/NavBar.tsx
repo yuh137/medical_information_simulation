@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Icon } from "@iconify/react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Drawer, Divider } from "@mui/material";
 import { useTheme } from "../context/ThemeContext";
-import { useAuth } from "../context/AuthContext";
+import { AuthToken, useAuth } from "../context/AuthContext";
+import { Admin, Student } from "../utils/utils";
 
 interface NavBarPropsTypes {
   name: string;
@@ -14,7 +15,38 @@ const NavBar = (props: NavBarPropsTypes) => {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const { initials, logout, checkUserType } = useAuth();
+  const { logout, checkUserType } = useAuth();
+
+  const [initials, setInitials] = useState<string>("");
+
+  const loggedinUser: Promise<Admin | Student | null> = useMemo(async () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const authToken: AuthToken = JSON.parse(token);
+      const role = authToken.roles[0] + "s";
+      
+      try {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/${role}/${authToken.userID}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${authToken.jwtToken}`,
+          },
+        });
+
+        if (res.ok) {
+          const user = await res.json();
+          console.log(`Type: ${typeof user}`, user);
+          setInitials(user.initials);
+          return user;
+        }
+      } catch (e) {
+        console.error("Error fetching user data: ", e);
+      }
+    }
+    return null;
+  }, [])
 
   return (
     <>
@@ -43,7 +75,7 @@ const NavBar = (props: NavBarPropsTypes) => {
         <div className="user-info group absolute sm:top-[55%] sm:-translate-y-[55%] sm:right-[1.25svw] sm:p-3 flex sm:gap-x-2 sm:py-2 sm:px-3 border-2 border-solid border-white rounded-xl drop-shadow-xl hover:bg-[#2F528F] hover:cursor-pointer transition delay-75">
           <div className="text-white">
             <div className="sm:max-w-1/2 truncate">User Initials: {initials}</div>
-            <div className="text-right">{checkUserType() === "admin" ? "Admin" : "Student"}</div>
+            <div className="text-right">{checkUserType() === "Admin" ? "Admin" : "Student"}</div>
           </div>
           <img src="/user.png" alt="" className="sm:w-[42px] sm:h-[42px]"/>
           <Icon icon="bxs:left-arrow" className="text-white self-center group-hover:-rotate-90 transition duration-150"/>

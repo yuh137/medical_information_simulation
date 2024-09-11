@@ -4,6 +4,7 @@ using Medical_Information.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical_Information.API.Migrations
 {
     [DbContext(typeof(MedicalInformationDbContext))]
-    partial class MedicalInformationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240907230147_Making minor changes to Admin and AdminQCLot")]
+    partial class MakingminorchangestoAdminandAdminQCLot
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,30 +25,11 @@ namespace Medical_Information.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("AdminStudent", b =>
-                {
-                    b.Property<Guid>("AdminsAdminID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("StudentsStudentID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("AdminsAdminID", "StudentsStudentID");
-
-                    b.HasIndex("StudentsStudentID");
-
-                    b.ToTable("AdminStudent");
-                });
-
             modelBuilder.Entity("Medical_Information.API.Models.Domain.Admin", b =>
                 {
                     b.Property<Guid>("AdminID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Firstname")
                         .HasColumnType("nvarchar(max)");
@@ -81,7 +65,7 @@ namespace Medical_Information.API.Migrations
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("FileDate")
+                    b.Property<DateTime>("FileDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LotNumber")
@@ -105,8 +89,9 @@ namespace Medical_Information.API.Migrations
                             AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
                             Department = 0,
                             ExpirationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FileDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LotNumber = "888888888888",
-                            OpenDate = new DateTime(2024, 9, 11, 1, 25, 38, 718, DateTimeKind.Local).AddTicks(8349),
+                            OpenDate = new DateTime(2024, 9, 7, 18, 1, 46, 567, DateTimeKind.Local).AddTicks(7341),
                             QCName = "CMP Level I"
                         });
                 });
@@ -339,8 +324,6 @@ namespace Medical_Information.API.Migrations
 
                     b.HasKey("AnalyteInputID");
 
-                    b.HasIndex("ReportID");
-
                     b.ToTable("AnalyteInputs");
                 });
 
@@ -350,9 +333,8 @@ namespace Medical_Information.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("AdminID")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Firstname")
                         .IsRequired()
@@ -366,11 +348,17 @@ namespace Medical_Information.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("StudentID");
+
+                    b.HasIndex("AdminID");
 
                     b.ToTable("Students");
                 });
@@ -392,54 +380,33 @@ namespace Medical_Information.API.Migrations
 
                     b.HasKey("ReportID");
 
-                    b.HasIndex("AdminQCLotID");
-
                     b.HasIndex("StudentID");
 
                     b.ToTable("StudentReports");
                 });
 
-            modelBuilder.Entity("AdminStudent", b =>
-                {
-                    b.HasOne("Medical_Information.API.Models.Domain.Admin", null)
-                        .WithMany()
-                        .HasForeignKey("AdminsAdminID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Medical_Information.API.Models.Domain.Student", null)
-                        .WithMany()
-                        .HasForeignKey("StudentsStudentID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Medical_Information.API.Models.Domain.Analyte", b =>
                 {
-                    b.HasOne("Medical_Information.API.Models.Domain.AdminQCLot", null)
+                    b.HasOne("Medical_Information.API.Models.Domain.AdminQCLot", "AdminQCLot")
                         .WithMany("Analytes")
                         .HasForeignKey("AdminQCLotID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AdminQCLot");
                 });
 
-            modelBuilder.Entity("Medical_Information.API.Models.Domain.AnalyteInput", b =>
+            modelBuilder.Entity("Medical_Information.API.Models.Domain.Student", b =>
                 {
-                    b.HasOne("Medical_Information.API.Models.Domain.StudentReport", null)
-                        .WithMany("AnalyteInputs")
-                        .HasForeignKey("ReportID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("Medical_Information.API.Models.Domain.Admin", "Admin")
+                        .WithMany("Students")
+                        .HasForeignKey("AdminID");
+
+                    b.Navigation("Admin");
                 });
 
             modelBuilder.Entity("Medical_Information.API.Models.Domain.StudentReport", b =>
                 {
-                    b.HasOne("Medical_Information.API.Models.Domain.AdminQCLot", null)
-                        .WithMany("Reports")
-                        .HasForeignKey("AdminQCLotID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Medical_Information.API.Models.Domain.Student", null)
                         .WithMany("Reports")
                         .HasForeignKey("StudentID")
@@ -447,21 +414,19 @@ namespace Medical_Information.API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Medical_Information.API.Models.Domain.Admin", b =>
+                {
+                    b.Navigation("Students");
+                });
+
             modelBuilder.Entity("Medical_Information.API.Models.Domain.AdminQCLot", b =>
                 {
                     b.Navigation("Analytes");
-
-                    b.Navigation("Reports");
                 });
 
             modelBuilder.Entity("Medical_Information.API.Models.Domain.Student", b =>
                 {
                     b.Navigation("Reports");
-                });
-
-            modelBuilder.Entity("Medical_Information.API.Models.Domain.StudentReport", b =>
-                {
-                    b.Navigation("AnalyteInputs");
                 });
 #pragma warning restore 612, 618
         }

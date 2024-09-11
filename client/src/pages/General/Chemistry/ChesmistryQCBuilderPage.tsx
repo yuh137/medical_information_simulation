@@ -11,7 +11,7 @@ const ChemistryQCBuilder = () => {
   const { theme } = useTheme();
 
   useEffect(() => {
-    if (!checkSession() || checkUserType() === 'student') navigate("/unauthorized");
+    // if (!checkSession() || checkUserType() === 'student') navigate("/unauthorized");
   }, [checkSession, checkUserType, navigate]);
 
   return (

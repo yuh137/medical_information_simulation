@@ -4,5 +4,10 @@
     {
         Chemistry,
         Serology,
+        Blood_Bank,
+        Hematology,
+        Microbiology,
+        Molecular,
+        Urinalysis,
     }
 }

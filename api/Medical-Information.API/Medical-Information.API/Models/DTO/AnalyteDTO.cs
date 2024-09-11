@@ -13,6 +13,5 @@ namespace Medical_Information.API.Models.DTO
         public float Mean { get; set; }
         public float StdDevi { get; set; }
         public Guid AdminQCLotID { get; set; }
-        public AdminQCLotDTO AdminQCLotDTO { get; set; }
     }
 }

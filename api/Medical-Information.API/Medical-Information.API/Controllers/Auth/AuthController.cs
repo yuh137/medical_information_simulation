@@ -1,8 +1,11 @@
-﻿using Medical_Information.API.Models.DTO.Auth;
+﻿using Medical_Information.API.Models.Domain;
+using Medical_Information.API.Models.DTO.Auth;
+using Medical_Information.API.Repositories.Interfaces;
 using Medical_Information.API.Repositories.Interfaces.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Medical_Information.API.Controllers.Auth
 {
@@ -12,11 +15,15 @@ namespace Medical_Information.API.Controllers.Auth
     {
         private readonly UserManager<IdentityUser> userManager;
         private readonly ITokenRepository tokenRepository;
+        private readonly IAdminRepository adminRepository;
+        private readonly IStudentRepository studentRepository;
 
-        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
+        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository, IAdminRepository adminRepository, IStudentRepository studentRepository)
         {
             this.userManager = userManager;
             this.tokenRepository = tokenRepository;
+            this.adminRepository = adminRepository;
+            this.studentRepository = studentRepository;
         }
 
         [HttpPost]
@@ -31,6 +38,8 @@ namespace Medical_Information.API.Controllers.Auth
 
             var identityResult = await userManager.CreateAsync(identityUser, requestDTO.Password);
 
+            Console.WriteLine(identityResult);
+
             if (identityResult.Succeeded)
             {
                 if (requestDTO.Roles != null && requestDTO.Roles.Any())
@@ -39,6 +48,34 @@ namespace Medical_Information.API.Controllers.Auth
 
                     if (identityResult.Succeeded)
                     {
+                        if (requestDTO.Roles.Contains("Admin"))
+                        {
+                            var newUser = new Admin
+                            {
+                                Username = requestDTO.Username,
+                                Email = requestDTO.Email,
+                                Firstname = requestDTO.Firstname,
+                                Lastname = requestDTO.Lastname,
+                                Initials = requestDTO.Initials,
+                                Students = new List<Student>()
+                            };
+
+                            await adminRepository.CreateAdminAsync(newUser);
+                        } else if (requestDTO.Roles.Contains("Student"))
+                        {
+                            var newUser = new Student
+                            {
+                                Username = requestDTO.Username,
+                                Email = requestDTO.Email,
+                                Firstname = requestDTO.Firstname,
+                                Lastname = requestDTO.Lastname,
+                                Initials = requestDTO.Initials,
+                                Admins = new List<Admin>()
+                            };
+
+                            await studentRepository.CreateStudentAsync(newUser);
+                        }
+
                         return Ok("User successfully registered");
                     }
                 }
@@ -64,21 +101,104 @@ namespace Medical_Information.API.Controllers.Auth
 
                     if (roles != null && roles.Any())
                     {
-                        var token = tokenRepository.CreateJWTToken(user, roles.ToList());
-
-                        var response = new LoginResponseDTO
+                        if (roles.Contains("Admin"))
                         {
-                            JwtToken = token,
-                        };
+                            var savedUser = await adminRepository.GetAdminByNameAsync(loginDTO.Username);
 
-                        return Ok(response);
+                            if (savedUser != null)
+                            {
+                                var token = tokenRepository.CreateJWTToken(user, roles.ToList());
+
+                                var response = new LoginResponseDTO
+                                {
+                                    JwtToken = token,
+                                    UserID = savedUser.AdminID,
+                                    Roles = roles.ToList(),
+                                };
+
+                                var cookieOptions = new CookieOptions
+                                {
+                                    HttpOnly = true,
+                                    Secure = true,
+                                    SameSite = SameSiteMode.None,
+                                    Expires = DateTime.UtcNow.AddMinutes(30),
+                                };
+
+                                Response.Cookies.Append("jwtToken", token, cookieOptions);
+
+                                return Ok(response);
+                            }
+                        }
+                        
+                        else if (roles.Contains("Student"))
+                        {
+                            var savedUser = await studentRepository.GetStudentByNameAsync(loginDTO.Username);
+
+                            if (savedUser != null)
+                            {
+                                var token = tokenRepository.CreateJWTToken(user, roles.ToList());
+
+                                var response = new LoginResponseDTO
+                                {
+                                    JwtToken = token,
+                                    UserID = savedUser.StudentID,
+                                    Roles = roles.ToList(),
+                                };
+
+                                var cookieOptions = new CookieOptions
+                                {
+                                    HttpOnly = true,
+                                    Secure = true,
+                                    SameSite = SameSiteMode.None,
+                                    Expires = DateTime.UtcNow.AddMinutes(30),
+                                };
+
+                                Response.Cookies.Append("jwtToken", token, cookieOptions);
+
+                                return Ok(response);
+                            }
+                        }
                     }
+                    return BadRequest("Role invalid");
                 }
 
                 return BadRequest("Password incorrect");
             }
 
             return BadRequest("User does not exist");
+        }
+
+        [HttpGet]
+        [Route("ValidateToken")]
+        public async Task<IActionResult> ValidateToken()
+        {
+            try
+            {
+                // Extract the token from the Authorization header
+                var authHeader = Request.Headers["Authorization"].FirstOrDefault();
+
+                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                {
+                    return BadRequest(new { error = "Authorization header missing or invalid" });
+                }
+
+                var jwtToken = authHeader.Substring("Bearer ".Length).Trim();
+
+                // Call the token validation service
+                JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(jwtToken);
+
+                if (tokenRepository.IsTokenValid(jwtToken))
+                {
+                    return Ok("Token Valid");
+                }
+
+                return BadRequest("Token Invalid");
+            }
+            catch (Exception ex)
+            {
+                // Catch any token parsing errors or unexpected exceptions
+                return StatusCode(500, new { error = "An error occurred during token validation", details = ex.Message });
+            }
         }
     }
 }

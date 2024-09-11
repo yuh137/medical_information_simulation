@@ -42,5 +42,16 @@ namespace Medical_Information.API.Controllers
 
             return CreatedAtAction("Get", new { id = analyteDTO.AnalyteID }, analyteDTO);
         }
+
+        [HttpGet]
+        [Route("{lotId:Guid}")]
+        public async Task<IActionResult> GetAllAnalytesFromQCLot([FromRoute] Guid lotId)
+        {
+            var analyteModels = await analyteRepository.GetAllAnalytesFromQCLotAsync(lotId);
+
+            var analyteDTO = mapper.Map<AnalyteDTO>(analyteModels);
+
+            return Ok(analyteDTO);
+        }
     }
 }

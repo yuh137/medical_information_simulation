@@ -41,5 +41,20 @@ namespace Medical_Information.API.Repositories.SQLImplementation.Auth
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        public bool IsTokenValid(string token)
+        {
+            JwtSecurityToken jwtSecurityToken;
+            try
+            {
+                jwtSecurityToken = new JwtSecurityToken(token);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return jwtSecurityToken.ValidTo > DateTime.UtcNow;
+        }
     }
 }

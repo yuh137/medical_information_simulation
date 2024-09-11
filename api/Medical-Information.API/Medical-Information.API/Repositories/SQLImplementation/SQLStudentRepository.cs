@@ -49,19 +49,5 @@ namespace Medical_Information.API.Repositories.SQLImplementation
         {
             return await dbContext.Students.FirstOrDefaultAsync(item => item.Username == name);
         }
-
-        public async Task<Student?> UpdateStudentPasswordAsync(Guid id, UpdatePasswordDTO dto)
-        {
-            var existingStudent = await dbContext.Students.FirstOrDefaultAsync(item => item.StudentID == id);
-
-            if (existingStudent == null)
-            {
-                return null;
-            }
-
-            existingStudent.Password = dto.Password;
-            await dbContext.SaveChangesAsync();
-            return existingStudent;
-        }
     }
 }

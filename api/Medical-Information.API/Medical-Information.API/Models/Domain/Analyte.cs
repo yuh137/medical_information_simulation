@@ -16,6 +16,6 @@ namespace Medical_Information.API.Models.Domain
         public float StdDevi { get; set; }
         [ForeignKey("AdminQCLotID")]
         public Guid AdminQCLotID { get; set; }
-        public AdminQCLot AdminQCLot { get; set; }
+        //public AdminQCLot AdminQCLot { get; set; }
     }
 }

@@ -8,10 +8,12 @@ const Layout = () => {
   return (
     <>
         <ScrollToTop />
-        <ThemeProvider>
-            {/* App starts here */}
-            <Outlet />
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider>
+              {/* App starts here */}
+              <Outlet />
+          </ThemeProvider>
+        </AuthProvider>
     </>
   );
 };

@@ -22,14 +22,21 @@ namespace Medical_Information.API.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<AdminQCLot>().HasMany(p => p.Analytes).WithOne(e => e.AdminQCLot).HasForeignKey(e => e.AdminQCLotID);
+            modelBuilder.Entity<AdminQCLot>().HasMany(p => p.Analytes).WithOne().HasForeignKey(e => e.AdminQCLotID);
 
-            modelBuilder.Entity<Analyte>().HasOne(e => e.AdminQCLot).WithMany(e => e.Analytes).HasForeignKey(e => e.AdminQCLotID);
+            modelBuilder.Entity<AdminQCLot>().HasMany(p => p.Reports).WithOne().HasForeignKey(e => e.AdminQCLotID);
+
+            //modelBuilder.Entity<Analyte>().HasOne(e => e.AdminQCLot).WithMany(e => e.Analytes).HasForeignKey(e => e.AdminQCLotID);
+
+            modelBuilder.Entity<Student>().HasMany(p => p.Reports).WithOne().HasForeignKey(e => e.StudentID);
+
+            modelBuilder.Entity<StudentReport>().HasMany(p => p.AnalyteInputs).WithOne().HasForeignKey(e => e.ReportID);
 
             //Seed data for Analytes
             var mockQCLot = new AdminQCLot()
             {
                 AdminQCLotID = Guid.Parse("bbb59aca-6c27-424c-852f-21656a88f449"),
+                QCName = "CMP Level I",
                 LotNumber = "888888888888",
                 OpenDate = DateTime.Now,
                 Department = Enums.Department.Chemistry,

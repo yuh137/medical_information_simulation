@@ -16,8 +16,16 @@ const FacultyHomeScreen = () => {
 
   const dropdownOptions = testTypeLinkList.map(({ link, name }) => ({ name, link: link + '/qc_results' }));
 
+  async function validateSession() {
+    const status = await checkSession();
+
+    console.log("Session state: ", status);
+
+    // if (!status || checkUserType() === 'student') navigate('/unauthorized');
+  }
+
   useEffect(() => {
-    if (!checkSession() || checkUserType() === 'student') navigate('/unauthorized');
+    validateSession();
   }, []);
 
   return (
@@ -27,7 +35,7 @@ const FacultyHomeScreen = () => {
         className=" bg-[#fff] flex flex-wrap justify-center px-24 py-12 sm:gap-x-6 sm:max-w-[1460px] my-0 mx-auto"
         style={{ minHeight: "90svh" }}
       >
-        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`} onClick={() => navigate("/qc")}>
+        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`} onClick={() => navigate("/admin-qc")}>
           <div className="button-text font-bold text-2xl">Quality Controls</div>
         </ButtonBase>
         <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>

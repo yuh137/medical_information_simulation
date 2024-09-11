@@ -7,10 +7,12 @@ import addData from "../utils/indexedDB/addData";
 import { generateRandomId } from "../utils/utils";
 import { Admin } from "../utils/indexedDB/IDBSchema";
 import { getAdminByName, getStudentByName } from "../utils/indexedDB/getData";
+import { Icon } from "@iconify/react";
 
 export interface CredentialsInput {
   username: string;
   password: string;
+  email: string;
   firstname: string;
   lastname: string;
   initials: string;
@@ -38,41 +40,62 @@ const Register = () => {
   const onSubmit: SubmitHandler<CredentialsInput> = async (data) => {
     if (registerOptions === "Admin") {
       console.log("Data object: ", data);
-      const check = await getAdminByName(data.username);
+      // const check = await getAdminByName(data.username);
       // console.log("Check", await check);
+      const user = { ...data, roles: [ "Admin" ] }
+      try {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/Auth/Register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(user),
+        })
 
-      if ((await check) === null) {
-        const res = await addData<Admin>("admins", {
-          ["id"]: generateRandomId(),
-          username: data.username,
-          password: data.password,
-          firstname: data.firstname,
-          lastname: data.lastname,
-          initials: data.initials,
-        });
-
-        console.log(res);
-      } else {
-        console.log(new Error("Username already exists"));
+        if (res.ok) {
+          setFeedbackNotiOpen(true);
+          console.log(res.text());
+        } else {
+          console.error("Failed to register");
+        }
+      } catch (e) {
+        console.error("Failed to register", e);
       }
+
+      // if ((await check) === null) {
+      //   const res = await addData<Admin>("admins", {
+      //     ["id"]: generateRandomId(),
+      //     username: data.username,
+      //     password: data.password,
+      //     firstname: data.firstname,
+      //     lastname: data.lastname,
+      //     initials: data.initials,
+      //   });
+
+      //   console.log(res);
+      // } else {
+      //   console.log(new Error("Username already exists"));
+      // }
     } else if (registerOptions === "Student") {
-      const check = await getStudentByName(data.username);
+      // const check = await getStudentByName(data.username);
+      const user = { ...data, roles: [ "Student" ] }
+      try {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/Auth/Register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(user),
+        })
 
-      if (!check) {
-        const res = await addData<Admin>("students", {
-          ["id"]: generateRandomId(),
-          username: data.username,
-          password: data.password,
-          firstname: data.firstname,
-          lastname: data.lastname,
-          initials: data.initials,
-        });
-
-        console.log(res);
-        setFeedbackNotiOpen(true);
-      } else {
-        console.log(new Error("Username taken!"));
-        setFeedbackNotiOpen(true);
+        if (res.ok) {
+          setFeedbackNotiOpen(true);
+          console.log(res.text());
+        } else {
+          console.error("Failed to register");
+        }
+      } catch (e) {
+        console.error("Failed to register", e);
       }
     } else {
       console.log(new Error("Invalid type"));
@@ -151,6 +174,12 @@ const Register = () => {
               <input
                 type="text"
                 className="min-h-10 placeholder:font-semibold placeholder:text-center text-center"
+                placeholder="Email"
+                {...register("email", { required: true })}
+              />
+              <input
+                type="text"
+                className="min-h-10 placeholder:font-semibold placeholder:text-center text-center"
                 placeholder="First Name"
                 {...register("firstname", { required: true })}
               />
@@ -173,21 +202,6 @@ const Register = () => {
               >
                 Register
               </Button>
-              {/* <Button
-                variant="outlined"
-                onClick={() => {
-                  if (registerOptions === "Admin") {
-                    setRegisterOptions("Student");
-                  } else if (registerOptions === "Student") {
-                    setRegisterOptions("Admin");
-                  } else {
-                    setRegisterOptions("");
-                  }
-                }}
-                className={`!text-black !bg-[${theme.secondaryColor}] !border !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F]`}
-              >
-                Change register option
-              </Button> */}
             </form>
           </div>
           <div className="login-link">
@@ -206,7 +220,38 @@ const Register = () => {
           setFeedbackNotiOpen(false);
         }}
       >
-        <div className="bg-white sm:w-[500px] sm:h-[300px] rounded-xl"></div>
+        <div className="bg-white rounded-xl">
+          <div className="sm:p-8 flex flex-col sm:gap-4">
+            <div className="text-center text-gray-600 text-xl font-semibold">
+              { isFeedbackNotiOpen ? (
+                <>
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon icon="clarity:success-standard-line" className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                    <div>Registration Successful</div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                    <div>Error Occurred</div>
+                  </div>
+                </>
+              ) }
+            </div>
+            <div className="flex justify-center">
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setFeedbackNotiOpen(false);
+                }}
+                className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+              >
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
       </Backdrop>
     </>
   );

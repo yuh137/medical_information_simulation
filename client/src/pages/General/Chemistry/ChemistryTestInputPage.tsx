@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
+import { saveToDB } from "../../../utils/indexedDB/getData";
 import {
   ColumnDef,
   RowData,
@@ -65,25 +66,25 @@ export const ChemistryTestInputPage = (props: { name: string }) => {
   // const [isDrawerOpen, openDrawer] = useState<boolean>(false);
   const { register, handleSubmit } = useForm<QCTemplateBatch>();
   const saveQC: SubmitHandler<QCTemplateBatch> = async (data) => {
-    const check = await getDataByKey<QCTemplateBatch>("qc_store", props.name);
+    const qcDataToSave: QCTemplateBatch = {
+        fileName: props.name,
+        lotNumber: data.lotNumber || "",
+        openDate: data.openDate || "",
+        closedDate: data.closedDate || "",
+        analytes: QCElements.map(({ analyteName, analyteAcronym, unit_of_measure, electrolyte, mean, std_devi, min_level, max_level }) => ({
+            analyteName, analyteAcronym, unit_of_measure, electrolyte, mean, std_devi, min_level, max_level
+        })),
+    };
 
-    if (check) {
-      const deleteStatus = await deleteData("qc_store", props.name); 
-
-      console.log(deleteStatus ? "Delete success" : "Delete failed");
+    console.log("Attempting to save:", qcDataToSave);
+    
+    try {
+        await saveToDB("qc_store", qcDataToSave);
+        console.log("Data saved successfully.");
+    } catch (error) {
+        console.error("Failed to save data:", error);
     }
-
-    const savedAnalyte = QCElements.map(({ analyteName, analyteAcronym, unit_of_measure, electrolyte, mean, std_devi, min_level, max_level }) => ({ analyteName, analyteAcronym, unit_of_measure, electrolyte, mean, std_devi, min_level, max_level }))
-    const res = await addData<QCTemplateBatch>("qc_store", {
-      fileName: props.name,
-      lotNumber: data.lotNumber || "",
-      openDate: data.openDate || "",
-      closedDate: data.closedDate || "",
-      analytes: [...savedAnalyte],
-    });
-
-    console.log("Save result: ", res);
-  }
+};
 
   const inputRefs = useRef<HTMLInputElement[]>([]);
 
@@ -186,8 +187,8 @@ export const ChemistryTestInputPage = (props: { name: string }) => {
   });
 
   useEffect(() => {
-    if (!checkSession() || checkUserType() === "student")
-      navigate("/unauthorized");
+    if (!checkSession() || checkUserType() === "Student") {}
+      // navigate("/unauthorized");
   }, []);
 
   useEffect(() => {
@@ -204,7 +205,7 @@ export const ChemistryTestInputPage = (props: { name: string }) => {
 
   return (
     <>
-      <NavBar name={`${props.name} QC Builder`} />
+      <NavBar name={`Chemistry QC Builder`} />
       <div className="basic-container relative sm:space-y-4 pb-24">
         <div className="input-container flex justify-center">
           <div className="drawer-container sm:h-full flex items-center py-4 sm:space-x-12">

@@ -13,7 +13,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import FacultyHomeScreen from "./pages/FacultyView/FacultyHomeScreen";
 import FacultyQualityControls from "./pages/FacultyView/FacultyQualityControls";
 import ChemistryQCBuilder from "./pages/General/Chemistry/ChesmistryQCBuilderPage";
-import { qcTypeLinkList, testTypeLinkList } from "./utils/utils";
+// import { qcTypeLinkList, testTypeLinkList } from "./utils/utils";
 import ChemistryEditQC from "./pages/General/Chemistry/ChemistryEditQCPage";
 import { ChemistryTestInputPage } from "./pages/General/Chemistry/ChemistryTestInputPage";
 import ErrorPage from "./pages/ErrorPage";
@@ -22,22 +22,24 @@ import ChemistryCustomQCBuild from "./pages/General/Chemistry/ChemistryCustomQCB
 import ChemistryCustomTests from "./pages/General/Chemistry/ChemistryCustomTests";
 import Student_QC_Review from "./pages/StudentView/StudentReviewControls";
 import Faculty_QC_Review from "./pages/FacultyView/FacultyReviewControls";
-import QCTypeButtonsPage from "./pages/QCTypeSelection";
-import { getAllDataFromStore, getQCRangeByName } from "./utils/indexedDB/getData";
+import ChemistryQCTypeButtonsPage from "./pages/General/Chemistry/ChemistryQCTypeSelection";
 import Layout from "./utils/Layout";
-import Test from "./pages/Test";
+import LeveyJennings from "./pages/General/Chemistry/ChemistryLeveyJennings";
+import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInputPage";
+import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
+import { getAllDataFromStore } from "./utils/indexedDB/getData";
 
 function App() {
   initIDB();
   return (
-    <AuthProvider>
-      <AppWithRouter />
-    </AuthProvider>
+    // <AuthProvider>
+    // </AuthProvider>
+    <AppWithRouter />
   );
 }
 
 function AppWithRouter() {
-  const { checkSession, checkUserType } = useAuth();
+  // const { checkSession, checkUserType } = useAuth();
 
   const router = useMemo(() => {
     return createBrowserRouter([
@@ -45,179 +47,146 @@ function AppWithRouter() {
         path: '/',
         element: <Layout />,
         children: [
-          {
-            index: true,
-            element: checkSession() ? <Navigate to="/home" /> : <Navigate to="/login" />,
-          },
+          { index: true, element: <Navigate to="/login" /> },
           { path: 'login', element: <Login /> },
           { path: 'register', element: <Register /> },
           {
-            path: 'home',
-            element: checkUserType() === 'student' ? <StudentHomeScreen /> : <FacultyHomeScreen />,
+            path: 'student-home',
+            element: <StudentHomeScreen />,
           },
           {
-            path: 'qc',
-            element: checkUserType() === 'student' ? <StudentQualityControls /> : <FacultyQualityControls />,
+            path: 'admin-home',
+            element: <FacultyHomeScreen />,
           },
           {
-            path: 'review_controls',
-            element: checkUserType() === 'student' ? <Student_QC_Review name="Student" link="student" /> : <Faculty_QC_Review name="Faculty" link="faculty" />,
+            path: 'student-qc',
+            element: <StudentQualityControls />,
           },
+          {
+            path: 'admin-qc',
+            element: <FacultyQualityControls />,
+          },
+          {
+            path: 'student-review_controls',
+            element: <Student_QC_Review name="Student" link="student" />,
+          },
+          {
+            path: 'admin-review_controls',
+            element: <Simple_Faculty_QC_Review />,
+          },
+          {
+            path: 'levey-jennings/:fileName/:lotNumber/:analyteName',
+            element: <LeveyJennings />,
+          },
+          
           { path: 'results', element: <ResultsInProgress /> },
           
           // CHEMISTRY PATHS
-          { path: 'chemistry', children: [
-            {
-              path: 'qc_results',
-              element: <ChemistryQCResult link="chemistry" name="Chemistry" />,
-              loader: async () => {
-                const data = await getAllDataFromStore("qc_store");
-                // const dta = await fetch(`${process.env.REACT_APP_API_URL}/Admins`)
-                // console.log(await dta.json())
-                return data;
+          { 
+            path: 'chemistry', 
+            children: [
+              {
+                path: 'qc_results',
+                element: <ChemistryQCResult link="chemistry" name="Chemistry" />,
               },
-            },
-            {
-              path: "qc_results/:link",
-              element: <ChemistryAnalyteInputPage name="" />,
-              loader: async ({ params }) => {
-                const { link } = params;
-                console.log("loader function: ", link);
+              {
+                path: 'simple-analyte-input-page',
+                element: <SimpleAnalyteInputPage name="Chemistry" />,  
+              },
+              {
+                path: "qc_results/:link",
+                element: <ChemistryAnalyteInputPage name="" />,
+                loader: async ({ params }) => {
+                  const { link } = params;
+                  console.log("loader function: ", link);
 
-                return null;
+                  return null;
+                }
+              },
+              { 
+                path: 'order_controls', 
+                element: <ChemistryOrderControls /> 
+              },
+              {
+                path: "qc_builder",
+                element: <ChemistryQCBuilder />,
+              },
+              {
+                path: "edit_qc",
+                element: <ChemistryEditQC />,
+              },
+              {
+                path: "edit_qc/:item",
+                element: <ChemistryTestInputPage name="CMP Level I" />,
+              },
+              {
+                path: "build_qc/:item",
+                element: <ChemistryCustomQCBuild name="Chemistry" />,
+              },
+              {
+                path: "custom_tests",
+                element: <ChemistryCustomTests />,
+              },
+              {
+                path: "qc_types",
+                element: <ChemistryQCTypeButtonsPage />,
               }
-            },
-            { 
-              path: 'order_controls', 
-              element: <ChemistryOrderControls /> 
-            },
-            {
-              path: "qc_builder",
-              element: <ChemistryQCBuilder />,
-            },
-            {
-              path: "edit_qc",
-              element: <ChemistryEditQC />,
-            },
-            {
-              path: "edit_qc/:item",
-              element: <ChemistryTestInputPage name="" />,
-            },
-            {
-              path: "build_qc/:item",
-              element: <ChemistryCustomQCBuild name="Chemistry" />,
-            },
-            {
-              path: "custom_tests",
-              element: <ChemistryCustomTests />,
-            },
-            {
-              path: "qc_types",
-              element: <QCTypeButtonsPage name="" link="chemistry" />,
-            }
-          ]},
-          // { path: 'hema_coag', },
-          // { path: 'microbiology', },
-          // { path: 'serology', },
-          // { path: 'UA_fluids', },
-          // { path: 'blood_bank', },
-          // { path: 'molecular', },
-          // ...testTypeLinkList.map((item) => (
-          //   {
-          //     path: `${item.link}/qc_results`,
-          //     children: [
-          //       {
-          //         index: true,
-          //         element: <ChemistryQCResult link={item.link} name={item.name} />,
-          //         loader: async () => {
-          //           const data = await getAllDataFromStore("qc_store");
-          //           return data;
-          //           // const dta = await fetch(`${process.env.REACT_APP_API_URL}/Admins`)
-          //           // console.log(await dta.json())
-          //         },
-          //       },
-          //       ...qcTypeLinkList.map((subItem) => ({
-          //         path: subItem.link,
-          //         element: <AnalyteInputPage link={subItem.link} name={subItem.name} />,
-          //       })),
-          //     ],
-          //   }
-          // )),
-          // ...testTypeLinkList.map((item) => (
-          //   {
-          //     path: `${item.link}/qc_builder`,
-          //     element: <QCBuilder link={item.link} name={item.name} />,
-          //   }
-          // )),
-          // ...testTypeLinkList.map((item) => (
-          //   {
-          //     path: `${item.link}/edit_qc`,
-          //     children: [
-          //       {
-          //         index: true,
-          //         element: <EditQC link={item.link} name={item.name} />,
-          //       },
-          //       ...qcTypeLinkList.map((subItem) => ({
-          //         path: subItem.link,
-          //         element: (
-          //           <TestInputPage
-          //             name={subItem.name}
-          //             link={subItem.link}
-          //             dataType={
-          //               subItem.name.includes('Cardiac')
-          //                 ? 'Cardiac'
-          //                 : subItem.name.includes('Lipid')
-          //                 ? 'Lipid'
-          //                 : subItem.name.includes('Liver')
-          //                 ? 'Liver'
-          //                 : subItem.name.includes('Thyroid')
-          //                 ? 'Thyroid'
-          //                 : subItem.name.includes('Iron')
-          //                 ? 'Iron'
-          //                 : subItem.name.includes('Drug')
-          //                 ? 'Drug'
-          //                 : subItem.name.includes('Hormone')
-          //                 ? 'Hormone'
-          //                 : subItem.name.includes('Pancreatic')
-          //                 ? 'Pancreatic'
-          //                 : subItem.name.includes('Vitamins')
-          //                 ? 'Vitamins'
-          //                 : subItem.name.includes('Diabetes')
-          //                 ? 'Diabetes'
-          //                 : subItem.name.includes('Cancer')
-          //                 ? 'Cancer'
-          //                 : 'General'
-          //             }
-          //           />
-          //         ),
-          //       })),
-          //     ],
-          //   }
-          // )),
-          // ...testTypeLinkList.map((item) => (
-          //   {
-          //     path: `${item.link}/build_qc/:type`,
-          //     element: <CustomQCBuild name={item.name} />,
-          //   }
-          // )),
-          ...testTypeLinkList.map((item) => (
-            {
-              path: `${item.link}/custom_tests`,
-              element: <ChemistryCustomTests />,
-            }
-          )),
-          ...testTypeLinkList.map((item) => (
-            {
-              path: `${item.link}/qc_types`,
-              element: <QCTypeButtonsPage name={item.name} link={item.link} />,
-            }
-          )),
+            ]
+          },
+
+          //  HEMATOLOGY/COAG PATHS
+          { 
+            path: 'hema_coag', 
+            children: [
+
+            ]
+          },
+
+          // MICROBIOLOGY PATHS
+          {
+            path: 'microbiology',
+            children: [
+
+            ]
+          },
+
+          // SEROLOGY PATHS
+          {
+            path: 'serology',
+            children: [
+
+            ]
+          },
+
+          // URINALYSIS PATHS
+          {
+            path: 'urinalysis',
+            children: [
+
+            ]
+          },
+
+          // BLOOD BANK PATHS
+          {
+            path: 'blood_bank',
+            children: [
+
+            ]
+          },
+
+          // MOLECULAR PATHS
+          {
+            path: 'molecular',
+            children: [
+
+            ]
+          },
           { path: 'unauthorized', element: <Unauthorized /> },
           { path: '*', element: <ErrorPage /> },
         ],
       },
     ]);
-  }, [checkSession, checkUserType])
+  }, [])
 
   return (
     <>

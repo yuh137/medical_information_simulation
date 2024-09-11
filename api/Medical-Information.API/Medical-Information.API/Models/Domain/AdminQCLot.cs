@@ -10,8 +10,9 @@ namespace Medical_Information.API.Models.Domain
         public DateTime OpenDate { get; set; }
         public DateTime? ClosedDate { get; set; }
         public DateTime ExpirationDate { get; set; }
-        public DateTime FileDate { get; set; }
+        public DateTime? FileDate { get; set; }
         public Department Department { get; set; }
         public ICollection<Analyte> Analytes { get; set; } = [];
+        public ICollection<StudentReport> Reports { get; set; } = [];
     }
 }

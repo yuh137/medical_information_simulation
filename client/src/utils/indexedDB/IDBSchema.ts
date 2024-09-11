@@ -16,6 +16,7 @@ export interface Student {
     initials: string;
 }
 
+
 export interface ChemistryQCTemplate {
     analyteName: string;
     analyteAcronym: string;
@@ -24,12 +25,6 @@ export interface ChemistryQCTemplate {
     max_level: number;
     mean: number;
     std_devi: number;
-    // sdplus1: number;
-    // sdplus2: number;
-    // sdplus3: number;
-    // sdminus1: number;
-    // sdminus2: number;
-    // sdminus3: number;
 }
 
 export interface QCTemplateBatch {
@@ -46,5 +41,7 @@ export interface QCTemplateBatch {
         mean: string;
         std_devi: string;
         electrolyte: boolean;
+        value?: string; // Optional value field, since it might not exist initially
+
     }[];
 }

@@ -51,22 +51,12 @@ namespace Medical_Information.API.Repositories.SQLImplementation
 
         public async Task<Admin?> GetAdminByIdAsync(Guid id)
         {
-            return await dbContext.Admins.FirstOrDefaultAsync(item => item.AdminID == id);
+            return await dbContext.Admins.Include(item => item.Students).FirstOrDefaultAsync(item => item.AdminID == id);
         }
 
-        public async Task<Admin?> UpdateAdminPasswordAsync(Guid id, UpdatePasswordDTO updatePasswordDTO)
+        async Task<Admin?> IAdminRepository.GetAdminByNameAsync(string name)
         {
-            var existingAdmin = dbContext.Admins.FirstOrDefault(item => item.AdminID == id);
-
-            if (existingAdmin == null)
-            {
-                return null;
-            }
-
-            existingAdmin.Password = updatePasswordDTO.Password;
-            await dbContext.SaveChangesAsync();
-
-            return existingAdmin;
+            return await dbContext.Admins.FirstOrDefaultAsync(item => item.Username == name);
         }
     }
 }

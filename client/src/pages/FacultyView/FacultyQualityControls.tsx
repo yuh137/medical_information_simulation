@@ -36,7 +36,7 @@ const FacultyQualityControls = () => {
   const [selectedDropdown, setSelectedDropdown] = useState<string>("");
 
   useEffect(() => {
-    if (!checkSession() || checkUserType() === 'student') navigate("/unauthorized");
+    // if (!checkSession() || checkUserType() === 'student') navigate("/unauthorized");
   }, [])
 
   return (

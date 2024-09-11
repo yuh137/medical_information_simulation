@@ -13,8 +13,12 @@ const ChemistryEditQC = () => {
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!checkSession() || checkUserType() === "student") navigate("/unauthorized");
+    // if (!checkSession() || checkUserType() === "student") navigate("/unauthorized");
   }, []);
+
+  useEffect(() => {
+    console.log(selectedItem);
+  }, [selectedItem])
 
   return (
     <>
@@ -29,7 +33,7 @@ const ChemistryEditQC = () => {
                   ? `!border-[#2F528F] !border-[4px] !bg-[#8faadc]`
                   : `!border !bg-[${theme.secondaryColor}] !border-[${theme.primaryBorderColor}]`
               } !px-3`}
-              onClick={(e) =>{
+              onClick={() =>{
                   setSelectedItem(item.link === selectedItem ? null : item.link);
                 }
               }

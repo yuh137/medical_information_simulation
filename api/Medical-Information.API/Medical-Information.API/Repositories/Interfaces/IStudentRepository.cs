@@ -10,6 +10,5 @@ namespace Medical_Information.API.Repositories.Interfaces
         Task<Student?> GetStudentByIDAsync(Guid id);
         Task<Student?> GetStudentByNameAsync(string name);
         Task<Student?> DeleteStudentAsync(Guid id);
-        Task<Student?> UpdateStudentPasswordAsync(Guid id, UpdatePasswordDTO dto);
     }
 }

@@ -50,35 +50,35 @@ namespace Medical_Information.API.Controllers
             return Ok(adminDTO);
         }
 
-        [HttpPost]
-        [ValidateModel]
-        public async Task<IActionResult> CreateNewAdmin([FromBody] AddAdminRequestDTO request)
-        {
-            var newAdmin = mapper.Map<Admin>(request);
+        //[HttpPost]
+        //[ValidateModel]
+        //public async Task<IActionResult> CreateNewAdmin([FromBody] AddAdminRequestDTO request)
+        //{
+        //    var newAdmin = mapper.Map<Admin>(request);
 
-            await adminRepository.CreateAdminAsync(newAdmin);
+        //    await adminRepository.CreateAdminAsync(newAdmin);
 
-            var adminDTO = mapper.Map<AdminDTO>(newAdmin);
+        //    var adminDTO = mapper.Map<AdminDTO>(newAdmin);
 
-            return CreatedAtAction(nameof(GetAdminById), new { id = adminDTO.AdminID }, adminDTO);
-        }
+        //    return CreatedAtAction(nameof(GetAdminById), new { id = adminDTO.AdminID }, adminDTO);
+        //}
 
-        [HttpPut]
-        [Route("{id:Guid}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateAdmin([FromRoute] Guid id, [FromBody] UpdatePasswordDTO updatePasswordDTO)
-        {
-            var adminDomain = await adminRepository.UpdateAdminPasswordAsync(id, updatePasswordDTO);
+        //[HttpPut]
+        //[Route("{id:Guid}")]
+        //[Authorize(Roles = "Admin")]
+        //public async Task<IActionResult> UpdateAdmin([FromRoute] Guid id, [FromBody] UpdatePasswordDTO updatePasswordDTO)
+        //{
+        //    var adminDomain = await adminRepository.UpdateAdminPasswordAsync(id, updatePasswordDTO);
 
-            if (adminDomain == null)
-            {
-                return NotFound("Admin not found");
-            }
+        //    if (adminDomain == null)
+        //    {
+        //        return NotFound("Admin not found");
+        //    }
 
-            var adminDTO = mapper.Map<AdminDTO>(adminDomain);
+        //    var adminDTO = mapper.Map<AdminDTO>(adminDomain);
 
-            return Ok(adminDTO);
-        }
+        //    return Ok(adminDTO);
+        //}
 
         [HttpDelete]
         [Route("{id:Guid}")]

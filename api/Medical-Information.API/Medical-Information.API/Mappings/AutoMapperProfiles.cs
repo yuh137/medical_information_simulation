@@ -9,10 +9,7 @@ namespace Medical_Information.API.Mappings
         public AutoMapperProfiles() 
         {
             CreateMap<Admin, AdminDTO>().ReverseMap();
-            CreateMap<Admin, AddAdminRequestDTO>().ReverseMap();
-            CreateMap<Admin, UpdatePasswordDTO>().ReverseMap();
             CreateMap<Student, StudentDTO>().ReverseMap();
-            CreateMap<Student, AddStudentRequestDTO>().ReverseMap();
             CreateMap<AdminQCLot, AdminQCLotDTO>().ReverseMap();
             CreateMap<Analyte, AnalyteDTO>().ReverseMap();
             CreateMap<Analyte, AddAnalyteRequestDTO>().ReverseMap();

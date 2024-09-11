@@ -44,44 +44,44 @@ namespace Medical_Information.API.Controllers
             return Ok(studentModel);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateStudent([FromBody] AddStudentRequestDTO addStudentRequestDTO)
-        {
-            var existingStudent = await studentRepository.GetStudentByNameAsync(addStudentRequestDTO.Username);
+        //[HttpPost]
+        //public async Task<IActionResult> CreateStudent([FromBody] AddStudentRequestDTO addStudentRequestDTO)
+        //{
+        //    var existingStudent = await studentRepository.GetStudentByNameAsync(addStudentRequestDTO.Username);
 
-            if (existingStudent != null)
-            {
-                return Conflict(new
-                {
-                    message = "Student already existed",
-                    student = existingStudent
-                });
-            }
+        //    if (existingStudent != null)
+        //    {
+        //        return Conflict(new
+        //        {
+        //            message = "Student already existed",
+        //            student = existingStudent
+        //        });
+        //    }
 
-            var studentModel = mapper.Map<Student>(addStudentRequestDTO);
+        //    var studentModel = mapper.Map<Student>(addStudentRequestDTO);
 
-            await studentRepository.CreateStudentAsync(studentModel);
+        //    await studentRepository.CreateStudentAsync(studentModel);
 
-            var studentDTO = mapper.Map<StudentDTO>(studentModel);
+        //    var studentDTO = mapper.Map<StudentDTO>(studentModel);
 
-            return CreatedAtAction(nameof(GetStudentByID), new { id = studentDTO.StudentID }, studentDTO);
-        }
+        //    return CreatedAtAction(nameof(GetStudentByID), new { id = studentDTO.StudentID }, studentDTO);
+        //}
 
-        [HttpPut]
-        [Route("{id:Guid}")]
-        public async Task<IActionResult> UpdateStudentPassword([FromRoute] Guid id, [FromBody] UpdatePasswordDTO dto)
-        {
-            var studentModel = await studentRepository.UpdateStudentPasswordAsync(id, dto);
+        // [HttpPut]
+        // [Route("{id:Guid}")]
+        // public async Task<IActionResult> UpdateStudentPassword([FromRoute] Guid id, [FromBody] UpdatePasswordDTO dto)
+        // {
+        //     var studentModel = await studentRepository.UpdateStudentPasswordAsync(id, dto);
 
-            if (studentModel == null)
-            {
-                return NotFound("Student not found");
-            }
+        //     if (studentModel == null)
+        //     {
+        //         return NotFound("Student not found");
+        //     }
 
-            var studentDTO = mapper.Map<StudentDTO>(studentModel);
+        //     var studentDTO = mapper.Map<StudentDTO>(studentModel);
 
-            return Ok(studentDTO);
-        }
+        //     return Ok(studentDTO);
+        // }
 
         [HttpDelete]
         [Route("{id:Guid}")]
