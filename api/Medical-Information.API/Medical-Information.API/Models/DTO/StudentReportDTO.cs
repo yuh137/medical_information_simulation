@@ -1,18 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Medical_Information.API.Models.Domain;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
-namespace Medical_Information.API.Models.Domain
+namespace Medical_Information.API.Models.DTO
 {
-    public class StudentReport
+    public class StudentReportDTO
     {
-        [Key]
         public Guid ReportID { get; set; }
-        [ForeignKey("StudentID")]
         public Guid StudentID { get; set; }
-        //public Student Student { get; set; }
-        [ForeignKey("AdminQCLotID")]
         public Guid AdminQCLotID { get; set; }
-        //public AdminQCLot AdminQCLot { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public ICollection<AnalyteInput> AnalyteInputs { get; set; } = [];
     }

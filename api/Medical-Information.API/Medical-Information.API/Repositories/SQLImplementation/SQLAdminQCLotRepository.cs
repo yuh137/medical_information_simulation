@@ -36,12 +36,12 @@ namespace Medical_Information.API.Repositories.SQLImplementation
 
         public async Task<List<AdminQCLot>> GetAllQCLotsAsync()
         {
-            return await dbContext.AdminQCLots.Include(item => item.Analytes).ToListAsync();
+            return await dbContext.AdminQCLots.Include(item => item.Analytes).Include(item => item.Reports).ToListAsync();
         }
 
         public async Task<AdminQCLot?> GetQCLotByIDAsync(Guid id)
         {
-            return await dbContext.AdminQCLots.FirstOrDefaultAsync(item => item.AdminQCLotID == id);
+            return await dbContext.AdminQCLots.Include(item => item.Analytes).Include(item => item.Reports).FirstOrDefaultAsync(item => item.AdminQCLotID == id);
         }
     }
 }
