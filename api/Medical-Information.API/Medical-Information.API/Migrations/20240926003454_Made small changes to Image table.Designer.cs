@@ -4,6 +4,7 @@ using Medical_Information.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical_Information.API.Migrations
 {
     [DbContext(typeof(MedicalInformationDbContext))]
-    partial class MedicalInformationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240926003454_Made small changes to Image table")]
+    partial class MadesmallchangestoImagetable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

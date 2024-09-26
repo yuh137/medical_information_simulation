@@ -17,6 +17,7 @@ namespace Medical_Information.API.Data
         public DbSet<Student> Students { get; set; }
         public DbSet<StudentReport> StudentReports { get; set; }
         public DbSet<AnalyteInput> AnalyteInputs { get; set; }
+        public DbSet<Images> Images { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

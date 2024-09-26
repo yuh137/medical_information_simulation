@@ -4,6 +4,7 @@ using Medical_Information.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical_Information.API.Migrations
 {
     [DbContext(typeof(MedicalInformationDbContext))]
-    partial class MedicalInformationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240925050244_Added Images Table")]
+    partial class AddedImagesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,10 +107,10 @@ namespace Medical_Information.API.Migrations
                         {
                             AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
                             Department = 0,
-                            ExpirationDate = new DateTime(2024, 10, 25, 19, 34, 53, 885, DateTimeKind.Local).AddTicks(7820),
-                            FileDate = new DateTime(2024, 9, 25, 19, 34, 53, 885, DateTimeKind.Local).AddTicks(7825),
+                            ExpirationDate = new DateTime(2024, 10, 25, 0, 2, 43, 556, DateTimeKind.Local).AddTicks(3936),
+                            FileDate = new DateTime(2024, 9, 25, 0, 2, 43, 556, DateTimeKind.Local).AddTicks(3941),
                             LotNumber = "888888888888",
-                            OpenDate = new DateTime(2024, 9, 25, 19, 34, 53, 885, DateTimeKind.Local).AddTicks(7842),
+                            OpenDate = new DateTime(2024, 9, 25, 0, 2, 43, 556, DateTimeKind.Local).AddTicks(3958),
                             QCName = "CMP Level I"
                         });
                 });
@@ -352,10 +355,6 @@ namespace Medical_Information.API.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("FileDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileExtension")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FileName")
