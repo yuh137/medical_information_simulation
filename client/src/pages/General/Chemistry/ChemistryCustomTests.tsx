@@ -10,11 +10,11 @@ import { useTheme } from "../../../context/ThemeContext";
 interface QCRangeElements {
   analyteName: string;
   analyteAcronym: string;
-  unit_of_measure: string;
-  min_level: string;
-  max_level: string;
+  unitOfMeasure: string;
+  minLevel: string;
+  maxLevel: string;
   mean: string;
-  std_devi: string;
+  stdDevi: string;
   electrolyte: boolean;
 }
 
@@ -73,11 +73,11 @@ const ChemistryCustomTests = () => {
   const columns: ColumnDef<QCRangeElements, string>[] = [
     { accessorKey: "analyteName", header: "Name" },
     { accessorKey: "analyteAcronym", header: "Abbreviation" },
-    { accessorKey: "unit_of_measure", header: "Units of Measure" },
-    { accessorKey: "min_level", header: "Min Level" },
-    { accessorKey: "max_level", header: "Max Level" },
+    { accessorKey: "unitOfMeasure", header: "Units of Measure" },
+    { accessorKey: "minLevel", header: "Min Level" },
+    { accessorKey: "maxLevel", header: "Max Level" },
     { accessorKey: "mean", header: "Mean" },
-    { accessorKey: "std_devi", header: "Standard Deviation" },
+    { accessorKey: "stdDevi", header: "Standard Deviation" },
     { accessorKey: "sdplus1", header: "+1 SD" },
     { accessorKey: "sdminus1", header: "-1 SD" },
     { accessorKey: "sdplus2", header: "+2 SD" },

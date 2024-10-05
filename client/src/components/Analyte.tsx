@@ -6,8 +6,8 @@ export interface AnalyteProps {
   acronym: string;
   electro?: boolean;
   // level: number;
-  min_level: number;
-  max_level: number;
+  minLevel: number;
+  maxLevel: number;
   measUnit: string;
   handleInputChange: (value: string) => void;
 }
@@ -47,8 +47,8 @@ const Analyte = forwardRef((props: AnalyteProps, ref) => {
               // console.log(+event.currentTarget.value);
               if (
                 isNaN(+event.currentTarget.value) ||
-                +event.currentTarget.value < +props.min_level ||
-                +event.currentTarget.value > +props.max_level
+                +event.currentTarget.value < +props.minLevel ||
+                +event.currentTarget.value > +props.maxLevel
               ) {
                 event.currentTarget.classList.remove("bg-[#00FF00]");
                 event.currentTarget.classList.add("bg-[#FF0000]");
@@ -81,9 +81,9 @@ const Analyte = forwardRef((props: AnalyteProps, ref) => {
           <div className="analyte-name peer text-base truncate">{props.name}</div>
           <div className="absolute invisible transition-all ease-in delay-100 peer-hover:visible text-white text-sm bg-slate-500 max-sm:text-center border border-solid border-gray-300 rounded-lg p-2">{props.name}</div>
           <div className="analyte-range text-xs">
-            {/* {props.level === 1 || props.level === 2 ? `Level ${props.level === 1 ? "I" : "II"} range: ${props.min_level} -${" "}
-            ${props.max_level} ${props.measUnit}` : `Range: ${props.min_level} -${" "} ${props.max_level} ${props.measUnit}`} */}
-            Range: {props.min_level} - {props.max_level} {props.measUnit}
+            {/* {props.level === 1 || props.level === 2 ? `Level ${props.level === 1 ? "I" : "II"} range: ${props.minLevel} -${" "}
+            ${props.maxLevel} ${props.measUnit}` : `Range: ${props.minLevel} -${" "} ${props.maxLevel} ${props.measUnit}`} */}
+            Range: {props.minLevel} - {props.maxLevel} {props.measUnit}
           </div>
         </div>
       </div>

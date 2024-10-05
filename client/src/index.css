@@ -172,6 +172,16 @@ html {
   animation: ripple-animation 0.8s linear;
 }
 
+.ant-picker-ok button {
+  /* color: #fff !important; */
+  background: #4096ff !important;
+}
+
+/* .ant-btn-primary .css-dev-only-do-not-override-3rel02 {
+  color: #fff;
+  background: #4096ff;
+} */
+
 @keyframes ripple-animation {
   to {
     transform: scale(3);

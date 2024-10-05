@@ -257,8 +257,8 @@ const Simple_Faculty_QC_Review = () => {
                 {/* Table to display analyte names */}
                 <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200 mt-4">
                   <TableHeader>
-                    <TableRow style={tableHeaderStyle}>
-                      <TableHead className="text-center">Analyte Name</TableHead>
+                    <TableRow className='bg-[#3A62A7]'>
+                      <TableHead className="text-center text-white">Analyte Name</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

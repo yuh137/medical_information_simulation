@@ -20,28 +20,29 @@ export interface Student {
 export interface ChemistryQCTemplate {
     analyteName: string;
     analyteAcronym: string;
-    unit_of_measure: string;
-    min_level: number;
-    max_level: number;
+    unitOfMeasure: string;
+    minLevel: number;
+    maxLevel: number;
     mean: number;
-    std_devi: number;
+    stdDevi: number;
 }
 
 export interface QCTemplateBatch {
+    adminQCLotID?: string;
     fileName: string;
     lotNumber: string;
     openDate: string;
     closedDate: string;
+    expirationDate: string;
+    fileDate: string;
     analytes: {
         analyteName: string;
         analyteAcronym: string;
-        unit_of_measure: string;
-        min_level: string;
-        max_level: string;
+        unitOfMeasure: string;
+        minLevel: string;
+        maxLevel: string;
         mean: string;
-        std_devi: string;
-        electrolyte: boolean;
+        stdDevi: string;
         value?: string; // Optional value field, since it might not exist initially
-
     }[];
 }

@@ -49,7 +49,7 @@ namespace Medical_Information.API.Controllers
         {
             var analyteModels = await analyteRepository.GetAllAnalytesFromQCLotAsync(lotId);
 
-            var analyteDTO = mapper.Map<AnalyteDTO>(analyteModels);
+            var analyteDTO = mapper.Map<List<AnalyteDTO>>(analyteModels);
 
             return Ok(analyteDTO);
         }

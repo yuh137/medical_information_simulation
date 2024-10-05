@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Medical_Information.API.Enums;
 using Medical_Information.API.Models.Domain;
 using Medical_Information.API.Models.DTO;
+using Medical_Information.API.Models.ErrorHandling;
 using Medical_Information.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -43,10 +45,37 @@ namespace Medical_Information.API.Controllers
             return Ok(qcLotDTO);
         }
 
+        [HttpGet]
+        [Route("ByName")]
+        public async Task<IActionResult> GetQCLotByName([FromQuery] string? name, [FromQuery] string? dep)
+        {
+            AdminQCLot? qcLotModel;
+
+            if (Enum.TryParse(dep, true, out Department department))
+            {
+                qcLotModel = await adminQCLotRepository.GetAdminQCLotByNameAsync(name, department);
+            } else
+            {
+                qcLotModel = await adminQCLotRepository.GetAdminQCLotByNameAsync(name);
+            }
+
+            if (qcLotModel == null)
+            {
+                return NotFound(new RequestErrorObject
+                {
+                    ErrorCode = ErrorCode.NotFound,
+                    Message = "QC Lot Do Not Exist!"
+                });
+            }
+
+            var qcLotDTO = mapper.Map<AdminQCLotDTO>(qcLotModel);
+
+            return Ok(qcLotDTO);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateQCLot([FromBody] AddAdminQCLotRequestDTO dto)
         {
-            //var qclotModel = mapper.Map<AdminQCLot>(dto);
             var qclotModel = new AdminQCLot
             {
                 QCName = dto.QCName,
@@ -54,11 +83,23 @@ namespace Medical_Information.API.Controllers
                 OpenDate = dto.OpenDate,
                 ClosedDate = dto.ClosedDate,
                 ExpirationDate = dto.ExpirationDate,
+                IsActive = true,
                 FileDate = dto.FileDate,
                 Department = dto.Department,
                 Analytes = new List<Analyte>(),
                 Reports = new List<StudentReport>()
             };
+
+            var checkExistingModel = await adminQCLotRepository.DoesLotNumberExist(qclotModel);
+
+            if (checkExistingModel != null)
+            {
+                 return BadRequest(new RequestErrorObject
+                 {
+                     ErrorCode = ErrorCode.AlreadyExist,
+                     Message = "Lot Number Already Exist!",
+                 });
+            }
 
             foreach (var analyteDTO in dto.Analytes)
             {
@@ -76,6 +117,49 @@ namespace Medical_Information.API.Controllers
 
             //return CreatedAtAction("Get", new { id = qclotDTO.AdminQCLotID }, qclotDTO);
             return Ok(qclotDTO);
+        }
+
+        [HttpPut]
+        [Route("UpdateQCLot/{id:Guid}")]
+        public async Task<IActionResult> UpdateQCLot([FromRoute] Guid id, [FromBody] UpdateAdminQCLotDTO dto)
+        {
+            //var qclotModel = new AdminQCLot
+            //{
+            //    QCName = dto.QCName,
+            //    LotNumber = dto.LotNumber,
+            //    OpenDate = dto.OpenDate,
+            //    ClosedDate = dto.ClosedDate,
+            //    ExpirationDate = dto.ExpirationDate,
+            //    IsActive = true,
+            //    FileDate = dto.FileDate,
+            //    Department = dto.Department,
+            //    Analytes = new List<Analyte>(),
+            //    Reports = new List<StudentReport>()
+            //};
+
+            //foreach (var analyteDTO in dto.Analytes)
+            //{
+            //    if (analyteDTO != null)
+            //    {
+            //        var analyteModel = mapper.Map<Analyte>(analyteDTO);
+
+            //        qclotModel.Analytes.Add(analyteModel);
+            //    }
+            //};
+
+            var qclotModel = mapper.Map<AdminQCLot>(dto);
+
+            qclotModel = await adminQCLotRepository.UpdateQCLotAsync(id, qclotModel);
+
+            if (qclotModel == null)
+            {
+                return BadRequest(new RequestErrorObject
+                {
+                    ErrorCode = ErrorCode.NotFound,
+                });
+            }
+
+            return Ok(qclotModel);
         }
     }
 }

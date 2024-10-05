@@ -23,10 +23,10 @@ interface AnalyteData {
   closedDate: string;
   value: number;
   mean: number;
-  std_devi: number;
+  stdDevi: number;
   analyteName: string;
-  min_level: number;
-  max_level: number;
+  minLevel: number;
+  maxLevel: number;
 }
 
 interface TableData {
@@ -60,10 +60,10 @@ const ChemistryLeveyJennings = () => {
               closedDate: record.closedDate,
               value: analyte.value ? parseFloat(analyte.value) : parseFloat(analyte.mean),
               mean: parseFloat(analyte.mean),
-              std_devi: parseFloat(analyte.std_devi),
+              stdDevi: parseFloat(analyte.stdDevi),
               analyteName: analyte.analyteName,
-              min_level: parseFloat(analyte.min_level),  
-              max_level: parseFloat(analyte.max_level),  
+              minLevel: parseFloat(analyte.minLevel),  
+              maxLevel: parseFloat(analyte.maxLevel),  
             };
           }
           return null;
@@ -107,8 +107,8 @@ const ChemistryLeveyJennings = () => {
       .domain([new Date(2024, 0, 1), new Date(2024, 11, 31)])
       .range([0, width]);
 
-    const yMax = d3.max(analyteData, d => d.mean + 3 * d.std_devi) || 0;
-    const yMin = d3.min(analyteData, d => d.mean - 3 * d.std_devi) || 0;
+    const yMax = d3.max(analyteData, d => d.mean + 3 * d.stdDevi) || 0;
+    const yMin = d3.min(analyteData, d => d.mean - 3 * d.stdDevi) || 0;
 
     const yScale = d3.scaleLinear()
       .domain([yMin, yMax])
@@ -139,12 +139,12 @@ const ChemistryLeveyJennings = () => {
       .call(yAxis);
     const yAxisLabels = [
         { label: 'x̅', value: analyteData[0].mean, color: 'grey' },
-        { label: '+1 SD', value: analyteData[0].mean + analyteData[0].std_devi, color: 'green' },
-        { label: '-1 SD', value: analyteData[0].mean - analyteData[0].std_devi, color: 'green' },
-        { label: '+2 SD', value: analyteData[0].mean + 2 * analyteData[0].std_devi, color: 'orange' },
-        { label: '-2 SD', value: analyteData[0].mean - 2 * analyteData[0].std_devi, color: 'orange' },
-        { label: '+3 SD', value: analyteData[0].mean + 3 * analyteData[0].std_devi, color: 'purple' },
-        { label: '-3 SD', value: analyteData[0].mean - 3 * analyteData[0].std_devi, color: 'purple' }
+        { label: '+1 SD', value: analyteData[0].mean + analyteData[0].stdDevi, color: 'green' },
+        { label: '-1 SD', value: analyteData[0].mean - analyteData[0].stdDevi, color: 'green' },
+        { label: '+2 SD', value: analyteData[0].mean + 2 * analyteData[0].stdDevi, color: 'orange' },
+        { label: '-2 SD', value: analyteData[0].mean - 2 * analyteData[0].stdDevi, color: 'orange' },
+        { label: '+3 SD', value: analyteData[0].mean + 3 * analyteData[0].stdDevi, color: 'purple' },
+        { label: '-3 SD', value: analyteData[0].mean - 3 * analyteData[0].stdDevi, color: 'purple' }
       ];
   
       yAxisLabels.forEach(({ label, value, color }) => {
@@ -167,8 +167,8 @@ const ChemistryLeveyJennings = () => {
     svgContainer.append("line")
       .attr("x1", 0)
       .attr("x2", width)
-      .attr("y1", yScale(analyteData[0].mean + analyteData[0].std_devi))
-      .attr("y2", yScale(analyteData[0].mean + analyteData[0].std_devi))
+      .attr("y1", yScale(analyteData[0].mean + analyteData[0].stdDevi))
+      .attr("y2", yScale(analyteData[0].mean + analyteData[0].stdDevi))
       .attr("stroke", "green")
       .attr("stroke-dasharray", "4")
       .attr("stroke-width", 1);
@@ -176,8 +176,8 @@ const ChemistryLeveyJennings = () => {
     svgContainer.append("line")
       .attr("x1", 0)
       .attr("x2", width)
-      .attr("y1", yScale(analyteData[0].mean - analyteData[0].std_devi))
-      .attr("y2", yScale(analyteData[0].mean - analyteData[0].std_devi))
+      .attr("y1", yScale(analyteData[0].mean - analyteData[0].stdDevi))
+      .attr("y2", yScale(analyteData[0].mean - analyteData[0].stdDevi))
       .attr("stroke", "green")
       .attr("stroke-dasharray", "4")
       .attr("stroke-width", 1);
@@ -185,8 +185,8 @@ const ChemistryLeveyJennings = () => {
     svgContainer.append("line")
       .attr("x1", 0)
       .attr("x2", width)
-      .attr("y1", yScale(analyteData[0].mean + 2 * analyteData[0].std_devi))
-      .attr("y2", yScale(analyteData[0].mean + 2 * analyteData[0].std_devi))
+      .attr("y1", yScale(analyteData[0].mean + 2 * analyteData[0].stdDevi))
+      .attr("y2", yScale(analyteData[0].mean + 2 * analyteData[0].stdDevi))
       .attr("stroke", "orange")
       .attr("stroke-dasharray", "4")
       .attr("stroke-width", 1);
@@ -194,8 +194,8 @@ const ChemistryLeveyJennings = () => {
     svgContainer.append("line")
       .attr("x1", 0)
       .attr("x2", width)
-      .attr("y1", yScale(analyteData[0].mean - 2 * analyteData[0].std_devi))
-      .attr("y2", yScale(analyteData[0].mean - 2 * analyteData[0].std_devi))
+      .attr("y1", yScale(analyteData[0].mean - 2 * analyteData[0].stdDevi))
+      .attr("y2", yScale(analyteData[0].mean - 2 * analyteData[0].stdDevi))
       .attr("stroke", "orange")
       .attr("stroke-dasharray", "4")
       .attr("stroke-width", 1);
@@ -203,8 +203,8 @@ const ChemistryLeveyJennings = () => {
     svgContainer.append("line")
       .attr("x1", 0)
       .attr("x2", width)
-      .attr("y1", yScale(analyteData[0].mean + 3 * analyteData[0].std_devi))
-      .attr("y2", yScale(analyteData[0].mean + 3 * analyteData[0].std_devi))
+      .attr("y1", yScale(analyteData[0].mean + 3 * analyteData[0].stdDevi))
+      .attr("y2", yScale(analyteData[0].mean + 3 * analyteData[0].stdDevi))
       .attr("stroke", "purple")
       .attr("stroke-dasharray", "4")
       .attr("stroke-width", 1);
@@ -212,8 +212,8 @@ const ChemistryLeveyJennings = () => {
     svgContainer.append("line")
       .attr("x1", 0)
       .attr("x2", width)
-      .attr("y1", yScale(analyteData[0].mean - 3 * analyteData[0].std_devi))
-      .attr("y2", yScale(analyteData[0].mean - 3 * analyteData[0].std_devi))
+      .attr("y1", yScale(analyteData[0].mean - 3 * analyteData[0].stdDevi))
+      .attr("y2", yScale(analyteData[0].mean - 3 * analyteData[0].stdDevi))
       .attr("stroke", "purple")
       .attr("stroke-dasharray", "4")
       .attr("stroke-width", 1);
@@ -225,7 +225,7 @@ const ChemistryLeveyJennings = () => {
       .attr("cx", (d) => xScale(parseDate(d.closedDate) as Date))
       .attr("cy", (d) => yScale(d.value))
       .attr("r", 4)
-      .attr("fill", (d) => (d.value > d.mean + 2 * d.std_devi || d.value < d.mean - 2 * d.std_devi) ? "red" : "blue"); // Red if outside ±2 SD, else blue
+      .attr("fill", (d) => (d.value > d.mean + 2 * d.stdDevi || d.value < d.mean - 2 * d.stdDevi) ? "red" : "blue"); // Red if outside ±2 SD, else blue
   };
 
   const generatePDF = async () => {
@@ -309,8 +309,8 @@ const ChemistryLeveyJennings = () => {
             <div >Lot #: {lotNumber}</div>
             <div style = {{fontWeight: 'normal'}}>Closed Date: {analyteData.length > 0 ? analyteData[0].closedDate : ''}</div>
             <div>Analyte: {analyteName}</div>
-            <div style = {{fontWeight: 'normal'}}>Minimum Range: {analyteData.length > 0 ? analyteData[0].min_level : ''}</div>
-            <div style = {{fontWeight: 'normal'}} >Maximum : {analyteData.length > 0 ? analyteData[0].max_level : ''}</div>
+            <div style = {{fontWeight: 'normal'}}>Minimum Range: {analyteData.length > 0 ? analyteData[0].minLevel : ''}</div>
+            <div style = {{fontWeight: 'normal'}} >Maximum : {analyteData.length > 0 ? analyteData[0].maxLevel : ''}</div>
           </div>
         </div>
 

@@ -67,12 +67,12 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
               </View>
               <View>
                 {analyteValues?.map((value, index) => (
-                  <Text style={tw(`mb-2 text-[13px] ${invalidIndexArray?.includes(index) ? "text-red-500" : ""}`)} key={index}>{parseFloat(value)} {QCData?.analytes[index].unit_of_measure}</Text>
+                  <Text style={tw(`mb-2 text-[13px] ${invalidIndexArray?.includes(index) ? "text-red-500" : ""}`)} key={index}>{parseFloat(value)} {QCData?.analytes[index].unitOfMeasure}</Text>
                 ))}
               </View>
               <View>
                 {analyteValues?.map((value, index) => (
-                  <Text style={tw(`mb-2 text-[13px] ${invalidIndexArray?.includes(index) ? "text-red-500" : ""}`)} key={index}>{QCData?.analytes[index].min_level} - {QCData?.analytes[index].max_level} {QCData?.analytes[index].unit_of_measure}</Text>
+                  <Text style={tw(`mb-2 text-[13px] ${invalidIndexArray?.includes(index) ? "text-red-500" : ""}`)} key={index}>{QCData?.analytes[index].minLevel} - {QCData?.analytes[index].maxLevel} {QCData?.analytes[index].unitOfMeasure}</Text>
                 ))}
               </View>
             </View>
@@ -256,15 +256,14 @@ useEffect(() => {
               <Analyte
                 name={item.analyteName}
                 acronym={item.analyteAcronym}
-                electro={item.electrolyte}
-                min_level={+item.min_level}
-                max_level={+item.max_level}
+                minLevel={+item.minLevel}
+                maxLevel={+item.maxLevel}
                 // level={detectLevel(props.name)}
-                measUnit={item.unit_of_measure}
+                measUnit={item.unitOfMeasure}
                 handleInputChange={(val) => {
-                    if (item.min_level !== "" && item.max_level !== "") {
+                    if (item.minLevel !== "" && item.maxLevel !== "") {
                       // console.log("First condition");
-                      handleInputChange(index, val, +item.min_level, +item.max_level)
+                      handleInputChange(index, val, +item.minLevel, +item.maxLevel)
                     }
                     else {
                       // console.log("Second condition")

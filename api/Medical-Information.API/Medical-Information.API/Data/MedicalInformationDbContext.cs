@@ -27,6 +27,8 @@ namespace Medical_Information.API.Data
 
             modelBuilder.Entity<AdminQCLot>().HasMany(p => p.Reports).WithOne().HasForeignKey(e => e.AdminQCLotID);
 
+            modelBuilder.Entity<AdminQCLot>().HasIndex(e => e.LotNumber).IsUnique();
+
             //modelBuilder.Entity<Analyte>().HasOne(e => e.AdminQCLot).WithMany(e => e.Analytes).HasForeignKey(e => e.AdminQCLotID);
 
             modelBuilder.Entity<Student>().HasMany(p => p.Reports).WithOne().HasForeignKey(e => e.StudentID);
@@ -230,13 +232,9 @@ namespace Medical_Information.API.Data
                 },
             };
 
-            //mockQCLot.Analytes = new List<Analyte>(analytes);
-
             modelBuilder.Entity<AdminQCLot>().HasData(mockQCLot);
 
             modelBuilder.Entity<Analyte>().HasData(analytes);
-
-            //ICollection<Analyte> analytesInQCLot = new List<Analyte>(analytes);
         }
     }
 }

@@ -37,11 +37,7 @@ export const AuthProvider = (props: AuthProviderProps) => {
     const [username, setUsername] = useState<string>("");
     const [initials, setInitials] = useState<string>("");
 
-    async function login(token: string, initials: string, username: string, userType: UserType) {
-
-      
-
-      setIsAuthenticated(true);
+    async function login(token: string, initials: string, username: string, userType: UserType) {setIsAuthenticated(true);
       setUserType(userType);
       setUsername(username);
       setInitials(initials);
@@ -67,7 +63,7 @@ export const AuthProvider = (props: AuthProviderProps) => {
   async function checkSession(): Promise<boolean> {
     const tokenString = localStorage.getItem("token");
 
-    console.log("check session: ", tokenString);
+    // console.log("check session: ", tokenString);
     if (tokenString && tokenString !== "") {
       setIsAuthenticated(true);
       const token: AuthToken = JSON.parse(tokenString);

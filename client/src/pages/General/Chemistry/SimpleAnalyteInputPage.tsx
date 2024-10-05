@@ -126,12 +126,12 @@ const SimpleAnalyteInputPage = (props: { name: string }) => {
             </View>
             <View>
               {analyteValues?.map((value, index) => (
-                <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{parseFloat(value)} {QCData?.analytes[index].unit_of_measure}</Text>
+                <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{parseFloat(value)} {QCData?.analytes[index].unitOfMeasure}</Text>
               ))}
             </View>
             <View>
               {analyteValues?.map((value, index) => (
-                <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{QCData?.analytes[index].min_level} - {QCData?.analytes[index].max_level} {QCData?.analytes[index].unit_of_measure}</Text>
+                <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{QCData?.analytes[index].minLevel} - {QCData?.analytes[index].maxLevel} {QCData?.analytes[index].unitOfMeasure}</Text>
               ))}
             </View>
           </View>
@@ -221,16 +221,15 @@ const SimpleAnalyteInputPage = (props: { name: string }) => {
               <Analyte
                 name={item.analyteName}
                 acronym={item.analyteAcronym}
-                electro={item.electrolyte}
-                min_level={+item.min_level}
-                max_level={+item.max_level}
+                minLevel={+item.minLevel}
+                maxLevel={+item.maxLevel}
                 // level={detectLevel(props.name)}
-                measUnit={item.unit_of_measure}
+                measUnit={item.unitOfMeasure}
                 handleInputChange={(val: string) => {
                   // Convert string to number but pass the string to handleInputChange
                   const numericValue = +val;
-                  if (item.min_level !== "" && item.max_level !== "") {
-                      handleInputChange(index, val, +item.min_level, +item.max_level);  // Pass `val` as a string
+                  if (item.minLevel !== "" && item.maxLevel !== "") {
+                      handleInputChange(index, val, +item.minLevel, +item.maxLevel);  // Pass `val` as a string
                   } else {
                       handleInputChange(index, val, -1, 9999);  // Pass `val` as a string
                   }

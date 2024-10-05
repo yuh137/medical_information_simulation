@@ -6,19 +6,23 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { CredentialsInput } from './Register';
 import { AuthToken, UserType, useAuth } from '../context/AuthContext';
 import { getAdminByName, getStudentByName } from '../utils/indexedDB/getData';
+import { Icon } from '@iconify/react';
 
 const Login = () => {
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const { login, checkSession, checkUserType } = useAuth();
+  const { checkSession, checkUserType } = useAuth();
   const [loginOptions, setLoginOptions] = useState<"Admin" | "Student" | string>("");
-  const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState(false);
   const { register, handleSubmit } = useForm<CredentialsInput>();
   const onSubmit: SubmitHandler<CredentialsInput> = async (data) => {
+    setIsLoggingIn(true);
     if (loginOptions === "Admin") {
       // const check = await getAdminByName(data.username);
       const sessionCheck = await checkSession();
       if (sessionCheck) {
+        setIsLoggingIn(false);
         navigate("/admin-home");
       }
 
@@ -31,34 +35,24 @@ const Login = () => {
         body: JSON.stringify({ username: data.username, password: data.password }),
       })
 
-      // const res = await checkServer;
-      console.log(checkServer);
-
       try {
         if (checkServer.status === 200) {
           const token: AuthToken = await checkServer.json();
 
           localStorage.setItem('token', JSON.stringify(token));
           console.log(localStorage.getItem('token'));
+          setIsLoggingIn(false);
           navigate('/admin-home');
-          // if ()
         }
       } catch(e) {
         console.log("Error in login ", e);
+        setIsLoggingIn(false);
       }
-
-      // if (check && check.password === data.password) {
-      //   login(JSON.stringify({ username: data.username, userType: UserType.Admin, initials: check.initials }), check.initials, data.username, UserType.Admin);
-      //   navigate('/admin-home');
-      // } else {
-      //   console.log(new Error("Invalid credentials"));
-      // }
-      // console.log(username, type);
     } else if (loginOptions === "Student") {
-      // const check = await getStudentByName(data.username);
       try {
         const sessionCheck = await checkSession();
         if (sessionCheck) {
+          setIsLoggingIn(false);
           navigate('/student-home');
         }
 
@@ -71,29 +65,21 @@ const Login = () => {
           body: JSON.stringify({ username: data.username, password: data.password }),
         })
 
-        console.log(checkServer);
-
         if (checkServer.status === 200) {
           const token: AuthToken = await checkServer.json();
 
           localStorage.setItem('token', JSON.stringify(token));
           console.log(localStorage.getItem('token'));
+          setIsLoggingIn(false);
           navigate('/student-home');
-          // if ()
         }
       } catch (e) {
         console.log("Error logging in: ", e);
+        setIsLoggingIn(false);
       }
-
-      // console.log(check);
-      // if (check && check.password === data.password) {
-      //   login(JSON.stringify({ username: data.username, userType: UserType.Student, initials: check.initials }), check.initials, data.username, UserType.Student);
-      //   navigate('/student-home');
-      // } else {
-      //   console.log(new Error("Invalid credentials"));
-      // }
     } else {
       console.log(new Error("Invalid type"));
+      setIsLoggingIn(false);
     }
   }
 
@@ -114,15 +100,6 @@ const Login = () => {
   useEffect(() => {
     checkCurrentSession();
   }, [])
-
-  useEffect(() => {
-    //If notification is enabled, disable after 3 seconds
-    if (isFeedbackNotiOpen) {
-      setTimeout(() => {
-        setFeedbackNotiOpen(false);
-      }, 3000);
-    }
-  }, [isFeedbackNotiOpen])
 
   return (
     <>
@@ -179,7 +156,6 @@ const Login = () => {
             className="flex flex-col gap-6"
             onSubmit={handleSubmit(onSubmit)}
           >
-            {/* <TextField variant='outlined' /> */}
             <input
               type="text"
               className="min-h-10 placeholder:font-semibold placeholder:text-center text-center"
@@ -197,15 +173,13 @@ const Login = () => {
               onClick={handleSubmit(onSubmit)}
               className={`!text-black !bg-[${theme.secondaryColor}] !border !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F]`}
             >
-              Login
+              { isLoggingIn ? (<Icon icon="eos-icons:three-dots-loading" />) : "Login" }
             </Button>
           </form>
           <div className="register-link">
-            <Link to="/register">
-              <div className="register-link-text text-center text-blue-400 ">
-                Don't have an account?
-              </div>
-            </Link>
+            <div className="register-link-text text-center hover:cursor-pointer text-blue-400" onClick={() => navigate("/register")}>
+              Don't have an account?
+            </div>
           </div>
         </div>
       </div>

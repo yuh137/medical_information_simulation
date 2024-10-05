@@ -1,5 +1,6 @@
 ﻿using Medical_Information.API.Models.Domain;
 using Medical_Information.API.Models.DTO;
+using Medical_Information.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,14 @@ namespace Medical_Information.API.Controllers
     [ApiController]
     public class ImagesController : ControllerBase
     {
+        private readonly IImageRepository imageRepository;
+
+        public ImagesController(IImageRepository imageRepository)
+        {
+            this.imageRepository = imageRepository;
+        }
+        [HttpPost]
+        [Route("Upload")]
         public async Task<IActionResult> Upload([FromForm] ImageUploadRequestDTO requestDTO)
         {
             ValidateFileUpload(requestDTO);
@@ -23,6 +32,10 @@ namespace Medical_Information.API.Controllers
                     FileSizeInBytes = requestDTO.File.Length,
                     FileExtension = Path.GetExtension(requestDTO.File.FileName)
                 };
+
+                await imageRepository.Upload(imageDomainModel);
+
+                return Ok(imageDomainModel);
             }
 
             return BadRequest(ModelState);

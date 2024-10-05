@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Routes, Route, Navigate, Link, useNavigate, createBrowserRouter, RouterProvider, useParams } from "react-router-dom";
+import { Navigate, createBrowserRouter, RouterProvider } from "react-router-dom";
 import initIDB from "./utils/indexedDB/initIDB";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -9,7 +9,6 @@ import ChemistryOrderControls from "./pages/General/Chemistry/ChemistryOrderCont
 import ChemistryQCResult from "./pages/General/Chemistry/ChemistryQCResult";
 import ChemistryAnalyteInputPage from "./pages/General/Chemistry/ChemistryAnalyteInputPage";
 import Unauthorized from "./pages/Unauthorized";
-import { AuthProvider, useAuth } from "./context/AuthContext";
 import FacultyHomeScreen from "./pages/FacultyView/FacultyHomeScreen";
 import FacultyQualityControls from "./pages/FacultyView/FacultyQualityControls";
 import ChemistryQCBuilder from "./pages/General/Chemistry/ChesmistryQCBuilderPage";
@@ -27,7 +26,7 @@ import Layout from "./utils/Layout";
 import ChemistryLeveyJennings from "./pages/General/Chemistry/ChemistryLeveyJennings";
 import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInputPage";
 import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
-import { getAllDataFromStore } from "./utils/indexedDB/getData";
+import { qcTypeLinkList } from "./utils/utils";
 
 function App() {
   initIDB();
@@ -83,7 +82,7 @@ function AppWithRouter() {
             children: [
               {
                 path: 'qc_results',
-                element: <ChemistryQCResult link="chemistry" name="Chemistry" />,
+                element: <ChemistryQCResult />,
               },
               {
                 path: 'simple-analyte-input-page',
@@ -117,7 +116,28 @@ function AppWithRouter() {
               },
               {
                 path: "edit_qc/:item",
-                element: <ChemistryTestInputPage name="CMP Level I" />,
+                element: <ChemistryTestInputPage />,
+                loader: async ({ params, request }) => {
+                  const { item } = params;
+                  const searchParams = new URL(request.url).searchParams;
+                  const qcName = searchParams.get("name");
+                  const dep = searchParams.get("dep");
+                  // const qcName = qcTypeLinkList.find(qcType => qcType.link.includes(item ?? "undefined"))?.name;
+
+                  if (qcName) {
+                    try {
+                      const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByName?dep=${dep}&name=${qcName}`);
+
+                      if (res.ok) {
+                        return res.json();
+                      }
+                    } catch (e) {
+                      console.error("Error fetching QC data", e);
+                    }
+                  }
+
+                  return null; 
+                }
               },
               {
                 path: "build_qc/:item",

@@ -2,13 +2,16 @@ using Medical_Information.API.Data;
 using Medical_Information.API.Mappings;
 using Medical_Information.API.Repositories.Interfaces;
 using Medical_Information.API.Repositories.Interfaces.Auth;
+using Medical_Information.API.Repositories.LocalImplementation;
 using Medical_Information.API.Repositories.SQLImplementation;
 using Medical_Information.API.Repositories.SQLImplementation.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Net.NetworkInformation;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -70,6 +73,7 @@ builder.Services.AddScoped<IAdminRepository, SQLAdminRepository>();
 builder.Services.AddScoped<IStudentRepository, SQLStudentRepository>();
 builder.Services.AddScoped<IAdminQCLotRepository, SQLAdminQCLotRepository>();
 builder.Services.AddScoped<IAnalyteRepository, SQLAnalyteRepository>();
+builder.Services.AddScoped<IImageRepository, LocalImageRepository>();
 
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 
@@ -120,6 +124,12 @@ app.UseCors("All Origins");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+    RequestPath = "/Images"
+});
 
 app.MapControllers();
 

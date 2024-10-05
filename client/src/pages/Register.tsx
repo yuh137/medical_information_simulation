@@ -3,10 +3,6 @@ import { Link } from "react-router-dom";
 import { Button, Backdrop } from "@mui/material";
 import { useTheme } from "../context/ThemeContext";
 import { useForm, SubmitHandler } from "react-hook-form";
-import addData from "../utils/indexedDB/addData";
-import { generateRandomId } from "../utils/utils";
-import { Admin } from "../utils/indexedDB/IDBSchema";
-import { getAdminByName, getStudentByName } from "../utils/indexedDB/getData";
 import { Icon } from "@iconify/react";
 
 export interface CredentialsInput {
@@ -24,6 +20,8 @@ const Register = () => {
     "Admin" | "Student" | string
   >("");
   const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [isRegisterSuccessful, setIsRegisterSuccessful] = useState(false);
 
   useEffect(() => {
     //If notification is enabled, disable after 3 seconds
@@ -43,6 +41,7 @@ const Register = () => {
       // const check = await getAdminByName(data.username);
       // console.log("Check", await check);
       const user = { ...data, roles: [ "Admin" ] }
+      setIsRegistering(true);
       try {
         const res = await fetch(`${process.env.REACT_APP_API_URL}/Auth/Register`, {
           method: "POST",
@@ -53,29 +52,17 @@ const Register = () => {
         })
 
         if (res.ok) {
-          setFeedbackNotiOpen(true);
+          setIsRegisterSuccessful(true);
           console.log(res.text());
         } else {
           console.error("Failed to register");
         }
+        setIsRegistering(false);
+        setFeedbackNotiOpen(true);
       } catch (e) {
         console.error("Failed to register", e);
+        setIsRegistering(false);
       }
-
-      // if ((await check) === null) {
-      //   const res = await addData<Admin>("admins", {
-      //     ["id"]: generateRandomId(),
-      //     username: data.username,
-      //     password: data.password,
-      //     firstname: data.firstname,
-      //     lastname: data.lastname,
-      //     initials: data.initials,
-      //   });
-
-      //   console.log(res);
-      // } else {
-      //   console.log(new Error("Username already exists"));
-      // }
     } else if (registerOptions === "Student") {
       // const check = await getStudentByName(data.username);
       const user = { ...data, roles: [ "Student" ] }
@@ -198,9 +185,9 @@ const Register = () => {
               <Button
                 variant="outlined"
                 onClick={handleSubmit(onSubmit)}
-                className={`!text-black !bg-[${theme.secondaryColor}] !border !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F]`}
+                className={`!text-black !bg-[${theme.secondaryColor}] !border !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] sm:h-10`}
               >
-                Register
+                {isRegistering ? (<Icon icon="eos-icons:three-dots-loading" />) : "Register"}
               </Button>
             </form>
           </div>
@@ -213,9 +200,9 @@ const Register = () => {
           </div>
         </div>
       </div>
+      
       <Backdrop
         open={isFeedbackNotiOpen}
-        
         onClick={() => {
           setFeedbackNotiOpen(false);
         }}
@@ -223,7 +210,7 @@ const Register = () => {
         <div className="bg-white rounded-xl">
           <div className="sm:p-8 flex flex-col sm:gap-4">
             <div className="text-center text-gray-600 text-xl font-semibold">
-              { isFeedbackNotiOpen ? (
+              { isRegisterSuccessful ? (
                 <>
                   <div className="flex flex-col sm:gap-y-2">
                     <Icon icon="clarity:success-standard-line" className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>

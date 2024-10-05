@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import {
   ColumnDef,
@@ -19,7 +19,6 @@ import { CMP, Cardiac, Thyroid, Iron, Lipid, Liver, Drug, Hormone, Pancreatic, D
 import { renderSubString } from "../../../utils/utils";
 import { CMPLevelList, CardiacLevelList, HormoneLevelList, ThyroidLevelList, LipidLevelList, LiverLevelList, IronLevelList, DrugLevelList, PancreaticLevelList, DiabetesLevelList, CancerLevelList, VitaminsLevelList } from "../../../utils/utils";
 import { ButtonBase, Checkbox, Drawer } from "@mui/material";
-import { Icon } from "@iconify/react";
 import { useTheme } from "../../../context/ThemeContext";
 import addData from "../../../utils/indexedDB/addData";
 import { QCTemplateBatch } from "../../../utils/indexedDB/IDBSchema";
@@ -37,11 +36,11 @@ import NavBar from "../../../components/NavBar";
 interface QCRangeElements {
   analyteName: string;
   analyteAcronym: string;
-  unit_of_measure: string;
-  min_level: string;
-  max_level: string;
+  unitOfMeasure: string;
+  minLevel: string;
+  maxLevel: string;
   mean: string;
-  std_devi: string;
+  stdDevi: string;
   electrolyte: boolean;
 }
 
@@ -84,21 +83,19 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
       ({
         analyteName,
         analyteAcronym,
-        unit_of_measure,
-        electrolyte,
+        unitOfMeasure,
         mean,
-        std_devi,
-        min_level,
-        max_level,
+        stdDevi,
+        minLevel,
+        maxLevel,
       }) => ({
         analyteName,
         analyteAcronym,
-        unit_of_measure,
-        electrolyte,
+        unitOfMeasure,
         mean,
-        std_devi,
-        min_level,
-        max_level,
+        stdDevi,
+        minLevel,
+        maxLevel,
       })
     );
 
@@ -106,7 +103,9 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
       fileName: props.name,
       lotNumber: data.lotNumber || "",
       openDate: data.openDate || "",
+      fileDate: data.fileDate || "",
       closedDate: data.closedDate || "",
+      expirationDate: data.expirationDate || "",
       analytes: [...savedAnalyte],
     });
 
@@ -167,7 +166,7 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
       ),
     },
     {
-      accessorKey: "unit_of_measure",
+      accessorKey: "unitOfMeasure",
       header: "Units of Measure",
       cell: (info) => (
         <input
@@ -179,9 +178,9 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
           type="text"
           className="sm:w-24 p-1 border border-solid border-[#548235] rounded-lg text-center"
           value={
-            info.row.original.unit_of_measure === ""
+            info.row.original.unitOfMeasure === ""
               ? ""
-              : info.row.original.unit_of_measure.toString()
+              : info.row.original.unitOfMeasure.toString()
           }
           onChange={(e) => {
             e.preventDefault();
@@ -192,7 +191,7 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
                   item.analyteName === info.row.original.analyteName &&
                   /^[a-zA-Z\/]+$/.test(e.target.value)
                 )
-                  return { ...item, unit_of_measure: e.target.value };
+                  return { ...item, unitOfMeasure: e.target.value };
                 else return item;
               });
               return newState;
@@ -202,7 +201,7 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
       ),
     },
     {
-      accessorKey: "min_level",
+      accessorKey: "minLevel",
       header: "Min Level",
       cell: (info) => (
         <input
@@ -213,7 +212,7 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
             }
           }}
           className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
-          value={info.row.original.min_level || ""}
+          value={info.row.original.minLevel || ""}
           onChange={(e) => {
             e.preventDefault();
 
@@ -223,7 +222,7 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
                   item.analyteName === info.row.original.analyteName &&
                   /^\d*\.?\d*$/.test(e.target.value)
                 ) {
-                  return { ...item, min_level: e.target.value };
+                  return { ...item, minLevel: e.target.value };
                 } else return item;
               });
               return newState;
@@ -235,10 +234,10 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
               setQCElements((prevState) => {
                 const newState = prevState.map((item) => {
                   if (item.analyteName === info.row.original.analyteName) {
-                    const new_level = (+item.min_level)
+                    const new_level = (+item.minLevel)
                       .toFixed(2)
                       .replace(/^0+(?!\.|$)/, "");
-                    return { ...item, min_level: new_level };
+                    return { ...item, minLevel: new_level };
                   } else return item;
                 });
                 return newState;
@@ -249,7 +248,7 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
       ),
     },
     {
-      accessorKey: "max_level",
+      accessorKey: "maxLevel",
       header: "Max Level",
       cell: (info) => (
         <input
@@ -260,7 +259,7 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
             }
           }}
           className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
-          value={info.row.original.max_level || ""}
+          value={info.row.original.maxLevel || ""}
           onChange={(e) => {
             e.preventDefault();
 
@@ -270,7 +269,7 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
                   item.analyteName === info.row.original.analyteName &&
                   /^\d*\.?\d*$/.test(e.target.value)
                 )
-                  return { ...item, max_level: e.target.value };
+                  return { ...item, maxLevel: e.target.value };
                 else return item;
               });
               return newState;
@@ -282,10 +281,10 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
               setQCElements((prevState) => {
                 const newState = prevState.map((item) => {
                   if (item.analyteName === info.row.original.analyteName) {
-                    const new_level = (+item.max_level)
+                    const new_level = (+item.maxLevel)
                       .toFixed(2)
                       .replace(/^0+(?!\.|$)/, "");
-                    return { ...item, max_level: new_level };
+                    return { ...item, maxLevel: new_level };
                   } else return item;
                 });
                 return newState;
@@ -343,11 +342,11 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
       ),
     },
     {
-      accessorKey: "std_devi",
+      accessorKey: "stdDevi",
       header: "Standard Deviation",
       cell: (info) => (
         <div>
-          {((+info.row.original.max_level - +info.row.original.min_level) / 4).toFixed(2)}
+          {((+info.row.original.maxLevel - +info.row.original.minLevel) / 4).toFixed(2)}
         </div>
       ),
     },
@@ -358,7 +357,7 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
         <div>
           {(
             +info.row.original.mean +
-            (+info.row.original.max_level - +info.row.original.min_level) / 4
+            (+info.row.original.maxLevel - +info.row.original.minLevel) / 4
           ).toFixed(2)}
         </div>
       ),
@@ -370,7 +369,7 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
         <div>
           {(
             +info.row.original.mean -
-            (+info.row.original.max_level - +info.row.original.min_level) / 4
+            (+info.row.original.maxLevel - +info.row.original.minLevel) / 4
           ).toFixed(2)}
         </div>
       ),
@@ -382,7 +381,7 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
         <div>
           {(
             +info.row.original.mean +
-            ((+info.row.original.max_level - +info.row.original.min_level) / 4) * 2
+            ((+info.row.original.maxLevel - +info.row.original.minLevel) / 4) * 2
           ).toFixed(2)}
         </div>
       ),
@@ -394,7 +393,7 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
         <div>
           {(
             +info.row.original.mean -
-            ((+info.row.original.max_level - +info.row.original.min_level) / 4) * 2
+            ((+info.row.original.maxLevel - +info.row.original.minLevel) / 4) * 2
           ).toFixed(2)}
         </div>
       ),
@@ -406,7 +405,7 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
         <div>
           {(
             +info.row.original.mean +
-            ((+info.row.original.max_level - +info.row.original.min_level) / 4) * 3
+            ((+info.row.original.maxLevel - +info.row.original.minLevel) / 4) * 3
           ).toFixed(2)}
         </div>
       ),
@@ -418,7 +417,7 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
         <div>
           {(
             +info.row.original.mean -
-            ((+info.row.original.max_level - +info.row.original.min_level) / 4) * 3
+            ((+info.row.original.maxLevel - +info.row.original.minLevel) / 4) * 3
           ).toFixed(2)}
         </div>
       ),
