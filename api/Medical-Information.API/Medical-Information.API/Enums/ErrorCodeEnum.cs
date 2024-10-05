@@ -3,6 +3,7 @@
     public enum ErrorCode
     {
         AlreadyExist,
-        NotFound
+        NotFound,
+        MinimumLengthRequired,
     }
 }
