@@ -214,5 +214,6 @@ export interface DefinedRequestError {
 export enum ErrorCode
 {
   AlreadyExist,
-  NotFound
+  NotFound,
+  MinimumLengthRequired
 }
