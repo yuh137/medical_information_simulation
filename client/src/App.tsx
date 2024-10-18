@@ -13,6 +13,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import FacultyHomeScreen from "./pages/FacultyView/FacultyHomeScreen";
 import FacultyQualityControls from "./pages/FacultyView/FacultyQualityControls";
 import ChemistryQCBuilder from "./pages/General/Chemistry/ChesmistryQCBuilderPage";
+import BloodBankQCBuilder from "./pages/General/BloodBank/BloodBankQCBuilderPage";
 // import { qcTypeLinkList, testTypeLinkList } from "./utils/utils";
 import ChemistryEditQC from "./pages/General/Chemistry/ChemistryEditQCPage";
 import { ChemistryTestInputPage } from "./pages/General/Chemistry/ChemistryTestInputPage";
@@ -170,7 +171,10 @@ function AppWithRouter() {
           {
             path: 'blood_bank',
             children: [
-
+              {
+                path: 'qc_builder',
+                element: <BloodBankQCBuilder />,
+              }
             ]
           },
 

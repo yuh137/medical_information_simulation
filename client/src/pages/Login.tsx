@@ -18,15 +18,15 @@ const Login = () => {
     if (loginOptions === "Admin") {
       // const check = await getAdminByName(data.username);
       const sessionCheck = await checkSession();
-      if (sessionCheck) {
+      if (sessionCheck) {  // sessionCheck
         navigate("/admin-home");
       }
-
+        console.log(process.env.REACT_APP_API_URL);
       const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/Auth/LoginByUsername`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+            'Accept': 'application/json'  // application/json
         },
         body: JSON.stringify({ username: data.username, password: data.password }),
       })
@@ -100,7 +100,7 @@ const Login = () => {
   async function checkCurrentSession() {
     const session = await checkSession();
 
-    if (session) {
+    if (session) {  // session
       if (checkUserType() === UserType.Student) {
         navigate('/student-home');
       } else if (checkUserType() === UserType.Admin) {
@@ -192,9 +192,9 @@ const Login = () => {
               placeholder="Password"
               {...register("password", { required: true })}
             />
-            <Button
+            <Button  // THE PLACE
               variant="outlined"
-              onClick={handleSubmit(onSubmit)}
+                          onClick={handleSubmit(onSubmit)}  // handleSubmit(onSubmit)   navigate("/admin-home")
               className={`!text-black !bg-[${theme.secondaryColor}] !border !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F]`}
             >
               Login
