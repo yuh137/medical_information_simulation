@@ -13,7 +13,6 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import FacultyHomeScreen from "./pages/FacultyView/FacultyHomeScreen";
 import FacultyQualityControls from "./pages/FacultyView/FacultyQualityControls";
 import ChemistryQCBuilder from "./pages/General/Chemistry/ChesmistryQCBuilderPage";
-import BloodBankQCBuilder from "./pages/General/BloodBank/BloodBankQCBuilderPage";
 // import { qcTypeLinkList, testTypeLinkList } from "./utils/utils";
 import ChemistryEditQC from "./pages/General/Chemistry/ChemistryEditQCPage";
 import { ChemistryTestInputPage } from "./pages/General/Chemistry/ChemistryTestInputPage";
@@ -29,6 +28,17 @@ import ChemistryLeveyJennings from "./pages/General/Chemistry/ChemistryLeveyJenn
 import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInputPage";
 import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
 import { getAllDataFromStore } from "./utils/indexedDB/getData";
+// BLOOD BANK imports
+import BloodBankQCBuilder from "./pages/General/BloodBank/BloodBankQCBuilderPage";
+import BloodBankEditQC from "./pages/General/BloodBank/BloodBankEditQCPage";
+import BloodBankQCResult from "./pages/General/BloodBank/BloodBankQCResult";
+import BloodBankAnalyteInputPage from "./pages/General/BloodBank/BloodBankAnalyteInputPage";
+import BloodBankOrderControls from "./pages/General/BloodBank/BloodBankOrderControls";
+import BloodBankLeveyJennings from "./pages/General/BloodBank/BloodBankLeveyJennings";
+import { BloodBankTestInputPage } from "./pages/General/BloodBank/BloodBankTestInputPage";
+import BloodBankCustomQCBuild from "./pages/General/BloodBank/BloodBankCustomQCBuild";
+import BloodBankCustomTests from "./pages/General/BloodBank/BloodBankCustomTests";
+import BloodBankQCTypeButtonsPage from "./pages/General/BloodBank/BloodBankQCTypeSelection";
 
 function App() {
   initIDB();
@@ -168,12 +178,58 @@ function AppWithRouter() {
           },
 
           // BLOOD BANK PATHS
-          {
-            path: 'blood_bank',
+          { 
+            path: 'blood_bank', 
             children: [
               {
-                path: 'qc_builder',
+                path: 'qc_results',
+                element: <BloodBankQCResult link="blood_bank" name="BloodBank" />,
+              },
+              {
+                path: 'simple-analyte-input-page',
+                element: <SimpleAnalyteInputPage name="BloodBank" />,  
+              },
+              {
+                path: "qc_results/:link",
+                element: <BloodBankAnalyteInputPage name="" />,
+                loader: async ({ params }) => {
+                  const { link } = params;
+                  console.log("loader function: ", link);
+
+                  return null;
+                }
+              },
+              { 
+                path: 'order_controls', 
+                element: <BloodBankOrderControls /> 
+              },
+              {
+                path: "qc_builder",
                 element: <BloodBankQCBuilder />,
+              },
+              {
+                path: 'levey-jennings/:fileName/:lotNumber/:analyteName',
+                element: <BloodBankLeveyJennings />,
+              },
+              {
+                path: "edit_qc",
+                element: <BloodBankEditQC />,
+              },
+              {
+                path: "edit_qc/:item",
+                element: <BloodBankTestInputPage name="CMP Level I" />,
+              },
+              {
+                path: "build_qc/:item",
+                element: <BloodBankCustomQCBuild name="BloodBank" />,
+              },
+              {
+                path: "custom_tests",
+                element: <BloodBankCustomTests />,
+              },
+              {
+                path: "qc_types",
+                element: <BloodBankQCTypeButtonsPage />,
               }
             ]
           },
