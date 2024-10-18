@@ -4,7 +4,12 @@
     "\\api",
     "\\api\\Medical-Information.API",
     "\\api\\Medical-Information.API\\Medical-Information.API",
-    "\\client"
+    "\\client",
+    "\\client\\src",
+    "\\client\\src\\pages",
+    "\\client\\src\\pages\\General",
+    "\\client\\src\\pages\\General\\BloodBank"
   ],
+  "SelectedNode": "\\client\\.gitignore",
   "PreviewInSolutionExplorer": false
 }

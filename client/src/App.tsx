@@ -35,6 +35,7 @@ import BloodBankQCResult from "./pages/General/BloodBank/BloodBankQCResult";
 import BloodBankAnalyteInputPage from "./pages/General/BloodBank/BloodBankAnalyteInputPage";
 import BloodBankOrderControls from "./pages/General/BloodBank/BloodBankOrderControls";
 import BloodBankLeveyJennings from "./pages/General/BloodBank/BloodBankLeveyJennings";
+// import { ChemistryTestInputPage } from "./pages/General/Chemistry/ChemistryTestInputPage";
 import { BloodBankTestInputPage } from "./pages/General/BloodBank/BloodBankTestInputPage";
 import BloodBankCustomQCBuild from "./pages/General/BloodBank/BloodBankCustomQCBuild";
 import BloodBankCustomTests from "./pages/General/BloodBank/BloodBankCustomTests";
