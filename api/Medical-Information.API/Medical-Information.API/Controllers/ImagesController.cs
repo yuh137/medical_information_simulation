@@ -9,6 +9,8 @@ namespace Medical_Information.API.Controllers
     [ApiController]
     public class ImagesController : ControllerBase
     {
+        [HttpPost]
+        [Route("Upload")]
         public async Task<IActionResult> Upload([FromForm] ImageUploadRequestDTO requestDTO)
         {
             ValidateFileUpload(requestDTO);

@@ -151,7 +151,7 @@ const Register = () => {
                 }}
               >
                 <img src="/admin-icon.png" alt="" />
-                <div className="self-center font-semibold text-xl">Admin</div>
+                <div className="self-center font-semibold text-xl">Faculty</div>
               </div>
             </div>
             <form
