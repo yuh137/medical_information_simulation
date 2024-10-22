@@ -27,6 +27,8 @@ import Layout from "./utils/Layout";
 import ChemistryLeveyJennings from "./pages/General/Chemistry/ChemistryLeveyJennings";
 import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInputPage";
 import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
+import MicrobiologyQCBuilder from "./pages/General/Microbiology/MicrobiologyQCBuilderPage";
+import MicrobiologyEditQC from "./pages/General/Microbiology/MicrobiologyEditQCPage";
 import { getAllDataFromStore } from "./utils/indexedDB/getData";
 
 function App() {
@@ -146,7 +148,14 @@ function AppWithRouter() {
           {
             path: 'microbiology',
             children: [
-
+              {
+                path: "qc_builder",
+                element: <MicrobiologyQCBuilder />,
+              },
+              {
+                path: "edit_qc",
+                element: <MicrobiologyEditQC />,
+              }
             ]
           },
 
