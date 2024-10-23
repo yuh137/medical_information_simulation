@@ -109,22 +109,6 @@ const NavBar = (props: NavBarPropsTypes) => {
                 <Icon icon="fa6-solid:house" className="sm:text-xl"/>
                 <div className="sm:text-lg sm:translate-y-[2px]">Home</div>
               </li>
-              <Divider />
-              <li className="sidebar-item flex items-center justify-center sm:py-4 sm:gap-x-2 hover:cursor-pointer hover:bg-black/30 transition delay-75" onClick={() => navigate("/home")}>
-                <Icon icon="fa6-solid:house" className="sm:text-xl"/>
-                <div className="sm:text-lg sm:translate-y-[2px]">Home</div>
-              </li>
-              <Divider />
-              <li className="sidebar-item flex items-center justify-center sm:py-4 sm:gap-x-2 hover:cursor-pointer hover:bg-black/30 transition delay-75" onClick={() => navigate("/home")}>
-                <Icon icon="fa6-solid:house" className="sm:text-xl"/>
-                <div className="sm:text-lg sm:translate-y-[2px]">Home</div>
-              </li>
-              <Divider />
-              <li className="sidebar-item flex items-center justify-center sm:py-4 sm:gap-x-2 hover:cursor-pointer hover:bg-black/30 transition delay-75" onClick={() => navigate("/home")}>
-                <Icon icon="fa6-solid:house" className="sm:text-xl"/>
-                <div className="sm:text-lg sm:translate-y-[2px]">Home</div>
-              </li>
-              <Divider />
             </ul>
           </div>
         </Drawer>
