@@ -31,6 +31,7 @@ import MicrobiologyQCBuilder from "./pages/General/Microbiology/MicrobiologyQCBu
 import MicrobiologyEditQC from "./pages/General/Microbiology/MicrobiologyEditQCPage";
 import MicrobiologyTestInput from "./pages/General/Microbiology/MicrobiologyTestInputPage";
 import MicrobiologyOrderControls from "./pages/General/Microbiology/MicrobiologyOrderControls";
+import MicrobiologyQCResult from "./pages/General/Microbiology/MicrobiologyQCResultPage";
 import { getAllDataFromStore } from "./utils/indexedDB/getData";
 
 function App() {
@@ -165,6 +166,10 @@ function AppWithRouter() {
               {
                 path: "order_controls",
                 element: <MicrobiologyOrderControls />,
+              },
+              {
+                path: "mirco_results",
+                element: <MicrobiologyQCResult link="microbiology" name="Microbiology"/>, // figure out how to link the dropdown to work //
               }
             ]
           },
