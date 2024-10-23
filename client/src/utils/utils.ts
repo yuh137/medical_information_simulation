@@ -48,7 +48,6 @@ export const microbiologyQcTypeList = [
   {name:"MUG", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
   {name:"Oxidase", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
   {name:"PYR", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
-  {name:"PYR", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
   {name:"Sterility Tests", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
   {name:"Staphaurex", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
   {name:"Susceptibility", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},

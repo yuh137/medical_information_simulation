@@ -29,6 +29,7 @@ import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInput
 import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
 import MicrobiologyQCBuilder from "./pages/General/Microbiology/MicrobiologyQCBuilderPage";
 import MicrobiologyEditQC from "./pages/General/Microbiology/MicrobiologyEditQCPage";
+import MicrobiologyOrderControls from "./pages/General/Microbiology/MicrobiologyOrderControls";
 import { getAllDataFromStore } from "./utils/indexedDB/getData";
 
 function App() {
@@ -155,6 +156,10 @@ function AppWithRouter() {
               {
                 path: "edit_qc",
                 element: <MicrobiologyEditQC />,
+              },
+              {
+                path: "order_controls",
+                element: <MicrobiologyOrderControls />,
               }
             ]
           },
