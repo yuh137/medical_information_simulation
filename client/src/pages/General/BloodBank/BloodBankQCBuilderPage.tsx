@@ -16,21 +16,26 @@ const BloodBankQCBuilder = () => {
 
   return (
     <>
-      <NavBar name={`Blood Bank QC Builder`} />
-      <div className="flex items-center justify-center gap-48" style={{ minWidth: "100svw", minHeight: "90svh" }}>
+      <NavBar name={`Blood Bank QC`} />
+      <div className="grid grid-cols-2 place-items-center gap-0" style={{ minWidth: "100svw", minHeight: "90svh" }}>
         <Link to={`/blood_bank/edit_qc`}>
           <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
-            <div className="button-text font-bold text-2xl">QC Panels</div>
+            <div className="button-text font-bold text-2xl">Blood Bank QC</div>
           </ButtonBase>
         </Link>
         <Link to={`/blood_bank/qc_types`}>
           <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
-            <div className="button-text font-bold text-2xl">Custom QC Panels</div>
+            <div className="button-text font-bold text-2xl">RBC Anti-Sera QC</div>
           </ButtonBase>
         </Link>
         <Link to={`/blood_bank/custom_tests`}>
           <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
-            <div className="button-text font-bold text-2xl">Custom Tests</div>
+            <div className="button-text font-bold text-2xl">Lectin QC</div>
+          </ButtonBase>
+        </Link>
+        <Link to={`/blood_bank/custom_tests`}>
+          <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
+            <div className="button-text font-bold text-2xl">Create New Panel</div>
           </ButtonBase>
         </Link>
       </div>
