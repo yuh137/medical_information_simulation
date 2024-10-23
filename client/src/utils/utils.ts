@@ -40,7 +40,7 @@ export const qcTypeLinkList = [
 ];
 
 export const microbiologyQcTypeList = [
-  {name:"Catalase", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
+  {name:"Catalase", link:'cmp_2', component: 'TestInputPage', mockData : 'CMP'},
   {name:"Esculin", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
   {name:"Gram Stain", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
   {name:"Indole", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
