@@ -17,7 +17,7 @@ const BloodBankQCBuilder = () => {
   return (
     <>
       <NavBar name={`Blood Bank QC`} />
-      <div className="grid grid-cols-2 place-items-center gap-0" style={{ minWidth: "100svw", minHeight: "90svh" }}>
+      <div className="bg-[#fff] grid grid-cols-2 grid-rows-3 place-items-center px-80 py-20 sm:gap-x-0 sm:gap-y-21 sm:max-w-[1460px] my-12 mx-auto" style={{ minWidth: "10svw", minHeight: "90svh" }}>
         <Link to={`/blood_bank/edit_qc`}>
           <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
             <div className="button-text font-bold text-2xl">Blood Bank QC</div>
