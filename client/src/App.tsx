@@ -168,8 +168,8 @@ function AppWithRouter() {
                 element: <MicrobiologyOrderControls />,
               },
               {
-                path: "mirco_results",
-                element: <MicrobiologyQCResult link="microbiology" name="Microbiology"/>, // figure out how to link the dropdown to work //
+                path: "qc_results",
+                element: <MicrobiologyQCResult link="microbiology" name="Microbiology"/>,
               }
             ]
           },
