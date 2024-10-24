@@ -16,14 +16,28 @@ const MicrobiologyTestInput = () => {
 
   return (
     <>
-      <NavBar name={`Catalase QC Input Page`} />
-      <div className="flex items-center justify-center gap-48" style={{ minWidth: "100svw", minHeight: "90svh" }}>
-          <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
-            <div className="button-text font-bold text-2xl">This means its working for me Jack</div>
-          </ButtonBase>
-          <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
-            <div className="button-text font-bold text-2xl">Create New Panel</div>
-          </ButtonBase>
+      <NavBar name={`Catalase QC Builder`} />
+      <div className="basic-container relative sm:space-y-4 pb-24">
+        <div className="input-container flex justify-center">
+          <div className="drawer-container sm:h-full flex items-center py-4 sm:space-x-12">
+            <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
+              <div className="lotnumber-label sm:text-xl font-semibold text-white">QC Lot Number</div>
+              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center" />
+            </div>
+            <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
+              <div className="lotnumber-label sm:text-xl font-semibold text-white">Expiration Date</div>
+              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center" />
+            </div>
+            <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
+              <div className="lotnumber-label sm:text-xl font-semibold text-white">Open Date</div>
+              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center"/>
+            </div>
+            <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
+              <div className="lotnumber-label sm:text-xl font-semibold text-white">Close Date</div>
+              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center"/>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );
