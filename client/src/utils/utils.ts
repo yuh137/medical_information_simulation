@@ -35,22 +35,21 @@ export const qcTypeLinkList = [
   {name: "Vitamins Level II", link: "vitamins_2", mockData: 'Vitamins'},
   {name: "Diabetes Level I", link: "Diabetes_1", mockData: 'Diabetes'},
   {name: "Diabetes Level II", link: "Diabetes_2", mockData: 'Diabetes'},
-  {name: "Cancer Level I", link: "Cancer_1", mockData: 'Cancer'},
-  {name: "Cancer Level II", link: "Cancer_2", mockData: 'Cancer'},
+  {name: "Cancer Level I", link: "Cancer_1", mockData: 'Cancer'},  {name: "Cancer Level II", link: "Cancer_2", mockData: 'Cancer'},
 ];
 
 export const microbiologyQcTypeList = [
-  {name:"Catalase", link:'cmp_2', component: 'TestInputPage', mockData : 'CMP'},
-  {name:"Esculin", link:'cmp_3', component: 'TestInputPage', mockData : 'CMP'},
-  {name:"Gram Stain", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
-  {name:"Indole", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
-  {name:"Monthly QC", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
-  {name:"MUG", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
-  {name:"Oxidase", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
-  {name:"PYR", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
-  {name:"Sterility Tests", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
-  {name:"Staphaurex", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
-  {name:"Susceptibility", link:'cmp_1', component: 'TestInputPage', mockData : 'CMP'},
+  {name:"Catalase", link:'cata', component: 'TestInputPage', mockData : 'CMP'},
+  {name:"Esculin", link:'escu', component: 'TestInputPage', mockData : 'CMP'},
+  {name:"Gram Stain", link:'gram', component: 'TestInputPage', mockData : 'CMP'},
+  {name:"Indole", link:'indo', component: 'TestInputPage', mockData : 'CMP'},
+  {name:"Monthly QC", link:'month', component: 'TestInputPage', mockData : 'CMP'},
+  {name:"MUG", link:'mug', component: 'TestInputPage', mockData : 'CMP'},
+  {name:"Oxidase", link:'oxid', component: 'TestInputPage', mockData : 'CMP'},
+  {name:"PYR", link:'pyr', component: 'TestInputPage', mockData : 'CMP'},
+  {name:"Sterility Tests", link:'steri', component: 'TestInputPage', mockData : 'CMP'},
+  {name:"Staphaurex", link:'staph', component: 'TestInputPage', mockData : 'CMP'},
+  {name:"Susceptibility", link:'sucept', component: 'TestInputPage', mockData : 'CMP'},
 ]
 
 export function cn(...inputs: ClassValue[]) {
