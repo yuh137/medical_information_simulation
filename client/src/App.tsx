@@ -27,6 +27,7 @@ import ChemistryLeveyJennings from "./pages/General/Chemistry/ChemistryLeveyJenn
 import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInputPage";
 import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
 import { qcTypeLinkList } from "./utils/utils";
+import MolecularQCResult from "./pages/General/Molecular/MolecularQCResult";
 
 function App() {
   initIDB();
@@ -198,7 +199,10 @@ function AppWithRouter() {
           {
             path: 'molecular',
             children: [
-
+              {
+                path: 'qc_results',
+                element: <MolecularQCResult />,
+              },
             ]
           },
           { path: 'unauthorized', element: <Unauthorized /> },
