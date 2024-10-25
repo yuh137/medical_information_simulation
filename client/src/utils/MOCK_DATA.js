@@ -431,11 +431,6 @@ export const Thyroid = [
   
 
 
-
-
-
-
-
 export const Liver = [
   {
     analyteName: "Alanine Aminotransferase",
@@ -551,21 +546,6 @@ export const Liver = [
   },
 ];
   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 export const Lipid = [
   {

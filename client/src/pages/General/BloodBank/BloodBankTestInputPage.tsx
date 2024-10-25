@@ -17,27 +17,24 @@ import {
   TableHeader,
   TableRow,
 } from "../../../components/ui/table";
-import { CMP,Cardiac, Thyroid, Liver, Lipid, Iron, Drug, Hormone, Cancer, Pancreatic, Vitamins, Diabetes} from "../../../utils/MOCK_DATA";
+import { CMP,RR_QC,TWO_CELL,THREE_CELL} from "../../../utils/BB_DATA";
 import { renderSubString } from "../../../utils/utils";
 import { ButtonBase, Checkbox, Drawer } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useTheme } from "../../../context/ThemeContext";
 import addData from "../../../utils/indexedDB/addData";
-import { QCTemplateBatch } from "../../../utils/indexedDB/IDBSchema";
+import { BloodBankQC } from "../../../utils/indexedDB/IDBSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { getDataByKey } from "../../../utils/indexedDB/getData";
 import { deleteData } from "../../../utils/indexedDB/deleteData";
 import NavBar from "../../../components/NavBar";
 
 interface QCRangeElements {
-  analyteName: string;
-  analyteAcronym: string;
-  unit_of_measure: string;
-  min_level: string;
-  max_level: string;
-  mean: string;
-  std_devi: string;
-  electrolyte: boolean;
+  reagentName: string;
+  Abbreviation: string;
+  AntiSeraLot: string;
+  ExpDate: string;
+  ExpectedRange: string;
 }
 
 
@@ -46,33 +43,21 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
   const { item } = useParams();
   const { checkSession, checkUserType, isAuthenticated, logout } = useAuth();
   const { theme } = useTheme();
-  const initialData = 
-    item?.includes('cardiac') ? Cardiac :
-    item?.includes('lipid') ? Lipid :
-    item?.includes('thyroid') ? Thyroid :
-    item?.includes('liver') ? Liver :
-    item?.includes('iron') ? Iron :
-    item?.includes('drug') ? Drug:
-    item?.includes('hormone') ? Hormone :
-    item?.includes('cancer') ? Cancer :
-    item?.includes('pancreatic') ? Pancreatic :
-    item?.includes('vitamins') ? Vitamins :
-    item?.includes('diabetes') ? Diabetes :
-    CMP;
-    console.log("DataType:", item);
+  const initialData = RR_QC;
+  console.log("DataType:", item);
 
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(initialData);
   const [isValid, setIsValid] = useState<boolean>(false);
   // const [isDrawerOpen, openDrawer] = useState<boolean>(false);
-  const { register, handleSubmit } = useForm<QCTemplateBatch>();
-  const saveQC: SubmitHandler<QCTemplateBatch> = async (data) => {
-    const qcDataToSave: QCTemplateBatch = {
+  const { register, handleSubmit } = useForm<BloodBankQC>();
+  const saveQC: SubmitHandler<BloodBankQC> = async (data) => {
+    const qcDataToSave: BloodBankQC = {
         fileName: props.name,
         lotNumber: data.lotNumber || "",
         openDate: data.openDate || "",
         closedDate: data.closedDate || "",
-        analytes: QCElements.map(({ analyteName, analyteAcronym, unit_of_measure, electrolyte, mean, std_devi, min_level, max_level }) => ({
-            analyteName, analyteAcronym, unit_of_measure, electrolyte, mean, std_devi, min_level, max_level
+        reagents: QCElements.map(({ reagentName, Abbreviation, AntiSeraLot,ExpDate, ExpectedRange}) => ({
+          reagentName, Abbreviation, AntiSeraLot,ExpDate, ExpectedRange
         })),
     };
 
@@ -106,7 +91,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
     //   cell: (info) => <></>
     // },
     {
-      accessorKey: "analyteName",
+      accessorKey: "reagentName",
       header: "Name",
       cell: (info) => (
         <div>{info.getValue()}</div>
@@ -120,63 +105,6 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
           dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
         />
       ),
-    },
-    {
-      accessorKey: "unit_of_measure",
-      header: "Units of Measure",
-      cell: (info) => (
-        <></>
-      ),
-    },
-    {
-      accessorKey: "min_level",
-      header: "Min Level",
-      cell: (info) => <></>,
-    },
-    {
-      accessorKey: "max_level",
-      header: "Max Level",
-      cell: (info) => <></>,
-    },
-    {
-      accessorKey: "mean",
-      header: "QC Mean",
-      cell: (info) => <></>,
-    },
-    {
-      accessorKey: "std_devi",
-      header: "Standard Deviation",
-      cell: (info) => <></>,
-    },
-    {
-      accessorKey: "sdplus1",
-      header: "+1 SD",
-      cell: (info) => <></>,
-    },
-    {
-      accessorKey: "sdminus1",
-      header: "-1 SD",
-      cell: (info) => <></>,
-    },
-    {
-      accessorKey: "sdplus2",
-      header: "+2 SD",
-      cell: (info) => <></>,
-    },
-    {
-      accessorKey: "sdminus2",
-      header: "-2 SD",
-      cell: (info) => <></>,
-    },
-    {
-      accessorKey: "sdplus3",
-      header: "+3 SD",
-      cell: (info) => <></>,
-    },
-    {
-      accessorKey: "sdminus3",
-      header: "-3 SD",
-      cell: (info) => <></>,
     },
   ];
 
@@ -193,9 +121,9 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
 
   useEffect(() => {
     (async () => {
-      const res = await getDataByKey<QCTemplateBatch>("qc_store", props.name);
+      const res = await getDataByKey<BloodBankQC>("qc_store", props.name);
 
-      if (res && typeof res !== "string") setQCElements(res.analytes)
+      if (res && typeof res !== "string") setQCElements(res.reagents)
     })()
   }, [])
 
@@ -307,7 +235,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                 </TableRow>
               ))} */}
               {QCElements.map((row, index) => (
-                <TableRow key={row.analyteName} className="text-center sm:h-[10%] border-none">
+                <TableRow key={row.reagentName} className="text-center sm:h-[10%] border-none">
                   {/* <TableCell>
                     <Checkbox sx={{ '&.Mui-checked': {color: '#3A62A7'} }} checked={row.electrolyte} onChange={(e) => {
                       setQCElements(prevState => {
@@ -322,144 +250,13 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                     }}/>
                   </TableCell> */}
                   <TableCell>
-                    <div>{row.analyteName}</div>
+                    <div>{row.reagentName}</div>
                   </TableCell>
                   <TableCell>
-                    <div dangerouslySetInnerHTML={{ __html: renderSubString(row.analyteAcronym) }} />
+                    <div dangerouslySetInnerHTML={{ __html: renderSubString(row.Abbreviation) }} />
                   </TableCell>
-                  <TableCell className="unit_of_measure">
-                    <input ref={el => {if (el && inputRefs.current.length < QCElements.length * 4) {inputRefs.current[index * 4] = el}}} type="text" className="sm:w-24 p-1 border border-solid border-[#548235] rounded-lg text-center" value={row.unit_of_measure === "" ? "" : row.unit_of_measure.toString()} onChange={(e) => {
-                      e.preventDefault();
-
-                      setQCElements(prevState => {
-                          const newState = prevState.map(item => {
-                              if (item.analyteName === row.analyteName && /^[a-zA-Z\/]+$/.test(e.target.value))
-                                  return { ...item, unit_of_measure: e.target.value }
-                              else return item
-                          })
-          
-                          return newState
-                      })
-                    }}/>
-                  </TableCell>
-                  <TableCell className="min_level">
-                    <input type="text" ref={el => {if (el && inputRefs.current.length < QCElements.length * 4) {inputRefs.current[index * 4 + 1] = el}}} className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center" value={row.min_level || ''} onChange={(e) => {
-                      e.preventDefault();
-
-                      setQCElements(prevState => {
-                          const newState = prevState.map(item => {
-                              if (item.analyteName === row.analyteName && /^\d*\.?\d*$/.test(e.target.value)) {
-                                return { ...item, min_level: e.target.value }
-                              }
-                              else return item
-                          })
-          
-                          return newState
-                      })
-                    }}
-                    onKeyDown={(e) => {
-                      // e.preventDefault();
-                      if (e.key === 'Enter') {
-                        console.log(e.currentTarget.value)
-                          setQCElements(prevState => {
-                            const newState = prevState.map(item => {
-                                if (item.analyteName === row.analyteName) {
-                                  const new_level = (+item.min_level).toFixed(2).replace(/^0+(?!\.|$)/, "");
-                                  return { ...item, min_level: new_level }
-                                }
-                                else return item
-                            })
-            
-                            return newState
-                        })
-                      }
-                    }}/>
-                  </TableCell>
-                  <TableCell className="max_level">
-                    <input type="text" ref={el => {if (el && inputRefs.current.length < QCElements.length * 4) {inputRefs.current[index * 4 + 2] = el}}} className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center" value={row.max_level || ''} onChange={(e) => {
-                      e.preventDefault();
-
-                      setQCElements(prevState => {
-                          const newState = prevState.map(item => {
-                              if (item.analyteName === row.analyteName && /^\d*\.?\d*$/.test(e.target.value))
-                                  return { ...item, max_level: e.target.value }
-                              else return item
-                          })
-          
-                          return newState
-                      })
-                    }}
-                    onKeyDown={(e) => {
-                      // e.preventDefault();
-                      if (e.key === 'Enter') {
-                        console.log(e.currentTarget.value)
-                          setQCElements(prevState => {
-                            const newState = prevState.map(item => {
-                                if (item.analyteName === row.analyteName) {
-                                  const new_level = (+item.max_level).toFixed(2).replace(/^0+(?!\.|$)/, "");
-                                  return { ...item, max_level: new_level }
-                                }
-                                else return item
-                            })
-            
-                            return newState
-                        })
-                      }
-                    }}/>
-                  </TableCell>
-                  <TableCell className="mean">
-                  <input type="text" ref={el => {if (el && inputRefs.current.length < QCElements.length * 4) {inputRefs.current[index * 4 + 3] = el}}} className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center" value={row.mean || ''} onChange={(e) => {
-                      e.preventDefault();
-
-                      setQCElements(prevState => {
-                          const newState = prevState.map(item => {
-                              if (item.analyteName === row.analyteName && /^\d*\.?\d*$/.test(e.target.value))
-                                  return { ...item, mean: e.target.value }
-                              else return item
-                          })
-          
-                          return newState
-                      })
-                    }}
-                    onKeyDown={(e) => {
-                      // e.preventDefault();
-                      if (e.key === 'Enter') {
-                        console.log(e.currentTarget.value)
-                          setQCElements(prevState => {
-                            const newState = prevState.map(item => {
-                                if (item.analyteName === row.analyteName) {
-                                  const new_level = (+item.mean).toFixed(2).replace(/^0+(?!\.|$)/, "");
-                                  return { ...item, mean: new_level }
-                                }
-                                else return item
-                            })
-            
-                            return newState
-                        })
-                      }
-                    }}/>
-                  </TableCell>
-                  <TableCell className="standard-deviation sm:w-32">
-                    <div>{((+row.max_level - +row.min_level)/4).toFixed(2)}</div>
-                  </TableCell>
-                  <TableCell className="sd+1 sm:w-20">
-                    <div>{(+row.mean + (+row.max_level - +row.min_level)/4).toFixed(2)}</div>
-                  </TableCell>
-                  <TableCell className="sd-1 sm:w-20">
-                    <div>{(+row.mean - (+row.max_level - +row.min_level)/4).toFixed(2)}</div>
-                  </TableCell>
-                  <TableCell className="sd+2 sm:w-20">
-                    <div>{(+row.mean + ((+row.max_level - +row.min_level)/4) * 2).toFixed(2)}</div>
-                  </TableCell>
-                  <TableCell className="sd-2 sm:w-20">
-                    <div>{(+row.mean - ((+row.max_level - +row.min_level)/4) * 2).toFixed(2)}</div>
-                  </TableCell>
-                  <TableCell className="sd+3 sm:w-20">
-                    <div>{(+row.mean + ((+row.max_level - +row.min_level)/4) * 3).toFixed(2)}</div>
-                  </TableCell>
-                  <TableCell className="sd-3 sm:w-20">
-                    <div>{(+row.mean - ((+row.max_level - +row.min_level)/4) * 3).toFixed(2)}</div>
-                  </TableCell>
+                  
+                  
                 </TableRow>
               ))}
             </TableBody>

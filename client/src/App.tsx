@@ -129,7 +129,7 @@ function AppWithRouter() {
               },
               {
                 path: "edit_qc/:item",
-                element: <ChemistryTestInputPage name="CMP Level I" />,
+                element: <ChemistryTestInputPage name=":item" />,
               },
               {
                 path: "build_qc/:item",
@@ -218,7 +218,7 @@ function AppWithRouter() {
               },
               {
                 path: "edit_qc/:item",
-                element: <BloodBankTestInputPage name="CMP Level I" />,
+                element: <BloodBankTestInputPage name=":item" />,
               },
               {
                 path: "build_qc/:item",

@@ -2,7 +2,12 @@ import { clsx, type ClassValue } from "clsx"
 import { jwtDecode } from "jwt-decode";
 import { Component, MonitorCheck } from "lucide-react";
 import { twMerge } from "tailwind-merge"
-
+// BLOOK BANK LINKS
+export const bloodBankQC = [
+  { link:"reagent_rack", name:"Reagent Rack", bbData:"RR_QC"},
+  { link:"3_cell", name:"2 Cell Screen", bbData:"TWO_CELL"},
+  { link:"2_cell", name:"2 Cell Screen", bbData:"THREE_CELL"}
+]
 export const testTypeLinkList = [
   {link: "chemistry", name: "Chemistry"},
   {link: "hema_coag", name: "Hematology/Coag"},

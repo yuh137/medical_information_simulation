@@ -3,7 +3,7 @@ import NavBar from "../../../components/NavBar";
 import { useTheme } from "../../../context/ThemeContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
-import { qcTypeLinkList } from "../../../utils/utils";
+import { bloodBankQC } from "../../../utils/utils";
 import { ButtonBase } from "@mui/material";
 
 const BloodBankEditQC = () => {
@@ -25,7 +25,7 @@ const BloodBankEditQC = () => {
       <NavBar name={`Edit Blood Bank QC`} />
       <div className="basic-container">
         <div className={`edit-qc-options flex flex-wrap sm:justify-center sm:p-24 sm:h-[150svh] sm:w-[100svw] sm:gap-x-4 mx-auto`}>
-          {qcTypeLinkList.map((item) => (
+          {bloodBankQC.map((item) => (
             <ButtonBase
               key={item.name}
               className={`!rounded-lg sm:w-64 sm:h-28 !border-solid transition ease-in-out ${
