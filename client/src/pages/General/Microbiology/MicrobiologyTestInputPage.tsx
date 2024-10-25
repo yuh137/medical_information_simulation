@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../../components/ui/table";
-import { MMD } from "../../../utils/MICRO_MOCK_DATA";
+import { CAT, ESC, GRAM, INDOLE, MUG, OXID, PYR, STER, STAPH } from "../../../utils/MICRO_MOCK_DATA";
 import { renderSubString } from "../../../utils/utils";
 import { ButtonBase, Checkbox } from "@mui/material";
 import { useTheme } from "../../../context/ThemeContext";
@@ -43,11 +43,27 @@ export const MicrobiologyTestInputPage = () => {
     if (!checkSession() || checkUserType() === 'Student') navigate("/unauthorized");
   }, [checkSession, checkUserType, navigate]);
 
-  const initialData = MMD;
+  const initialData = 
+  item?.includes('escu') ? ESC:
+  item?.includes('gram') ? GRAM:
+  item?.includes('indo') ? INDOLE:
+  item?.includes('mug') ? MUG:
+  item?.includes('oxid') ? OXID:
+  item?.includes('pyr') ? PYR:
+  item?.includes('steri') ? STER:
+  item?.includes('staph') ? STAPH:
+  CAT;
 
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(initialData);
   const [isValid, setIsValid] = useState(false);
   const { register, handleSubmit } = useForm<QCTemplateBatch>();
+
+  // Function to handle updates to the expected range field
+const handleExpectedRangeChange = (index: number, value: string) => {
+  const updatedQCElements = [...QCElements];
+  updatedQCElements[index].expectedRange = value;
+  setQCElements(updatedQCElements);
+};
 
   // Column definitions for the table
   const columns: ColumnDef<QCRangeElements, string>[] = [
@@ -62,6 +78,14 @@ export const MicrobiologyTestInputPage = () => {
     {
       accessorKey: "expectedRange",
       header: "Expected Range",
+      cell: ({ row }) => (
+        <input
+          type="text"
+          value={row.original.expectedRange}
+          onChange={(e) => handleExpectedRangeChange(row.index, e.target.value)}
+          className="p-1 rounded-lg border border-solid border-[#548235] text-center"
+        />
+      ),
     },
   ];
 
@@ -74,7 +98,7 @@ export const MicrobiologyTestInputPage = () => {
 
   return (
     <>
-      <NavBar name={`Catalase QC Builder`} />
+      <NavBar name={`Microbiology QC Builder`} />
       <div className="basic-container relative sm:space-y-4 pb-24">
         <div className="input-container flex justify-center">
           <div className="drawer-container sm:h-full flex items-center py-4 sm:space-x-12">
@@ -110,11 +134,13 @@ export const MicrobiologyTestInputPage = () => {
               ))}
             </TableHeader>
             <TableBody>
-              {QCElements.map((row, index) => (
-                <TableRow key={row.analyteName}>
-                  <TableCell>{row.analyteName}</TableCell>
-                  <TableCell>{row.analyteAcronym}</TableCell>
-                  <TableCell>{row.expectedRange}</TableCell>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))}
             </TableBody>
