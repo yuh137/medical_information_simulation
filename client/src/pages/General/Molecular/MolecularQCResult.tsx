@@ -1,3 +1,5 @@
+import NavBar from "../../../components/NavBar";
+
 const MolecularQCResult = () => {
   return (
     <>
