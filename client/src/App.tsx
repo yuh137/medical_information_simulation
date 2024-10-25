@@ -28,6 +28,8 @@ import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInput
 import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
 import { qcTypeLinkList } from "./utils/utils";
 
+import HemeCoagQCBuilderPage from "./pages/General/Hema_Coag/HemeCoagQCBuilderPage";
+import HemeEditQCPage from "./pages/General/Hema_Coag/Heme/HemeEditQCPage";
 function App() {
   initIDB();
   return (
@@ -158,7 +160,21 @@ function AppWithRouter() {
           { 
             path: 'hema_coag', 
             children: [
-
+              {
+                path: 'qc_builder',
+                element: <HemeCoagQCBuilderPage />,
+              },
+          
+              {
+          //im just using a seperate file for all of the heme specific pages, if anyone wants to do the same just declare the folder here and its kids
+                path: 'heme',
+                children: [
+                  {
+                    path: 'heme_editQC',
+                    element: <HemeEditQCPage />,
+                  }
+                ]
+              }
             ]
           },
 
