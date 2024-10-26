@@ -2,6 +2,12 @@ interface MolecularQCPanel {
 	fileName: string;
 }
 
+let uniqueID = 0
+
+function getNextID(): number {
+	return ++uniqueID;
+}
+
 export async function DEBUG_add_molecular_data_to_idb(QCPanels: string[]): Promise<void> {
 	return new Promise((resolve, reject) => {
 		const request = indexedDB.open("MIS_database");
@@ -9,7 +15,7 @@ export async function DEBUG_add_molecular_data_to_idb(QCPanels: string[]): Promi
 			const db = (event.target as IDBOpenDBRequest).result;
 			const transaction = db.transaction("qc_store", "readwrite");
 			const objectStore = transaction.objectStore("qc_store");
-			const addRequest = objectStore.add(QCPanels.map((item) => { return { fileName: item, lotNumber: '', closedDate: '' }}));
+			const addRequest = objectStore.add(QCPanels.map((item) => { return { fileName: item, lotNumber: getNextID(), closedDate: getNextID() }}));
 			addRequest.onsuccess = () => {
 				console.log("Added idb data");
 				resolve();
