@@ -1,2 +1,5 @@
 # for vim
 *.swp
+
+# convenience script
+local_update.sh
