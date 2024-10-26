@@ -1,5 +1,6 @@
 import NavBar from "../../../components/NavBar";
 import React, { useState, useEffect } from "react";
+import { getAllDataByFileName, getQCRangeByDetails } from "../../../utils/indexedDB/getData";
 import {
   ColumnDef,
   useReactTable,
