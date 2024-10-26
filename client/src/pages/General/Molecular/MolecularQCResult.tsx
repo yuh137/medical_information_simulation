@@ -43,10 +43,7 @@ const MolecularQCResult = () => {
     const selectedQCs: string[] = JSON.parse(localStorage.getItem('selectedQCItems') || '[]');
     const allDataPromises = selectedQCs.map(qcName => getAllDataByFileName("qc_store", qcName));
     const results = await Promise.all(allDataPromises);
-// TODO(colby): MAYBE DEBUG
- //   add department key containing Molecular
-//
-//    setQcData(results.flat());
+    setQcData(results.flat());
     console.log("Fetched QC data:", results.flat());
   };
   
