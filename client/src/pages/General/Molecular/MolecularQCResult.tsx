@@ -45,9 +45,7 @@ const MolecularQCResult = () => {
     const results = await Promise.all(allDataPromises);
 // TODO(colby): MAYBE DEBUG
  //   add department key containing Molecular
-    for (let result in results) {
-        result.department = 'Molecular';         
-    }
+    const results = results.map(result => result.department = 'Molecular');
     setQcData(results.flat());
     console.log("Fetched QC data:", results.flat());
   };
