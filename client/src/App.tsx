@@ -28,8 +28,14 @@ import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInput
 import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
 import { qcTypeLinkList } from "./utils/utils";
 
+// Heme/Coag 
 import HemeCoagQCBuilderPage from "./pages/General/Hema_Coag/HemeCoagQCBuilderPage";
 import HemeEditQCPage from "./pages/General/Hema_Coag/Heme/HemeEditQCPage";
+// Custom QC Panels
+import CustomCreateNewPage from "./pages/General/Hema_Coag/Custom/CustomCreateNewPage";
+import CustomSelectPage from "./pages/General/Hema_Coag/Custom/CustomSelectPage";
+import CustomHemeCoagQCTypeButtonsPage from "./pages/General/Hema_Coag/Custom/HemeCoagQCTypeSelection";
+
 function App() {
   initIDB();
   return (
@@ -174,6 +180,22 @@ function AppWithRouter() {
                     element: <HemeEditQCPage />,
                   }
                 ]
+              },
+
+              {
+                //Custom QC Builder - Carson 
+                 path: 'custom',
+                children: [
+                    {
+                      path: 'select_custom',
+                      element: <CustomSelectPage />,
+                    },
+
+                    {
+                      path: 'create_custom',
+                      element: <CustomHemeCoagQCTypeButtonsPage />,
+                    }
+                 ]
               }
             ]
           },
