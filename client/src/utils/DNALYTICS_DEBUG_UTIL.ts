@@ -32,6 +32,3 @@ export async function DEBUG_add_molecular_data_to_idb(QCPanels: string[]): Promi
 		};
 	});
 }
-
-function DEBUG_ADD(QCPanels: string[]):  {
-}
