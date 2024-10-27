@@ -40,6 +40,17 @@ export const qcTypeLinkList = [
 
 ];
 
+export const hemeTypeLinkList = [
+  {name: "CBC Level I", link: 'cbc_1'},
+  {name: "CBC Level II", link: 'cbc_2'},
+  {name: "CBC Level III", link: 'cbc_3'},
+  {name: "Retic Level I", link: 'rl_1'},
+  {name: "Retic Level II", link: 'rl_2'},
+  {name: "Retic Level III", link: 'rl_3'},
+  {name: "Sickle Cell QC Screen", link: 'sc_qc'},
+  {name: "Erythrocyte Sedimentation Rate QC", link: 'esr_qc'},
+]
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -162,6 +173,31 @@ export const VitaminsLevelList = [
   { name: "Homocysteine", acronymName: "HCY" },
   { name: "Folate", acronymName: "FOL" },
 ];
+
+//MINE MINE MINE MINE MINE - Zack 
+export const CBCLevelIList = [
+  { name: "White Blood Cell", acronymName: "WBC" },
+  { name: "Red Blood Cell", acronymName: "RBC" },
+  { name: "Hemoglobin", acronymName: "Hgb" },
+  { name: "Hematocrit", acronymName: "Hct" },
+  { name: "Mean Corp. Value", acronymName: "MCV" },
+  { name: "Mean Corp. Hgb", acronymName: "MCH" },
+  { name: "Mean Corp. Hgb Conc.", acronymName: "MCHC" },
+  { name: "RBC Distribution Width", acronymName: "RDW" },
+  { name: "Neutrophil %", acronymName: "NE" },
+  { name: "Absolute Neutrophil Ct", acronymName: "NE #" },
+  { name: "Lymphocyte %", acronymName: "LY" },
+  { name: "Absolute Lymphocyte Ct", acronymName: "LY #" },
+  { name: "Monocyte %", acronymName: "MO" },
+  { name: "Absolute Monocyte Ct", acronymName: "MO #" },
+  { name: "Eosinophil %", acronymName: "EO" },
+  { name: "Absoltue Eosinophil Ct", acronymName: "EO #" },
+  { name: "Basophil %", acronymName: "BA" },
+  { name: "Absolute Basophil Ct", acronymName: "BA #" },
+  { name: "Platelet Count", acronymName: "PLT" },
+  { name: "Mean Platelet Volume", acronymName: "MPV" },
+]
+
 
 export const isTokenExpired = (token: string) => {
   if (!token) return true;
