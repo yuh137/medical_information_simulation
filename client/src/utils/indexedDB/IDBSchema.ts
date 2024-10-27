@@ -51,4 +51,11 @@ export interface MolecularQCTemplateBatch {
   fileName: string;
   lotNumber: string;
   closedDate: string;
+  analytes: {
+      analyteName: string;
+      analyteAcronym: string; 
+      unitOfMeasure: string;
+      minLevel: string;
+      maxLevel: string;
+  }[];
 }
