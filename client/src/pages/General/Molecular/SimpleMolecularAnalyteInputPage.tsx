@@ -10,6 +10,7 @@ const SimpleMolecularAnalyteInputPage = () => {
   const [analyteValues, setAnalyteValues] = useState<string[]>([]);
   const [isInputFull, setIsInputFull] = useState<boolean>(false);
   const inputRefs = useRef<HTMLInputElement[]>([]);
+  const analyteNameRefs = useRef<HTMLDivElement[]>([]);
 
   useEffect(() => {
     const storedQCData = localStorage.getItem('selectedQCData');
