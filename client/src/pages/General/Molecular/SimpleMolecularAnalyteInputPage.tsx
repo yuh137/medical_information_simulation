@@ -31,6 +31,35 @@ const SimpleMolecularAnalyteInputPage = () => {
     else return false;
   }, [analyteValues, invalidIndexes, qcData]);
 
+  
+  const handleInputChange = (index: number, value: string, min: number, max: number) => {
+    const newValues = [...analyteValues];
+    newValues[index] = value;
+    setAnalyteValues(newValues);
+
+    if (
+      isNaN(parseFloat(value)) ||
+      parseFloat(value) < min ||
+      parseFloat(value) > max ||
+      typeof value === "undefined"
+    ) {
+      if (!invalidIndexes) {
+        let newInvalidIndexes = new Set<number>();
+        newInvalidIndexes.add(index);
+        setInvalidIndexes(newInvalidIndexes);
+      } else {
+        let newInvalidIndexes = new Set<number>(invalidIndexes);
+        newInvalidIndexes.add(index);
+        setInvalidIndexes(newInvalidIndexes);
+      }
+    } else {
+      let newInvalidIndexes = new Set<number>(invalidIndexes);
+      newInvalidIndexes.delete(index);
+      setInvalidIndexes(newInvalidIndexes);
+    }
+    setIsInputFull(newValues.length === qcData?.analytes.length && newValues.length > 0);
+  };
+
   if (!qcData) {
     return <p>No data available for this QC record.</p>;
   }
