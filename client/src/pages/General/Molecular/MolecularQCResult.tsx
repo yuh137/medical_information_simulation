@@ -16,6 +16,8 @@ import { DEBUG_add_molecular_data_to_idb } from "../../../utils/DNALYTICS_DEBUG_
 
 interface QCItem {
   fileName: string;
+  lotNumber: string;
+  closedDate: string;
 }
 
 const columns: ColumnDef<QCItem>[] = [
