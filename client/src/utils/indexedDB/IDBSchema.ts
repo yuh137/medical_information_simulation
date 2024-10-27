@@ -46,3 +46,9 @@ export interface QCTemplateBatch {
         value?: string; // Optional value field, since it might not exist initially
     }[];
 }
+
+export interface MolecularQCTemplateBatch {
+  fileName: string;
+  lotNumber: string;
+  closedDate: string;
+}

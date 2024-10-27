@@ -66,6 +66,8 @@ const MolecularQCResult = () => {
           console.log("QC Data found:", qcData);
           // Save the qcData to localStorage
           localStorage.setItem('selectedQCData', JSON.stringify(qcData));
+          // Navigate to the AnalyteInputPage
+          navigate(`/molecular/simple-analyte-input-page`);
   
         } else {
           console.warn('No matching QC data found in the database.');

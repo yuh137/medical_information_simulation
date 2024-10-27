@@ -28,6 +28,7 @@ import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInput
 import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
 import { qcTypeLinkList } from "./utils/utils";
 import MolecularQCResult from "./pages/General/Molecular/MolecularQCResult";
+import SimpleMolecularAnalyteInputPage from "./pages/General/Molecular/SimpleMolecularAnalyteInputPage";
 
 function App() {
   initIDB();
@@ -202,6 +203,10 @@ function AppWithRouter() {
               {
                 path: 'qc_results',
                 element: <MolecularQCResult />,
+              },
+              {
+                path: 'simple-analyte-input-page',
+                element: <SimpleMolecularAnalyteInputPage/>,  
               },
             ]
           },
