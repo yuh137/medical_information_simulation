@@ -39,19 +39,19 @@ function App() {
       <Routes>
         <Route path="/" element={<SplashPage />} />
         <Route path="/home" element={<HomePage />} />
-        <Route path="/home" element={<CaseStudiesPage />} />
-        <Route path="/home" element={<GradeBookPage_Faculty />} />
-        <Route path="/home" element={<GradeBookPage_Student />} />
-        <Route path="/home" element={<InputQC_ResultsPage />} />
-        <Route path="/home" element={<PatientReportsPage />} />
-        <Route path="/home" element={<QC_OrderEntriesPage />} />
-        <Route path="/home" element={<QC_Page />} />
-        <Route path="/home" element={<QuizzesPage_Faculty />} />
-        <Route path="/home" element={<QuizzesPage_Student />} />
-        <Route path="/home" element={<ReferecnceFilesPage />} />
-        <Route path="/home" element={<ViewQCResultsPage />} />
-        <Route path="/home" element={<ReportSubmissionsPage_Student/>} />
-        <Route path="/home" element={<ReportSubmissionsPage_Faculty/>} />
+        <Route path="/casestudies" element={<CaseStudiesPage />} />
+        <Route path="/gradebookfaculty" element={<GradeBookPage_Faculty />} />
+        <Route path="/gradebookstudent" element={<GradeBookPage_Student />} />
+        <Route path="/inputqcresults" element={<InputQC_ResultsPage />} />
+        <Route path="/patientreports" element={<PatientReportsPage />} />
+        <Route path="/orderentries" element={<QC_OrderEntriesPage />} />
+        <Route path="/qc" element={<QC_Page />} />
+        <Route path="/quizzesfaculty" element={<QuizzesPage_Faculty />} />
+        <Route path="/quizzesstudent" element={<QuizzesPage_Student />} />
+        <Route path="/referencefiles" element={<ReferecnceFilesPage />} />
+        <Route path="/viewqcresults" element={<ViewQCResultsPage />} />
+        <Route path="/reportsubmissionsstudent" element={<ReportSubmissionsPage_Student/>} />
+        <Route path="/reportsubmissinosfaculty" element={<ReportSubmissionsPage_Faculty/>} />
 
       </Routes>
     </Router>
