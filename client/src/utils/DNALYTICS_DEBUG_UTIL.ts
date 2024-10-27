@@ -18,10 +18,10 @@ export async function DEBUG_add_molecular_data_to_idb(QCPanels: string[]): Promi
 			const items = QCPanels.map((item) => { return { fileName: item, lotNumber: getNextID(), closedDate: getNextID() }})
 
 			let completedRequests = 0;
-			const getRequests = items.map(item => objectStore.get(item));
+			const getRequests = items.map((item) => objectStore.get([item.fileName, item.lotNumber, item.closedDate]));
 			getRequests.forEach(getRequest => {
 				getRequest.onsuccess = (event) => {
-                    if (event.target.result) {
+                    if ((event.target as IDBOpenDBRequest).result) {
                         completedRequests++;
                     }
                     else {
