@@ -1,3 +1,5 @@
+import { Button } from "@mui/material";
+import { Icon } from "@iconify/react";
 import NavBar from "../../../components/NavBar";
 import React, { useState, useEffect } from "react";
 import { getAllDataByFileName, getQCRangeByDetails } from "../../../utils/indexedDB/getData";
@@ -13,6 +15,8 @@ import { DEBUG_add_molecular_data_to_idb } from "../../../utils/DNALYTICS_DEBUG_
 
 interface QCItem {
   fileName: string;
+  lotNumber: string;
+  closedDate: string;
 }
 
 const columns: ColumnDef<QCItem>[] = [
@@ -52,6 +56,28 @@ const MolecularQCResult = () => {
 
     fetchQCData();
   }, []);
+
+  const handleSelectQC = async () => {
+    if (selectedQC) {
+      console.log("Selected QC:", selectedQC);  
+      try {
+        const qcData = await getQCRangeByDetails(selectedQC.fileName, selectedQC.lotNumber, selectedQC.closedDate);
+        if (qcData) {
+          console.log("QC Data found:", qcData);
+          // Save the qcData to localStorage
+          localStorage.setItem('selectedQCData', JSON.stringify(qcData));
+  
+        } else {
+          console.warn('No matching QC data found in the database.');
+          alert('No matching QC data found in the database.');
+        }
+      } catch (error) {
+        console.error("Error fetching QC data:", error);
+      }
+    } else {
+      alert('Please select a QC record to proceed.');
+    }
+  };
 
   const table = useReactTable({
     data: qcData,
@@ -104,6 +130,31 @@ const MolecularQCResult = () => {
             </TableBody>
           </Table>  
         </div>
+        <div className="flex items-center justify-center space-x-2 py-4">
+          <div className="space-x-2">
+            <Button
+              variant="outlined"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <Icon icon="mdi:arrow-left-thin" />
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              <Icon icon="mdi:arrow-right-thin" />
+            </Button>
+          </div>
+        </div>
+        <Button
+          className="sm:!absolute sm:w-36 sm:h-12 sm:!text-lg !bg-[#DAE3F3] right-3 -bottom-3 !border !border-solid !border-blue-500 font-medium !text-black"
+          onClick={handleSelectQC}
+          disabled={!selectedQC}
+        >
+          Select QC
+        </Button>
       </div>
     </>
   );
