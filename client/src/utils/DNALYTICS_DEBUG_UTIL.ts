@@ -40,7 +40,7 @@ export async function DEBUG_add_molecular_data_to_idb(QCPanels: string[]): Promi
 				};
 
 				getRequest.onerror = (error) => {
-					console.log("Error checking data", addRequest.error);
+					console.log("Error checking data", getRequest.error);
 					reject(addRequest.error);
 				};
 			});
