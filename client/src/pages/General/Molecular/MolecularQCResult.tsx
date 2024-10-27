@@ -1,3 +1,4 @@
+import { MolecularQCTemplateBatch } from  '../../../utils/indexedDB/IDBSchema';
 import { Button } from "@mui/material";
 import { Icon } from "@iconify/react";
 import NavBar from "../../../components/NavBar";
@@ -14,13 +15,7 @@ import {
 } from "@tanstack/react-table";
 import { DEBUG_add_molecular_data_to_idb } from "../../../utils/DNALYTICS_DEBUG_UTIL";
 
-interface QCItem {
-  fileName: string;
-  lotNumber: string;
-  closedDate: string;
-}
-
-const columns: ColumnDef<QCItem>[] = [
+const columns: ColumnDef<MolecularQCTemplateBatch>[] = [
   {
     id: 'departmentColumn',
     header: () => <span>Department</span>,
@@ -34,8 +29,8 @@ const columns: ColumnDef<QCItem>[] = [
 ];
 
 const MolecularQCResult = () => {
-  const [qcData, setQcData] = useState<QCItem[]>([]);
-  const [selectedQC, setSelectedQC] = useState<QCItem | null>(null);
+  const [qcData, setQcData] = useState<MolecularQCTemplateBatch[]>([]);
+  const [selectedQC, setSelectedQC] = useState<MolecularQCTemplateBatch | null>(null);
   const navigate = useNavigate();
 
   const fetchQCData = async () => {
