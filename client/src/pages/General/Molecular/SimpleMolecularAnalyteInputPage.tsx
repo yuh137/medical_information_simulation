@@ -8,6 +8,7 @@ const SimpleMolecularAnalyteInputPage = () => {
   const [qcData, setQcData] = useState<MolecularQCTemplateBatch | null>(null);
   const [invalidIndexes, setInvalidIndexes] = useState<Set<number> | null>(null);
   const [analyteValues, setAnalyteValues] = useState<string[]>([]);
+  const [isInputFull, setIsInputFull] = useState<boolean>(false);
   const inputRefs = useRef<HTMLInputElement[]>([]);
 
   useEffect(() => {
