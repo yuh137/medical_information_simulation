@@ -10,10 +10,4 @@ body{
   margin: 0;
 }
 
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow-x: hidden; /* Prevents horizontal overflow */
-  max-width: 100vw; /* Prevents the viewport from extending beyond the visible area */
-  position: relative; /* Resets any potential positioning from other styles */
-}
+

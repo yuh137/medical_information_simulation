@@ -1,55 +1,70 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Avr from './pages/projectPages/Avr.jsx';
-import Lps from './pages/projectPages/Lps.jsx';
-import Prison from './pages/projectPages/Prison.jsx';
-import StaringContest from './pages/projectPages/StaringContest.jsx';
-import DrugDiscovery from './pages/projectPages/DrugDiscovery.jsx';
-import IotWater from './pages/projectPages/IotWater.jsx';
-import Leetcode from './pages/projectPages/Leetcode.jsx';
-import ChatBot from './pages/projectPages/Chatbot.jsx';
+//import base components for entire website
 import NavBar from './components/NavBar.jsx';
-import ParticleBG from './components/particleBG.jsx';
-import HomePage from './pages/Homepage.jsx';
-import Contact from './pages/Contact.jsx'; // Import the Contact page
-import AboutMe from './pages/AboutMe.jsx';     // Import the About Me page
-import ProjectPage from './pages/ProjectPage.jsx'
-
 import './App.css';
+//import react pages
+import SplashPage from './pages/SplashPage.jsx';
+import HomePage from './pages/HomePage.jsx';
+import CaseStudiesPage from './pages/CaseStudiesPage.jsx';
+import GradeBookPage_Faculty from './pages/GradeBookPage_Faculty.jsx';
+import GradeBookPage_Student from './pages/GradeBookPage_Student.jsx';
+import InputQC_ResultsPage from './pages/InputQC_ResultsPage.jsx';
+import PatientReportsPage from './pages/PatientReportsPage.jsx';
+import QC_OrderEntriesPage from './pages/QC_OrderEntriesPage.jsx';
+import QC_Page from './pages/QC_Page.jsx';
+import QuizzesPage_Faculty from './pages/QuizzesPage_Faculty.jsx';
+import QuizzesPage_Student from './pages/QuizzesPage_Student.jsx';
+import ReferecnceFilesPage from './pages/ReferenceFilesPage.jsx';
+import ViewQCResultsPage from './pages/ViewQCResultsPage.jsx';
+import ReportSubmissionsPage_Student from './pages/ReportSubmissionsPage_Student.jsx';
+import ReportSubmissionsPage_Faculty from './pages/ReportSubmissionsPage_Faculty.jsx';
+
+
+
 
 function App() {
-  const [count, setCount] = useState(0);
-  
+
+  // Scroll to top when the component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   return (
     <Router>
-      <ParticleBG />
+      
       <div className='nav-bar'>
         <NavBar />
       </div>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/about" element={<AboutMe />} />
-        <Route path="/projects" element={<ProjectPage />} />
+        <Route path="/" element={<SplashPage />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/home" element={<CaseStudiesPage />} />
+        <Route path="/home" element={<GradeBookPage_Faculty />} />
+        <Route path="/home" element={<GradeBookPage_Student />} />
+        <Route path="/home" element={<InputQC_ResultsPage />} />
+        <Route path="/home" element={<PatientReportsPage />} />
+        <Route path="/home" element={<QC_OrderEntriesPage />} />
+        <Route path="/home" element={<QC_Page />} />
+        <Route path="/home" element={<QuizzesPage_Faculty />} />
+        <Route path="/home" element={<QuizzesPage_Student />} />
+        <Route path="/home" element={<ReferecnceFilesPage />} />
+        <Route path="/home" element={<ViewQCResultsPage />} />
+        <Route path="/home" element={<ReportSubmissionsPage_Student/>} />
+        <Route path="/home" element={<ReportSubmissionsPage_Faculty/>} />
 
-
-        <Route path="/avr" element={<Avr />} />
-        <Route path="/prison" element={<Prison />} />
-        <Route path="/staringcontest" element={<StaringContest />} />
-        <Route path="/drugdiscovery" element={<DrugDiscovery />} />
-        <Route path="/iotwater" element={<IotWater />} />
-        <Route path="/lps" element={<Lps />} />
-        <Route path="/chatbot" element={<ChatBot />} />
-        <Route path="/leetcode" element={<Leetcode />} />
-
-        
       </Routes>
     </Router>
   );
 }
+
+/*
+
+routes to add
+<Route path="/account" element={<accountPage />} />
+<Route path="/account" element={<accountPage />} />
+
+
+*/
 
 export default App;

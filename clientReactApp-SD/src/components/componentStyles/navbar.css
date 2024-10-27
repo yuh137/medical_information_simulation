@@ -2,14 +2,3 @@ h1{
   text-decoration: rgb(40, 97, 146);
 }
 
-@media (min-width: 768px){
-  #toggle{
-    display: none;
-  }
-}
-
-@media(max-width: 767px){
-  .navTabs{
-      display: none;
-  }
-}
