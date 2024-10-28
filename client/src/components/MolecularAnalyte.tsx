@@ -88,6 +88,7 @@ const MolecularAnalyte = forwardRef((props: AnalyteProps, ref) => {
         </div>
       </div>
     </>
+	);
 });
 
 export default MolecularAnalyte;
