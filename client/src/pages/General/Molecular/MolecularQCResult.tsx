@@ -2,6 +2,7 @@ import { Button } from "@mui/material";
 import { Icon } from "@iconify/react";
 import NavBar from "../../../components/NavBar";
 import React, { useState, useEffect } from "react";
+import { MolecularQCTemplateBatch } from  '../../../utils/indexedDB/IDBSchema';
 import { useNavigate } from "react-router-dom";
 import { getAllDataByFileName, getQCRangeByDetails } from "../../../utils/indexedDB/getData";
 import { Table, TableBody, TableCell, TableHead, TableRow, TableHeader } from "../../../components/ui/table";
@@ -34,7 +35,7 @@ const columns: ColumnDef<QCItem>[] = [
 ];
 
 const MolecularQCResult = () => {
-  const [qcData, setQcData] = useState<QCItem[]>([]);
+  const [qcData, setQcData] = useState<MolecularQCTemplateBatch[]>([]);
   const [selectedQC, setSelectedQC] = useState<QCItem | null>(null);
   const navigate = useNavigate();
 

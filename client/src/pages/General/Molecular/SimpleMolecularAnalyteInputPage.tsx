@@ -34,16 +34,18 @@ const SimpleMolecularAnalyteInputPage = () => {
   }, [analyteValues, invalidIndexes, qcData]);
 
   
-  const handleInputChange = (index: number, value: string, min: number, max: number) => {
+  const handleInputChange = (index: number, value: string, old_analyte: MolecularQCTemplateBatchAnalyte) => {
     const newValues = [...analyteValues];
     newValues[index] = value;
     setAnalyteValues(newValues);
+		const concreteAnalyte: QualitativeMolecularQCTemplateBatchAnalyte | QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte = old_analyte;
 
     if (
-      isNaN(parseFloat(value)) ||
-      parseFloat(value) < min ||
-      parseFloat(value) > max ||
-      typeof value === "undefined"
+      ((concreteAnalyte.reportType === ReportType.QualitativeViralLoadRange) && (isNaN(parseFloat(value)) ||
+      parseFloat(value) < concreteAnalyte.minLevel ||
+      parseFloat(value) > concreteAnalyte.maxLevel)) || 
+			((concreteAnalyte.reportType === ReportType.Qualitative) && (value !== concreteAnalyte.expectedRange)) ||
+      typeof value === "undefined")
     ) {
       if (!invalidIndexes) {
         let newInvalidIndexes = new Set<number>();
@@ -91,21 +93,10 @@ const SimpleMolecularAnalyteInputPage = () => {
               }}
               key={item.analyteName}
             >
-              <Analyte
-                name={item.analyteName}
-                acronym={item.analyteAcronym}
-                minLevel={+item.minLevel}
-                maxLevel={+item.maxLevel}
-                // level={detectLevel(props.name)}
-                measUnit={item.unitOfMeasure}
+              <MolecularAnalyte
+		analyte = {item}
                 handleInputChange={(val: string) => {
-                  // Convert string to number but pass the string to handleInputChange
-                  const numericValue = +val;
-                  if (item.minLevel !== "" && item.maxLevel !== "") {
-                      handleInputChange(index, val, +item.minLevel, +item.maxLevel);  // Pass `val` as a string
-                  } else {
-                      handleInputChange(index, val, -1, 9999);  // Pass `val` as a string
-                  }
+	      	handleInputChange(index, val, item);
               }}
               
                 ref={(childRef: { inputRef: React.RefObject<HTMLInputElement>; nameRef: React.RefObject<HTMLDivElement> }) => {

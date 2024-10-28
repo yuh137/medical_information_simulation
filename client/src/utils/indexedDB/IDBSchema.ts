@@ -47,15 +47,31 @@ export interface QCTemplateBatch {
     }[];
 }
 
+export enum ReportType {
+	Qualitative,
+	QualitativeViralLoadRange
+}
+
+export interface MolecularQCTemplateBatchAnalyte {
+	reportType: ReportType;
+	analyteName: string;
+	analyteAcronym: string;
+	value?: string;
+}
+
+export interface QualitativeMolecularQCTemplateBatchAnalyte extends MolecularQCTemplateBatchAnalyte {
+	expectedRange: "Present" | "Not Detected";
+}
+
+export interface QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte extends MolecularQCTemplateBatchAnalyte {
+	conventionalUnits: string;
+	minLevel: string;
+	maxLevel: string;
+}
+
 export interface MolecularQCTemplateBatch {
   fileName: string;
   lotNumber: string;
   closedDate: string;
-  analytes: {
-      analyteName: string;
-      analyteAcronym: string; 
-      unitOfMeasure: string;
-      minLevel: string;
-      maxLevel: string;
-  }[];
+  analytes: MolecularQCTemplateBatchAnalyte[];
 }
