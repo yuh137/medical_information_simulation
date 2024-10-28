@@ -4,6 +4,7 @@ import NavBar from '../../../components/NavBar';
 import MolecularAnalyte from '../../../components/MolecularAnalyte';
 import { Button, ButtonBase, Modal } from "@mui/material";
 import { useTheme } from "../../../context/ThemeContext";
+import { saveToDB } from "../../../utils/indexedDB/getData";
 
 
 const SimpleMolecularAnalyteInputPage = () => {
@@ -51,6 +52,30 @@ const SimpleMolecularAnalyteInputPage = () => {
     }
 	}
 		
+  const handleAcceptQC = async () => {
+    if (!qcData) {
+      console.error("No QC data available to save.");
+      return;
+    }
+    const qcDataToSave: MolecularQCTemplateBatch = {
+      ...qcData,
+      analytes: qcData.analytes.map((analyte, index) => ({
+        ...analyte,
+        value: analyteValues[index],
+      })),
+    };
+    console.log("Data to save:", qcDataToSave);
+    try {
+      await saveToDB("qc_store", qcDataToSave);
+      console.log("QC data saved successfully.");
+      setAnalyteValues([]);
+      setInvalidIndexes(null);
+      setModalData([]);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error saving QC data:", error);
+    }
+	};
   
   const handleInputChange = (index: number, value: string, old_analyte: MolecularQCTemplateBatchAnalyte) => {
     const newValues = [...analyteValues];
@@ -66,7 +91,6 @@ const SimpleMolecularAnalyteInputPage = () => {
       	let newInvalidIndexes = new Set<number>(invalidIndexes);
       	newInvalidIndexes.delete(index);
       	setInvalidIndexes(newInvalidIndexes);
-				console.log("Set valid index");
     	}
     } else if (old_analyte.reportType === ReportType.Qualitative) {
 				const qualitativeAnalyte = old_analyte as QualitativeMolecularQCTemplateBatchAnalyte;
@@ -149,6 +173,15 @@ const SimpleMolecularAnalyteInputPage = () => {
               onClick={() => setIsModalOpen(true)}
             >
               Apply QC Comment
+            </Button>
+            <Button
+              className={`sm:w-32 sm:h-[50px] !font-semibold !border !border-solid !border-[#6781AF] max-sm:w-full ${
+                isValid ? "!bg-[#DAE3F3] !text-black" : "!bg-[#AFABAB] !text-white"
+              }`}
+             disabled={!isValid}
+              onClick={() => handleAcceptQC()}
+            >
+              Accept QC
             </Button>
           </div>
         </div>
