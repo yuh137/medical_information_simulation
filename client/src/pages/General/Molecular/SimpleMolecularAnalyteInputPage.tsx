@@ -66,6 +66,7 @@ const SimpleMolecularAnalyteInputPage = () => {
       	let newInvalidIndexes = new Set<number>(invalidIndexes);
       	newInvalidIndexes.delete(index);
       	setInvalidIndexes(newInvalidIndexes);
+				console.log("Set valid index");
     	}
     } else if (old_analyte.reportType === ReportType.Qualitative) {
 				const qualitativeAnalyte = old_analyte as QualitativeMolecularQCTemplateBatchAnalyte;
