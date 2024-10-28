@@ -84,10 +84,7 @@ const MolecularAnalyte = forwardRef((props: AnalyteProps, ref) => {
           onChange={event => {
             event.preventDefault();
             const newValue = event.target.value;
-            const isValid = /^\d*\.?\d*$/.test(newValue) || (newValue === 'Present') || (newValue === 'Not Detected');
-            if (isValid) {
-              setInputValue(newValue);
-            }
+            setInputValue(newValue);
           }}
         />
         <div
