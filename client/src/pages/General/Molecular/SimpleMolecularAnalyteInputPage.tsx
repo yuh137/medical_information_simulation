@@ -55,7 +55,7 @@ const SimpleMolecularAnalyteInputPage = () => {
 			if (isNaN(parseFloat(value)) ||
       (parseFloat(value) < +viralLoadAnalyte.minLevel) ||
       (parseFloat(value) > +viralLoadAnalyte.maxLevel)) {
-				setInvalidIndexes(index);
+				setInvalidIndex(index);
     	} else {
       	let newInvalidIndexes = new Set<number>(invalidIndexes);
       	newInvalidIndexes.delete(index);
@@ -64,14 +64,14 @@ const SimpleMolecularAnalyteInputPage = () => {
     } else if (old_analyte.reportType === ReportType.Qualitative) {
 				const qualitativeAnalyte = old_analyte as QualitativeMolecularQCTemplateBatchAnalyte;
 				if (qualitativeAnalyte.expectedRange !== value) {
-					setInvalidIndexes(index);
+					setInvalidIndex(index);
 				} else {
       		let newInvalidIndexes = new Set<number>(invalidIndexes);
       		newInvalidIndexes.delete(index);
       		setInvalidIndexes(newInvalidIndexes);
 				}
     } else if (typeof value === 'undefined') {
-			setInvalidIndexes(index);
+			setInvalidIndex(index);
 		}
     setIsInputFull(newValues.length === qcData?.analytes.length && newValues.length > 0);
   };
