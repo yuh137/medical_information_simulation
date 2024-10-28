@@ -34,11 +34,13 @@ const MolecularAnalyte = forwardRef((props: AnalyteProps, ref) => {
           value={inputValue}
           className="text-base sm:w-[4.5rem] sm:h-10 w-16 h-8 absolute rounded-lg text-center top-0 right-0 border border-solid border-[#7F9458]"
           onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+						let newInput = inputValue;
             if (event.key === "Enter") {
               event.preventDefault();
               const numericInputVal = (+inputValue).toFixed(2).replace(/^0+(?!\.|$)/, "");
 							if (props.analyte.reportType === ReportType.QualitativeViralLoadRange) {
 								const viralLoadRangeAnalyte = props.analyte as QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte;
+								newInput = (+inputValue).toFixed(2).replace(/^0+(?!\.|$)/, "");
 								if (
 									isNaN(+event.currentTarget.value) ||
 									+event.currentTarget.value < +viralLoadRangeAnalyte.minLevel ||
