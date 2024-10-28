@@ -39,7 +39,7 @@ export default function ButtonAppBar() {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
         
         {/*Buttons, they only show up past the splash page*/}
-        {location.pathname !== '/' && (                                                                 
+        {location.pathname !== '/' && location.pathname !== '/register' && (                                                                 
 
           <div className='navTabs'>
             <Link to="/qc" style={{ textDecoration: 'none', color: 'inherit' }}>                          {/*style prop keeps the button white*/}
@@ -51,12 +51,13 @@ export default function ButtonAppBar() {
           </div>
         )}
         
-        {/*toggle button with drawer component. drawer component has links*/}
-        {location.pathname !== '/' && (
+        {/*toggle button with drawer component only on non splash/register page. drawer component has links*/}
+        {location.pathname !== '/' && location.pathname !== '/register' && (
           <div id='toggle'>
             <DrawerToggle />
           </div>
         )}
+        
       </Toolbar>
     </AppBar>
   );

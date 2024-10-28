@@ -7,148 +7,137 @@ import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-
+import { useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { ListItemIcon } from '@mui/material';
 
 export default function DrawerToggle() {
   const [state, setState] = React.useState({
-    top: false,
+    right: false,
   });
+
+  const navigate = useNavigate();
 
   const toggleDrawer = (anchor, open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
 
-    setState({ ...state, ['top']: open });
+    setState({ ...state, [anchor]: open });
+  };
+
+  const handleNavigation = (path) => {
+    navigate(path);
+    setState({ right: false }); // Close the drawer after navigation
   };
 
   const list = (anchor) => (
     <Box
-      sx={{ width: anchor === 'top' ? 'auto' : 250 }}
+      sx={{ width: anchor === 'right' ? 'auto' : 250 }}
       role="presentation"
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        {['QC Builder'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/qc')}>
+            <ListItemText primary="QC Builder" />
+          </ListItemButton>
+        </ListItem>
       </List>
       <Divider />
       <List>
-        {['Input QC Results'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/inputqcresults')}>
+            <ListItemText primary="Input QC Results" />
+          </ListItemButton>
+        </ListItem>
       </List>
       <Divider />
       <List>
-        {['View QC Results '].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/viewqcresults')}>
+            <ListItemText primary="View QC Results" />
+          </ListItemButton>
+        </ListItem>
       </List>
       <Divider />
       <List>
-        {['QC Order Entries'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/orderentries')}>
+            <ListItemText primary="QC Order Entries" />
+          </ListItemButton>
+        </ListItem>
       </List>
       <Divider />
       <List>
-        {['Patient Reports'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/patientreports')}>
+            <ListItemText primary="Patient Reports" />
+          </ListItemButton>
+        </ListItem>
       </List>
       <Divider />
       <List>
-        {['Student Report Submissions'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/reportsubmissions')}>
+            <ListItemText primary="Student Report Submissions" />
+          </ListItemButton>
+        </ListItem>
       </List>
       <Divider />
       <List>
-        {['Quizzes'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/quizzes')}>
+            <ListItemText primary="Quizzes" />
+          </ListItemButton>
+        </ListItem>
       </List>
       <Divider />
       <List>
-        {['Grade Book'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/gradebook')}>
+            <ListItemText primary="Grade Book" />
+          </ListItemButton>
+        </ListItem>
       </List>
       <Divider />
       <List>
-        {['Case Studies'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/casestudies')}>
+            <ListItemText primary="Case Studies" />
+          </ListItemButton>
+        </ListItem>
       </List>
       <Divider />
-      
-
-      {/*add conditional button if logged in as staff, reference files page */}
-
       <List>
-        {['Log Out'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <LogoutIcon />
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/account')}>
+            <ListItemText primary="Account" />
+          </ListItemButton>
+        </ListItem>
       </List>
       <Divider />
-
-      
+      <List>
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/error')}>
+            <ListItemIcon>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="Log Out" />
+          </ListItemButton>
+        </ListItem>
+      </List>
+      <Divider />
     </Box>
   );
 
   return (
     <div>
-      {['top'].map((anchor) => (
+      {['right'].map((anchor) => (
         <React.Fragment key={anchor}>
-          <Button onClick={toggleDrawer(anchor, true)}><MenuIcon sx={{color: 'white'}}></MenuIcon></Button>
+          <Button onClick={toggleDrawer(anchor, true)}><MenuIcon sx={{color: 'white'}} /></Button>
           <Drawer
             anchor={anchor}
             open={state[anchor]}

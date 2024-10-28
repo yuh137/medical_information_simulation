@@ -5,20 +5,20 @@ import NavBar from './components/NavBar.jsx';
 import './App.css';
 //import react pages
 import SplashPage from './pages/SplashPage.jsx';
+import RegisterPage from './pages/RegisterPage.jsx';
 import HomePage from './pages/HomePage.jsx';
 import CaseStudiesPage from './pages/CaseStudiesPage.jsx';
-import GradeBookPage_Faculty from './pages/GradeBookPage_Faculty.jsx';
-import GradeBookPage_Student from './pages/GradeBookPage_Student.jsx';
+import GradeBookPage from './pages/GradeBookPage.jsx';
 import InputQC_ResultsPage from './pages/InputQC_ResultsPage.jsx';
 import PatientReportsPage from './pages/PatientReportsPage.jsx';
 import QC_OrderEntriesPage from './pages/QC_OrderEntriesPage.jsx';
 import QC_Page from './pages/QC_Page.jsx';
-import QuizzesPage_Faculty from './pages/QuizzesPage_Faculty.jsx';
-import QuizzesPage_Student from './pages/QuizzesPage_Student.jsx';
+import QuizzesPage from './pages/QuizzesPage.jsx';
 import ReferecnceFilesPage from './pages/ReferenceFilesPage.jsx';
 import ViewQCResultsPage from './pages/ViewQCResultsPage.jsx';
-import ReportSubmissionsPage_Student from './pages/ReportSubmissionsPage_Student.jsx';
-import ReportSubmissionsPage_Faculty from './pages/ReportSubmissionsPage_Faculty.jsx';
+import ReportSubmissionsPage from './pages/ReportSubmissionsPage.jsx';
+import AccountPage from './pages/AccountPage.jsx';
+import ErrorPage from './pages/ErrorPage.jsx';
 
 
 
@@ -30,6 +30,8 @@ function App() {
     window.scrollTo(0, 0);
   }, []);
 
+  //Splash Page is login!
+  
   return (
     <Router>
       
@@ -38,33 +40,25 @@ function App() {
       </div>
       <Routes>
         <Route path="/" element={<SplashPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/casestudies" element={<CaseStudiesPage />} />
-        <Route path="/gradebookfaculty" element={<GradeBookPage_Faculty />} />
-        <Route path="/gradebookstudent" element={<GradeBookPage_Student />} />
+        <Route path="/gradebook" element={<GradeBookPage/>} />
         <Route path="/inputqcresults" element={<InputQC_ResultsPage />} />
         <Route path="/patientreports" element={<PatientReportsPage />} />
         <Route path="/orderentries" element={<QC_OrderEntriesPage />} />
         <Route path="/qc" element={<QC_Page />} />
-        <Route path="/quizzesfaculty" element={<QuizzesPage_Faculty />} />
-        <Route path="/quizzesstudent" element={<QuizzesPage_Student />} />
+        <Route path="/quizzes" element={<QuizzesPage />} />
         <Route path="/referencefiles" element={<ReferecnceFilesPage />} />
         <Route path="/viewqcresults" element={<ViewQCResultsPage />} />
-        <Route path="/reportsubmissionsstudent" element={<ReportSubmissionsPage_Student/>} />
-        <Route path="/reportsubmissinosfaculty" element={<ReportSubmissionsPage_Faculty/>} />
+        <Route path="/reportsubmissions" element={<ReportSubmissionsPage/>} />
+        <Route path="/account" element={<AccountPage/>} />
+        <Route path="/error" element={<ErrorPage/>} />
+
 
       </Routes>
     </Router>
   );
 }
-
-/*
-
-routes to add
-<Route path="/account" element={<accountPage />} />
-<Route path="/account" element={<accountPage />} />
-
-
-*/
 
 export default App;
