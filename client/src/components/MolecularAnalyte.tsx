@@ -37,12 +37,12 @@ const MolecularAnalyte = forwardRef((props: AnalyteProps, ref) => {
             if (event.key === "Enter") {
               event.preventDefault();
               const numericInputVal = (+inputValue).toFixed(2).replace(/^0+(?!\.|$)/, "");
-							const concreteAnalyte = props.analyte as QualitativeMolecularQCTemplateBatchAnalyte | QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte;
-							if (concreteAnalyte.reportType === ReportType.QualitativeViralLoadRange) {
+							if (props.analyte.reportType === ReportType.QualitativeViralLoadRange) {
+								const viralLoadRangeAnalyte = props.analyte as QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte;
 								if (
 									isNaN(+event.currentTarget.value) ||
-									+event.currentTarget.value < +concreteAnalyte.minLevel ||
-									+event.currentTarget.value > +concreteAnalyte.maxLevel
+									+event.currentTarget.value < +viralLoadRangeAnalyte.minLevel ||
+									+event.currentTarget.value > +viralLoadRangeAnalyte.maxLevel
 								) {
 									event.currentTarget.classList.remove("bg-[#00FF00]");
 									event.currentTarget.classList.add("bg-[#FF0000]");
@@ -51,8 +51,9 @@ const MolecularAnalyte = forwardRef((props: AnalyteProps, ref) => {
 									event.currentTarget.classList.add("bg-[#00FF00]");
 								}
 							}
-							else if (concreteAnalyte.reportType === ReportType.Qualitative) {
-								if (((event.currentTarget.value === 'Present') && (concreteAnalyte.expectedRange === 'Present')) || ((event.currentTarget.value === 'Not Detected') && (concreteAnalyte.expectedRange === 'Not Detected'))) {
+							else if (props.analyte.reportType === ReportType.Qualitative) {
+							const qualitativeAnalyte = props.analyte as QualitativeMolecularQCTemplateBatchAnalyte;
+								if (((event.currentTarget.value === 'Present') && (qualitativeAnalyte.expectedRange === 'Present')) || ((event.currentTarget.value === 'Not Detected') && (qualitativeAnalyte.expectedRange === 'Not Detected'))) {
 									
 									event.currentTarget.classList.remove("bg-[#FF0000]");
 									event.currentTarget.classList.add("bg-[#00FF00]");
