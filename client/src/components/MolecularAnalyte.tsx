@@ -10,6 +10,8 @@ export interface AnalyteProps {
 
 const MolecularAnalyte = forwardRef((props: AnalyteProps, ref) => {
   const [inputValue, setInputValue] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLDivElement>(null);
 
   useImperativeHandle(ref, () => ({
     inputRef,

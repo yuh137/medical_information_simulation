@@ -46,7 +46,7 @@ const SimpleMolecularAnalyteInputPage = () => {
       parseFloat(value) > concreteAnalyte.maxLevel)) || 
 			((concreteAnalyte.reportType === ReportType.Qualitative) && (value !== concreteAnalyte.expectedRange)) ||
       typeof value === "undefined")
-    ) {
+    {
       if (!invalidIndexes) {
         let newInvalidIndexes = new Set<number>();
         newInvalidIndexes.add(index);
