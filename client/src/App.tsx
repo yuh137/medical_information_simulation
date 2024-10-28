@@ -26,7 +26,7 @@ import Layout from "./utils/Layout";
 import ChemistryLeveyJennings from "./pages/General/Chemistry/ChemistryLeveyJennings";
 import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInputPage";
 import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
-import { qcTypeLinkList } from "./utils/utils";
+import { hemeTypeLinkList } from "./utils/utils";
 
 // Heme/Coag 
 import HemeCoagQCBuilderPage from "./pages/General/Hema_Coag/HemeCoagQCBuilderPage";
@@ -35,6 +35,7 @@ import HemeEditQCPage from "./pages/General/Hema_Coag/Heme/HemeEditQCPage";
 import CustomCreateNewPage from "./pages/General/Hema_Coag/Custom/CustomCreateNewPage";
 import CustomSelectPage from "./pages/General/Hema_Coag/Custom/CustomSelectPage";
 import CustomHemeCoagQCTypeButtonsPage from "./pages/General/Hema_Coag/Custom/HemeCoagQCTypeSelection";
+import { HemeTestInputPage } from "./pages/General/Hema_Coag/Heme/HemeTestInputPage";
 
 function App() {
   initIDB();
@@ -172,12 +173,38 @@ function AppWithRouter() {
               },
           
               {
-          //im just using a seperate file for all of the heme specific pages, if anyone wants to do the same just declare the folder here and its kids
+                //im just using a seperate file for all of the heme specific pages, if anyone wants to do the same just declare the folder here and its kids
                 path: 'heme',
                 children: [
                   {
                     path: 'heme_editQC',
                     element: <HemeEditQCPage />,
+                  },
+                  {
+                    path: 'heme_editQC/:item',
+                    element: <HemeTestInputPage />,
+                    loader: async ({ params, request }) => {
+                      const { item } = params;
+                      const searchParams = new URL(request.url).searchParams;
+                      //const qcName = searchParams.get("name");
+                      const dep = searchParams.get("dep");
+                      const qcName = hemeTypeLinkList.find(qcType => qcType.link.includes(item ?? "undefined"))?.name;
+    
+                      if (qcName) {
+                        try {
+                          const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByName?dep=${dep}&name=${qcName}`);
+    
+                          if (res.ok) {
+                            return res.json();
+                          }
+                        } catch (e) {
+                          console.error("Error fetching QC data", e);
+                        }
+                      }
+    
+                      return null; 
+                    }
+
                   }
                 ]
               },
