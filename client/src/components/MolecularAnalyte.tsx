@@ -1,5 +1,5 @@
 import React, { forwardRef, useState, useRef, useImperativeHandle } from "react";
-import { MolecularQCTemplateBatchAnalyte } from "../utils/indexedDB/IDBSchema";
+import { MolecularQCTemplateBatchAnalyte, QualitativeMolecularQCTemplateBatchAnalyte, QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte, ReportType } from "../utils/indexedDB/IDBSchema";
 
 
 export interface AnalyteProps {
