@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte, QualitativeMolecularQCTemplateBatchAnalyte, QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte, ReportType } from  '../../../utils/indexedDB/IDBSchema';
 import NavBar from '../../../components/NavBar';
 import MolecularAnalyte from '../../../components/MolecularAnalyte';
+import { Button, ButtonBase, Modal } from "@mui/material";
 
 
 const SimpleMolecularAnalyteInputPage = () => {
