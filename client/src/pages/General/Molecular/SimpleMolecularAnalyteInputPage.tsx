@@ -53,8 +53,8 @@ const SimpleMolecularAnalyteInputPage = () => {
     if (old_analyte.reportType === ReportType.QualitativeViralLoadRange) {
 			const viralLoadAnalyte = old_analyte as QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte;
 			if (isNaN(parseFloat(value)) ||
-      parseFloat(value) < viralLoadAnalyte.minLevel ||
-      parseFloat(value) > viralLoadAnalyte.maxLevel)) {
+      (parseFloat(value) < viralLoadAnalyte.minLevel) ||
+      (parseFloat(value) > viralLoadAnalyte.maxLevel)) {
 				setInvalidIndexes(index);
     	} else {
       	let newInvalidIndexes = new Set<number>(invalidIndexes);
