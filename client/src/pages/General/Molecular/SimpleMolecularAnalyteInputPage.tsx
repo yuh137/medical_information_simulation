@@ -5,10 +5,14 @@ import MolecularAnalyte from '../../../components/MolecularAnalyte';
 
 
 const SimpleMolecularAnalyteInputPage = () => {
+  const { theme } = useTheme();
   const [qcData, setQcData] = useState<MolecularQCTemplateBatch | null>(null);
+  const [modalData, setModalData] = useState<{ invalidIndex: number; comment: string }[]>([]);
   const [invalidIndexes, setInvalidIndexes] = useState<Set<number> | null>(null);
   const [analyteValues, setAnalyteValues] = useState<string[]>([]);
   const [isInputFull, setIsInputFull] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isValidManual, setIsValidManual] = useState<boolean>(false);
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const analyteNameRefs = useRef<HTMLDivElement[]>([]);
 
@@ -76,9 +80,13 @@ const SimpleMolecularAnalyteInputPage = () => {
     setIsInputFull(newValues.length === qcData?.analytes.length && newValues.length > 0);
   };
 
-  if (!qcData) {
-    return <p>No data available for this QC record.</p>;
-  }
+  const handleTextareaChange = (index: number, invalidIndex: number, value: string) => {
+    setModalData(prevValues => {
+      const updatedValues = [...prevValues];
+      updatedValues[index] = { invalidIndex, comment: value };
+      return updatedValues;
+    });
+  };
 
   const handleKeyPress = (event: React.KeyboardEvent, index: number) => {
     if (
@@ -89,6 +97,10 @@ const SimpleMolecularAnalyteInputPage = () => {
       inputRefs.current[index + 1]?.focus();
     }
   };
+
+  if (!qcData) {
+    return <p>No data available for this QC record.</p>;
+  }
 
   return (
     <>
@@ -121,7 +133,51 @@ const SimpleMolecularAnalyteInputPage = () => {
             </div>
           ))}
         </div>
+        <div className="analyte-control-container sm:w-[90svw] w-[100svw] flex justify-between max-sm:flex-col max-sm:w-[100%] max-sm:space-y-4">
+          <Button className="shadow-lg sm:w-fit sm:h-[50px] sm:!px-4 !bg-[#DAE3F3] !text-black !font-semibold !border !border-solid !border-[#6781AF]">
+            QC Function Overview
+          </Button>
+          <div className="sm:space-x-16 max-sm:w-full max-sm:space-y-4">
+            <Button
+              className={`sm:w-32 sm:h-[50px] !font-semibold !border !border-solid !border-[#6781AF] max-sm:w-full ${
+                isInputFull ? "!bg-[#DAE3F3] !text-black" : "!bg-[#AFABAB] !text-white"
+              }`}
+              disabled={!isInputFull}
+              onClick={() => setIsModalOpen(true)}
+            >
+              Apply QC Comment
+            </Button>
+          </div>
+        </div>
       </div>
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      >
+        <div className={`modal-conatiner absolute top-1/1 left-1/2 sm:w-[50svw] sm:h-[80svh] bg-[${theme.secondaryColor}] border-2 border-solid border-[#6781AF] rounded-xl sm:-translate-x-1/2 sm:translate-y-12 flex flex-col items-center sm:py-6 relative overflow-scroll sm:space-y-4`}>
+          <div className="modal-title sm:text-2xl font-semibold">QC Comment</div>
+          <div className="invalid-items sm:w-[80%]">
+            {!invalidIndexArray || invalidIndexArray.length === 0 && (
+              <div className="absolute top-1/2 -translate-x-1/2 left-1/2 -translate-y-1/2">No invalid items</div>
+            )}
+            {invalidIndexArray && invalidIndexArray.length > 0 && (
+              <div className="invalid-items-comments flex flex-col sm:space-y-6">
+                {invalidIndexArray.map((invalidItem, index) => (
+                  <div className="comment flex sm:space-x-12 h-fit" key={invalidItem}>
+                    <div className="comment-name w-[5%] sm:text-xl font-semibold self-center" dangerouslySetInnerHTML={{ __html: analyteNameRefs.current[invalidItem]?.innerHTML }} />
+                    <textarea className="grow sm:h-16 p-1" value={modalData[index]?.comment || ""} onChange={(e) => handleTextareaChange(index, invalidItem, e.target.value)} required></textarea>
+                  </div>
+                ))}
+                <ButtonBase className={`!rounded-lg sm!my-10 sm:!py-6 sm:!px-10 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] sm:w-1/2 self-center`} onClick={() => {
+                  setIsValidManual(modalData.every(item => item.comment !== ""));
+                }}>
+                  Apply Comments
+                </ButtonBase>
+              </div>
+            )}
+          </div>
+        </div>
+      </Modal>
     </>
   );
 };
