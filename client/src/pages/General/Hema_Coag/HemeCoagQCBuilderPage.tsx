@@ -24,7 +24,7 @@ const HemeCoagQCBuilderPage = () => {
     <>
       <NavBar name={`Heme/Coag QC Builder`} />
       <div className="flex items-center justify-center gap-48" style={{ minWidth: "100svw", minHeight: "90svh" }}>
-        <Link to={`/hemecoag/heme/heme_editQC`}>
+        <Link to={`/hema_coag/heme/heme_editQC`}>
           <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
             <div className="button-text font-bold text-2xl">Heme QC Panels</div>
           </ButtonBase>
@@ -35,7 +35,6 @@ const HemeCoagQCBuilderPage = () => {
             <div className="button-text font-bold text-2xl">Coag QC Panels</div>
           </ButtonBase>
         </Link>
-
           <DropDown name = "Custom QC" options={Custom_options} />
         
       </div>

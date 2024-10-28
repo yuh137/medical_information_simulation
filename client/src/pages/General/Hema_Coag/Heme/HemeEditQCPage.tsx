@@ -3,7 +3,7 @@ import NavBar from "../../../../components/NavBar";
 import { useTheme } from "../../../../context/ThemeContext";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../context/AuthContext";
-import { Department, qcTypeLinkList } from "../../../../utils/utils";
+import { Department, qcTypeLinkList, hemeTypeLinkList } from "../../../../utils/utils";
 import { Backdrop, Button, ButtonBase } from "@mui/material";
 import { Icon } from "@iconify/react";
 
@@ -11,7 +11,7 @@ enum NotiType {
   NotSelected
 }
 
-const ChemistryEditQC = () => {
+const HematologyEditQC = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const { checkSession, checkUserType } = useAuth();
@@ -46,7 +46,7 @@ const ChemistryEditQC = () => {
         <div
           className={`edit-qc-options flex flex-wrap sm:justify-center sm:p-24 sm:h-[150svh] sm:w-[100svw] sm:gap-x-4 mx-auto`}
         >
-          {qcTypeLinkList.map((item) => (
+          {hemeTypeLinkList.map((item) => (
             <ButtonBase
               key={item.name}
               className={`!rounded-lg sm:w-64 sm:h-28 !border-solid transition ease-in-out ${
@@ -68,10 +68,10 @@ const ChemistryEditQC = () => {
             onClick={() => {
               if (selectedItem) {
                 navigate({
-                  pathname: `/chemistry/edit_qc/${selectedItem}`,
+                  pathname: `/hema_coag/heme/heme_editQC/${selectedItem}`,
                   search: createSearchParams({
-                    dep: Department.Chemistry.toString(),
-                    name: qcTypeLinkList.find(item => item.link == selectedItem)?.name ?? ""
+                    dep: Department.Hematology.toString(),
+                    name: hemeTypeLinkList.find(item => item.link == selectedItem)?.name ?? ""
                   }).toString()
                 })
               } else {
@@ -120,4 +120,4 @@ const ChemistryEditQC = () => {
   );
 };
 
-export default ChemistryEditQC;
+export default HematologyEditQC;
