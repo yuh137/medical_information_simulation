@@ -28,6 +28,12 @@ import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInput
 import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
 import { qcTypeLinkList } from "./utils/utils";
 
+/****Molecular Imports****/
+import MolecularQCResult from "./pages/General/Molecular/MolecularQCResult";
+import MolecularOrderControls from "./pages/General/Molecular/MolecularOrderControls";
+
+
+
 function App() {
   initIDB();
   return (
