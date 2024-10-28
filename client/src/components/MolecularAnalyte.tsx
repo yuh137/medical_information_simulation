@@ -37,7 +37,7 @@ const MolecularAnalyte = forwardRef((props: AnalyteProps, ref) => {
             if (event.key === "Enter") {
               event.preventDefault();
               const numericInputVal = (+inputValue).toFixed(2).replace(/^0+(?!\.|$)/, "");
-							const concreteAnalyte: QualitativeMolecularQCTemplateBatchAnalyte | QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte = props.analyte;
+							const concreteAnalyte = props.analyte as QualitativeMolecularQCTemplateBatchAnalyte | QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte;
 							if (concreteAnalyte.reportType === ReportType.QualitativeViralLoadRange) {
 								if (
 									isNaN(+event.currentTarget.value) ||
