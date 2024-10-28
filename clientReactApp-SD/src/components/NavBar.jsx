@@ -29,9 +29,8 @@ export default function ButtonAppBar() {
         <ThemeProvider theme={logoTheme}>
         <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
           {/*Change below with MIS logo*/}
-          <Typography variant="h2" component="div">
-            MIS    
-          </Typography>
+          <img className='MIS_Logo' src="https://i.imgur.com/dhjCDSv.png"/>
+
         </Link>
         </ThemeProvider>
 
