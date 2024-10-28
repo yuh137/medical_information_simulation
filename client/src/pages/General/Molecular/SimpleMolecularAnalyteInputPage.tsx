@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { MolecularQCTemplateBatch } from  '../../../utils/indexedDB/IDBSchema';
 import NavBar from '../../../components/NavBar';
-import Analyte from '../../../components/Analyte';
+import MolecularAnalyte from '../../../components/MolecularAnalyte';
 
 
 const SimpleMolecularAnalyteInputPage = () => {
