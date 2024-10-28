@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../../components/ui/table";
-import { CMP,RR_QC,TWO_CELL,THREE_CELL} from "../../../utils/BB_DATA";
+import { CMP, RR_QC, TWO_CELL, THREE_CELL } from "../../../utils/BB_DATA";
 import { renderSubString } from "../../../utils/utils";
 import { ButtonBase, Checkbox, Drawer } from "@mui/material";
 import { Icon } from "@iconify/react";
@@ -52,24 +52,26 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
   const { register, handleSubmit } = useForm<BloodBankQC>();
   const saveQC: SubmitHandler<BloodBankQC> = async (data) => {
     const qcDataToSave: BloodBankQC = {
-        fileName: props.name,
-        lotNumber: data.lotNumber || "",
-        openDate: data.openDate || "",
-        closedDate: data.closedDate || "",
-        reagents: QCElements.map(({ reagentName, Abbreviation, AntiSeraLot,ExpDate, ExpectedRange}) => ({
-          reagentName, Abbreviation, AntiSeraLot,ExpDate, ExpectedRange
-        })),
+      fileName: props.name,
+      lotNumber: data.lotNumber || "",
+      expDate: data.expDate || "",
+      openDate: data.openDate || "",
+      closedDate: data.closedDate || "",
+      reportType: data.reportType || "",
+      reagents: QCElements.map(({ reagentName, Abbreviation, AntiSeraLot, ExpDate, ExpectedRange }) => ({
+        reagentName, Abbreviation, AntiSeraLot, ExpDate, ExpectedRange
+      })),
     };
 
     console.log("Attempting to save:", qcDataToSave);
-    
+
     try {
-        await saveToDB("qc_store", qcDataToSave);
-        console.log("Data saved successfully.");
+      await saveToDB("qc_store", qcDataToSave);
+      console.log("Data saved successfully.");
     } catch (error) {
-        console.error("Failed to save data:", error);
+      console.error("Failed to save data:", error);
     }
-};
+  };
 
   const inputRefs = useRef<HTMLInputElement[]>([]);
 
@@ -92,7 +94,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
     // },
     {
       accessorKey: "reagentName",
-      header: "Name",
+      header: "Reagents",
       cell: (info) => (
         <div>{info.getValue()}</div>
       ),
@@ -106,6 +108,33 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
         />
       ),
     },
+    {
+      accessorKey: "AntiSeraLot",
+      header: "Anti-Sera Lot #",
+      cell: (info) => (
+        <div
+          dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
+        />
+      ),
+    },
+    {
+      accessorKey: "ExpDate",
+      header: "Exp. Date",
+      cell: (info) => (
+        <div
+          dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
+        />
+      ),
+    },
+    {
+      accessorKey: "ExpectedRange",
+      header: "Expected Range",
+      cell: (info) => (
+        <div
+          dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
+        />
+      ),
+    }
   ];
 
   const table = useReactTable({
@@ -115,8 +144,8 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
   });
 
   useEffect(() => {
-    if (!checkSession() || checkUserType() === "Student") {}
-      // navigate("/unauthorized");
+    if (!checkSession() || checkUserType() === "Student") { }
+    // navigate("/unauthorized");
   }, []);
 
   useEffect(() => {
@@ -134,22 +163,60 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
   return (
     <>
       <NavBar name={`Blood Bank QC Builder`} />
-      <div className="basic-container relative sm:space-y-4 pb-24">
+      <div className="basic-container relative sm:space-y-5 pb-20 ">
         <div className="input-container flex justify-center">
-          <div className="drawer-container sm:h-full flex items-center py-4 sm:space-x-12">
+          <div className="drawer-container sm:h-full flex items-center py-4 sm:space-x-5">
+
+            <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
+              <div className="lotnumber-label sm:text-xl font-semibold text-white">QC File Name:</div>
+              <div className="p-1 sm:w-[250px] text-center font-semibold text-white sm:w-[170px]">{item}</div>
+            </div>
+
             <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
               <div className="lotnumber-label sm:text-xl font-semibold text-white">QC Lot Number</div>
-              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center" {...register("lotNumber")}/>
+              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[170px] text-center" {...register("lotNumber")} />
+            </div>
+
+            <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
+              <div className="lotnumber-label sm:text-xl font-semibold text-white">QC Exp. Date</div>
+              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[170px] text-center" {...register("expDate")} />
+            </div>
+
+            <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
+              <div className="lotnumber-label sm:text-xl font-semibold text-white">Open Date</div>
+              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[170px] text-center" {...register("openDate")} />
             </div>
             <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
-              <div className="lotnumber-label sm:text-xl font-semibold text-white">Expiration Date</div>
-              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center" {...register("closedDate")}/>
+              <div className="lotnumber-label sm:text-xl font-semibold text-white">Close Date</div>
+              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[170px] text-center" {...register("closedDate")} />
             </div>
-            <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
-              <div className="lotnumber-label sm:text-xl font-semibold text-white">File Date</div>
-              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center"/>
+            <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-4 sm:px-2">
+              <div className="lotnumber-label sm:text-xl font-semibold text-white">Report Type:</div>
+              <div className="flex space-x-3">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="qualitative"
+                    className="form-radio text-[#548235] focus:ring-[#3A6CC6]"
+                    {...register("reportType")}
+                  />
+                  <span className="ml-2 text-white">Qualitative</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="levey-jennings"
+                    className="form-radio text-[#548235] focus:ring-[#3A6CC6]"
+                    {...register("reportType")}
+                  />
+                  <span className="ml-2 text-white">Levey-Jennings</span>
+                </label>
+              </div>
             </div>
           </div>
+
+
+
         </div>
         <div className="table-container flex flex-col mt-8 sm:w-[94svw] sm:h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA] relative">
           <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200">
@@ -196,6 +263,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                 moveToNextInputOnEnter(e);
               }
             }}>
+
               {!table.getRowModel().rows?.length ? (
                 <TableRow>
                   <TableCell
@@ -208,55 +276,137 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
               ) : (
                 <></>
               )}
-              {/* {table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  className="text-center sm:h-[10%] border-none"
-                  onClick={() => console.log(row.getVisibleCells().find(cell => cell.id.includes("analyteName"))?.getValue())}
-                >
-                  <TableCell>
-                    <div>{row.getVisibleCells().find(cell => cell.id.includes("analyteName"))?.getValue<string>()}</div>
-                  </TableCell>
-                  <TableCell>
-                    <input type="text" className="sm:w-24 p-1 border border-solid border-[#548235] rounded-lg text-center" value={QCElements.find(item => item.analyteName === row.getVisibleCells().find(cell => cell.id.includes("analyteName"))?.getValue())?.analyteAcronym || ""} onChange={(e) => {
-                      e.preventDefault();
 
-                      setQCElements(prevState => {
-                          const newState = prevState.map(item => {
-                              if (item.analyteName === row.getAllCells().find(subItem => subItem.id.includes("analyteName"))?.getValue())
-                                  return { ...item, analyteAcronym: e.target.value }
-                              else return item
-                          })
-          
-                          return newState
-                      })
-                    }}/>
-                  </TableCell>
-                </TableRow>
-              ))} */}
               {QCElements.map((row, index) => (
                 <TableRow key={row.reagentName} className="text-center sm:h-[10%] border-none">
-                  {/* <TableCell>
-                    <Checkbox sx={{ '&.Mui-checked': {color: '#3A62A7'} }} checked={row.electrolyte} onChange={(e) => {
-                      setQCElements(prevState => {
-                          const newState = prevState.map(item => {
-                              if (item.analyteName === row.analyteName)
-                                  return { ...item, electrolyte: e.target.checked }
-                              else return item
-                          })
-          
-                          return newState
-                      })
-                    }}/>
-                  </TableCell> */}
                   <TableCell>
-                    <div>{row.reagentName}</div>
+                    <div dangerouslySetInnerHTML={{ __html: renderSubString(row.reagentName) }} />
                   </TableCell>
                   <TableCell>
                     <div dangerouslySetInnerHTML={{ __html: renderSubString(row.Abbreviation) }} />
                   </TableCell>
-                  
-                  
+                  <TableCell className="anti-sera">
+                    <input
+                      type="text"
+                      ref={(el) => {
+                        if (el && inputRefs.current.length < QCElements.length * 4) {
+                          inputRefs.current[index * 4 + 2] = el;
+                        }
+                      }}
+                      className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
+                      value={row.AntiSeraLot || ''}
+                      onChange={(e) => {
+                        e.preventDefault();
+                        setQCElements((prevState) => {
+                          const newState = prevState.map((item) => {
+                            if (
+                              item.reagentName === row.reagentName &&
+                              /^\d*\.?\d*$/.test(e.target.value)
+                            ) {
+                              return { ...item, AntiSeraLot: e.target.value };
+                            } else return item;
+                          });
+                          return newState;
+                        });
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          setQCElements((prevState) => {
+                            const newState = prevState.map((item) => {
+                              if (item.reagentName === row.reagentName) {
+                                const new_level = (+item.AntiSeraLot)
+                                  .toFixed(2)
+                                  .replace(/^0+(?!\.|$)/, '');
+                                return { ...item, AntiSeraLot: new_level };
+                              } else return item;
+                            });
+                            return newState;
+                          });
+                        }
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell className="exp">
+                    <input
+                      type="text"
+                      ref={el => {
+                        if (el && inputRefs.current.length < QCElements.length * 4) {
+                          inputRefs.current[index * 4 + 3] = el;
+                        }
+                      }}
+                      className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
+                      value={row.ExpDate || ''}
+                      onChange={(e) => {
+                        e.preventDefault();
+                        setQCElements(prevState => {
+                          const newState = prevState.map(item => {
+                            if (item.reagentName === row.reagentName) {
+                              return { ...item, Exp: e.target.value };
+                            }
+                            return item;
+                          });
+                          return newState;
+                        });
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          setQCElements(prevState => {
+                            const newState = prevState.map(item => {
+                              if (item.reagentName === row.reagentName) {
+                                const expValue = item.ExpDate.trim();
+                                return { ...item, Exp: expValue }; // Removing unnecessary spaces
+                              }
+                              return item;
+                            });
+                            return newState;
+                          });
+                        }
+                      }}
+                    />
+                  </TableCell>
+
+                  <TableCell className="ExpectedRange">
+                    <input
+                      type="text"
+                      ref={el => {
+                        if (el && inputRefs.current.length < QCElements.length * 4) {
+                          inputRefs.current[index * 4 + 3] = el;
+                        }
+                      }}
+                      className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
+                      value={row.ExpectedRange || ''}
+                      onChange={(e) => {
+                        e.preventDefault();
+                        setQCElements(prevState => {
+                          const newState = prevState.map(item => {
+                            if (item.reagentName === row.reagentName) {
+                              return { ...item, ExpectedRange: e.target.value };
+                            }
+                            return item;
+                          });
+                          return newState;
+                        });
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          setQCElements(prevState => {
+                            const newState = prevState.map(item => {
+                              if (item.reagentName === row.reagentName) {
+                                const expValue = item.ExpectedRange.trim();
+                                return { ...item, Exp: expValue }; // Removing unnecessary spaces
+                              }
+                              return item;
+                            });
+                            return newState;
+                          });
+                        }
+                      }}
+                    />
+                  </TableCell>
+
+
+
+
                 </TableRow>
               ))}
             </TableBody>

@@ -4,9 +4,9 @@ import { Component, MonitorCheck } from "lucide-react";
 import { twMerge } from "tailwind-merge"
 // BLOOK BANK LINKS
 export const bloodBankQC = [
-  { link:"reagent_rack", name:"Reagent Rack", bbData:"RR_QC"},
-  { link:"3_cell", name:"2 Cell Screen", bbData:"TWO_CELL"},
-  { link:"2_cell", name:"2 Cell Screen", bbData:"THREE_CELL"}
+  { link:"Reagent_Rack", name:"Reagent Rack", bbData:"RR_QC"},
+  { link:"Two_Cell", name:"2 Cell Screen", bbData:"TWO_CELL"},
+  { link:"Three_Cell", name:"3 Cell Screen", bbData:"THREE_CELL"}
 ]
 export const testTypeLinkList = [
   {link: "chemistry", name: "Chemistry"},

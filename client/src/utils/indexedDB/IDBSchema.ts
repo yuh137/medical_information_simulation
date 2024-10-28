@@ -49,8 +49,10 @@ export interface QCTemplateBatch {
 export interface BloodBankQC {
     fileName: string;
     lotNumber: string;
+    expDate: string;
     openDate: string;
     closedDate: string;
+    reportType:string;
     reagents: {
         reagentName: string;
         Abbreviation: string;
