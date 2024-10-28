@@ -23,11 +23,11 @@ const MolecularAnalyte = forwardRef((props: AnalyteProps, ref) => {
 	let analyteFooter;
 	if (props.analyte.reportType === ReportType.Qualitative) {
 		const qualitativeAnalyte = props.analyte as QualitativeMolecularQCTemplateBatchAnalyte;
-		analyteFooter = `Exp Range: ${props.analyte.expectedRange}`;
+		analyteFooter = `Exp Range: ${qualitativeAnalyte.expectedRange}`;
 	}
 	else {
 		const viralLoadAnalyte = props.analyte as QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte;
-		analyteFooter = `Range: ${props.analyte.minLevel} - ${props.analyte.maxLevel} ${props.analyte.measUnit}`;
+		analyteFooter = `Range: ${viralLoadRangeAnalyte.minLevel} - ${viralLoadRangeAnalyte.maxLevel} ${viralLoadRangeAnalyte.measUnit}`;
 	}
 
 
