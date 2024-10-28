@@ -20,6 +20,17 @@ const MolecularAnalyte = forwardRef((props: AnalyteProps, ref) => {
   }));
 
 
+	let analyteFooter;
+	if (props.analyte.reportType === ReportType.Qualitative) {
+		const qualitativeAnalyte = props.analyte as QualitativeMolecularQCTemplateBatchAnalyte;
+		analyteFooter = `Exp Range: ${props.analyte.expectedRange}`;
+	}
+	else {
+		const viralLoadAnalyte = props.analyte as QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte;
+		analyteFooter = `Range: ${props.analyte.minLevel} - ${props.analyte.maxLevel} ${props.analyte.measUnit}`;
+	}
+
+
   return (
     <>
       <div
@@ -87,16 +98,7 @@ const MolecularAnalyte = forwardRef((props: AnalyteProps, ref) => {
         <div className="ananlyte-desc">
           <div className="analyte-name peer text-base truncate">{props.analyte.analyteName}</div>
           <div className="analyte-range text-xs">
-						{
-							if (props.analyte.reportType === ReportType.Qualitative) {
-								const qualitativeAnalyte = props.analyte as QualitativeMolecularQCTemplateBatchAnalyte;
-								return (`Exp Range: ${props.analyte.expectedRange}`);
-							}
-							else {
-								const viralLoadAnalyte = props.analyte as QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte;
-								return (`Range: ${props.analyte.minLevel} - ${props.analyte.maxLevel} ${props.analyte.measUnit}`);
-							}
-						}
+						{analyteFooter}
 					</div>
         </div>
       </div>
