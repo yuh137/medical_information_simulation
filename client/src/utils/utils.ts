@@ -37,7 +37,19 @@ export const qcTypeLinkList = [
   {name: "Diabetes Level II", link: "diabetes_2", },
   {name: "Cancer Level I", link: "cancer_1", },
   {name: "Cancer Level II", link: "cancer_2", },
+];
 
+//Molecular QC types
+export const qcTypeLinkListMolecular = [
+  { name: "GI Level I", link: 'gi_1', },
+  { name: "GI Level II", link: 'gi_2', },
+  { name: "Respriratory Level I", link: 'respiratory_1', },
+  { name: "Respriratory Level II", link: 'respiratory_2', },
+  { name: "STI-PCR Level I", link: 'sti_1', },
+  { name: "STI-PCR Level II", link: 'sti_2', },
+  { name: "HIV RT-PCR: Negative Control", link: 'hiv_negative', },
+  { name: "HIV RT-PCR: Low Control", link: 'hiv_low', },
+  { name: "HIV RT-PCR: High Control", link: 'hiv_high', },
 ];
 
 export function cn(...inputs: ClassValue[]) {
