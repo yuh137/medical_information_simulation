@@ -3,6 +3,7 @@ import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte, QualitativeM
 import NavBar from '../../../components/NavBar';
 import MolecularAnalyte from '../../../components/MolecularAnalyte';
 import { Button, ButtonBase, Modal } from "@mui/material";
+import { useTheme } from "../../../context/ThemeContext";
 
 
 const SimpleMolecularAnalyteInputPage = () => {
