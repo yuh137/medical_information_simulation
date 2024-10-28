@@ -51,8 +51,9 @@ const MolecularQCResult = () => {
     const selectedQCs: string[] = JSON.parse(localStorage.getItem('selectedQCItems') || '[]');
     const allDataPromises = selectedQCs.map(qcName => getAllDataByFileName("qc_store", qcName));
     const results = await Promise.all(allDataPromises);
-    setQcData(results.flat());
-    console.log("Fetched QC data:", results.flat());
+		const retyped_results = results as MolecularQCTemplateBatch[]
+    setQcData(retyped_results.flat());
+    console.log("Fetched QC data:", retyped_results.flat());
   };
   
   useEffect(() => {
