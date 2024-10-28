@@ -46,3 +46,9 @@ export interface QCTemplateBatch {
         value?: string; // Optional value field, since it might not exist initially
     }[];
 }
+
+export interface MicrobiologyQCTemplate {
+    analyteName: string;
+    analyteAcronym: string;
+    expectedRange: string;
+}

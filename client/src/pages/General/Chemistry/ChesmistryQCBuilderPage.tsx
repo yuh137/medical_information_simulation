@@ -10,10 +10,10 @@ const ChemistryQCBuilder = () => {
   const { checkSession, checkUserType } = useAuth();
   const { theme } = useTheme();
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (!checkSession() || checkUserType() === 'Student') navigate("/unauthorized");
   }, [checkSession, checkUserType, navigate]);
-
+*/
   return (
     <>
       <NavBar name={`Chemistry QC Builder`} />

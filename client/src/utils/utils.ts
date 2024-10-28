@@ -40,6 +40,18 @@ export const qcTypeLinkList = [
 
 ];
 
+export const microTypeLinkList = [
+  { name: "GI Panel Level I", link: "gi_panel_level_i" },
+  { name: "GI Panel Level II", link: "gi_panel_level_ii" },
+  { name: "Respiratory Panel Level I", link: "respiratory_panel_level_i" },
+  { name: "Respiratory Panel Level II", link: "respiratory_panel_level_ii" },
+  { name: "STI-PCR Panel Level I", link: "sti_pcr_panel_level_i" },
+  { name: "STI-PCR Panel Level II", link: "sti_pcr_panel_level_ii" },
+  { name: "HIV Real-Time PCR Panel: Negative Control", link: "hiv_real_time_pcr_panel_negative_control" },
+  { name: "HIV Real-Time PCR Panel: Low Control", link: "hiv_real_time_pcr_panel_low_control" },
+  { name: "HIV Real-Time PCR Panel: High Control", link: "hiv_real_time_pcr_panel_high_control" }
+]
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
