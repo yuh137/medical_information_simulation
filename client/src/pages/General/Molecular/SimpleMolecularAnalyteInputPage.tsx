@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte } from  '../../../utils/indexedDB/IDBSchema';
+import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte, QualitativeMolecularQCTemplateBatchAnalyte, QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte } from  '../../../utils/indexedDB/IDBSchema';
 import NavBar from '../../../components/NavBar';
 import MolecularAnalyte from '../../../components/MolecularAnalyte';
 
@@ -33,34 +33,46 @@ const SimpleMolecularAnalyteInputPage = () => {
     else return false;
   }, [analyteValues, invalidIndexes, qcData]);
 
+	const setInvalidIndex = (index: number) => {
+  	if (!invalidIndexes) {
+			let newInvalidIndexes = new Set<number>();
+      newInvalidIndexes.add(index);
+      setInvalidIndexes(newInvalidIndexes);
+    } else {
+    	let newInvalidIndexes = new Set<number>(invalidIndexes);
+      newInvalidIndexes.add(index);
+      setInvalidIndexes(newInvalidIndexes);
+    }
+	}
+		
   
   const handleInputChange = (index: number, value: string, old_analyte: MolecularQCTemplateBatchAnalyte) => {
     const newValues = [...analyteValues];
     newValues[index] = value;
     setAnalyteValues(newValues);
-		const concreteAnalyte: QualitativeMolecularQCTemplateBatchAnalyte | QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte = old_analyte;
-
-    if (
-      ((concreteAnalyte.reportType === ReportType.QualitativeViralLoadRange) && (isNaN(parseFloat(value)) ||
-      parseFloat(value) < concreteAnalyte.minLevel ||
-      parseFloat(value) > concreteAnalyte.maxLevel)) || 
-			((concreteAnalyte.reportType === ReportType.Qualitative) && (value !== concreteAnalyte.expectedRange)) ||
-      typeof value === "undefined")
-    {
-      if (!invalidIndexes) {
-        let newInvalidIndexes = new Set<number>();
-        newInvalidIndexes.add(index);
-        setInvalidIndexes(newInvalidIndexes);
-      } else {
-        let newInvalidIndexes = new Set<number>(invalidIndexes);
-        newInvalidIndexes.add(index);
-        setInvalidIndexes(newInvalidIndexes);
-      }
-    } else {
-      let newInvalidIndexes = new Set<number>(invalidIndexes);
-      newInvalidIndexes.delete(index);
-      setInvalidIndexes(newInvalidIndexes);
-    }
+    if (old_analyte.reportType === ReportType.QualitativeViralLoadRange) {
+			const viralLoadAnalyte = old_analyte as QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte;
+			if (isNaN(parseFloat(value)) ||
+      parseFloat(value) < viralLoadAnalyte.minLevel ||
+      parseFloat(value) > viralLoadAnalyte.maxLevel)) {
+				setInvalidIndexes(index);
+    	} else {
+      	let newInvalidIndexes = new Set<number>(invalidIndexes);
+      	newInvalidIndexes.delete(index);
+      	setInvalidIndexes(newInvalidIndexes);
+    	}
+    } else if (old_analyte.reportType === ReportType.Qualitative) {
+				const qualitativeAnalyte = old_analyte as QualitativeMolecularQCTemplateBatchAnalyte;
+				if (qualitativeAnalyte.expectedRange !== value) {
+					setInvalidIndexes(index);
+				} else {
+      		let newInvalidIndexes = new Set<number>(invalidIndexes);
+      		newInvalidIndexes.delete(index);
+      		setInvalidIndexes(newInvalidIndexes);
+				}
+    } else if (typeof value === 'undefined') {
+			setInvalidIndexes(index);
+		}
     setIsInputFull(newValues.length === qcData?.analytes.length && newValues.length > 0);
   };
 
