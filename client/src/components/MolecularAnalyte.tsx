@@ -27,7 +27,7 @@ const MolecularAnalyte = forwardRef((props: AnalyteProps, ref) => {
 	}
 	else {
 		const viralLoadAnalyte = props.analyte as QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte;
-		analyteFooter = `Range: ${viralLoadAnalyte.minLevel} - ${viralLoadAnalyte.maxLevel} ${viralLoadAnalyte.measUnit}`;
+		analyteFooter = `Range: ${viralLoadAnalyte.minLevel} - ${viralLoadAnalyte.maxLevel} ${viralLoadAnalyte.conventionalUnits}`;
 	}
 
 
