@@ -12,6 +12,7 @@ export const testTypeLinkList = [
   {link: "blood_bank", name: "Blood Bank"},
   {link: "molecular", name: "Molecular"},
 ];
+
 export const qcTypeLinkList = [
   {name:"CMP Level I", link:'cmp_1', },
   {name:"CMP Level II", link: "cmp_2", },
@@ -37,7 +38,6 @@ export const qcTypeLinkList = [
   {name: "Diabetes Level II", link: "diabetes_2", },
   {name: "Cancer Level I", link: "cancer_1", },
   {name: "Cancer Level II", link: "cancer_2", },
-
 ];
 
 export const hemeTypeLinkList = [
@@ -78,6 +78,7 @@ export const HormoneLevelList = [
   { name: "Sex Hormone Binding Globulin", acronymName: "SHBG" },
   { name: "Human Chorionic Gonadotropin-Total", acronymName: "hCGT" }
 ];
+
 export const DrugLevelList = [
   { name: "Amphetamines", acronymName: "AMP" },
   { name: "Cannabinoids", acronymName: "THC" },
@@ -90,18 +91,21 @@ export const DrugLevelList = [
   { name: "Propoxyphene", acronymName: "PRO" },
   { name: "Ethanol", acronymName: "ETOH" }
 ];
+
 export const IronLevelList = [
   { name: "Iron, Total", acronymName: "Fe" },
   { name: "Total Iron Binding Capacity", acronymName: "TIBC" },
   { name: "Transferrin Saturation", acronymName: "TS" },
   { name: "Ferritin", acronymName: "Ferr" }
 ];
+
 export const LipidLevelList = [
   { name: "Cholesterol", acronymName: "Chol" },
   { name: "High-Density Lipoproteins", acronymName: "HDL" },
   { name: "Low-Density Lipoproteins", acronymName: "LDL" },
   { name: "Triglycerides, Total", acronymName: "Trig" }
 ];
+
 export const LiverLevelList = [
   { name: "Alanine Aminotransferase", acronymName: "ALT" },
   { name: "Aspartate Aminotransferase", acronymName: "AST" },
@@ -111,6 +115,7 @@ export const LiverLevelList = [
   { name: "Bilirubin", acronymName: "BIL" },
   { name: "Total Protein", acronymName: "TP" }
 ];
+
 export const ThyroidLevelList = [
   { name: "Thyroid-Stimulating hormone", acronymName: "TSH" },
   { name: "TIiodothyronine, Total", acronymName: "T3" },
@@ -120,6 +125,7 @@ export const ThyroidLevelList = [
   { name: "Anti-Thyroid Peroxidase", acronymName: "TPOAb" },
   { name: "Anti-Thyroglobulin", acronymName: "TgAB" }
 ];
+
 export const CardiacLevelList = [
   { name: "Troponin-I", acronymName: "cTnl" },
   { name: "Creatine Kinase", acronymName: "CK" },
