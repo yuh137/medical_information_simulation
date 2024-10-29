@@ -358,3 +358,30 @@ export function saveToDB<T extends { fileName: string, lotNumber: string, closed
         };
     });
 }
+
+export function removeFromDB(storeName: string, key: { fileName: string, lotNumber: string, closedDate: string }): Promise<void> {
+    return new Promise((resolve, reject) => {
+        let request = indexedDB.open("MIS_database");
+        request.onsuccess = () => {
+            const db = request.result;
+            const trans = db.transaction(storeName, "readwrite");
+            const store = trans.objectStore(storeName);
+            const removeRequest = store.delete([key.fileName, key.lotNumber, key.closedDate]);
+
+            removeRequest.onsuccess = () => {
+                console.log("Data removed successfully");
+                resolve();
+            };
+
+            removeRequest.onerror = () => {
+                console.error("Error saving data", removeRequest.error);
+                reject(removeRequest.error);
+            };
+        };
+
+        request.onerror = () => {
+            console.error("Error opening database", request.error);
+            reject(request.error);
+        };
+    });
+}

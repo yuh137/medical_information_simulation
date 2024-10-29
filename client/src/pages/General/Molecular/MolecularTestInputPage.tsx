@@ -7,7 +7,7 @@ import NavBar from '../../../components/NavBar';
 import dayjs from 'dayjs';
 import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte, ReportType, QualitativeMolecularQCTemplateBatchAnalyte } from "../../../utils/indexedDB/IDBSchema";
 import { qcTypeLinkListMolecular } from "../../../utils/utils";
-import { saveToDB, getMolecularQCRangeByDetails } from "../../../utils/indexedDB/getData";
+import { saveToDB, removeFromDB, getMolecularQCRangeByDetails } from "../../../utils/indexedDB/getData";
 
 interface Ranges {
   [key: string]: string;
@@ -87,8 +87,10 @@ const MolecularTestingInputPage = () => {
     if (!QCLotInput || !expDateInput || !fileDateInput || Object.values(ranges).some(range => !range)) {
       alert("Please fill in all fields before submitting.");
       return;
-    } 
+    }
+		const oldLotNumber = qcPanelRef.current.lotNumber;
 		qcPanelRef.current.lotNumber = QCLotInput;
+		const oldClosedDate = qcPanelRef.current.closedDate;
 		qcPanelRef.current.closedDate = (new Date(expDateInput)).toISOString();
 		qcPanelRef.current.openDate = (new Date(fileDateInput)).toISOString();
 		for (let i = 0; i < qcPanelRef.current.analytes.length; i++) {
@@ -98,7 +100,7 @@ const MolecularTestingInputPage = () => {
 				concreteAnalyte.expectedRange = ranges[concreteAnalyte.analyteName];
 			}
 		}
-		console.log(qcPanelRef.current);
+		removeFromDB('qc_store', {fileName: qcPanelRef.current.fileName, lotNumber: oldLotNumber, closedDate: oldClosedDate});
 		saveToDB('qc_store', qcPanelRef.current);
   };
 
