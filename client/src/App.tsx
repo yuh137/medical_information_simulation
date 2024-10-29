@@ -29,7 +29,6 @@ import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review
 import { qcTypeLinkList } from "./utils/utils";
 
 /****Molecular Imports****/
-import MolecularQCResult from "./pages/General/Molecular/MolecularQCResult";
 import MolecularOrderControls from "./pages/General/Molecular/MolecularOrderControls";
 
 
