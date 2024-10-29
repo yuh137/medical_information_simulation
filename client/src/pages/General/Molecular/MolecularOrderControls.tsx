@@ -25,7 +25,7 @@ const MolecularOrderControls = () => {
     console.log("Fetching QC Panels...");
 		const results = await getAllDataFromStore<QCPanel>('qc_store');
     console.log("Fetched QC Panels:", results);
-		const retyped_results = results as QCPanel;
+		const retyped_results = (results as unknown) as QCPanel;
 		setOrderControlsItems(retyped_results.map(item => item.fileName));
   };
 
