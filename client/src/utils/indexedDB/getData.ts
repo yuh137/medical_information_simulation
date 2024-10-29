@@ -1,4 +1,4 @@
-import { Admin, QCTemplateBatch, Student } from "./IDBSchema";
+import { Admin, QCTemplateBatch, MolecularQCTemplateBatch, Student } from "./IDBSchema";
 
 export function getAllDataFromStore<T>(storeName: string): Promise<T[] | string | null> {
     return new Promise((resolve) => {
