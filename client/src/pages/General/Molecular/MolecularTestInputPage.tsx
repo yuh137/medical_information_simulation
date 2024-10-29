@@ -20,7 +20,7 @@ const MolecularTestingInputPage = () => {
   const [QCLotInput, setQCLotInput] = useState<string>('');
   const [expDateInput, setExpDateInput] = useState<string>('');
   const [fileDateInput, setFileDateInput] = useState<string>('');
-	const qcPanelRef = useRef<MolecularQCTemplateBatch | null>(null);
+	const qcPanelRef = useRef<MolecularQCTemplateBatch>(null);
 
 	const loadQCData = async () => {
     const currentPath = window.location.pathname; 
@@ -32,9 +32,9 @@ const MolecularTestingInputPage = () => {
 
     if (panelAnalytes) {
       setCurrentAnalytes(panelAnalytes);
-			setQCLotInput(qcPanelRef.current?.lotNumber);
-			setExpDateInput(qcPanelRef.current?.closedDate);
-			setFileDateInput(qcPanelRef.current?.openDate);
+			setQCLotInput(qcPanelRef.current.lotNumber);
+			setExpDateInput(qcPanelRef.current.closedDate);
+			setFileDateInput(qcPanelRef.current.openDate);
       setFormTitle(capitalizeWords(lastSegment));
       const initialRanges = panelAnalytes.reduce((acc, item) => {
 				if (item.reportType === Report.Qualitative) {
@@ -86,17 +86,17 @@ const MolecularTestingInputPage = () => {
       alert("Please fill in all fields before submitting.");
       return;
     } 
-		qcPanelRef.current?.lotNumber = QCLotInput;
-		qcPanelRef.current?.closedDate = expDate.toISOString();
-		qcPanelRef.current?.openDate = fileDate.toISOString();
-		for (let i = 0; i < qcPanelRef.current?.analytes.length; i++) {
-			let analyte = qcPanelRef.current?.analytes[i];
+		qcPanelRef.current.lotNumber = QCLotInput;
+		qcPanelRef.current.closedDate = expDate.toISOString();
+		qcPanelRef.current.openDate = fileDate.toISOString();
+		for (let i = 0; i < qcPanelRef.current.analytes.length; i++) {
+			let analyte = qcPanelRef.current.analytes[i];
 			if (analyte.reportType === Report.Qualitative) {
 				let concreteAnalyte = analyte as QualitativeMolecularQCTemplateBatchAnalyte;
 				concreteAnalyte.expectedRange = ranges[concreteAnalyte.analyteName];
 			}
 		}
-		saveToDB('qc_store', qcPanelRef.current?);
+		saveToDB('qc_store', qcPanelRef.current);
   };
 
   return (
