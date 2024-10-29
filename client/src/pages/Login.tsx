@@ -17,8 +17,16 @@ const Login = () => {
   const [loginOptions, setLoginOptions] = useState<"Admin" | "Student" | string>("");
   const { register, handleSubmit } = useForm<CredentialsInput>();
 
+	const initMolecularIDB = async () => {
+    const QCPanels = ['GI Panel Level I', 'GI Panel Level II', 'Respiratory Panel Level I', 'Respiratory Panel Level II', 'STI-PCR Panel Level I', 'STI-PCR Panel Level II', 'HIV Real-Time PCR Panel: Negative Control', 'HIV Real-Time PCR Panel: Low Control', 'HIV Real-Time PCR Panel: High Control'];
+    await DEBUG_add_molecular_data_to_idb(QCPanels);
+	};
+
   useEffect(() => {
     checkCurrentSession();
+// TODO(colby): DEBUG CODE
+		initMolecularIDB();
+//
   }, [])
 
   const onSubmit: SubmitHandler<CredentialsInput> = async (data) => {
