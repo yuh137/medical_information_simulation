@@ -176,36 +176,36 @@ function AppWithRouter() {
           {
             path: 'microbiology',
             children: [
-              {
-                path: "editqc",
-                element: <MicrobiologyEditQCPage />,
-              },
-              {
-                path: "edit_qc/:item",
-                element: <MicrobiologyTestingInputPage />,
-                loader: async ({ params, request }) => {
-                  const { item } = params;
-                  const searchParams = new URL(request.url).searchParams;
-                  const qcName = searchParams.get("name");
-                  const dep = searchParams.get("dep");
-                  // const qcName = qcTypeLinkList.find(qcType => qcType.link.includes(item ?? "undefined"))?.name;
-
-                  if (qcName) {
-                    try {
-                      const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByName?dep=${dep}&name=${qcName}`);
-
-                      if (res.ok) {
-                        return res.json();
-                      }
-                    } catch (e) {
-                      console.error("Error fetching QC data", e);
-                    }
-                  }
-
-                  return null; 
-                }
-              },
-
+//              {
+//                path: "editqc",
+//                element: <MicrobiologyEditQCPage />,
+//              },
+//              {
+//                path: "edit_qc/:item",
+//                element: <MicrobiologyTestingInputPage />,
+//                loader: async ({ params, request }) => {
+//                  const { item } = params;
+//                  const searchParams = new URL(request.url).searchParams;
+//                  const qcName = searchParams.get("name");
+//                  const dep = searchParams.get("dep");
+//                  // const qcName = qcTypeLinkList.find(qcType => qcType.link.includes(item ?? "undefined"))?.name;
+//
+//                  if (qcName) {
+//                    try {
+//                      const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByName?dep=${dep}&name=${qcName}`);
+//
+//                      if (res.ok) {
+//                        return res.json();
+//                      }
+//                    } catch (e) {
+//                      console.error("Error fetching QC data", e);
+//                    }
+//                  }
+//
+//                  return null; 
+//                }
+//              },
+//
             ]
           },
 
