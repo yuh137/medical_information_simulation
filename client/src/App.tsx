@@ -29,6 +29,9 @@ import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInput
 import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
 import MicrobiologyQCBuilder from "./pages/General/Microbiology/MicrobiologyQCBuilderPage";
 import MicrobiologyEditQC from "./pages/General/Microbiology/MicrobiologyEditQCPage";
+import MicrobiologyTestInput from "./pages/General/Microbiology/MicrobiologyTestInputPage";
+import MicrobiologyOrderControls from "./pages/General/Microbiology/MicrobiologyOrderControls";
+import MicrobiologyQCResult from "./pages/General/Microbiology/MicrobiologyQCResultPage";
 import { getAllDataFromStore } from "./utils/indexedDB/getData";
 
 function App() {
@@ -155,6 +158,18 @@ function AppWithRouter() {
               {
                 path: "edit_qc",
                 element: <MicrobiologyEditQC />,
+              },
+              {
+                path: "test_input/:item",
+                element: <MicrobiologyTestInput />,
+              },
+              {
+                path: "order_controls",
+                element: <MicrobiologyOrderControls />,
+              },
+              {
+                path: "qc_results",
+                element: <MicrobiologyQCResult link="microbiology" name="Microbiology"/>,
               }
             ]
           },
