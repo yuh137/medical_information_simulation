@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLoaderData } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import { Button } from '@mui/material';
@@ -22,7 +22,7 @@ const MolecularTestingInputPage = () => {
   const [fileDateInput, setFileDateInput] = useState<string>('');
 	const qcPanelRef = useRef<MolecularQCTemplateBatch | null>(null);
 
-	loadQCData = async () => {
+	const loadQCData = async () => {
     const currentPath = window.location.pathname; 
     const lastSegment = currentPath.split('/').pop() || "";
 
