@@ -1,10 +1,13 @@
 
 import { useLocation, Link } from 'react-router-dom'; // Import Link
 import './pageStyles/splashPage.css';
+import SignIn from '../components/SignIn';
 
 export default function SplashPage(){
   return(
     <>
+
+        <SignIn></SignIn>
 
         <div>
           Splash Page
