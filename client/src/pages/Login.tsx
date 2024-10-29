@@ -16,6 +16,11 @@ const Login = () => {
   const { checkSession, checkUserType } = useAuth();
   const [loginOptions, setLoginOptions] = useState<"Admin" | "Student" | string>("");
   const { register, handleSubmit } = useForm<CredentialsInput>();
+
+  useEffect(() => {
+    checkCurrentSession();
+  }, [])
+
   const onSubmit: SubmitHandler<CredentialsInput> = async (data) => {
     setIsLoggingIn(true);
     if (loginOptions === "Admin") {
@@ -96,10 +101,6 @@ const Login = () => {
     }
   }
 
-  useEffect(() => {
-    checkCurrentSession();
-  }, [])
-
   return (
     <>
       <div
@@ -128,7 +129,6 @@ const Login = () => {
               onClick={() => {
                 setLoginOptions((prevState) =>
                   prevState === "Student" ? "" : "Student"
-									console.log(loginOptions);
                 );
               }}
             >
