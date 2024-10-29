@@ -20,7 +20,8 @@ const MolecularTestingInputPage = () => {
   const [QCLotInput, setQCLotInput] = useState<string>('');
   const [expDateInput, setExpDateInput] = useState<string>('');
   const [fileDateInput, setFileDateInput] = useState<string>('');
-	const qcPanelRef = useRef<MolecularQCTemplateBatch | undefined>(undefined);
+	const qcPanelRef = useRef<MolecularQCTemplateBatch>({} as MolecularQCTemplateBatch);
+
 
 	const loadQCData = async () => {
     const currentPath = window.location.pathname; 
