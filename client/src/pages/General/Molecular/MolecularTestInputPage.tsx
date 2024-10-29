@@ -5,7 +5,7 @@ import { Button } from '@mui/material';
 import NavBar from '../../../components/NavBar';
 import { DatePicker } from "antd";
 import dayjs from 'dayjs';
-import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte } from "../../../utils/indexedDB/IDBSchema";
+import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte, Report, QualitativeMolecularQCTemplateBatchAnalyte } from "../../../utils/indexedDB/IDBSchema";
 import { qcTypeLinkListMolecular } from "../../../utils/utils";
 import { getMolecularQCRangeByDetails } from "../../../utils/indexedDB/getData";
 
