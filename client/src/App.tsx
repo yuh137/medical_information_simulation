@@ -177,10 +177,6 @@ function AppWithRouter() {
             path: 'microbiology',
             children: [
 //              {
-//                path: "editqc",
-//                element: <MicrobiologyEditQCPage />,
-//              },
-//              {
 //                path: "edit_qc/:item",
 //                element: <MicrobiologyTestingInputPage />,
 //                loader: async ({ params, request }) => {
@@ -237,6 +233,10 @@ function AppWithRouter() {
           {
             path: 'molecular',
             children: [
+              {
+                path: "editqc",
+                element: <MolecularEditQCPage />,
+              },
               { 
                 path: 'order_controls', 
                 element: <MolecularOrderControls /> 
