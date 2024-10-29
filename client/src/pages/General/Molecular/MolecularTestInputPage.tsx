@@ -93,8 +93,9 @@ const MolecularTestingInputPage = () => {
 		const oldLotNumber = qcPanelRef.current.lotNumber;
 		qcPanelRef.current.lotNumber = QCLotInput;
 		const oldClosedDate = qcPanelRef.current.closedDate;
-		qcPanelRef.current.closedDate = (new Date(expDateInput)).toISOString();
-		qcPanelRef.current.openDate = (new Date(fileDateInput)).toISOString();
+		console.log(expDateInput);
+		qcPanelRef.current.closedDate = expDateInput;
+		qcPanelRef.current.openDate = fileDateInput;
 		for (let i = 0; i < qcPanelRef.current.analytes.length; i++) {
 			let analyte = qcPanelRef.current.analytes[i];
 			if (analyte.reportType === ReportType.Qualitative) {
