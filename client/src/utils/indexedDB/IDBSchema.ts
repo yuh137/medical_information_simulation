@@ -72,12 +72,8 @@ export interface QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte extend
 export interface MolecularQCTemplateBatch {
   fileName: string;
   lotNumber: string;
+	openDate: string;
   closedDate: string;
+	reportType: 'Qualitative' | 'Levy-Jennings';
   analytes: MolecularQCTemplateBatchAnalyte[];
-}
-
-export interface MicrobiologyQCTemplate {
-    analyteName: string;
-    analyteAcronym: string;
-    expectedRange: string;
 }

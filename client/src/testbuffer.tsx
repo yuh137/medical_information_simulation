@@ -1,48 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { useLoaderData } from "react-router-dom";
+import { data } from "../../../utils/MOCK_DATA_MICRO.js"; // Ensure this path is correct
 import { jsPDF } from "jspdf";
 import { Button } from '@mui/material';
 import NavBar from '../../../components/NavBar';
 import { DatePicker } from "antd";
 import dayjs from 'dayjs';
-import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte } from "../../../utils/indexedDB/IDBSchema";
-import { qcTypeLinkListMolecular } from "../../../utils/utils";
-import { getQCRangeByDetails } from "../../../utils/indexedDB/getData";
 
 interface Ranges {
   [key: string]: string;
 }
 
-const MolecularTestingInputPage = () {
-  const [currentAnalytes, setCurrentAnalytes] = useState<MolecularQCTemplateBatchAnalyte[]>([]);
-  const [formTitle, setFormTitle] = useState<string>('');
+interface Analyte {
+  analyteName: string;
+  analyteAcronym: string;
+}
+
+const App: React.FC = () => {
+  const loaderData = useLoaderData() as { lotNumber: string; expirationDate: string; fileDate: string };
   const [ranges, setRanges] = useState<Ranges>({});
-  const [QCLotInput, setQCLotInput] = useState<string>('');
-  const [expDateInput, setExpDateInput] = useState<string>('');
-  const [fileDateInput, setFileDateInput] = useState<string>('');
-	const qcPanelRef = useRef<MolecularQCTemplateBatch | null>(null);
+  const [currentAnalytes, setCurrentAnalytes] = useState<Analyte[]>([]);
+  const [formTitle, setFormTitle] = useState<string>(''); // State to hold the title
+
+  const [QCLotInput, setQCLotInput] = useState<string>(loaderData ? loaderData.lotNumber : "");
+  const [expDate, setExpDate] = useState(dayjs(loaderData ? loaderData.expirationDate : undefined));
+  const [fileDate, setFileDate] = useState(dayjs(loaderData ? loaderData.fileDate : undefined));
 
   useEffect(() => {
     const currentPath = window.location.pathname; 
     const lastSegment = currentPath.split('/').pop() || "";
 
-		const canonicalPanelName = qcTypeLinkListMolecular.find(item => item.link == selectedItem)?.name ?? "";
-		qcPanelRef = (await getQCRangeByDetails(canonicalPanelName, "0", "")) as (MolecularQCTemplateBatch | null);
-		const panelAnalytes = QCPanel?.analytes;
+    const panelAnalytes = data[lastSegment as keyof typeof data] as Analyte[] | undefined;
 
     if (panelAnalytes) {
       setCurrentAnalytes(panelAnalytes);
-			setQCLotInput(qcPanelRef.lotNumber);
-			setExpDateInput(qcPanelRef.closedDate);
-			setFileDateInput(qcPanelRef.openDate);
       setFormTitle(capitalizeWords(lastSegment));
       const initialRanges = panelAnalytes.reduce((acc, item) => {
-				if (item.reportType === Report.Qualitative) {
-					acc[item.analyteName] = (item as QualitativeMolecularQCTemplateBatchAnalyte).expectedRange;
-				}
-				else {
-        	acc[item.analyteName] = "";
-				}
+        acc[item.analyteName] = ""; // Set to empty string or a default value
         return acc;
       }, {} as Ranges);
       setRanges(initialRanges);
@@ -57,6 +51,13 @@ const MolecularTestingInputPage = () {
       .split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(' ');
+  };
+
+  const handleInputChange = (name: string, value: string) => {
+    setRanges((prevRanges) => ({
+      ...prevRanges,
+      [name]: value,
+    }));
   };
 
   const handleDownloadPDF = () => {
@@ -75,22 +76,23 @@ const MolecularTestingInputPage = () {
       y += 10; 
     });
 
+    doc.save("report.pdf");
+  };
+
   const handleSubmit = () => {
     // Check if all fields are filled
     if (!QCLotInput || !expDate || !fileDate || Object.values(ranges).some(range => !range)) {
       alert("Please fill in all fields before submitting.");
       return;
     } 
-		qcPanelRef.current.lotNumber = QCLotInput;
-		qcPanelRef.current.closedDate = expDate.toISOString();
-		qcPanelRef.current.openDate = fileDate.toISOString();
-		for (let i = 0; i < qcPanelRef.current.analytes.length; i++) {
-			let analyte = qcPanelRef.current.analytes[i];
-			if (analyte.reportType === Report.Qualitative) {
-				let concreteAnalyte = analyte as QualitativeMolecularQCTemplateBatchAnalyte;
-				concreteAnalyte.expectedRange = ranges[concreteAnalyte.analyteName];
-		}
-		saveToDB('qc_store', qcPanelRef);
+
+    // Call the function to save data to the database (indexedDB or another method)
+    console.log("Submitting data:", {
+      lotNumber: QCLotInput,
+      expirationDate: expDate?.toISOString(),
+      fileDate: fileDate?.toISOString(),
+      ranges,
+    });
   };
 
   return (
@@ -122,6 +124,7 @@ const MolecularTestingInputPage = () {
               onChange={(value) => setExpDate(value)}
             />
           </div>
+
           <div className="filedate-input flex flex-col items-center bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
             <div className="filedate-label sm:text-xl font-semibold text-white text-center">File Date</div>
             <DatePicker
@@ -139,6 +142,7 @@ const MolecularTestingInputPage = () {
           </div>
         </div>
       </div>
+
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '20px' }}>
         <h1>{formTitle || 'Data Table'}</h1>
         <table style={{ marginTop: '20px', borderCollapse: 'collapse', width: '80%' }}>
@@ -173,7 +177,7 @@ const MolecularTestingInputPage = () {
         </div>
       </div>
     </>
-	);
+  );
 };
 
-export default MolecularTestingInputPage;
+export default App;
