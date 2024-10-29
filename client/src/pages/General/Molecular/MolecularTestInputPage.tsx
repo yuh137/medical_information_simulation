@@ -22,7 +22,7 @@ const MolecularTestingInputPage = () => {
   const [fileDateInput, setFileDateInput] = useState<string>('');
 	const qcPanelRef = useRef<MolecularQCTemplateBatch | null>(null);
 
-  useEffect(() => {
+	loadQCData = async () => {
     const currentPath = window.location.pathname; 
     const lastSegment = currentPath.split('/').pop() || "";
 
@@ -49,6 +49,10 @@ const MolecularTestingInputPage = () => {
     } else {
       console.error(`No analytes found for ${lastSegment}`);
     }
+	};
+
+  useEffect(() => {
+		loadQCData();
   }, []);
 
   const capitalizeWords = (str: string) => {
