@@ -31,7 +31,7 @@ const MolecularTestingInputPage = () => {
 		if (!molecularQueryResult) {
 			throw Error();
 		}
-		const qcPanelRef.current = molecularQueryResult as MolecularQCTemplateBatch;
+		qcPanelRef.current = molecularQueryResult as MolecularQCTemplateBatch;
 		const panelAnalytes = qcPanelRef.current?.analytes;
 
     if (panelAnalytes) {
