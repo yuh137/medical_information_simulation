@@ -77,6 +77,7 @@ const MolecularTestingInputPage = () => {
       doc.text(name, 10, y);
       doc.text(range, 100, y);
       y += 10; 
+		}
     });
 
   const handleSubmit = () => {
@@ -93,6 +94,7 @@ const MolecularTestingInputPage = () => {
 			if (analyte.reportType === Report.Qualitative) {
 				let concreteAnalyte = analyte as QualitativeMolecularQCTemplateBatchAnalyte;
 				concreteAnalyte.expectedRange = ranges[concreteAnalyte.analyteName];
+			}
 		}
 		saveToDB('qc_store', qcPanelRef);
   };
