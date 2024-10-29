@@ -13,7 +13,7 @@ interface Ranges {
   [key: string]: string;
 }
 
-const MolecularTestingInputPage = () {
+const MolecularTestingInputPage = () => {
   const [currentAnalytes, setCurrentAnalytes] = useState<MolecularQCTemplateBatchAnalyte[]>([]);
   const [formTitle, setFormTitle] = useState<string>('');
   const [ranges, setRanges] = useState<Ranges>({});
