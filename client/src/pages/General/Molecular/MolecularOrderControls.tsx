@@ -1,9 +1,8 @@
-import React, { useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import NavBar from "../../../components/NavBar";
 import { qcTypeLinkListMolecular } from "../../../utils/utils"; 
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { getAllDataFromStore } from "../../../utils/indexedDB/getData";
-
 import {
   DragDropContext,
   Draggable,
@@ -25,7 +24,7 @@ const MolecularOrderControls = () => {
   const fetchQCData = async () => {
     console.log("Fetching QC Panels...");
 		const results = await getAllDataFromStore<QCPanel>('qc_store');
-    console.log("Fetched QC Panels:", results));
+    console.log("Fetched QC Panels:", results);
 		const retyped_results = results as QCPanel;
 		setOrderControlsItems(retyped_results.map(item => item.fileName));
   };
