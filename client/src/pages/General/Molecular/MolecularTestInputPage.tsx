@@ -98,7 +98,7 @@ const MolecularTestingInputPage = () => {
 				concreteAnalyte.expectedRange = ranges[concreteAnalyte.analyteName];
 			}
 		}
-		print(qcPanelRef.current);
+		console.log(qcPanelRef.current);
 		saveToDB('qc_store', qcPanelRef.current);
   };
 
