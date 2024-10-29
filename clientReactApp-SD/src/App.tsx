@@ -6,7 +6,7 @@ import './App.css';
 //import react pages
 import SplashPage from './pages/SplashPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
-import HomePage from './pages/HomePage.jsx';
+import HomePage from './pages/HomePage.tsx';
 import CaseStudiesPage from './pages/CaseStudiesPage.jsx';
 import GradeBookPage from './pages/GradeBookPage.jsx';
 import InputQC_ResultsPage from './pages/InputQC_ResultsPage.jsx';

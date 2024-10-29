@@ -119,9 +119,6 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
     });
   };
 
-  //fuck
-
-
   const [studentChecked, setStudentChecked] = useState(false);
   const [facultyChecked, setFacultyChecked] = useState(false);
 
