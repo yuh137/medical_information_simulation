@@ -284,6 +284,53 @@ export const getQCRangeByDetails = (
     });
 };
 
+export const getMolecularQCRangeByDetails = (
+    fileName: string,
+    lotNumber: string,
+    closedDate: string
+): Promise<MolecularQCTemplateBatch | null> => {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open("MIS_database");
+
+        request.onerror = (event) => {
+            console.error("Database error", (event.target as IDBOpenDBRequest)?.error);
+            reject((event.target as IDBOpenDBRequest)?.error);
+        };
+
+        request.onsuccess = (event) => {
+            const db = (event.target as IDBOpenDBRequest)?.result;
+            if (!db) {
+                console.error("No database found");
+                reject("No database found");
+                return;
+            }
+
+            const transaction = db.transaction(["qc_store"], "readonly");
+            const objectStore = transaction.objectStore("qc_store");
+
+            const key = [fileName, lotNumber, closedDate];
+            console.log("Attempting to fetch data with key:", key);
+
+            const getRequest = objectStore.get(key);
+
+            getRequest.onsuccess = () => {
+                const result = getRequest.result;
+                if (result) {
+                    console.log("Data retrieved successfully:", result);
+                    resolve(result as MolecularQCTemplateBatch);
+                } else {
+                    console.warn("No data found for key:", key);
+                    resolve(null);
+                }
+            };
+
+            getRequest.onerror = (event) => {
+                console.error("Failed to retrieve data", (event.target as IDBRequest)?.error);
+                reject((event.target as IDBRequest)?.error);
+            };
+        };
+    });
+
 
 export function saveToDB<T extends { fileName: string, lotNumber: string, closedDate: string }>(storeName: string, data: T): Promise<void> {
     return new Promise((resolve, reject) => {

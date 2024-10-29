@@ -7,7 +7,7 @@ import { DatePicker } from "antd";
 import dayjs from 'dayjs';
 import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte } from "../../../utils/indexedDB/IDBSchema";
 import { qcTypeLinkListMolecular } from "../../../utils/utils";
-import { getQCRangeByDetails } from "../../../utils/indexedDB/getData";
+import { getMolecularQCRangeByDetails } from "../../../utils/indexedDB/getData";
 
 interface Ranges {
   [key: string]: string;
@@ -27,7 +27,7 @@ const MolecularTestingInputPage = () => {
     const lastSegment = currentPath.split('/').pop() || "";
 
 		const canonicalPanelName = qcTypeLinkListMolecular.find(item => item.link == lastSegment)?.name ?? "";
-		qcPanelRef.current = await getQCRangeByDetails(canonicalPanelName, "0", "");
+		qcPanelRef.current = await getMolecularQCRangeByDetails(canonicalPanelName, "0", "");
 		const panelAnalytes = QCPanel?.analytes;
 
     if (panelAnalytes) {
