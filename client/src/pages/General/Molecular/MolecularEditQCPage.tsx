@@ -58,7 +58,7 @@ const MolecularEditQC = () => {
                   pathname: `/molecular/edit_qc/${selectedItem}`,
                   search: createSearchParams({
                     dep: Department.Molecular.toString(),
-                    name: qcTypeLinkListMolecular.find(item => item.link == selectedItem)?.name ?? ""
+                    name: qcTypeLinkListMolecular.find(item => item.link === selectedItem)?.name ?? ""
                   }).toString()
                 })
               } 
