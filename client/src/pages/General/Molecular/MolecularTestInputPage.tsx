@@ -84,7 +84,8 @@ const MolecularTestingInputPage = () => {
 
   const handleSubmit = () => {
     // Check if all fields are filled
-    if (!QCLotInput || !expDateInput || !fileDateInput || Object.values(ranges).some(range => !range)) {
+		// TODO(not functional)
+    if (Object.values(ranges).some(range => !range)) {
       alert("Please fill in all fields before submitting.");
       return;
     }
@@ -138,8 +139,7 @@ const MolecularTestingInputPage = () => {
               value={expDateInput ? dayjs(expDateInput) : dayjs()}
               format="MM/DD/YYYY"
               onChange={(value) => {
-								console.log(value);
-								setExpDateInput(value.toISOString());}
+								value && setExpDateInput(value.toISOString());}
 							}
             />
           </div>
@@ -156,8 +156,7 @@ const MolecularTestingInputPage = () => {
               value={fileDateInput ? dayjs(fileDateInput) : dayjs()}
               format="MM/DD/YYYY"
               onChange={(value) => {
-								console.log(value);
-								setFileDateInput(value.toISOString());}
+								value && setFileDateInput(value.toISOString());}
 							}
             />
           </div>
