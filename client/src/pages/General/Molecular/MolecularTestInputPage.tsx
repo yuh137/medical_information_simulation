@@ -77,8 +77,8 @@ const MolecularTestingInputPage = () => {
       doc.text(name, 10, y);
       doc.text(range, 100, y);
       y += 10; 
-		}
     });
+	};
 
   const handleSubmit = () => {
     // Check if all fields are filled
