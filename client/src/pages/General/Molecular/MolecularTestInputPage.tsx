@@ -20,14 +20,18 @@ const MolecularTestingInputPage = () => {
   const [QCLotInput, setQCLotInput] = useState<string>('');
   const [expDateInput, setExpDateInput] = useState<string>('');
   const [fileDateInput, setFileDateInput] = useState<string>('');
-	const qcPanelRef = useRef<MolecularQCTemplateBatch | null>(null);
+	const qcPanelRef = useRef<MolecularQCTemplateBatch>(null);
 
 	const loadQCData = async () => {
     const currentPath = window.location.pathname; 
     const lastSegment = currentPath.split('/').pop() || "";
 
 		const canonicalPanelName = qcTypeLinkListMolecular.find(item => item.link == lastSegment)?.name ?? "";
-		qcPanelRef.current = await getMolecularQCRangeByDetails(canonicalPanelName, "0", "");
+		const molecularQueryResult = await getMolecularQCRangeByDetails(canonicalPanelName, "0", "");
+		if (!molecularQueryResult) {
+			throw Error();
+		}
+		const qcPanelRef.current = molecularQueryResult as MolecularQCTemplateBatch;
 		const panelAnalytes = qcPanelRef.current?.analytes;
 
     if (panelAnalytes) {
