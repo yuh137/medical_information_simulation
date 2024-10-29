@@ -20,25 +20,21 @@ const MolecularTestingInputPage = () => {
   const [QCLotInput, setQCLotInput] = useState<string>('');
   const [expDateInput, setExpDateInput] = useState<string>('');
   const [fileDateInput, setFileDateInput] = useState<string>('');
-	const qcPanelRef = useRef<MolecularQCTemplateBatch>(null);
+	const qcPanelRef = useRef<MolecularQCTemplateBatch | null>(null);
 
 	const loadQCData = async () => {
     const currentPath = window.location.pathname; 
     const lastSegment = currentPath.split('/').pop() || "";
 
 		const canonicalPanelName = qcTypeLinkListMolecular.find(item => item.link == lastSegment)?.name ?? "";
-		const molecularQueryResult = await getMolecularQCRangeByDetails(canonicalPanelName, "0", "");
-		if (!molecularQueryResult) {
-			throw Error();
-		}
-		qcPanelRef.current = molecularQueryResult as MolecularQCTemplateBatch;
-		const panelAnalytes = qcPanelRef.current?.analytes;
+		qcPanelRef.current = await getMolecularQCRangeByDetails(canonicalPanelName, "0", "");
+		const panelAnalytes = qcPanelRef.current??.analytes;
 
     if (panelAnalytes) {
       setCurrentAnalytes(panelAnalytes);
-			setQCLotInput(qcPanelRef.current.lotNumber);
-			setExpDateInput(qcPanelRef.current.closedDate);
-			setFileDateInput(qcPanelRef.current.openDate);
+			setQCLotInput(qcPanelRef.current?.lotNumber);
+			setExpDateInput(qcPanelRef.current?.closedDate);
+			setFileDateInput(qcPanelRef.current?.openDate);
       setFormTitle(capitalizeWords(lastSegment));
       const initialRanges = panelAnalytes.reduce((acc, item) => {
 				if (item.reportType === Report.Qualitative) {
@@ -90,17 +86,17 @@ const MolecularTestingInputPage = () => {
       alert("Please fill in all fields before submitting.");
       return;
     } 
-		qcPanelRef.current.lotNumber = QCLotInput;
-		qcPanelRef.current.closedDate = expDate.toISOString();
-		qcPanelRef.current.openDate = fileDate.toISOString();
-		for (let i = 0; i < qcPanelRef.current.analytes.length; i++) {
-			let analyte = qcPanelRef.current.analytes[i];
+		qcPanelRef.current?.lotNumber = QCLotInput;
+		qcPanelRef.current?.closedDate = expDate.toISOString();
+		qcPanelRef.current?.openDate = fileDate.toISOString();
+		for (let i = 0; i < qcPanelRef.current?.analytes.length; i++) {
+			let analyte = qcPanelRef.current?.analytes[i];
 			if (analyte.reportType === Report.Qualitative) {
 				let concreteAnalyte = analyte as QualitativeMolecularQCTemplateBatchAnalyte;
 				concreteAnalyte.expectedRange = ranges[concreteAnalyte.analyteName];
 			}
 		}
-		saveToDB('qc_store', qcPanelRef.current);
+		saveToDB('qc_store', qcPanelRef.current?);
   };
 
   return (
