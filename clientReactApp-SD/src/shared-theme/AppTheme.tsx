@@ -1,4 +1,4 @@
-//The theme for the whole website is set here.
+//The theme for the whole website is set here. Light and dark mode
 import * as React from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import type { ThemeOptions } from '@mui/material/styles';
