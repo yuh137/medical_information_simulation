@@ -60,7 +60,7 @@ export interface MolecularQCTemplateBatchAnalyte {
 }
 
 export interface QualitativeMolecularQCTemplateBatchAnalyte extends MolecularQCTemplateBatchAnalyte {
-	expectedRange: "Present" | "Not Detected";
+	expectedRange: string;
 }
 
 export interface QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte extends MolecularQCTemplateBatchAnalyte {
