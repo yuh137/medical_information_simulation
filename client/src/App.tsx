@@ -203,10 +203,6 @@ function AppWithRouter() {
           {
             path: 'molecular',
             children: [
-              {
-                path: 'qc_results',
-                element: <MolecularQCResult />,
-              },
               { 
                 path: 'order_controls', 
                 element: <MolecularOrderControls /> 
