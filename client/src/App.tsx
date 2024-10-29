@@ -33,9 +33,9 @@ import SimpleMolecularAnalyteInputPage from "./pages/General/Molecular/SimpleMol
 /****Molecular Imports****/
 import MolecularOrderControls from "./pages/General/Molecular/MolecularOrderControls";
 
-import MicrobiologyQCBuilder from "./pages/General/Microbiology/MicrobiologyQCBuilderPage";
-import MicrobiologyEditQCPage from "./pages/General/Microbiology/MicrobiologyEditQCPage";
-import MicrobiologyTestingInputPage from "./pages/General/Microbiology/MicrobiologyTestInputPage";
+import MolecularQCBuilder from "./pages/General/Molecular/MolecularQCBuilderPage";
+import MolecularEditQCPage from "./pages/General/Molecular/MolecularEditQCPage";
+import MolecularTestingInputPage from "./pages/General/Molecular/MolecularTestInputPage";
 
 
 function App() {
@@ -177,11 +177,6 @@ function AppWithRouter() {
             path: 'microbiology',
             children: [
               {
-                path: "qc_builder",
-                element: <MicrobiologyQCBuilder />,
-              },
-               
-              {
                 path: "editqc",
                 element: <MicrobiologyEditQCPage />,
               },
@@ -249,6 +244,11 @@ function AppWithRouter() {
               {
                 path: 'qc_results',
                 element: <MolecularQCResult />,
+              },
+               
+              {
+                path: "qc_builder",
+                element: <MolecularQCBuilder />,
               },
               {
                 path: 'simple-analyte-input-page',
