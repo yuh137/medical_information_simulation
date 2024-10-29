@@ -7,7 +7,7 @@ import NavBar from '../../../components/NavBar';
 import dayjs from 'dayjs';
 import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte, ReportType, QualitativeMolecularQCTemplateBatchAnalyte } from "../../../utils/indexedDB/IDBSchema";
 import { qcTypeLinkListMolecular } from "../../../utils/utils";
-import { getMolecularQCRangeByDetails } from "../../../utils/indexedDB/getData";
+import { saveToDB, getMolecularQCRangeByDetails } from "../../../utils/indexedDB/getData";
 
 interface Ranges {
   [key: string]: string;
