@@ -155,6 +155,7 @@ const MolecularTestingInputPage = () => {
               value={fileDateInput ? dayjs(fileDateInput) : dayjs()}
               format="MM/DD/YYYY"
               onChange={(value) => {
+								console.log(value);
 								setFileDateInput(value.toISOString());}
 							}
             />
