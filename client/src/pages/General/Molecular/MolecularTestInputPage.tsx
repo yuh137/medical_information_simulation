@@ -1,11 +1,9 @@
-import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "antd";
 import React, { useState, useEffect, useRef } from 'react';
 import { useLoaderData } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import { Button } from '@mui/material';
 import NavBar from '../../../components/NavBar';
-import { DatePicker } from "antd";
 import dayjs from 'dayjs';
 import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte, ReportType, QualitativeMolecularQCTemplateBatchAnalyte } from "../../../utils/indexedDB/IDBSchema";
 import { qcTypeLinkListMolecular } from "../../../utils/utils";
