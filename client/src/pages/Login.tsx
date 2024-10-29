@@ -18,6 +18,7 @@ const Login = () => {
   const { register, handleSubmit } = useForm<CredentialsInput>();
   const onSubmit: SubmitHandler<CredentialsInput> = async (data) => {
     setIsLoggingIn(true);
+		console.log(loginOptions);
     if (loginOptions === "Admin") {
       // const check = await getAdminByName(data.username);
       const sessionCheck = await checkSession();
