@@ -100,6 +100,13 @@ const MolecularTestingInputPage = () => {
 		saveToDB('qc_store', qcPanelRef.current);
   };
 
+  const handleInputChange = (name: string, value: string) => {
+    setRanges((prevRanges) => ({
+      ...prevRanges,
+      [name]: value,
+    }));
+  };
+
   return (
     <>
       <NavBar name={``} />
