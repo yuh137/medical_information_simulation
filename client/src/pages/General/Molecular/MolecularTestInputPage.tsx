@@ -28,10 +28,11 @@ const MolecularTestingInputPage = () => {
     const lastSegment = currentPath.split('/').pop() || "";
 
 		const canonicalPanelName = qcTypeLinkListMolecular.find(item => item.link == lastSegment)?.name ?? "";
-		qcPanelRef.current = await getMolecularQCRangeByDetails(canonicalPanelName, "0", "");
-		const panelAnalytes = qcPanelRef.current?.analytes;
+		const res = await getMolecularQCRangeByDetails(canonicalPanelName, "0", "");
 
-    if (panelAnalytes) {
+    if (res) {
+			qcPanelRef.current = res as MolecularQCTemplateBatch;
+			const panelAnalytes = qcPanelRef.current.analytes;
       setCurrentAnalytes(panelAnalytes);
 			setQCLotInput(qcPanelRef.current.lotNumber);
 			setExpDateInput(qcPanelRef.current.closedDate);
