@@ -330,7 +330,7 @@ export const getMolecularQCRangeByDetails = (
             };
         };
     });
-
+}
 
 export function saveToDB<T extends { fileName: string, lotNumber: string, closedDate: string }>(storeName: string, data: T): Promise<void> {
     return new Promise((resolve, reject) => {
