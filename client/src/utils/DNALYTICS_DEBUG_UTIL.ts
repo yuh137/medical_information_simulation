@@ -28,27 +28,29 @@ export async function DEBUG_add_molecular_data_to_idb(QCPanels: string[]): Promi
 			const db = (event.target as IDBOpenDBRequest).result;
 			const transaction = db.transaction("qc_store", "readwrite");
 			const objectStore = transaction.objectStore("qc_store");
-			const items = QCPanels.map((item) => { return { fileName: item, lotNumber: item, closedDate: item, analytes: panelToAnalytesTable.get(item)  }})
-
+			const items = QCPanels.map((item) => { return { fileName: item, lotNumber: '0', closedDate: '', analytes: panelToAnalytesTable.get(item) }})
 			let completedRequests = 0;
             items.forEach((item) => {
                 const getRequest = objectStore.get([item.fileName, item.lotNumber, item.closedDate]);
 				getRequest.onsuccess = (event) => {
                     if ((event.target as IDBOpenDBRequest).result) {
                         completedRequests++;
+												if (completedRequests === items.length) {
+														resolve();
+												}
                     }
                     else {
                         const addRequest = objectStore.add(item);
                         addRequest.onsuccess = () => {
                             completedRequests++;
+														if (completedRequests === items.length) {
+																resolve();
+														}
                         }
                         addRequest.onerror = () => {
                             console.log("Error adding data", addRequest.error);
                             reject(addRequest.error);
                         }
-                    }
-                    if (completedRequests === items.length) {
-                        resolve();
                     }
 				};
 

@@ -16,6 +16,11 @@ const StudentHomeScreen = () => {
 
   useEffect(() => {
     if (!checkSession()) navigate('/unauthorized');
+// TODO(colby): DEBUG
+    //insert into idb at qc_store 
+    const QCPanels = ['GI Panel Level I', 'GI Panel Level II', 'Respiratory Panel Level I', 'Respiratory Panel Level II', 'STI-PCR Panel Level I', 'STI-PCR Panel Level II', 'HIV Real-Time PCR Panel: Negative Control', 'HIV Real-Time PCR Panel: Low Control', 'HIV Real-Time PCR Panel: High Control'];
+    await DEBUG_add_molecular_data_to_idb(QCPanels);
+//
   }, []);
 
   return (

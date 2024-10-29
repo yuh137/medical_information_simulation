@@ -40,13 +40,6 @@ const MolecularQCResult = () => {
   const navigate = useNavigate();
 
   const fetchQCData = async () => {
-// TODO(colby): DEBUG
-    //insert all from localstorage
-    const QCPanels = ['GI Panel Level I', 'GI Panel Level II', 'Respiratory Panel Level I', 'Respiratory Panel Level II', 'STI-PCR Panel Level I', 'STI-PCR Panel Level II', 'HIV Real-Time PCR Panel: Negative Control', 'HIV Real-Time PCR Panel: Low Control', 'HIV Real-Time PCR Panel: High Control'];
-    localStorage.setItem('selectedQCItems', JSON.stringify(QCPanels));
-    //insert into idb at qc_store 
-    await DEBUG_add_molecular_data_to_idb(QCPanels);
-//
     console.log("Fetching QC data...");
     const selectedQCs: string[] = JSON.parse(localStorage.getItem('selectedQCItems') || '[]');
     const allDataPromises = selectedQCs.map(qcName => getAllDataByFileName("qc_store", qcName));

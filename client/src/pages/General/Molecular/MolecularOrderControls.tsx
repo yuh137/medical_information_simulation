@@ -11,13 +11,27 @@ import {
 } from "react-beautiful-dnd";
 import { ButtonBase } from "@mui/material"
 
+interface QCPanel {
+	fileName: string;
+}
+
 const MolecularOrderControls = () => {
   const [SelectedQCItems, setSelectedQCItems] = useState<string[]>([]);
-  const [OrderControlsItems, setOrderControlsItems] = useState<string[]>(
-    qcTypeLinkListMolecular.map(qc => qc.name) // I change this to qctypelinklist from utils from manually defining each draggable
-  );
+  const [OrderControlsItems, setOrderControlsItems] = useState<string[]>([]);
   const [OrderPlaced, setOrderPlaced] = useState(false);
   const navigate = useNavigate();
+
+  const fetchQCData = async () => {
+    console.log("Fetching QC Panels...");
+		const results = await getAllDataFromStore<QCPanel>('qc_store');
+    console.log("Fetched QC Panels:", results.flat());
+		setOrderControlsItems(results.map(item => item.fileName);
+  };
+
+  useEffect(() => {
+
+    fetchQCData();
+  }, []);
 
   const onDragEnd = (results: DropResult) => {
     // console.log(results);
