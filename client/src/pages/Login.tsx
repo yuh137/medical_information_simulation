@@ -7,6 +7,7 @@ import { CredentialsInput } from './Register';
 import { AuthToken, UserType, useAuth } from '../context/AuthContext';
 import { getAdminByName, getStudentByName } from '../utils/indexedDB/getData';
 import { Icon } from '@iconify/react';
+import { DEBUG_add_molecular_data_to_idb } from "../../utils/DNALYTICS_DEBUG_UTIL";
 
 const Login = () => {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
