@@ -27,7 +27,7 @@ const MolecularTestingInputPage = () => {
     const currentPath = window.location.pathname; 
     const lastSegment = currentPath.split('/').pop() || "";
 
-		const canonicalPanelName = qcTypeLinkListMolecular.find(item => item.link == lastSegment)?.name ?? "";
+		const canonicalPanelName = qcTypeLinkListMolecular.find(item => item.link === lastSegment)?.name ?? "";
 		const res = await getMolecularQCRangeByDetails(canonicalPanelName, "0", "");
 
     if (res) {
