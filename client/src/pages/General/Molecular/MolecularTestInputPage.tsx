@@ -135,6 +135,7 @@ const MolecularTestingInputPage = () => {
               value={expDateInput ? dayjs(expDateInput) : dayjs()}
               format="MM/DD/YYYY"
               onChange={(value) => {
+								console.log(typeof value);
 								setExpDateInput(value.toISOString());}
 							}
             />
@@ -152,6 +153,7 @@ const MolecularTestingInputPage = () => {
               value={fileDateInput ? dayjs(fileDateInput) : dayjs()}
               format="MM/DD/YYYY"
               onChange={(value) => {
+								console.log(typeof value);
 								setFileDateInput(value.toISOString());}
 							}
             />
