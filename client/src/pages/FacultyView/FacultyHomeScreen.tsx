@@ -8,7 +8,7 @@ import { Icon } from "@iconify/react";
 import { testTypeLinkList } from "../../utils/utils";
 import NavBar from "../../components/NavBar";
 import Password from "antd/es/input/Password";
-import { DEBUG_add_molecular_data_to_idb } from "../../../utils/DNALYTICS_DEBUG_UTIL";
+import { DEBUG_add_molecular_data_to_idb } from "../../utils/DNALYTICS_DEBUG_UTIL";
 
 const FacultyHomeScreen = () => {
   const { initials, username, logout, checkUserType, checkSession } = useAuth();

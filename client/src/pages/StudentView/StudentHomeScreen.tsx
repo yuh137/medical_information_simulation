@@ -7,7 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { Icon } from "@iconify/react";
 import { testTypeLinkList } from "../../utils/utils";
 import NavBar from "../../components/NavBar";
-import { DEBUG_add_molecular_data_to_idb } from "../../../utils/DNALYTICS_DEBUG_UTIL";
+import { DEBUG_add_molecular_data_to_idb } from "../../utils/DNALYTICS_DEBUG_UTIL";
 
 const StudentHomeScreen = () => {
   const { checkSession } = useAuth();
