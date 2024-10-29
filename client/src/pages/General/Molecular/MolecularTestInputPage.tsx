@@ -83,13 +83,13 @@ const MolecularTestingInputPage = () => {
 
   const handleSubmit = () => {
     // Check if all fields are filled
-    if (!QCLotInput || !expDate || !fileDate || Object.values(ranges).some(range => !range)) {
+    if (!QCLotInput || !expDateInput || !fileDateInput || Object.values(ranges).some(range => !range)) {
       alert("Please fill in all fields before submitting.");
       return;
     } 
 		qcPanelRef.current.lotNumber = QCLotInput;
-		qcPanelRef.current.closedDate = expDate.toISOString();
-		qcPanelRef.current.openDate = fileDate.toISOString();
+		qcPanelRef.current.closedDate = expDateInput.toISOString();
+		qcPanelRef.current.openDate = fileDateInput.toISOString();
 		for (let i = 0; i < qcPanelRef.current.analytes.length; i++) {
 			let analyte = qcPanelRef.current.analytes[i];
 			if (analyte.reportType === ReportType.Qualitative) {
@@ -124,9 +124,9 @@ const MolecularTestingInputPage = () => {
                 width: "150px",
                 height: "34px",
               }}
-              value={expDate}
+              value={expDateInput}
               format="MM/DD/YYYY"
-              onChange={(value) => setExpDate(value)}
+              onChange={(value) => setExpDateInput(value)}
             />
           </div>
           <div className="filedate-input flex flex-col items-center bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
@@ -139,7 +139,7 @@ const MolecularTestingInputPage = () => {
                 width: "150px",
                 height: "34px",
               }}
-              value={fileDate}
+              value={fileDateInput}
               format="MM/DD/YYYY"
               onChange={(value) => setFileDate(value)}
             />
