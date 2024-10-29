@@ -74,6 +74,5 @@ export interface MolecularQCTemplateBatch {
   lotNumber: string;
 	openDate: string;
   closedDate: string;
-	reportType: 'Qualitative' | 'Levy-Jennings';
   analytes: MolecularQCTemplateBatchAnalyte[];
 }
