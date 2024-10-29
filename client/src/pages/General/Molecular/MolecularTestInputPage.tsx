@@ -27,7 +27,7 @@ const MolecularTestingInputPage = () => {
     const lastSegment = currentPath.split('/').pop() || "";
 
 		const canonicalPanelName = qcTypeLinkListMolecular.find(item => item.link == selectedItem)?.name ?? "";
-		qcPanelRef = (await getQCRangeByDetails(canonicalPanelName, "0", "")) as (MolecularQCTemplateBatch | null);
+		qcPanelRef = await getQCRangeByDetails(canonicalPanelName, "0", "");
 		const panelAnalytes = QCPanel?.analytes;
 
     if (panelAnalytes) {
