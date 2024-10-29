@@ -18,7 +18,6 @@ const Login = () => {
   const { register, handleSubmit } = useForm<CredentialsInput>();
   const onSubmit: SubmitHandler<CredentialsInput> = async (data) => {
     setIsLoggingIn(true);
-		console.log(loginOptions);
     if (loginOptions === "Admin") {
       // const check = await getAdminByName(data.username);
       const sessionCheck = await checkSession();
@@ -39,7 +38,6 @@ const Login = () => {
       try {
         if (checkServer.status === 200) {
           const token: AuthToken = await checkServer.json();
-
           localStorage.setItem('token', JSON.stringify(token));
           console.log(localStorage.getItem('token'));
           setIsLoggingIn(false);
@@ -130,6 +128,7 @@ const Login = () => {
               onClick={() => {
                 setLoginOptions((prevState) =>
                   prevState === "Student" ? "" : "Student"
+									console.log(loginOptions);
                 );
               }}
             >
