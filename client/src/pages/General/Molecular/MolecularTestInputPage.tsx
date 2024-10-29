@@ -1,3 +1,5 @@
+import dayjs, { Dayjs } from "dayjs";
+import { DatePicker } from "antd";
 import React, { useState, useEffect, useRef } from 'react';
 import { useLoaderData } from "react-router-dom";
 import { jsPDF } from "jspdf";
@@ -88,8 +90,8 @@ const MolecularTestingInputPage = () => {
       return;
     } 
 		qcPanelRef.current.lotNumber = QCLotInput;
-		qcPanelRef.current.closedDate = expDateInput.toISOString();
-		qcPanelRef.current.openDate = fileDateInput.toISOString();
+		qcPanelRef.current.closedDate = (new Date(expDateInput)).toISOString();
+		qcPanelRef.current.openDate = (new Date(fileDateInput)).toISOString();
 		for (let i = 0; i < qcPanelRef.current.analytes.length; i++) {
 			let analyte = qcPanelRef.current.analytes[i];
 			if (analyte.reportType === ReportType.Qualitative) {
@@ -124,9 +126,11 @@ const MolecularTestingInputPage = () => {
                 width: "150px",
                 height: "34px",
               }}
-              value={expDateInput}
+              value={expDateInput ? dayjs(expDateInput) : dayjs()}
               format="MM/DD/YYYY"
-              onChange={(value) => setExpDateInput(value)}
+              onChange={(value) => {
+								setExpDateInput(value.toISOString())
+							}
             />
           </div>
           <div className="filedate-input flex flex-col items-center bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
@@ -139,9 +143,11 @@ const MolecularTestingInputPage = () => {
                 width: "150px",
                 height: "34px",
               }}
-              value={fileDateInput}
+              value={fileDateInput ? dayjs(fileDateInput) : dayjs()}
               format="MM/DD/YYYY"
-              onChange={(value) => setFileDate(value)}
+              onChange={(value) => {
+								setFileDateInput(value.toISOString())
+							}
             />
           </div>
         </div>
