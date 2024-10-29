@@ -5,7 +5,7 @@ import { Button } from '@mui/material';
 import NavBar from '../../../components/NavBar';
 import { DatePicker } from "antd";
 import dayjs from 'dayjs';
-import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte, Report, QualitativeMolecularQCTemplateBatchAnalyte } from "../../../utils/indexedDB/IDBSchema";
+import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte, ReportType, QualitativeMolecularQCTemplateBatchAnalyte } from "../../../utils/indexedDB/IDBSchema";
 import { qcTypeLinkListMolecular } from "../../../utils/utils";
 import { getMolecularQCRangeByDetails } from "../../../utils/indexedDB/getData";
 
@@ -38,7 +38,7 @@ const MolecularTestingInputPage = () => {
 			setFileDateInput(qcPanelRef.current.openDate);
       setFormTitle(capitalizeWords(lastSegment));
       const initialRanges = panelAnalytes.reduce((acc, item) => {
-				if (item.reportType === Report.Qualitative) {
+				if (item.reportType === ReportType.Qualitative) {
 					acc[item.analyteName] = (item as QualitativeMolecularQCTemplateBatchAnalyte).expectedRange;
 				}
 				else {
@@ -92,7 +92,7 @@ const MolecularTestingInputPage = () => {
 		qcPanelRef.current.openDate = fileDate.toISOString();
 		for (let i = 0; i < qcPanelRef.current.analytes.length; i++) {
 			let analyte = qcPanelRef.current.analytes[i];
-			if (analyte.reportType === Report.Qualitative) {
+			if (analyte.reportType === ReportType.Qualitative) {
 				let concreteAnalyte = analyte as QualitativeMolecularQCTemplateBatchAnalyte;
 				concreteAnalyte.expectedRange = ranges[concreteAnalyte.analyteName];
 			}
