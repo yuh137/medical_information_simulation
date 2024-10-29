@@ -27,14 +27,14 @@ const MolecularTestingInputPage = () => {
     const lastSegment = currentPath.split('/').pop() || "";
 
 		const canonicalPanelName = qcTypeLinkListMolecular.find(item => item.link == lastSegment)?.name ?? "";
-		qcPanelRef = await getQCRangeByDetails(canonicalPanelName, "0", "");
+		qcPanelRef.current = await getQCRangeByDetails(canonicalPanelName, "0", "");
 		const panelAnalytes = QCPanel?.analytes;
 
     if (panelAnalytes) {
       setCurrentAnalytes(panelAnalytes);
-			setQCLotInput(qcPanelRef.lotNumber);
-			setExpDateInput(qcPanelRef.closedDate);
-			setFileDateInput(qcPanelRef.openDate);
+			setQCLotInput(qcPanelRef.current.lotNumber);
+			setExpDateInput(qcPanelRef.current.closedDate);
+			setFileDateInput(qcPanelRef.current.openDate);
       setFormTitle(capitalizeWords(lastSegment));
       const initialRanges = panelAnalytes.reduce((acc, item) => {
 				if (item.reportType === Report.Qualitative) {
@@ -96,7 +96,7 @@ const MolecularTestingInputPage = () => {
 				concreteAnalyte.expectedRange = ranges[concreteAnalyte.analyteName];
 			}
 		}
-		saveToDB('qc_store', qcPanelRef);
+		saveToDB('qc_store', qcPanelRef.current);
   };
 
   return (
