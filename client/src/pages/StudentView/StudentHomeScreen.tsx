@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { Icon } from "@iconify/react";
 import { testTypeLinkList } from "../../utils/utils";
 import NavBar from "../../components/NavBar";
+import { DEBUG_add_molecular_data_to_idb } from "../../../utils/DNALYTICS_DEBUG_UTIL";
 
 const StudentHomeScreen = () => {
   const { checkSession } = useAuth();
@@ -14,13 +15,17 @@ const StudentHomeScreen = () => {
   const { theme } = useTheme();
   const dropdownOptions = testTypeLinkList.map(({ link, name }) => ({ name, link: link + '/qc_results' }));
 
-  useEffect(() => {
-    if (!checkSession()) navigate('/unauthorized');
+	const initMolecularIDB = async () => {
 // TODO(colby): DEBUG
     //insert into idb at qc_store 
     const QCPanels = ['GI Panel Level I', 'GI Panel Level II', 'Respiratory Panel Level I', 'Respiratory Panel Level II', 'STI-PCR Panel Level I', 'STI-PCR Panel Level II', 'HIV Real-Time PCR Panel: Negative Control', 'HIV Real-Time PCR Panel: Low Control', 'HIV Real-Time PCR Panel: High Control'];
     await DEBUG_add_molecular_data_to_idb(QCPanels);
 //
+	};
+
+  useEffect(() => {
+    if (!checkSession()) { navigate('/unauthorized'); }
+		initMolecularIDB();
   }, []);
 
   return (
