@@ -80,6 +80,7 @@ const MolecularTestingInputPage = () => {
       doc.text(range, 100, y);
       y += 10; 
     });
+		doc.save("report.pdf");
 	};
 
   const handleSubmit = () => {
