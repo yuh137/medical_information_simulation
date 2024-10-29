@@ -511,7 +511,7 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
       case "vitamins_2":
         setOrderControlsItems(VitaminsLevelList.map((item) => item.name));
         setDraggableItems(VitaminsLevelList);
-        setQCElements(Vitamins);
+        setQCElements(Cancer);
         break;
       default:
         setOrderControlsItems([]);

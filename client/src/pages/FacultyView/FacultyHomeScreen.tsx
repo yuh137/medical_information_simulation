@@ -22,7 +22,7 @@ const FacultyHomeScreen = () => {
 
     console.log("Session state: ", status);
 
-    if (!status || checkUserType() === 'Student') navigate('/unauthorized');
+    //if (!status || checkUserType() === 'Student') navigate('/unauthorized');
   }
 
 	const initMolecularIDB = async () => {

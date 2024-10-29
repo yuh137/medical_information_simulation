@@ -75,3 +75,9 @@ export interface MolecularQCTemplateBatch {
   closedDate: string;
   analytes: MolecularQCTemplateBatchAnalyte[];
 }
+
+export interface MicrobiologyQCTemplate {
+    analyteName: string;
+    analyteAcronym: string;
+    expectedRange: string;
+}
