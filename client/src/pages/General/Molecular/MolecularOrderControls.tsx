@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import NavBar from "../../../components/NavBar";
 import { qcTypeLinkListMolecular } from "../../../utils/utils"; 
 import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { getAllDataFromStore } from "../../../utils/indexedDB/getData";
 
 import {
   DragDropContext,
