@@ -44,6 +44,8 @@ export interface QCTemplateBatch {
         mean: string;
         stdDevi: string;
         value?: string; // Optional value field, since it might not exist initially
+        comments?: string;
+        tech?: string;
     }[];
 }
 

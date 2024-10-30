@@ -182,6 +182,8 @@ const SimpleAnalyteInputPage = (props: { name: string }) => {
       analytes: qcData.analytes.map((analyte, index) => ({
         ...analyte,
         value: analyteValues[index],
+        comments: modalData.find((item) => item.invalidIndex === index)?.comment || '',
+        tech: username,
       })),
     };
 
