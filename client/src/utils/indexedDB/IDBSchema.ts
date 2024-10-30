@@ -62,3 +62,21 @@ export interface BloodBankQC {
 
     }[];
 }
+export interface BloodBankRBC {
+    fileName: string;
+    lotNumber: string;
+    expDate: string;
+    openDate: string;
+    closedDate: string;
+    reportType:string;
+    reagents: {
+        reagentName:string,
+        Abbreviation:string,
+        AntiSeraLot:string,
+        ExpDate:string,
+        ExpImmSpinRange:string,
+        Exp37Range:string,
+        ExpAHGRange:string,
+        ExpCheckCellsRange:string
+    }[];
+}

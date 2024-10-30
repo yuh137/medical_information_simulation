@@ -40,6 +40,7 @@ import { BloodBankTestInputPage } from "./pages/General/BloodBank/BloodBankTestI
 import BloodBankCustomQCBuild from "./pages/General/BloodBank/BloodBankCustomQCBuild";
 import BloodBankCustomTests from "./pages/General/BloodBank/BloodBankCustomTests";
 import BloodBankQCTypeButtonsPage from "./pages/General/BloodBank/BloodBankQCTypeSelection";
+import {BloodBankRBCEdit} from "./pages/General/BloodBank/BloodBankRBCInputPage";
 
 function App() {
   initIDB();
@@ -143,6 +144,12 @@ function AppWithRouter() {
                 path: "qc_types",
                 element: <ChemistryQCTypeButtonsPage />,
               }
+              ,
+              {
+                path: "qc_types/:item",
+                element: <ChemistryQCTypeButtonsPage />,
+              }
+
             ]
           },
 
@@ -212,6 +219,7 @@ function AppWithRouter() {
                 path: 'levey-jennings/:fileName/:lotNumber/:analyteName',
                 element: <BloodBankLeveyJennings />,
               },
+              
               {
                 path: "edit_qc",
                 element: <BloodBankEditQC />,
@@ -229,8 +237,13 @@ function AppWithRouter() {
                 element: <BloodBankCustomTests />,
               },
               {
-                path: "qc_types",
+                path: "rbc_qc",
                 element: <BloodBankQCTypeButtonsPage />,
+              }
+              ,
+              {
+                path: "rbc_qc/:item",
+                element: <BloodBankRBCEdit name =":item"/>,
               }
             ]
           },

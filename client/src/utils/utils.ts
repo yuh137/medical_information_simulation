@@ -8,6 +8,27 @@ export const bloodBankQC = [
   { link:"Two_Cell", name:"2 Cell Screen", bbData:"TWO_CELL"},
   { link:"Three_Cell", name:"3 Cell Screen", bbData:"THREE_CELL"}
 ]
+
+export const bloodBankRBC_QC = [
+  {link:"RhPos",name:"RhPos QC",bbData:"rh"},
+  {link:"RhNeg",name:"RhNeg QC",bbData:"rh"},
+  {link:"KellPos",name:"Kell Pos QC",bbData:"neg"},
+  {link:"KellNeg",name:"Kell Neg Qc",bbData:"neg"},
+  {link:"KiddPos",name:"Kidd Pos QC",bbData:"kidd"},
+  {link:"KiddNeg",name:"Kidd Neg QC",bbData:"kidd"},
+  {link:"LewisPos",name:"Lewis Pos QC",bbData:"lewisPOS"},
+  {link:"LewisNeg",name:"Lewis Neg QC",bbData:"lewisNEG"},
+  {link:"DuffyPos",name:"Duffy Pos QC",bbData:"duffyPOS"},
+  {link:"DuffyNeg",name:"Duffy Neg QC",bbData:"duffyNEG"},
+  {link:"MNSsPos",name:"MNSs Pos QC",bbData:"mnssPOS"},
+  {link:"MNSsNeg",name:"MNSs Neg QC",bbData:"mnsPOS"},
+  {link:"LuthereanPos",name:"Lutherean Pos QC",bbData:"luthereanPOS"},
+  {link:"LuthereanNeg",name:"Lutherean Neg QC",bbData:"luthereanNEG"},
+  {link:"P1Pos",name:"P1 Pos QC",bbData:"p1POS"},
+  {link:"P1Neg",name:"P1 Neg QC",bbData:"p1NEG"},
+
+
+]
 export const testTypeLinkList = [
   {link: "chemistry", name: "Chemistry"},
   {link: "hema_coag", name: "Hematology/Coag"},

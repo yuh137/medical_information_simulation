@@ -23,7 +23,7 @@ const BloodBankQCBuilder = () => {
             <div className="button-text font-bold text-2xl">Blood Bank QC</div>
           </ButtonBase>
         </Link>
-        <Link to={`/blood_bank/qc_types`}>
+        <Link to={`/blood_bank/rbc_qc`}>
           <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
             <div className="button-text font-bold text-2xl">RBC Anti-Sera QC</div>
           </ButtonBase>

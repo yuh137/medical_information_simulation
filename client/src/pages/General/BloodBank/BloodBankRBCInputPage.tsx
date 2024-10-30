@@ -17,52 +17,53 @@ import {
   TableHeader,
   TableRow,
 } from "../../../components/ui/table";
-import { CMP, RR_QC, TWO_CELL, THREE_CELL } from "../../../utils/BB_DATA";
+import { rh } from "../../../utils/BB_DATA";
 import { renderSubString } from "../../../utils/utils";
 import { ButtonBase, Checkbox, Drawer } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useTheme } from "../../../context/ThemeContext";
 import addData from "../../../utils/indexedDB/addData";
-import { BloodBankQC } from "../../../utils/indexedDB/IDBSchema";
+import { BloodBankRBC } from "../../../utils/indexedDB/IDBSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { getDataByKey } from "../../../utils/indexedDB/getData";
 import { deleteData } from "../../../utils/indexedDB/deleteData";
 import NavBar from "../../../components/NavBar";
 
 interface QCRangeElements {
-  reagentName: string;
-  Abbreviation: string;
-  AntiSeraLot: string;
-  ExpDate: string;
-  ExpectedRange: string;
+  reagentName:string,
+  Abbreviation:string,
+  AntiSeraLot:string,
+  ExpDate:string,
+  ExpImmSpinRange:string,
+  Exp37Range:string,
+  ExpAHGRange:string,
+  ExpCheckCellsRange:string
 }
 
 
-export const BloodBankTestInputPage = (props: { name: string }) => {
+export const BloodBankRBCEdit = (props: { name: string }) => {
   const navigate = useNavigate();
   const { item } = useParams();
   const { checkSession, checkUserType, isAuthenticated, logout } = useAuth();
   const { theme } = useTheme();
-  const initialData = item?.includes("Reagent") ? RR_QC: item?.includes("Two")? TWO_CELL:THREE_CELL;
+  const initialData = rh;
   console.log("DataType:", item);
 
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(initialData);
   const [isValid, setIsValid] = useState<boolean>(false);
   // const [isDrawerOpen, openDrawer] = useState<boolean>(false);
-  const { register, handleSubmit } = useForm<BloodBankQC>();
-  const saveQC: SubmitHandler<BloodBankQC> = async (data) => {
-    const qcDataToSave: BloodBankQC = {
+  const { register, handleSubmit } = useForm<BloodBankRBC>();
+  const saveQC: SubmitHandler<BloodBankRBC> = async (data) => {
+    const qcDataToSave: BloodBankRBC = {
       fileName: props.name,
       lotNumber: data.lotNumber || "",
       expDate: data.expDate || "",
       openDate: data.openDate || "",
       closedDate: data.closedDate || "",
       reportType: data.reportType || "",
-      reagents: QCElements.map(({ reagentName, Abbreviation, AntiSeraLot, ExpDate, ExpectedRange }) => ({
-        reagentName, Abbreviation, AntiSeraLot, ExpDate, ExpectedRange
-      })),
+      reagents: QCElements.map(({reagentName,Abbreviation,AntiSeraLot,ExpDate,ExpImmSpinRange,Exp37Range,ExpAHGRange, ExpCheckCellsRange}) => ({reagentName,Abbreviation,AntiSeraLot,ExpDate,ExpImmSpinRange,Exp37Range,ExpAHGRange, ExpCheckCellsRange})),
     };
-
+//reagentName:string,
     console.log("Attempting to save:", qcDataToSave);
 
     try {
@@ -127,8 +128,35 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
       ),
     },
     {
-      accessorKey: "ExpectedRange",
-      header: "Expected Range",
+      accessorKey: "ExpImmSpinRange",
+      header: "Expected Immediate Spin Range",
+      cell: (info) => (
+        <div
+          dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
+        />
+      ),
+    },
+    {
+      accessorKey: "Exp37Range",
+      header: "Expected 37 Degrees Range",
+      cell: (info) => (
+        <div
+          dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
+        />
+      ),
+    },
+    {
+      accessorKey: "ExpAHGRange",
+      header: "Expected AHG Range",
+      cell: (info) => (
+        <div
+          dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
+        />
+      ),
+    },
+    {
+      accessorKey: "ExpCheckCellsRange",
+      header: "Expected Check Cells Range",
       cell: (info) => (
         <div
           dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
@@ -150,7 +178,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
 
   useEffect(() => {
     (async () => {
-      const res = await getDataByKey<BloodBankQC>("qc_store", props.name);
+      const res = await getDataByKey<BloodBankRBC>("qc_store", props.name);
 
       if (res && typeof res !== "string") setQCElements(res.reagents)
     })()
@@ -326,7 +354,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                       }}
                     />
                   </TableCell>
-                  <TableCell className="exp">
+                  <TableCell className="expImmSpin">
                     <input
                       type="text"
                       ref={el => {
@@ -335,13 +363,13 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                         }
                       }}
                       className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
-                      value={row.ExpDate || ''}
+                      value={row.ExpImmSpinRange || ''}
                       onChange={(e) => {
                         e.preventDefault();
                         setQCElements(prevState => {
                           const newState = prevState.map(item => {
                             if (item.reagentName === row.reagentName) {
-                              return { ...item, ExpDate: e.target.value };
+                              return { ...item, ExpImmSpinRange: e.target.value };
                             }
                             return item;
                           });
@@ -353,8 +381,8 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                           setQCElements(prevState => {
                             const newState = prevState.map(item => {
                               if (item.reagentName === row.reagentName) {
-                                const expValue = item.ExpDate.trim();
-                                return { ...item, ExpDate: expValue }; // Removing unnecessary spaces
+                                const ExpImmValue = item.ExpImmSpinRange.trim();
+                                return { ...item, ExpImmSpinRange: ExpImmValue }; // Removing unnecessary spaces
                               }
                               return item;
                             });
@@ -364,8 +392,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                       }}
                     />
                   </TableCell>
-
-                  <TableCell className="ExpectedRange">
+                  <TableCell className="Exp37Range">
                     <input
                       type="text"
                       ref={el => {
@@ -374,13 +401,13 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                         }
                       }}
                       className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
-                      value={row.ExpectedRange || ''}
+                      value={row.Exp37Range || ''}
                       onChange={(e) => {
                         e.preventDefault();
                         setQCElements(prevState => {
                           const newState = prevState.map(item => {
                             if (item.reagentName === row.reagentName) {
-                              return { ...item, ExpectedRange: e.target.value };
+                              return { ...item, Exp37Range: e.target.value };
                             }
                             return item;
                           });
@@ -392,8 +419,8 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                           setQCElements(prevState => {
                             const newState = prevState.map(item => {
                               if (item.reagentName === row.reagentName) {
-                                const expRangeValue = item.ExpectedRange.trim();
-                                return { ...item, ExpectedRange: expRangeValue }; // Removing unnecessary spaces
+                                const Exp37Range = item.Exp37Range.trim();
+                                return { ...item, ExpDate: Exp37Range }; // Removing unnecessary spaces
                               }
                               return item;
                             });
@@ -403,10 +430,120 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                       }}
                     />
                   </TableCell>
-
-
-
-
+                  <TableCell className="ExpAHG">
+                    <input
+                      type="text"
+                      ref={el => {
+                        if (el && inputRefs.current.length < QCElements.length * 4) {
+                          inputRefs.current[index * 4 + 3] = el;
+                        }
+                      }}
+                      className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
+                      value={row.ExpAHGRange || ''}
+                      onChange={(e) => {
+                        e.preventDefault();
+                        setQCElements(prevState => {
+                          const newState = prevState.map(item => {
+                            if (item.reagentName === row.reagentName) {
+                              return { ...item, ExpAHGRange: e.target.value };
+                            }
+                            return item;
+                          });
+                          return newState;
+                        });
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          setQCElements(prevState => {
+                            const newState = prevState.map(item => {
+                              if (item.reagentName === row.reagentName) {
+                                const ExpAHGRange_value = item.ExpAHGRange.trim();
+                                return { ...item, ExpDate: ExpAHGRange_value }; // Removing unnecessary spaces
+                              }
+                              return item;
+                            });
+                            return newState;
+                          });
+                        }
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell className="ExpectedCheckCells">
+                    <input
+                      type="text"
+                      ref={el => {
+                        if (el && inputRefs.current.length < QCElements.length * 4) {
+                          inputRefs.current[index * 4 + 3] = el;
+                        }
+                      }}
+                      className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
+                      value={row.ExpCheckCellsRange || ''}
+                      onChange={(e) => {
+                        e.preventDefault();
+                        setQCElements(prevState => {
+                          const newState = prevState.map(item => {
+                            if (item.reagentName === row.reagentName) {
+                              return { ...item, ExpCheckCellsRange: e.target.value };
+                            }
+                            return item;
+                          });
+                          return newState;
+                        });
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          setQCElements(prevState => {
+                            const newState = prevState.map(item => {
+                              if (item.reagentName === row.reagentName) {
+                                const ExpCheckCellsRange_value = item.ExpCheckCellsRange.trim();
+                                return { ...item, ExpDate: ExpCheckCellsRange_value }; // Removing unnecessary spaces
+                              }
+                              return item;
+                            });
+                            return newState;
+                          });
+                        }
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell className="Exp37Range">
+                    <input
+                      type="text"
+                      ref={el => {
+                        if (el && inputRefs.current.length < QCElements.length * 4) {
+                          inputRefs.current[index * 4 + 3] = el;
+                        }
+                      }}
+                      className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
+                      value={row.Exp37Range || ''}
+                      onChange={(e) => {
+                        e.preventDefault();
+                        setQCElements(prevState => {
+                          const newState = prevState.map(item => {
+                            if (item.reagentName === row.reagentName) {
+                              return { ...item, Exp37Range: e.target.value };
+                            }
+                            return item;
+                          });
+                          return newState;
+                        });
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          setQCElements(prevState => {
+                            const newState = prevState.map(item => {
+                              if (item.reagentName === row.reagentName) {
+                                const Exp37Range = item.Exp37Range.trim();
+                                return { ...item, ExpDate: Exp37Range }; // Removing unnecessary spaces
+                              }
+                              return item;
+                            });
+                            return newState;
+                          });
+                        }
+                      }}
+                    />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
