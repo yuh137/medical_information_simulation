@@ -146,6 +146,11 @@ const handleExpectedRangeChange = (index: number, value: string) => {
             </TableBody>
           </Table>
         </div>
+        <div className="button-container flex justify-center sm:-translate-y12 sm:space-x-68 sm:pb-6">
+          <ButtonBase className="sm:w-40 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold">
+            Save QC File
+          </ButtonBase>
+        </div>
       </div>
     </>
   );
