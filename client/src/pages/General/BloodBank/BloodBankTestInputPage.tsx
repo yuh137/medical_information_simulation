@@ -41,9 +41,10 @@ interface QCRangeElements {
 export const BloodBankTestInputPage = (props: { name: string }) => {
   const navigate = useNavigate();
   const { item } = useParams();
+  const fileName_Item = item || "default_file_name";
   const { checkSession, checkUserType, isAuthenticated, logout } = useAuth();
   const { theme } = useTheme();
-  const initialData =RR_QC;// item?.includes("Reagent") ? RR_QC: item?.includes("Two")? TWO_CELL:THREE_CELL
+  const initialData = RR_QC;// item?.includes("Reagent") ? RR_QC: item?.includes("Two")? TWO_CELL:THREE_CELL
   console.log("DataType:", item);
 
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(initialData);
@@ -52,7 +53,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
   const { register, handleSubmit } = useForm<BloodBankQC>();
   const saveQC: SubmitHandler<BloodBankQC> = async (data) => {
     const qcDataToSave: BloodBankQC = {
-      fileName: props.name,
+      fileName:fileName_Item ,
       lotNumber: data.lotNumber || "",
       expDate: data.expDate || "",
       openDate: data.openDate || "",
@@ -395,7 +396,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
             </TableBody>
           </Table>
         </div>
-        <ButtonBase disabled={!isValid} className="save-button !absolute left-1/2 -translate-x-1/2 sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold" onClick={handleSubmit(saveQC)}>
+        <ButtonBase className="save-button !absolute left-1/2 -translate-x-1/2 sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold" onClick={handleSubmit(saveQC)}>
           Save QC File
         </ButtonBase>
       </div>

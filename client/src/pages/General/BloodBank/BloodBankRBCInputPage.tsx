@@ -44,6 +44,7 @@ interface QCRangeElements {
 export const BloodBankRBCEdit = (props: { name: string }) => {
   const navigate = useNavigate();
   const { item } = useParams();
+  const fileName_Item = item || "default_file_name";
   const { checkSession, checkUserType, isAuthenticated, logout } = useAuth();
   const { theme } = useTheme();
   const initialData = item?.includes("Rh") ? rh : kell;
@@ -55,7 +56,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
   const { register, handleSubmit } = useForm<BloodBankRBC>();
   const saveQC: SubmitHandler<BloodBankRBC> = async (data) => {
     const qcDataToSave: BloodBankRBC = {
-      fileName: props.name,
+      fileName: fileName_Item,
       lotNumber: data.lotNumber || "",
       expDate: data.expDate || "",
       openDate: data.openDate || "",
@@ -270,24 +271,24 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
             </TableHeader>
             <TableBody onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                // const minInputArray = inputRefs.current.filter(item => inputRefs.current.indexOf(item) % 4 === 1);
+                const minInputArray = inputRefs.current.filter(item => inputRefs.current.indexOf(item) % 4 === 1);
 
-                // minInputArray.forEach(item => {
-                //   if (+inputRefs.current[inputRefs.current.indexOf(item) + 1].value < +item.value || item.value === '' || (inputRefs.current[inputRefs.current.indexOf(item) + 1].value === '0' && item.value === '0')) {
-                //     item.classList.remove('bg-green-500');
-                //     inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.remove('bg-green-500');
-                //     item.classList.add('bg-red-500');
-                //     inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.add('bg-red-500');
-                //   } else {
-                //     // console.log("Item at index " + inputRefs.current.indexOf(item) + " is valid")
-                //     item.classList.remove('bg-red-500');
-                //     inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.remove('bg-red-500');
-                //     item.classList.add('bg-green-500');
-                //     inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.add('bg-green-500');
-                //   }
-                // });
+                minInputArray.forEach(item => {
+                  if (+inputRefs.current[inputRefs.current.indexOf(item) + 1].value < +item.value || item.value === '' || (inputRefs.current[inputRefs.current.indexOf(item) + 1].value === '0' && item.value === '0')) {
+                    item.classList.remove('bg-green-500');
+                    inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.remove('bg-green-500');
+                    item.classList.add('bg-red-500');
+                    inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.add('bg-red-500');
+                  } else {
+                    // console.log("Item at index " + inputRefs.current.indexOf(item) + " is valid")
+                    item.classList.remove('bg-red-500');
+                    inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.remove('bg-red-500');
+                    item.classList.add('bg-green-500');
+                    inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.add('bg-green-500');
+                  }
+                });
 
-                // setIsValid(!inputRefs.current.some(item => item.classList.contains("bg-red-500")));
+                setIsValid(!inputRefs.current.some(item => item.classList.contains("bg-red-500")));
                 moveToNextInputOnEnter(e);
               }
             }}>
@@ -550,7 +551,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
             </TableBody>
           </Table>
         </div>
-        <ButtonBase disabled={!isValid} className="save-button !absolute left-1/2 -translate-x-1/2 sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold" onClick={handleSubmit(saveQC)}>
+        <ButtonBase className="save-button !absolute left-1/2 -translate-x-1/2 sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold" onClick={handleSubmit(saveQC)}>
           Save QC File
         </ButtonBase>
       </div>
