@@ -43,7 +43,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
   const { item } = useParams();
   const { checkSession, checkUserType, isAuthenticated, logout } = useAuth();
   const { theme } = useTheme();
-  const initialData = item?.includes("Reagent") ? RR_QC: item?.includes("Two")? TWO_CELL:THREE_CELL;
+  const initialData =RR_QC;// item?.includes("Reagent") ? RR_QC: item?.includes("Two")? TWO_CELL:THREE_CELL
   console.log("DataType:", item);
 
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(initialData);
@@ -74,7 +74,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
   };
 
   const inputRefs = useRef<HTMLInputElement[]>([]);
-
+  console.log("THIS IS THE INPUT REFS",inputRefs)
   function moveToNextInputOnEnter(e: React.KeyboardEvent) {
     if (e.key === 'Enter' && inputRefs.current.find(ele => ele === e.target)) {
       const currentFocus = inputRefs.current.find(ele => ele === e.target);
@@ -242,24 +242,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
             </TableHeader>
             <TableBody onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                const minInputArray = inputRefs.current.filter(item => inputRefs.current.indexOf(item) % 4 === 1);
-
-                minInputArray.forEach(item => {
-                  if (+inputRefs.current[inputRefs.current.indexOf(item) + 1].value < +item.value || item.value === '' || (inputRefs.current[inputRefs.current.indexOf(item) + 1].value === '0' && item.value === '0')) {
-                    item.classList.remove('bg-green-500');
-                    inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.remove('bg-green-500');
-                    item.classList.add('bg-red-500');
-                    inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.add('bg-red-500');
-                  } else {
-                    // console.log("Item at index " + inputRefs.current.indexOf(item) + " is valid")
-                    item.classList.remove('bg-red-500');
-                    inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.remove('bg-red-500');
-                    item.classList.add('bg-green-500');
-                    inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.add('bg-green-500');
-                  }
-                });
-
-                setIsValid(!inputRefs.current.some(item => item.classList.contains("bg-red-500")));
+                // setIsValid(!inputRefs.current.some(item => item.classList.contains("bg-red-500")));
                 moveToNextInputOnEnter(e);
               }
             }}>
@@ -289,8 +272,8 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                     <input
                       type="text"
                       ref={(el) => {
-                        if (el && inputRefs.current.length < QCElements.length * 4) {
-                          inputRefs.current[index * 4 + 2] = el;
+                        if (el && inputRefs.current.length < QCElements.length * 3) {
+                          inputRefs.current[index * 3] = el;
                         }
                       }}
                       className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
@@ -330,8 +313,8 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                     <input
                       type="text"
                       ref={el => {
-                        if (el && inputRefs.current.length < QCElements.length * 4) {
-                          inputRefs.current[index * 4 + 3] = el;
+                        if (el && inputRefs.current.length < QCElements.length * 3) {
+                          inputRefs.current[index * 3 + 1] = el;
                         }
                       }}
                       className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
@@ -354,7 +337,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                             const newState = prevState.map(item => {
                               if (item.reagentName === row.reagentName) {
                                 const expValue = item.ExpDate.trim();
-                                return { ...item, ExpDate: expValue }; // Removing unnecessary spaces
+                                return { ...item, ExpDate: expValue };
                               }
                               return item;
                             });
@@ -369,8 +352,8 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                     <input
                       type="text"
                       ref={el => {
-                        if (el && inputRefs.current.length < QCElements.length * 4) {
-                          inputRefs.current[index * 4 + 3] = el;
+                        if (el && inputRefs.current.length < QCElements.length * 3) {
+                          inputRefs.current[index * 3 + 2] = el;
                         }
                       }}
                       className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
@@ -393,7 +376,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                             const newState = prevState.map(item => {
                               if (item.reagentName === row.reagentName) {
                                 const expRangeValue = item.ExpectedRange.trim();
-                                return { ...item, ExpectedRange: expRangeValue }; // Removing unnecessary spaces
+                                return { ...item, ExpectedRange: expRangeValue }; 
                               }
                               return item;
                             });

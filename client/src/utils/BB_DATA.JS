@@ -185,10 +185,10 @@ export const rh= [
     }
 ]
 
-export const neg= [
+export const kell= [
     {
-        reagentName:"Anti-D",
-        Abbreviation:"D",
+        reagentName:"Anti-K",
+        Abbreviation:"K",
         AntiSeraLot:"",
         ExpDate:"",
         ExpImmSpinRange:"1",
@@ -197,8 +197,8 @@ export const neg= [
         ExpCheckCellsRange:"0"
     },
     {
-        reagentName:"Anti-C",
-        Abbreviation:"C",
+        reagentName:"Anti-k",
+        Abbreviation:"k",
         AntiSeraLot:"",
         ExpDate:"",
         ExpImmSpinRange:"1",
@@ -207,8 +207,8 @@ export const neg= [
         ExpCheckCellsRange:"0"
     },
     {
-        reagentName:"Anti-E",
-        Abbreviation:"E",
+        reagentName:"Anti-Kp\u1D43",
+        Abbreviation:"Kp\u1D43",
         AntiSeraLot:"",
         ExpDate:"",
         ExpImmSpinRange:"1",
@@ -217,8 +217,8 @@ export const neg= [
         ExpCheckCellsRange:"0"
     },
     {
-        reagentName:"Anti-c",
-        Abbreviation:"c",
+        reagentName:"Anti-Kp\u1D47",
+        Abbreviation:"Kp\u1D47",
         AntiSeraLot:"",
         ExpDate:"",
         ExpImmSpinRange:"1",
@@ -227,8 +227,18 @@ export const neg= [
         ExpCheckCellsRange:"0"
     },
     {
-        reagentName:"Anti-e",
-        Abbreviation:"e",
+        reagentName:"Anti-Js\u1D43",
+        Abbreviation:"Js\u1D43",
+        AntiSeraLot:"",
+        ExpDate:"",
+        ExpImmSpinRange:"1",
+        Exp37Range:"0",
+        ExpAHGRange:"0",
+        ExpCheckCellsRange:"0"
+    },
+    {
+        reagentName:"Anti-Js\u1D47",
+        Abbreviation:"Js\u1D47",
         AntiSeraLot:"",
         ExpDate:"",
         ExpImmSpinRange:"1",

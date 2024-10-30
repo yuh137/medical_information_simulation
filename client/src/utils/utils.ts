@@ -10,10 +10,10 @@ export const bloodBankQC = [
 ]
 
 export const bloodBankRBC_QC = [
-  {link:"RhPos",name:"RhPos QC",bbData:"rh"},
-  {link:"RhNeg",name:"RhNeg QC",bbData:"rh"},
-  {link:"KellPos",name:"Kell Pos QC",bbData:"neg"},
-  {link:"KellNeg",name:"Kell Neg Qc",bbData:"neg"},
+  {link:"RhPos",name:"Rh Pos QC",bbData:"rh"},
+  {link:"RhNeg",name:"Rh Neg QC",bbData:"rh"},
+  {link:"KellPos",name:"Kell Pos QC",bbData:"kell"},
+  {link:"KellNeg",name:"Kell Neg Qc",bbData:"kell"},
   {link:"KiddPos",name:"Kidd Pos QC",bbData:"kidd"},
   {link:"KiddNeg",name:"Kidd Neg QC",bbData:"kidd"},
   {link:"LewisPos",name:"Lewis Pos QC",bbData:"lewisPOS"},

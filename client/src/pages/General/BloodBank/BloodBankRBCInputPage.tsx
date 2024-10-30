@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../../components/ui/table";
-import { rh } from "../../../utils/BB_DATA";
+import { kell, rh } from "../../../utils/BB_DATA";
 import { renderSubString } from "../../../utils/utils";
 import { ButtonBase, Checkbox, Drawer } from "@mui/material";
 import { Icon } from "@iconify/react";
@@ -46,7 +46,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
   const { item } = useParams();
   const { checkSession, checkUserType, isAuthenticated, logout } = useAuth();
   const { theme } = useTheme();
-  const initialData = rh;
+  const initialData = item?.includes("Rh") ? rh : kell;
   console.log("DataType:", item);
 
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(initialData);
@@ -246,7 +246,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
 
 
         </div>
-        <div className="table-container flex flex-col mt-8 sm:w-[94svw] sm:h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA] relative">
+        <div className="table-container flex flex-col mt-5 sm:w-[94svw]  sm:mx-auto w-100svw bg-[#CFD5EA] relative">
           <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200">
             <TableHeader>
               {table.getHeaderGroups().map((group) => (
@@ -270,24 +270,24 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
             </TableHeader>
             <TableBody onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                const minInputArray = inputRefs.current.filter(item => inputRefs.current.indexOf(item) % 4 === 1);
+                // const minInputArray = inputRefs.current.filter(item => inputRefs.current.indexOf(item) % 4 === 1);
 
-                minInputArray.forEach(item => {
-                  if (+inputRefs.current[inputRefs.current.indexOf(item) + 1].value < +item.value || item.value === '' || (inputRefs.current[inputRefs.current.indexOf(item) + 1].value === '0' && item.value === '0')) {
-                    item.classList.remove('bg-green-500');
-                    inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.remove('bg-green-500');
-                    item.classList.add('bg-red-500');
-                    inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.add('bg-red-500');
-                  } else {
-                    // console.log("Item at index " + inputRefs.current.indexOf(item) + " is valid")
-                    item.classList.remove('bg-red-500');
-                    inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.remove('bg-red-500');
-                    item.classList.add('bg-green-500');
-                    inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.add('bg-green-500');
-                  }
-                });
+                // minInputArray.forEach(item => {
+                //   if (+inputRefs.current[inputRefs.current.indexOf(item) + 1].value < +item.value || item.value === '' || (inputRefs.current[inputRefs.current.indexOf(item) + 1].value === '0' && item.value === '0')) {
+                //     item.classList.remove('bg-green-500');
+                //     inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.remove('bg-green-500');
+                //     item.classList.add('bg-red-500');
+                //     inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.add('bg-red-500');
+                //   } else {
+                //     // console.log("Item at index " + inputRefs.current.indexOf(item) + " is valid")
+                //     item.classList.remove('bg-red-500');
+                //     inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.remove('bg-red-500');
+                //     item.classList.add('bg-green-500');
+                //     inputRefs.current[inputRefs.current.indexOf(item) + 1].classList.add('bg-green-500');
+                //   }
+                // });
 
-                setIsValid(!inputRefs.current.some(item => item.classList.contains("bg-red-500")));
+                // setIsValid(!inputRefs.current.some(item => item.classList.contains("bg-red-500")));
                 moveToNextInputOnEnter(e);
               }
             }}>
@@ -317,8 +317,8 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                     <input
                       type="text"
                       ref={(el) => {
-                        if (el && inputRefs.current.length < QCElements.length * 4) {
-                          inputRefs.current[index * 4 + 2] = el;
+                        if (el && inputRefs.current.length < QCElements.length * 6) {
+                          inputRefs.current[index * 6] = el;
                         }
                       }}
                       className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
@@ -354,12 +354,50 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                       }}
                     />
                   </TableCell>
+                  <TableCell className="ExpDate">
+                    <input
+                      type="text"
+                      ref={el => {
+                        if (el && inputRefs.current.length < QCElements.length * 6 ) {
+                          inputRefs.current[index * 6 + 1] = el;
+                        }
+                      }}
+                      className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
+                      value={row.ExpDate || ''}
+                      onChange={(e) => {
+                        e.preventDefault();
+                        setQCElements(prevState => {
+                          const newState = prevState.map(item => {
+                            if (item.reagentName === row.reagentName) {
+                              return { ...item, ExpDate: e.target.value };
+                            }
+                            return item;
+                          });
+                          return newState;
+                        });
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          setQCElements(prevState => {
+                            const newState = prevState.map(item => {
+                              if (item.reagentName === row.reagentName) {
+                                const newDate = item.ExpDate.trim();
+                                return { ...item, ExpDate: newDate }; // Removing unnecessary spaces
+                              }
+                              return item;
+                            });
+                            return newState;
+                          });
+                        }
+                      }}
+                    />
+                  </TableCell>
                   <TableCell className="expImmSpin">
                     <input
                       type="text"
                       ref={el => {
-                        if (el && inputRefs.current.length < QCElements.length * 4) {
-                          inputRefs.current[index * 4 + 3] = el;
+                        if (el && inputRefs.current.length < QCElements.length * 6 ) {
+                          inputRefs.current[index * 6 + 2] = el;
                         }
                       }}
                       className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
@@ -396,8 +434,8 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                     <input
                       type="text"
                       ref={el => {
-                        if (el && inputRefs.current.length < QCElements.length * 4) {
-                          inputRefs.current[index * 4 + 3] = el;
+                        if (el && inputRefs.current.length < QCElements.length * 6) {
+                          inputRefs.current[index * 6 + 3] = el;
                         }
                       }}
                       className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
@@ -420,7 +458,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                             const newState = prevState.map(item => {
                               if (item.reagentName === row.reagentName) {
                                 const Exp37Range = item.Exp37Range.trim();
-                                return { ...item, ExpDate: Exp37Range }; // Removing unnecessary spaces
+                                return { ...item, Exp37Range: Exp37Range }; // Removing unnecessary spaces
                               }
                               return item;
                             });
@@ -434,8 +472,8 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                     <input
                       type="text"
                       ref={el => {
-                        if (el && inputRefs.current.length < QCElements.length * 4) {
-                          inputRefs.current[index * 4 + 3] = el;
+                        if (el && inputRefs.current.length < QCElements.length * 6) {
+                          inputRefs.current[index * 6 + 4] = el;
                         }
                       }}
                       className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
@@ -458,7 +496,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                             const newState = prevState.map(item => {
                               if (item.reagentName === row.reagentName) {
                                 const ExpAHGRange_value = item.ExpAHGRange.trim();
-                                return { ...item, ExpDate: ExpAHGRange_value }; // Removing unnecessary spaces
+                                return { ...item, ExpAHGRange: ExpAHGRange_value }; // Removing unnecessary spaces
                               }
                               return item;
                             });
@@ -472,8 +510,8 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                     <input
                       type="text"
                       ref={el => {
-                        if (el && inputRefs.current.length < QCElements.length * 4) {
-                          inputRefs.current[index * 4 + 3] = el;
+                        if (el && inputRefs.current.length < QCElements.length * 6) {
+                          inputRefs.current[index * 6 + 5] = el;
                         }
                       }}
                       className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
@@ -496,7 +534,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                             const newState = prevState.map(item => {
                               if (item.reagentName === row.reagentName) {
                                 const ExpCheckCellsRange_value = item.ExpCheckCellsRange.trim();
-                                return { ...item, ExpDate: ExpCheckCellsRange_value }; // Removing unnecessary spaces
+                                return { ...item, ExpCheckCellsRange: ExpCheckCellsRange_value }; // Removing unnecessary spaces
                               }
                               return item;
                             });
@@ -506,44 +544,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                       }}
                     />
                   </TableCell>
-                  <TableCell className="Exp37Range">
-                    <input
-                      type="text"
-                      ref={el => {
-                        if (el && inputRefs.current.length < QCElements.length * 4) {
-                          inputRefs.current[index * 4 + 3] = el;
-                        }
-                      }}
-                      className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
-                      value={row.Exp37Range || ''}
-                      onChange={(e) => {
-                        e.preventDefault();
-                        setQCElements(prevState => {
-                          const newState = prevState.map(item => {
-                            if (item.reagentName === row.reagentName) {
-                              return { ...item, Exp37Range: e.target.value };
-                            }
-                            return item;
-                          });
-                          return newState;
-                        });
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          setQCElements(prevState => {
-                            const newState = prevState.map(item => {
-                              if (item.reagentName === row.reagentName) {
-                                const Exp37Range = item.Exp37Range.trim();
-                                return { ...item, ExpDate: Exp37Range }; // Removing unnecessary spaces
-                              }
-                              return item;
-                            });
-                            return newState;
-                          });
-                        }
-                      }}
-                    />
-                  </TableCell>
+                  
                 </TableRow>
               ))}
             </TableBody>
