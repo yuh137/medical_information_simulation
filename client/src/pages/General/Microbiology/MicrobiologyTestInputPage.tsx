@@ -69,11 +69,11 @@ const handleExpectedRangeChange = (index: number, value: string) => {
   const columns: ColumnDef<QCRangeElements, string>[] = [
     {
       accessorKey: "analyteName",
-      header: "Analyte Name",
+      header: "Analyte",
     },
     {
       accessorKey: "analyteAcronym",
-      header: "Acronym",
+      header: "Abbreviation",
     },
     {
       accessorKey: "expectedRange",

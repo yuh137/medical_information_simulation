@@ -50,6 +50,65 @@ export const INDOLE = [
   }
 ]
 
+export const MONTHLY = [
+  {
+    analyteName: "Monthly QC - Escherichia coli",
+    analyteAcronym: "E. coli",
+    agar: "BAP",
+    controlLevel: "QC Organism",
+    expectedRange: "Growth-No Contamination"
+  },
+  {
+    analyteName: "Monthly QC - Enterococcus faecalis",
+    analyteAcronym: "E. Faecalis",
+    agar: "BAP",
+    controlLevel: "QC Organism",
+    expectedRange: "Growth-No Contamination"
+  },
+  {
+    analyteName: "Monthly QC - Klebsiella pneumoniae",
+    analyteAcronym: "K. pneumoniae",
+    agar: "BAP",
+    controlLevel: "QC Organism",
+    expectedRange: "Growth-No Contamination"
+  },
+  {
+    analyteName: "Monthly QC - Pseudomonas aeruginosa",
+    analyteAcronym: "P. aeruginosa",
+    agar: "BAP",
+    controlLevel: "QC Organism",
+    expectedRange: "Growth-No Contamination"
+  },
+  {
+    analyteName: "Monthly QC - Streptococcus agalactiae",
+    analyteAcronym: "S. agalactiae",
+    agar: "BAP",
+    controlLevel: "QC Organism",
+    expectedRange: "Growth-No Contamination"
+  },
+  {
+    analyteName: "Monthly QC - Staphylococcus aureus",
+    analyteAcronym: "S. aureus",
+    agar: "BAP",
+    controlLevel: "QC Organism",
+    expectedRange: "Growth-No Contamination"
+  },
+  {
+    analyteName: "Monthly QC - Staphylococcus epidermidis",
+    analyteAcronym: "S. epidermidis",
+    agar: "BAP",
+    controlLevel: "QC Organism",
+    expectedRange: "Growth-No Contamination"
+  },
+  {
+    analyteName: "Monthly QC - Streptococcus pyogenes",
+    analyteAcronym: "S. pyogenes",
+    agar: "BAP",
+    controlLevel: "QC Organism",
+    expectedRange: "Growth-No Contamination"
+  }
+]
+
 export const MUG = [
   {
     analyteName: "MUG Negative - Klebsiella pneumoniae",
