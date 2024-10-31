@@ -50,6 +50,7 @@ export const microbiologyQcTypeList = [
   {name:"Sterility Tests", link:'steri', component: 'TestInputPage', mockData : 'CMP'},
   {name:"Staphaurex", link:'staph', component: 'TestInputPage', mockData : 'CMP'},
   {name:"Susceptibility", link:'sucept', component: 'TestInputPage', mockData : 'CMP'},
+  {name:"Weekly QC", link:'week', component: 'TestInputPage', mockData : 'CMP'},
 ]
 
 export function cn(...inputs: ClassValue[]) {
