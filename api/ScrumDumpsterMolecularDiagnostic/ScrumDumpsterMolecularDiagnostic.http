@@ -1,0 +1,6 @@
+@ScrumDumpsterMolecularDiagnostic_HostAddress = http://localhost:5223
+
+GET {{ScrumDumpsterMolecularDiagnostic_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
