@@ -1,10 +1,15 @@
+//ignore the indentation n shit its all awry rn 
+//im just adding the mock data im using at the top
+
+
+//HEME list? wtf even is this DS
 export const CBCLevelII = [
  { 
     analyteName: "White Blood Cell",
     analyteAcronym: "WBC",
     unitOfMeasure: "",
-    minLevel: "0",
-    maxLevel: "100",
+    minLevel: "",
+    maxLevel: "",
     mean: "",
     stdDevi: "",
     sdplus1: 0,
@@ -336,8 +341,8 @@ export const CBCLevelI = [
      analyteName: "White Blood Cell",
      analyteAcronym: "WBC",
      unitOfMeasure: "",
-     minLevel: "0",
-     maxLevel: "100",
+     minLevel: "",
+     maxLevel: "",
      mean: "",
      stdDevi: "",
      sdplus1: 0,
@@ -1026,8 +1031,8 @@ export const SickleCellQCScreen = [
 
 export const ErythrocyteSedimentationRate = [
   {
-   analyteName: "Retic %",
-   analyteAcronym: "MPV",
+   analyteName: "Erythrocyte Sedimentation Rate I",
+   analyteAcronym: "ESR-1",
    unitOfMeasure: "",
    minLevel: "",
    maxLevel: "",
@@ -1040,6 +1045,21 @@ export const ErythrocyteSedimentationRate = [
    sdminus2: 0,
    sdminus3: 0,
   },
+  {
+  analyteName: "Erythrocyte Sedimentation Rate II",
+  analyteAcronym: "ESR-2",
+  unitOfMeasure: "",
+  minLevel: "",
+  maxLevel: "",
+  mean: "",
+  stdDevi: "",
+  sdplus1: 0,
+  sdplus2: 0,
+  sdplus3: 0,
+  sdminus1: 0,
+  sdminus2: 0,
+  sdminus3: 0,
+ },
 ];
 
 export const CMP = [

@@ -87,15 +87,11 @@ export const HemeTestInputPage = () => {
   const [isUpdatingQCLotSuccessful, setIsUpdatingQCLotSuccessful] = useState<boolean>(false);
   const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState<boolean>(false);
   
-  
-  // 
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { item } = useParams() as { item: string };
   const loaderData = useLoaderData() as QCTemplateBatch;
   const { checkSession, checkUserType } = useAuth();
-
-
 
   const mockData = item?.includes("cbc_1")
   ? CBCLevelI
@@ -115,10 +111,8 @@ export const HemeTestInputPage = () => {
   ? ErythrocyteSedimentationRate
   : CBCLevelI;
 
-
- 
-
-  // Set the initial value for QCPanel table, taken from the database. If none exist, use the mock data.
+  
+  // Set the initial vaue for QCPanel table, taken from the database. If none exist, use the mock data.
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(loaderData ? loaderData.analytes : mockData);
 
   // State to manage what clicking the Save button does
