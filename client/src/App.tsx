@@ -161,7 +161,7 @@ function AppWithRouter() {
               },
               {
                 path: "test_input/:item",
-                element: <MicrobiologyTestInput />,
+                element: <MicrobiologyTestInput name ="Catalase"/>,
               },
               {
                 path: "order_controls",

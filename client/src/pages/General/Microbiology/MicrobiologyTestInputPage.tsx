@@ -17,12 +17,12 @@ import {
   TableHeader,
   TableRow,
 } from "../../../components/ui/table";
-import { CAT, ESC, GRAM, INDOLE, MUG, OXID, PYR, STER, STAPH } from "../../../utils/MICRO_MOCK_DATA";
+import { CAT, ESC, GRAM, INDOLE, MUG, OXID, PYR, STER, STAPH} from "../../../utils/MICRO_MOCK_DATA";
 import { renderSubString } from "../../../utils/utils";
 import { ButtonBase, Checkbox } from "@mui/material";
 import { useTheme } from "../../../context/ThemeContext";
 import addData from "../../../utils/indexedDB/addData";
-import { QCTemplateBatch } from "../../../utils/indexedDB/IDBSchema";
+import { MicroQCTemplateBatch, QCTemplateBatch } from "../../../utils/indexedDB/IDBSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { getDataByKey } from "../../../utils/indexedDB/getData";
 import NavBar from "../../../components/NavBar";
@@ -33,7 +33,7 @@ interface QCRangeElements {
   expectedRange: string;
 }
 
-export const MicrobiologyTestInputPage = () => {
+export const MicrobiologyTestInputPage = (props: { name: string }) => {
   const navigate = useNavigate();
   const {item} = useParams();
   const { checkSession, checkUserType } = useAuth();
@@ -56,8 +56,18 @@ export const MicrobiologyTestInputPage = () => {
 
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(initialData);
   const [isValid, setIsValid] = useState(false);
-  const { register, handleSubmit } = useForm<QCTemplateBatch>();
-
+  const { register, handleSubmit } = useForm<MicroQCTemplateBatch>();
+  const saveQC: SubmitHandler<MicroQCTemplateBatch> = async (data) => {
+    const qcDataToSave: MicroQCTemplateBatch = {
+        fileName: props.name,
+        lotNumber: data.lotNumber || "",
+        openDate: data.openDate || "",
+        closedDate: data.closedDate || "",
+        analytes: QCElements.map(({ analyteName, analyteAcronym, expectedRange}) => ({
+            analyteName, analyteAcronym, expectedRange
+        })),
+    };
+  };
   // Function to handle updates to the expected range field
 const handleExpectedRangeChange = (index: number, value: string) => {
   const updatedQCElements = [...QCElements];
@@ -147,10 +157,10 @@ const handleExpectedRangeChange = (index: number, value: string) => {
           </Table>
         </div>
         <div className="button-container flex justify-center sm:-translate-y12 sm:space-x-68 sm:pb-6">
-          <ButtonBase className="sm:w-40 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold">
-            Save QC File
-          </ButtonBase>
         </div>
+        <ButtonBase disabled={!isValid} className="save-button !absolute left-1/2 -translate-x-1/2 sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold" onClick={handleSubmit(saveQC)}>
+          Save QC File
+        </ButtonBase>
       </div>
     </>
   );

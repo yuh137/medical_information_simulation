@@ -45,3 +45,18 @@ export interface QCTemplateBatch {
 
     }[];
 }
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+export interface MicroQCTemplateBatch {
+    fileName: string;
+    lotNumber: string;
+    openDate: string;
+    closedDate: string;
+    analytes: {
+        analyteName: string;
+        analyteAcronym: string;
+        expectedRange: string;
+        value?: string; // Optional value field, since it might not exist initially
+
+    }[];
+}
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
