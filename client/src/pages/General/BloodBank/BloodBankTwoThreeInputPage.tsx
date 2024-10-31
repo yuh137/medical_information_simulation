@@ -17,50 +17,51 @@ import {
   TableHeader,
   TableRow,
 } from "../../../components/ui/table";
-import { CMP, RR_QC, TWO_CELL, THREE_CELL } from "../../../utils/BB_DATA";
+import { TWO_CELL, THREE_CELL } from "../../../utils/BB_DATA";
 import { renderSubString } from "../../../utils/utils";
 import { ButtonBase, Checkbox, Drawer } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useTheme } from "../../../context/ThemeContext";
 import addData from "../../../utils/indexedDB/addData";
-import { BloodBankQC } from "../../../utils/indexedDB/IDBSchema";
+import { BloodBankQC_Two__Three } from "../../../utils/indexedDB/IDBSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { getDataByKey } from "../../../utils/indexedDB/getData";
 import { deleteData } from "../../../utils/indexedDB/deleteData";
 import NavBar from "../../../components/NavBar";
 
 interface QCRangeElements {
-  reagentName: string;
-  Abbreviation: string;
-  AntiSeraLot: string;
-  ExpDate: string;
-  ExpectedRange: string;
+  reagentName:string,
+  Abbreviation:string,
+  ExpImmSpinRange:string,
+  Exp37Range:string,
+  ExpAHGRange:string,
+  ExpCheckCellsRange:string
 }
 
 
-export const BloodBankTestInputPage = (props: { name: string }) => {
+export const BloodBankTwoThreeInputPage = (props: { name: string }) => {
   const navigate = useNavigate();
   const { item } = useParams();
-  const fileName_Item = "Reagent Rack";
+  const fileName_Item = item || "default_file_name";
   const { checkSession, checkUserType, isAuthenticated, logout } = useAuth();
   const { theme } = useTheme();
-  const initialData = RR_QC;// item?.includes("Reagent") ? RR_QC: item?.includes("Two")? TWO_CELL:THREE_CELL
+  const initialData = item?.includes("Two")? TWO_CELL:THREE_CELL;// item?.includes("Reagent") ? RR_QC: 
   console.log("DataType:", item);
 
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(initialData);
   const [isValid, setIsValid] = useState<boolean>(false);
   // const [isDrawerOpen, openDrawer] = useState<boolean>(false);
-  const { register, handleSubmit } = useForm<BloodBankQC>();
-  const saveQC: SubmitHandler<BloodBankQC> = async (data) => {
-    const qcDataToSave: BloodBankQC = {
+  const { register, handleSubmit } = useForm<BloodBankQC_Two__Three>();
+  const saveQC: SubmitHandler<BloodBankQC_Two__Three> = async (data) => {
+    const qcDataToSave: BloodBankQC_Two__Three = {
       fileName:fileName_Item ,
       lotNumber: data.lotNumber || "",
       expDate: data.expDate || "",
       openDate: data.openDate || "",
       closedDate: data.closedDate || "",
       reportType: data.reportType || "",
-      reagents: QCElements.map(({ reagentName, Abbreviation, AntiSeraLot, ExpDate, ExpectedRange }) => ({
-        reagentName, Abbreviation, AntiSeraLot, ExpDate, ExpectedRange
+      reagents: QCElements.map(({ reagentName, Abbreviation, ExpImmSpinRange, Exp37Range,ExpAHGRange, ExpCheckCellsRange }) => ({
+        reagentName, Abbreviation, ExpImmSpinRange, Exp37Range, ExpAHGRange, ExpCheckCellsRange
       })),
     };
 
@@ -110,8 +111,8 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
       ),
     },
     {
-      accessorKey: "AntiSeraLot",
-      header: "Anti-Sera Lot #",
+      accessorKey: "ExpImmSpinRange",
+      header: "Expected Immediate Spin Range",
       cell: (info) => (
         <div
           dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
@@ -119,8 +120,8 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
       ),
     },
     {
-      accessorKey: "ExpDate",
-      header: "Exp. Date",
+      accessorKey: "Exp37Range",
+      header: "Expected 37 Degrees Range",
       cell: (info) => (
         <div
           dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
@@ -128,8 +129,17 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
       ),
     },
     {
-      accessorKey: "ExpectedRange",
-      header: "Expected Range",
+      accessorKey: "ExpAHGRange",
+      header: "Expected AHG Range",
+      cell: (info) => (
+        <div
+          dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
+        />
+      ),
+    },
+    {
+      accessorKey: "ExpCheckCellsRange",
+      header: "Expected Check Cells Range",
       cell: (info) => (
         <div
           dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
@@ -151,7 +161,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
 
   useEffect(() => {
     (async () => {
-      const res = await getDataByKey<BloodBankQC>("qc_store", props.name);
+      const res = await getDataByKey<BloodBankQC_Two__Three>("qc_store", props.name);
 
       if (res && typeof res !== "string") setQCElements(res.reagents)
     })()
@@ -170,7 +180,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
 
             <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
               <div className="lotnumber-label sm:text-xl font-semibold text-white">QC File Name:</div>
-              <div className="p-1 sm:w-[250px] text-center font-semibold text-white sm:w-[170px]">Reagent Rack</div>
+              <div className="p-1 sm:w-[250px] text-center font-semibold text-white sm:w-[170px]">{item}</div>
             </div>
 
             <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
@@ -219,7 +229,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
 
 
         </div>
-        <div className="table-container flex flex-col mt-8 sm:w-[94svw] sm:mx-auto w-100svw bg-[#CFD5EA] relative">
+        <div className="table-container flex flex-col mt-5 sm:w-[94svw]  sm:mx-auto w-100svw bg-[#CFD5EA] relative">
           <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200">
             <TableHeader>
               {table.getHeaderGroups().map((group) => (
@@ -269,63 +279,23 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                   <TableCell>
                     <div dangerouslySetInnerHTML={{ __html: renderSubString(row.Abbreviation) }} />
                   </TableCell>
-                  <TableCell className="anti-sera">
-                    <input
-                      type="text"
-                      ref={(el) => {
-                        if (el && inputRefs.current.length < QCElements.length * 3) {
-                          inputRefs.current[index * 3] = el;
-                        }
-                      }}
-                      className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
-                      value={row.AntiSeraLot || ''}
-                      onChange={(e) => {
-                        e.preventDefault();
-                        setQCElements((prevState) => {
-                          const newState = prevState.map((item) => {
-                            if (
-                              item.reagentName === row.reagentName &&
-                              /^\d*\.?\d*$/.test(e.target.value)
-                            ) {
-                              return { ...item, AntiSeraLot: e.target.value };
-                            } else return item;
-                          });
-                          return newState;
-                        });
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          setQCElements((prevState) => {
-                            const newState = prevState.map((item) => {
-                              if (item.reagentName === row.reagentName) {
-                                const new_level = (+item.AntiSeraLot)
-                                  .toFixed(2)
-                                  .replace(/^0+(?!\.|$)/, '');
-                                return { ...item, AntiSeraLot: new_level };
-                              } else return item;
-                            });
-                            return newState;
-                          });
-                        }
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell className="exp">
+                  
+                  <TableCell className="expImmSpin">
                     <input
                       type="text"
                       ref={el => {
-                        if (el && inputRefs.current.length < QCElements.length * 3) {
-                          inputRefs.current[index * 3 + 1] = el;
+                        if (el && inputRefs.current.length < QCElements.length * 4 ) {
+                          inputRefs.current[index * 4] = el;
                         }
                       }}
                       className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
-                      value={row.ExpDate || ''}
+                      value={row.ExpImmSpinRange || ''}
                       onChange={(e) => {
                         e.preventDefault();
                         setQCElements(prevState => {
                           const newState = prevState.map(item => {
                             if (item.reagentName === row.reagentName) {
-                              return { ...item, ExpDate: e.target.value };
+                              return { ...item, ExpImmSpinRange: e.target.value };
                             }
                             return item;
                           });
@@ -337,8 +307,8 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                           setQCElements(prevState => {
                             const newState = prevState.map(item => {
                               if (item.reagentName === row.reagentName) {
-                                const expValue = item.ExpDate.trim();
-                                return { ...item, ExpDate: expValue };
+                                const ExpImmValue = item.ExpImmSpinRange.trim();
+                                return { ...item, ExpImmSpinRange: ExpImmValue }; // Removing unnecessary spaces
                               }
                               return item;
                             });
@@ -348,23 +318,22 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                       }}
                     />
                   </TableCell>
-
-                  <TableCell className="ExpectedRange">
+                  <TableCell className="Exp37Range">
                     <input
                       type="text"
                       ref={el => {
-                        if (el && inputRefs.current.length < QCElements.length * 3) {
-                          inputRefs.current[index * 3 + 2] = el;
+                        if (el && inputRefs.current.length < QCElements.length * 4) {
+                          inputRefs.current[index * 4 + 1] = el;
                         }
                       }}
                       className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
-                      value={row.ExpectedRange || ''}
+                      value={row.Exp37Range || ''}
                       onChange={(e) => {
                         e.preventDefault();
                         setQCElements(prevState => {
                           const newState = prevState.map(item => {
                             if (item.reagentName === row.reagentName) {
-                              return { ...item, ExpectedRange: e.target.value };
+                              return { ...item, Exp37Range: e.target.value };
                             }
                             return item;
                           });
@@ -376,8 +345,84 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                           setQCElements(prevState => {
                             const newState = prevState.map(item => {
                               if (item.reagentName === row.reagentName) {
-                                const expRangeValue = item.ExpectedRange.trim();
-                                return { ...item, ExpectedRange: expRangeValue }; 
+                                const Exp37Range = item.Exp37Range.trim();
+                                return { ...item, Exp37Range: Exp37Range }; // Removing unnecessary spaces
+                              }
+                              return item;
+                            });
+                            return newState;
+                          });
+                        }
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell className="ExpAHG">
+                    <input
+                      type="text"
+                      ref={el => {
+                        if (el && inputRefs.current.length < QCElements.length * 4) {
+                          inputRefs.current[index * 4 + 2] = el;
+                        }
+                      }}
+                      className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
+                      value={row.ExpAHGRange || ''}
+                      onChange={(e) => {
+                        e.preventDefault();
+                        setQCElements(prevState => {
+                          const newState = prevState.map(item => {
+                            if (item.reagentName === row.reagentName) {
+                              return { ...item, ExpAHGRange: e.target.value };
+                            }
+                            return item;
+                          });
+                          return newState;
+                        });
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          setQCElements(prevState => {
+                            const newState = prevState.map(item => {
+                              if (item.reagentName === row.reagentName) {
+                                const ExpAHGRange_value = item.ExpAHGRange.trim();
+                                return { ...item, ExpAHGRange: ExpAHGRange_value }; // Removing unnecessary spaces
+                              }
+                              return item;
+                            });
+                            return newState;
+                          });
+                        }
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell className="ExpectedCheckCells">
+                    <input
+                      type="text"
+                      ref={el => {
+                        if (el && inputRefs.current.length < QCElements.length * 4) {
+                          inputRefs.current[index * 4 + 3] = el;
+                        }
+                      }}
+                      className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
+                      value={row.ExpCheckCellsRange || ''}
+                      onChange={(e) => {
+                        e.preventDefault();
+                        setQCElements(prevState => {
+                          const newState = prevState.map(item => {
+                            if (item.reagentName === row.reagentName) {
+                              return { ...item, ExpCheckCellsRange: e.target.value };
+                            }
+                            return item;
+                          });
+                          return newState;
+                        });
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          setQCElements(prevState => {
+                            const newState = prevState.map(item => {
+                              if (item.reagentName === row.reagentName) {
+                                const ExpCheckCellsRange_value = item.ExpCheckCellsRange.trim();
+                                return { ...item, ExpCheckCellsRange: ExpCheckCellsRange_value }; // Removing unnecessary spaces
                               }
                               return item;
                             });

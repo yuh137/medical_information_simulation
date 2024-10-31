@@ -37,6 +37,7 @@ import BloodBankOrderControls from "./pages/General/BloodBank/BloodBankOrderCont
 import BloodBankLeveyJennings from "./pages/General/BloodBank/BloodBankLeveyJennings";
 // import { ChemistryTestInputPage } from "./pages/General/Chemistry/ChemistryTestInputPage";
 import { BloodBankTestInputPage } from "./pages/General/BloodBank/BloodBankTestInputPage";
+import {BloodBankTwoThreeInputPage} from "./pages/General/BloodBank/BloodBankTwoThreeInputPage";
 import BloodBankCustomQCBuild from "./pages/General/BloodBank/BloodBankCustomQCBuild";
 import BloodBankCustomTests from "./pages/General/BloodBank/BloodBankCustomTests";
 import BloodBankQCTypeButtonsPage from "./pages/General/BloodBank/BloodBankQCTypeSelection";
@@ -225,8 +226,12 @@ function AppWithRouter() {
                 element: <BloodBankEditQC />,
               },
               {
+                path: "edit_qc/Reagent_Rack",
+                element: <BloodBankTestInputPage name="Reagent_Rack" />,
+              },
+              {
                 path: "edit_qc/:item",
-                element: <BloodBankTestInputPage name=":item" />,
+                element: <BloodBankTwoThreeInputPage name=":item" />,
               },
               {
                 path: "build_qc/:item",

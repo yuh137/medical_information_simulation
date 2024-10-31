@@ -62,6 +62,22 @@ export interface BloodBankQC {
 
     }[];
 }
+export interface BloodBankQC_Two__Three{
+    fileName: string;
+    lotNumber: string;
+    expDate: string;
+    openDate: string;
+    closedDate: string;
+    reportType:string;
+    reagents: {
+        reagentName:string,
+        Abbreviation:string,
+        ExpImmSpinRange:string,
+        Exp37Range:string,
+        ExpAHGRange:string,
+        ExpCheckCellsRange:string
+    }[];
+}
 export interface BloodBankRBC {
     fileName: string;
     lotNumber: string;
