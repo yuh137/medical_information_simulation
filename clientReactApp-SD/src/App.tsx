@@ -13,7 +13,7 @@ import InputQC_ResultsPage from './pages/InputQC_ResultsPage.jsx';
 import PatientReportsPage from './pages/PatientReportsPage.jsx';
 import QC_OrderEntriesPage from './pages/QC_OrderEntriesPage.jsx';
 import QC_Page from './pages/QC_Page.jsx';
-import QuizzesPage from './pages/QuizzesPage.jsx';
+import QuizzesPage from './pages/QuizzesPage.tsx';
 import ReferecnceFilesPage from './pages/ReferenceFilesPage.jsx';
 import ViewQCResultsPage from './pages/ViewQCResultsPage.jsx';
 import ReportSubmissionsPage from './pages/ReportSubmissionsPage.jsx';

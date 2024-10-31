@@ -66,39 +66,36 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
-  const navigate = useNavigate(); // to navigate on successful login
 
-  const handleClickOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (validateInputs()) {
-      const data = new FormData(event.currentTarget);
-      const email = data.get('email') as string;
-      const password = data.get('password') as string;
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-      try {
-        const response = await axios.post('/api/auth/signin', { email, password });
-        localStorage.setItem('authToken', response.data.token); // Store JWT token
-        navigate('/dashboard'); // Redirect after successful login
-      } catch (error) {
-        console.error('Authentication failed', error);
-        setEmailError(true);
-        setPasswordError(true);
-        setEmailErrorMessage('Invalid email or password');
-        setPasswordErrorMessage('Invalid email or password');
-      }
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    if (emailError || passwordError) {
+      event.preventDefault();
+      return;
     }
+    const data = new FormData(event.currentTarget);
+    console.log({
+      email: data.get('email'),
+      password: data.get('password'),
+    });
+    //Make API Call here!!
+    
   };
 
   const validateInputs = () => {
-    const email = (document.getElementById('email') as HTMLInputElement).value;
-    const password = (document.getElementById('password') as HTMLInputElement).value;
+    const email = document.getElementById('email') as HTMLInputElement;
+    const password = document.getElementById('password') as HTMLInputElement;
 
     let isValid = true;
 
-    if (!/\S+@\S+\.\S+/.test(email)) {
+    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
       isValid = false;
@@ -107,7 +104,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       setEmailErrorMessage('');
     }
 
-    if (password.length < 6) {
+    if (!password.value || password.value.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage('Password must be at least 6 characters long.');
       isValid = false;
@@ -123,97 +120,38 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
-        <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
+        {/* Rest of your component */}
         <Card variant="outlined">
-          <Typography
-            component="h1"
-            variant="h4"
-            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
-          >
+          <Typography component="h1" variant="h4">
             Sign in
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '100%',
-              gap: 2,
-            }}
-          >
+          <Box component="form" onSubmit={handleSubmit} noValidate>
             <FormControl>
               <FormLabel htmlFor="email">TTU HSC Email</FormLabel>
               <TextField
                 error={emailError}
                 helperText={emailErrorMessage}
                 id="email"
-                type="email"
                 name="email"
-                placeholder="your@hsc.ttu.edu"
-                autoComplete="email"
-                autoFocus
                 required
                 fullWidth
-                variant="outlined"
-                color={emailError ? 'error' : 'primary'}
-                sx={{ ariaLabel: 'email' }}
               />
             </FormControl>
             <FormControl>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <FormLabel htmlFor="password">Password</FormLabel>
-                <Link
-                  component="button"
-                  type="button"
-                  onClick={handleClickOpen}
-                  variant="body2"
-                  sx={{ alignSelf: 'baseline' }}
-                >
-                  Forgot your password?
-                </Link>
-              </Box>
+              <FormLabel htmlFor="password">Password</FormLabel>
               <TextField
                 error={passwordError}
                 helperText={passwordErrorMessage}
-                name="password"
-                placeholder="••••••"
-                type="password"
                 id="password"
-                autoComplete="current-password"
-                autoFocus
+                name="password"
+                type="password"
                 required
                 fullWidth
-                variant="outlined"
-                color={passwordError ? 'error' : 'primary'}
               />
             </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <ForgotPassword open={open} handleClose={handleClose} />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-            >
+            <Button type="submit" fullWidth variant="contained">
               Sign in
             </Button>
-            <Typography sx={{ textAlign: 'center' }}>
-              Don&apos;t have an account?{' '}
-              <span>
-                <Link
-                  href="/register"
-                  variant="body2"
-                  sx={{ alignSelf: 'center' }}
-                >
-                  Sign up
-                </Link>
-              </span>
-            </Typography>
           </Box>
         </Card>
       </SignInContainer>
