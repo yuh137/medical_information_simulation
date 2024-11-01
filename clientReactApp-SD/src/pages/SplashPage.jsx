@@ -2,12 +2,15 @@
 import { useLocation, Link } from 'react-router-dom'; // Import Link
 import './pageStyles/splashPage.css';
 import SignIn from '../components/SignIn';
+import BaseCard from '../components/BaseCard';
+import SliderComponent from '../components/SliderComponent';
+import APITest from '../components/APITest';
 
 export default function SplashPage(){
   return(
     <>
 
-        <SignIn></SignIn>
+        <APITest></APITest>
 
         <div>
           Splash Page

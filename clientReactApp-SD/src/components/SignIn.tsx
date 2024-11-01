@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Box from '@mui/material/Box';
@@ -71,25 +71,28 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (validateInputs()) {
-      const data = new FormData(event.currentTarget);
-      const email = data.get('email') as string;
-      const password = data.get('password') as string;
+  const [state, setState] = useState({
+    name: "",
+    job: ""
+  });
 
-      try {
-        const response = await axios.post('/api/auth/signin', { email, password });
-        localStorage.setItem('authToken', response.data.token); // Store JWT token
-        navigate('/dashboard'); // Redirect after successful login
-      } catch (error) {
-        console.error('Authentication failed', error);
-        setEmailError(true);
-        setPasswordError(true);
-        setEmailErrorMessage('Invalid email or password');
-        setPasswordErrorMessage('Invalid email or password');
-      }
-    }
+  const handleChange = (e: { target: { value: any; name: any; }; }) => {
+    const value = e.target.value;
+    setState({
+      ...state,
+      [e.target.name]: value
+    });
+  };
+
+  const handleSubmit = (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    const userData = {
+      name: state.name,
+      job: state.job
+    };
+    axios.post("https://reqres.in/api/users", userData).then((response) => {
+      console.log(response.status, response.data);
+    });
   };
 
   const validateInputs = () => {
