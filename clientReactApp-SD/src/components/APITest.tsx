@@ -8,7 +8,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { styled } from '@mui/material/styles';
 import AppTheme from '../shared-theme/AppTheme';
 import ColorModeSelect from '../shared-theme/ColorModeSelect';
-
+import DataTable from './table/DataTable';
+import SignUp from './SignUp';
+import AccountsDataTable from './table/AccountsDataTable';
 // Import utility functions
 import initIDB from '../util/indexedDB/initIDB';
 import { getAllDataFromStore, getDataByCompositeKey } from '../util/indexedDB/getData';
@@ -160,6 +162,7 @@ export default function APITest(props: { disableCustomTheme?: boolean }) {
               {result}
             </Typography>
           )}
+          <DataTable></DataTable>
         </Card>
       </SignInContainer>
     </AppTheme>

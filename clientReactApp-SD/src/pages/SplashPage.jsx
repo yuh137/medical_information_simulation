@@ -5,6 +5,7 @@ import SignIn from '../components/SignIn';
 import BaseCard from '../components/BaseCard';
 import SliderComponent from '../components/SliderComponent';
 import APITest from '../components/APITest';
+import SignUp from '../components/SignUp';
 
 export default function SplashPage(){
   return(

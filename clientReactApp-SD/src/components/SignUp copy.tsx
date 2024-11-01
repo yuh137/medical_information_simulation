@@ -66,14 +66,10 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
   const validateInputs = () => {
     const email = document.getElementById('email') as HTMLInputElement;
     const password = document.getElementById('password') as HTMLInputElement;
-    const username = document.getElementById('name') as HTMLInputElement;
-    const firstname = document.getElementById('firstname') as HTMLInputElement;
-    const lastname = document.getElementById('lastname') as HTMLInputElement;
-    const initials = document.getElementById('initials') as HTMLInputElement;
-  
+    const name = document.getElementById('name') as HTMLInputElement;
+
     let isValid = true;
-  
-    // Validate email
+
     if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
@@ -82,54 +78,27 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
       setEmailError(false);
       setEmailErrorMessage('');
     }
-  
-    // Validate password
-    if (!password.value || password.value.length < 8) {
+
+    if (!password.value || password.value.length < 6) {
       setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 8 characters long.');
+      setPasswordErrorMessage('Password must be at least 6 characters long.');
       isValid = false;
     } else {
       setPasswordError(false);
       setPasswordErrorMessage('');
     }
-  
-    // Validate username
-    if (!username.value || username.value.length < 1) {
+
+    if (!name.value || name.value.length < 1) {
       setNameError(true);
-      setNameErrorMessage('Username is required.');
+      setNameErrorMessage('Name is required.');
       isValid = false;
     } else {
       setNameError(false);
       setNameErrorMessage('');
     }
-  
-    // Validate firstname
-    if (!firstname.value || firstname.value.length < 1) {
-      setResultMessage("First name is required.");
-      isValid = false;
-    } else {
-      setResultMessage(null);
-    }
-  
-    // Validate lastname
-    if (!lastname.value || lastname.value.length < 1) {
-      setResultMessage("Last name is required.");
-      isValid = false;
-    } else {
-      setResultMessage(null);
-    }
-  
-    // Validate initials
-    if (!initials.value || initials.value.length < 1) {
-      setResultMessage("Initials are required.");
-      isValid = false;
-    } else {
-      setResultMessage(null);
-    }
-  
+
     return isValid;
   };
-  
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -138,12 +107,9 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
       return;
     }
 
-    const username = (document.getElementById('name') as HTMLInputElement).value;
+    const name = (document.getElementById('name') as HTMLInputElement).value;
     const email = (document.getElementById('email') as HTMLInputElement).value;
     const password = (document.getElementById('password') as HTMLInputElement).value;
-    const firstname = (document.getElementById('firstname') as HTMLInputElement).value;
-    const lastname = (document.getElementById('lastname') as HTMLInputElement).value;
-    const initials = (document.getElementById('initials') as HTMLInputElement).value;
     const roles = studentChecked ? ["Student"] : ["Admin"];
 
     setLoading(true);
@@ -152,33 +118,26 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
     try {
       // Send registration data to the API
       const response = await axios.post(`${apiUrl}/api/Auth/Register`, {
-        Username: username,
+        Username: name,
         Email: email,
         Password: password,
-        Firstname: firstname,
-        Lastname: lastname,
-        Initials: initials,
-        Roles: roles
+        Roles: roles,
       });
-  
+
       if (response.status === 200) {
         // Initialize IndexedDB and add user data
         await initIDB();
-        await addData('user_store', { Username: username, Email: email, Roles: roles });
+        await addData('user_store', { Username: name, Email: email, Roles: roles });
         setResultMessage("Registration successful and data stored in IndexedDB.");
       }
     } catch (error) {
       console.error("Error during registration:", error);
-      if (error.response && error.response.data) {
-        // If there's an error response from the API, display it
-        setResultMessage(`Registration failed: ${error.response.data}`);
-      } else {
-        setResultMessage("Failed to register. Please try again.");
-      }
+      setResultMessage("Failed to register. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
@@ -190,55 +149,19 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
           </Typography>
           <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <FormControl>
-              <FormLabel htmlFor="name">Username</FormLabel>
+              <FormLabel htmlFor="name">Full name</FormLabel>
               <TextField
-                autoComplete="username"
+                autoComplete="name"
                 name="name"
                 required
                 fullWidth
                 id="name"
-                placeholder="JonSnow123"
+                placeholder="Jon Snow"
                 error={nameError}
                 helperText={nameErrorMessage}
                 color={nameError ? 'error' : 'primary'}
               />
             </FormControl>
-            
-            <FormControl>
-              <FormLabel htmlFor="firstname">First Name</FormLabel>
-              <TextField
-                autoComplete="given-name"
-                name="firstname"
-                required
-                fullWidth
-                id="firstname"
-                placeholder="Jon"
-              />
-            </FormControl>
-            
-            <FormControl>
-              <FormLabel htmlFor="lastname">Last Name</FormLabel>
-              <TextField
-                autoComplete="family-name"
-                name="lastname"
-                required
-                fullWidth
-                id="lastname"
-                placeholder="Snow"
-              />
-            </FormControl>
-
-            <FormControl>
-              <FormLabel htmlFor="initials">Initials</FormLabel>
-              <TextField
-                name="initials"
-                required
-                fullWidth
-                id="initials"
-                placeholder="JS"
-              />
-            </FormControl>
-
             <FormControl>
               <FormLabel htmlFor="email">Email</FormLabel>
               <TextField
@@ -254,7 +177,6 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                 color={passwordError ? 'error' : 'primary'}
               />
             </FormControl>
-
             <FormControl>
               <FormLabel htmlFor="password">Password</FormLabel>
               <TextField
@@ -271,9 +193,11 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                 color={passwordError ? 'error' : 'primary'}
               />
             </FormControl>
+            <FormControlLabel
+              control={<Checkbox color="primary" />}
+              label="By registering I agree to email communications with TTU HSC"
+            />
 
-
-            {/* Role selection (Student or Faculty) */}
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Typography component="h2" variant="h6" sx={{ fontSize: '1rem', textAlign: 'left', color: 'red', marginRight: 1 }}>
                 *
@@ -300,8 +224,15 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                 {resultMessage}
               </Typography>
             )}
+            <Typography sx={{ textAlign: 'center' }}>
+              Already have an account?{' '}
+              <span>
+                <Link href="/" variant="body2" sx={{ alignSelf: 'center' }}>
+                  Sign in
+                </Link>
+              </span>
+            </Typography>
           </Box>
-
         </Card>
       </SignUpContainer>
     </AppTheme>
