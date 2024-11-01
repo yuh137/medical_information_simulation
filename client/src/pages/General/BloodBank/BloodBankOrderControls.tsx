@@ -57,9 +57,15 @@ const BloodBankOrderControls = () => {
     console.log("QC Items ordered: ", SelectedQCItems);
   };
   
-  const handleClearSelection = () => {
-    setSelectedQCItems([]);
+  const handleClearSelection = () => { 
+    let orderQCs = [...OrderControlsItems];
+    let selectedQCs = [...SelectedQCItems];
+    setSelectedQCItems([]); 
     localStorage.removeItem('selectedQCItems');
+    for (let i = 0; i < selectedQCs.length; i++){  // Push every selected QC to orderQCs
+      orderQCs.push(selectedQCs[i]);
+    }
+    setOrderControlsItems(orderQCs);
   };
   
   return (
