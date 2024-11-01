@@ -5,6 +5,9 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import AppTheme from '../shared-theme/AppTheme.tsx';
 import ColorModeSelect from '../shared-theme/ColorModeSelect.tsx';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -59,9 +62,37 @@ export default function AccountMessage(props: { disableCustomTheme?: boolean }) 
       <SignInContainer direction="column" justifyContent="space-between">
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         {/* Replace card with you*/}
-        <Card>
-          HEY HOE THIS IS THE ACCOUNT PAGE
-        </Card>
+        {/*<h1>Account Page</h1>*/}
+        <Card><h1>Account Page</h1></Card>
+        <Box
+      component="form"
+      sx={{ '& > :not(style)': { m: 1, width: '30ch' },
+      position: 'fixed',
+      top: '44%',    // 25% down from the top of the viewport
+      left: '65%',   // Centered horizontally
+      transform: 'translate(-50%, -25%)', // Centers box based on its own size
+       }}
+      noValidate
+      autoComplete="off"
+    >
+      {/*<TextField id="filled-basic" label="Enter message here." variant="filled" multiline rows={4}/>*/}
+      <TextField id="standard-basic" label="Enter message here." variant="standard" multiline rows={4}/>
+    </Box>
+    <Stack spacing={2} direction="row"
+      sx={{
+        position: 'fixed',
+        top: '50%',    // 25% down from the top of the viewport
+        left: '75%',   // Centered horizontally
+        transform: 'translate(-50%, -25%)', // Centers box based on its own size
+        //width: '200px',
+        //height: '100px',
+        //backgroundColor: 'secondary.main'
+      }}
+    >
+      {/*<Button variant="text">Text</Button>
+      <Button variant="contained">Contained</Button>*/}
+      <Button variant="outlined">SEND</Button>
+    </Stack>
       </SignInContainer>
     </AppTheme>
   );
