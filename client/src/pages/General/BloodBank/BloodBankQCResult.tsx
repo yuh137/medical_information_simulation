@@ -46,6 +46,7 @@ const BloodBankQCResult = (props: { name: string, link: string }) => {
   const fetchQCData = async () => {
     console.log("Fetching QC data...");
     const selectedQCs: string[] = JSON.parse(localStorage.getItem('selectedQCItems') || '[]');
+    console.log(selectedQCs);
     const allDataPromises = selectedQCs.map(qcName => getAllDataByFileName("qc_store", qcName));
     const results = await Promise.all(allDataPromises);
     setQcData(results.flat());

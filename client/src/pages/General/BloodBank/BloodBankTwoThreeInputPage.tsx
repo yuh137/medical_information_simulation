@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { saveToDB } from "../../../utils/indexedDB/getData";
+import { bloodBankQC } from "../../../utils/utils";
 import {
   ColumnDef,
   RowData,
@@ -39,6 +40,17 @@ interface QCRangeElements {
 }
 
 
+// This is used to get what the file name should be from the link
+function NameFromLink(link: string): string {
+  for (let item of bloodBankQC) {
+    let link_name: string = item["link"];
+    if (link_name === link) {
+      return item["name"];
+    }
+  }
+  return link;
+}
+
 export const BloodBankTwoThreeInputPage = (props: { name: string }) => {
   const navigate = useNavigate();
   const { item } = useParams();
@@ -54,7 +66,7 @@ export const BloodBankTwoThreeInputPage = (props: { name: string }) => {
   const { register, handleSubmit } = useForm<BloodBankQC_Two__Three>();
   const saveQC: SubmitHandler<BloodBankQC_Two__Three> = async (data) => {
     const qcDataToSave: BloodBankQC_Two__Three = {
-      fileName:fileName_Item ,
+      fileName: NameFromLink(fileName_Item),
       lotNumber: data.lotNumber || "",
       expDate: data.expDate || "",
       openDate: data.openDate || "",

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { saveToDB } from "../../../utils/indexedDB/getData";
+import { bloodBankRBC_QC } from "../../../utils/utils";
 import {
   ColumnDef,
   RowData,
@@ -40,6 +41,16 @@ interface QCRangeElements {
   ExpCheckCellsRange:string
 }
 
+// This is used to get what the file name should be from the link
+function NameFromLink(link: string): string {
+  for (let item of bloodBankRBC_QC) {
+    let link_name: string = item["link"];
+    if (link_name === link) {
+      return item["name"];
+    }
+  }
+  return link;
+}
 
 export const BloodBankRBCEdit = (props: { name: string }) => {
   const navigate = useNavigate();
@@ -56,7 +67,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
   const { register, handleSubmit } = useForm<BloodBankRBC>();
   const saveQC: SubmitHandler<BloodBankRBC> = async (data) => {
     const qcDataToSave: BloodBankRBC = {
-      fileName: fileName_Item,
+      fileName: NameFromLink(fileName_Item), // fileName_Item,
       lotNumber: data.lotNumber || "",
       expDate: data.expDate || "",
       openDate: data.openDate || "",
@@ -66,7 +77,6 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
     };
 //reagentName:string,
     console.log("Attempting to save:", qcDataToSave);
-
     try {
       await saveToDB("qc_store", qcDataToSave);
       console.log("Data saved successfully.");
