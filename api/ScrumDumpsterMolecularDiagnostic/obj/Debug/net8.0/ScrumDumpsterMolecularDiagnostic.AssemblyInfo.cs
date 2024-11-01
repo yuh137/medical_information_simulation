@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ScrumDumpsterMolecularDiagnostic")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c628de9acadef94030f2503761c94fbe1ec63a47")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0a702226be06b6d75bb3136b6f7c5f01ab28d736")]
 [assembly: System.Reflection.AssemblyProductAttribute("ScrumDumpsterMolecularDiagnostic")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ScrumDumpsterMolecularDiagnostic")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

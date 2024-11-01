@@ -139,12 +139,6 @@ app.UseCors("AllowSpecificOrigin"); // Apply the defined CORS policy
 app.UseAuthentication(); // Enables authentication middleware
 app.UseAuthorization(); // Enables authorization middleware
 
-// Serve static files (e.g., images) from the "Images" folder
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
-    RequestPath = "/Images"
-});
 
 // Map incoming requests to controllers
 app.MapControllers();
