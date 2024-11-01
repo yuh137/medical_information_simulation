@@ -1,7 +1,11 @@
+import AccountMessage from "../components/AccountMessage";
+
 export default function AccountPage(){
   /*if student*/
     return(
       <>
+
+          <AccountMessage></AccountMessage>
           <div>
             Account Page
           </div>

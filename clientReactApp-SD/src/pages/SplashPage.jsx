@@ -11,7 +11,7 @@ export default function SplashPage(){
   return(
     <>
 
-        <APITest></APITest>
+        <BaseCard></BaseCard>
 
         <div>
           Splash Page
