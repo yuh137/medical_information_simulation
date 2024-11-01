@@ -226,13 +226,11 @@ export const MicrobiologyTestInputPage = (props: { name: string }) => {
                     <div dangerouslySetInnerHTML={{ __html: renderSubString(row.analyteAcronym) }} />
                   </TableCell>
                   <TableCell className="expectedRange">
-      {/* Input field pre-filled with the expectedRange value */}
                     <input
                       type="text"
                       className="sm:w-70 p-1 border border-solid border-[#548235] rounded-lg text-center"
-                      value={row.expectedRange} // Sets initial value as mock data
+                      value={row.expectedRange}
                       onChange={(e) => {
-          // Updates QCElements state with new input values
                         setQCElements(prevState =>
                           prevState.map(item =>
                             item.analyteName === row.analyteName
