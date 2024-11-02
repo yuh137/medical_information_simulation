@@ -6,12 +6,6 @@ export default function AccountPage(){
       <>
 
           <AccountMessage></AccountMessage>
-          <div>
-            Account Page
-          </div>
-          <div>
-            There are case studies here
-          </div>
           
       </>
     );
