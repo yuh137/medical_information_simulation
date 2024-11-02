@@ -13,11 +13,18 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Net.NetworkInformation;
 using System.Text;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// load .env variables
+Env.Load();
 
+// store the .env variable DATABASE_CONNECTION_STRING
+string dbConnectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING");
+//string authConnectionString = Environment.GetEnvironmentVariable("AUTH_DATABASE_CONNECTION_STRING");
+
+// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -52,8 +59,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// uses the connection string in the .env file
 builder.Services.AddDbContext<MedicalInformationDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("MedicalInformationConnectionString")));
+options.UseSqlServer(dbConnectionString));
 
 builder.Services.AddDbContext<MedicalInformationAuthDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("MedicalInformationAuthConnectionString")));
@@ -130,6 +138,7 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
     RequestPath = "/Images"
 });
+
 
 app.MapControllers();
 
