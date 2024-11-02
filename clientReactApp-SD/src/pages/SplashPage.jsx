@@ -10,12 +10,7 @@ import SignUp from '../components/SignUp';
 export default function SplashPage(){
   return(
     <>
-
-        <BaseCard></BaseCard>
-
-        <div>
-          Splash Page
-        </div>
+        <SignIn></SignIn>
         <div>
           add login and button to register page. Authentit
         </div>
