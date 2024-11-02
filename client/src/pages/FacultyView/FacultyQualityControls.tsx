@@ -7,6 +7,9 @@ import { useAuth } from "../../context/AuthContext";
 
 const OC_options: { name: string, link: string }[] = testTypeLinkList.map(item => Object({ name: item.name, link: item.link + "/order_controls" }));
 const RC_options: { name: string, link: string }[] = testTypeLinkList.map(item => Object({ name: item.name, link: "admin-review_controls" }));
+// NOTE(DNAlytics): Generic Simple_Faculty_QC_Review incompatible with Molecular page specification. Routing for this link changed to /molecular/admin-review_controls
+RC_options[RC_options.findIndex(element => element.name === "molecular")] = { name: 'molecular', link: 'molecular/admin-review_controls' };
+//
 const QB_options: { name: string, link: string }[] = testTypeLinkList.map(item => Object({ name: item.name, link: item.link + "/qc_builder" }));
 
 const FacultyQualityControls = () => {

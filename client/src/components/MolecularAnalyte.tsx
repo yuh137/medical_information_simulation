@@ -1,5 +1,5 @@
 import React, { forwardRef, useState, useRef, useImperativeHandle } from "react";
-import { MolecularQCTemplateBatchAnalyte, QualitativeMolecularQCTemplateBatchAnalyte, QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte, ReportType } from "../utils/indexedDB/IDBSchema";
+import { MolecularQCTemplateBatchAnalyte, QualitativeMolecularQCTemplateBatchAnalyte, QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte, AnalyteReportType } from "../utils/indexedDB/IDBSchema";
 import { renderSubString } from "../utils/utils";
 
 
@@ -21,7 +21,7 @@ const MolecularAnalyte = forwardRef((props: AnalyteProps, ref) => {
 
 
 	let analyteFooter;
-	if (props.analyte.reportType === ReportType.Qualitative) {
+	if (props.analyte.reportType === AnalyteReportType.Qualitative) {
 		const qualitativeAnalyte = props.analyte as QualitativeMolecularQCTemplateBatchAnalyte;
 		analyteFooter = `Exp Range: ${qualitativeAnalyte.expectedRange}`;
 	}
@@ -50,7 +50,7 @@ const MolecularAnalyte = forwardRef((props: AnalyteProps, ref) => {
             if (event.key === "Enter") {
               event.preventDefault();
               const numericInputVal = (+inputValue).toFixed(2).replace(/^0+(?!\.|$)/, "");
-							if (props.analyte.reportType === ReportType.QualitativeViralLoadRange) {
+							if (props.analyte.reportType === AnalyteReportType.QualitativeViralLoadRange) {
 								const viralLoadRangeAnalyte = props.analyte as QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte;
 								newInput = (+inputValue).toFixed(2).replace(/^0+(?!\.|$)/, "");
 								if (
@@ -65,7 +65,7 @@ const MolecularAnalyte = forwardRef((props: AnalyteProps, ref) => {
 									event.currentTarget.classList.add("bg-[#00FF00]");
 								}
 							}
-							else if (props.analyte.reportType === ReportType.Qualitative) {
+							else if (props.analyte.reportType === AnalyteReportType.Qualitative) {
 							const qualitativeAnalyte = props.analyte as QualitativeMolecularQCTemplateBatchAnalyte;
 								if (((event.currentTarget.value === 'Present') && (qualitativeAnalyte.expectedRange === 'Present')) || ((event.currentTarget.value === 'Not Detected') && (qualitativeAnalyte.expectedRange === 'Not Detected'))) {
 									

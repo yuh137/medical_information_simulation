@@ -5,7 +5,7 @@ import { jsPDF } from "jspdf";
 import { Button } from '@mui/material';
 import NavBar from '../../../components/NavBar';
 import dayjs from 'dayjs';
-import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte, ReportType, QualitativeMolecularQCTemplateBatchAnalyte } from "../../../utils/indexedDB/IDBSchema";
+import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte, AnalyteReportType, QualitativeMolecularQCTemplateBatchAnalyte } from "../../../utils/indexedDB/IDBSchema";
 import { qcTypeLinkListMolecular } from "../../../utils/utils";
 import { saveToDB, removeFromDB, getMolecularQCRangeByDetails } from "../../../utils/indexedDB/getData";
 
@@ -39,7 +39,7 @@ const MolecularTestingInputPage = () => {
 			setFileDateInput(qcPanelRef.current.openDate);
       setFormTitle(capitalizeWords(lastSegment));
       const initialRanges = panelAnalytes.reduce((acc, item) => {
-				if (item.reportType === ReportType.Qualitative) {
+				if (item.reportType === AnalyteReportType.Qualitative) {
 					acc[item.analyteName] = (item as QualitativeMolecularQCTemplateBatchAnalyte).expectedRange;
 				}
 				else {
@@ -98,7 +98,7 @@ const MolecularTestingInputPage = () => {
 		qcPanelRef.current.openDate = fileDateInput;
 		for (let i = 0; i < qcPanelRef.current.analytes.length; i++) {
 			let analyte = qcPanelRef.current.analytes[i];
-			if (analyte.reportType === ReportType.Qualitative) {
+			if (analyte.reportType === AnalyteReportType.Qualitative) {
 				let concreteAnalyte = analyte as QualitativeMolecularQCTemplateBatchAnalyte;
 				concreteAnalyte.expectedRange = ranges[concreteAnalyte.analyteName];
 			}

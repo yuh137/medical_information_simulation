@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte, QualitativeMolecularQCTemplateBatchAnalyte, QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte, ReportType } from  '../../../utils/indexedDB/IDBSchema';
+import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte, QualitativeMolecularQCTemplateBatchAnalyte, QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte, AnalyteReportType, MolecularQCReport } from  '../../../utils/indexedDB/IDBSchema';
 import NavBar from '../../../components/NavBar';
 import MolecularAnalyte from '../../../components/MolecularAnalyte';
+import { AuthToken } from "../../../context/AuthContext";
 import { Button, ButtonBase, Modal } from "@mui/material";
 import { useTheme } from "../../../context/ThemeContext";
 import { saveToDB } from "../../../utils/indexedDB/getData";
@@ -16,10 +17,38 @@ const SimpleMolecularAnalyteInputPage = () => {
   const [isInputFull, setIsInputFull] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isValidManual, setIsValidManual] = useState<boolean>(false);
+  const [username, setUsername] = useState<string>('');
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const analyteNameRefs = useRef<HTMLDivElement[]>([]);
 
+  const getUsername = async () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const authToken: AuthToken = JSON.parse(token);
+      const role = authToken.roles[0];
+      try {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/${role + "s"}/${authToken.userID}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${authToken.jwtToken}`,
+          },
+        });
+
+        if (res.ok) {
+          const user = await res.json();
+          console.log(`User ${user}`);
+          setUsername(user.username);
+        }
+      } catch (e) {
+        console.error("Error fetching user data: ", e);
+      }
+    }
+  }
+
   useEffect(() => {
+    getUsername();
     const storedQCData = localStorage.getItem('selectedQCData');
     if (storedQCData) {
       setQcData(JSON.parse(storedQCData));
@@ -57,16 +86,11 @@ const SimpleMolecularAnalyteInputPage = () => {
       console.error("No QC data available to save.");
       return;
     }
-    const qcDataToSave: MolecularQCTemplateBatch = {
-      ...qcData,
-      analytes: qcData.analytes.map((analyte, index) => ({
-        ...analyte,
-        value: analyteValues[index],
-      })),
-    };
-    console.log("Data to save:", qcDataToSave);
+    const report: MolecularQCReport = { studentID: username, creationDate: new Date(), analyteInputs: qcData.analytes.map((analyte, index) => ({ analyteName: analyte.analyteName, value: analyteValues[index], comment: modalData.find(element => element.invalidIndex === index)?.comment || "" }))};
+    qcData.reports.push(report);
+    console.log("Data to save:", qcData);
     try {
-      await saveToDB("qc_store", qcDataToSave);
+      await saveToDB("qc_store", qcData);
       console.log("QC data saved successfully.");
       setAnalyteValues([]);
       setInvalidIndexes(null);
@@ -75,13 +99,13 @@ const SimpleMolecularAnalyteInputPage = () => {
     } catch (error) {
       console.error("Error saving QC data:", error);
     }
-	};
+  };
   
   const handleInputChange = (index: number, value: string, old_analyte: MolecularQCTemplateBatchAnalyte) => {
     const newValues = [...analyteValues];
     newValues[index] = value;
     setAnalyteValues(newValues);
-    if (old_analyte.reportType === ReportType.QualitativeViralLoadRange) {
+    if (old_analyte.reportType === AnalyteReportType.QualitativeViralLoadRange) {
 			const viralLoadAnalyte = old_analyte as QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte;
 			if (isNaN(parseFloat(value)) ||
       (parseFloat(value) < +viralLoadAnalyte.minLevel) ||
@@ -92,7 +116,7 @@ const SimpleMolecularAnalyteInputPage = () => {
       	newInvalidIndexes.delete(index);
       	setInvalidIndexes(newInvalidIndexes);
     	}
-    } else if (old_analyte.reportType === ReportType.Qualitative) {
+    } else if (old_analyte.reportType === AnalyteReportType.Qualitative) {
 				const qualitativeAnalyte = old_analyte as QualitativeMolecularQCTemplateBatchAnalyte;
 				if (qualitativeAnalyte.expectedRange !== value) {
 					setInvalidIndex(index);
@@ -176,9 +200,9 @@ const SimpleMolecularAnalyteInputPage = () => {
             </Button>
             <Button
               className={`sm:w-32 sm:h-[50px] !font-semibold !border !border-solid !border-[#6781AF] max-sm:w-full ${
-                isValid ? "!bg-[#DAE3F3] !text-black" : "!bg-[#AFABAB] !text-white"
+                (isValid || isValidManual) ? "!bg-[#DAE3F3] !text-black" : "!bg-[#AFABAB] !text-white"
               }`}
-             disabled={!isValid}
+             disabled={!isValid && !isValidManual}
               onClick={() => handleAcceptQC()}
             >
               Accept QC
@@ -205,7 +229,7 @@ const SimpleMolecularAnalyteInputPage = () => {
                   </div>
                 ))}
                 <ButtonBase className={`!rounded-lg sm!my-10 sm:!py-6 sm:!px-10 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] sm:w-1/2 self-center`} onClick={() => {
-                  setIsValidManual(modalData.every(item => item.comment !== ""));
+                  setIsValidManual(modalData.every(item => item.comment !== "")); 
                 }}>
                   Apply Comments
                 </ButtonBase>

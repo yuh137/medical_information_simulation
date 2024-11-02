@@ -49,16 +49,27 @@ export interface QCTemplateBatch {
     }[];
 }
 
-export enum ReportType {
+export interface MolecularQCReport {
+  studentID: string;
+  creationDate: Date;
+  analyteInputs: AnalyteInput[];
+}
+
+export interface AnalyteInput {
+  analyteName: string;
+  value: string;
+  comment: string;
+}
+
+export enum AnalyteReportType {
 	Qualitative,
 	QualitativeViralLoadRange
 }
 
 export interface MolecularQCTemplateBatchAnalyte {
-	reportType: ReportType;
+	reportType: AnalyteReportType;
 	analyteName: string;
 	analyteAcronym: string;
-	value?: string;
 }
 
 export interface QualitativeMolecularQCTemplateBatchAnalyte extends MolecularQCTemplateBatchAnalyte {
@@ -74,7 +85,8 @@ export interface QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte extend
 export interface MolecularQCTemplateBatch {
   fileName: string;
   lotNumber: string;
-	openDate: string;
+  openDate: string;
   closedDate: string;
   analytes: MolecularQCTemplateBatchAnalyte[];
+  reports: MolecularQCReport[];
 }

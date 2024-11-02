@@ -1,5 +1,6 @@
 # for vim
 *.swp
+tags
 
 # convenience script
 local_update.sh

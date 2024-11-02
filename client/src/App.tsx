@@ -228,7 +228,6 @@ function AppWithRouter() {
                 path: 'qc_results',
                 element: <MolecularQCResult />,
               },
-               
               {
                 path: "qc_builder",
                 element: <MolecularQCBuilder />,
@@ -236,6 +235,10 @@ function AppWithRouter() {
               {
                 path: 'simple-analyte-input-page',
                 element: <SimpleMolecularAnalyteInputPage/>,  
+              },
+              {
+	        path: 'admin-review_controls',
+	        element: <MolecularReviewControls />,
               },
               {
                 path: 'student-review_controls',
@@ -246,7 +249,7 @@ function AppWithRouter() {
                 element: <MolecularAnalyteSelection/>
               },
               {
-                path: 'qc_analysis',
+                path: 'qc_analysis/:encodedSelectedAnalyteId/:encodedStartDate/:encodedEndDate',
                 element: <MolecularQualitativeAnalysis/>,
               },
               {

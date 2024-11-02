@@ -4,7 +4,7 @@ import NavBar from "../../../components/NavBar";
 import { useState, useEffect } from "react";
 import { MolecularQCTemplateBatch } from  '../../../utils/indexedDB/IDBSchema';
 import { useNavigate } from "react-router-dom";
-import { getAllDataByFileName, getQCRangeByDetails } from "../../../utils/indexedDB/getData";
+import { getAllDataFromStore, getAllDataByFileName, getQCRangeByDetails } from "../../../utils/indexedDB/getData";
 import { Table, TableBody, TableCell, TableHead, TableRow, TableHeader } from "../../../components/ui/table";
 import {
   ColumnDef,
@@ -39,13 +39,11 @@ const MolecularReviewControls = () => {
   const navigate = useNavigate();
 
   const fetchQCData = async () => {
-    console.log("Fetching QC data...");
-    const selectedQCs: string[] = JSON.parse(localStorage.getItem('selectedQCItems') || '[]');
-    const allDataPromises = selectedQCs.map(qcName => getAllDataByFileName("qc_store", qcName));
-    const results = await Promise.all(allDataPromises);
-		const retyped_results = (results as unknown) as MolecularQCTemplateBatch[][]
-    setQcData(retyped_results.flat());
-    console.log("Fetched QC data:", retyped_results.flat());
+    console.log("Fetching QC Panels...");
+		const results = await getAllDataFromStore<MolecularQCTemplateBatch>('qc_store');
+    console.log("Fetched QC Panels:", results);
+		const retyped_results = (results as unknown) as MolecularQCTemplateBatch[];
+    setQcData(retyped_results);
   };
   
   useEffect(() => {
@@ -56,22 +54,10 @@ const MolecularReviewControls = () => {
   const handleSelectQC = async () => {
     if (selectedQC) {
       console.log("Selected QC:", selectedQC);  
-      try {
-        const qcData = await getQCRangeByDetails(selectedQC.fileName, selectedQC.lotNumber, selectedQC.closedDate);
-        if (qcData) {
-          console.log("QC Data found:", qcData);
-          // Save the qcData to localStorage
-          localStorage.setItem('selectedQCData', JSON.stringify(qcData));
-          // Navigate to the AnalyteInputPage
-          navigate(`/molecular/MolecularAnalyteSelection`);
-  
-        } else {
-          console.warn('No matching QC data found in the database.');
-          alert('No matching QC data found in the database.');
-        }
-      } catch (error) {
-        console.error("Error fetching QC data:", error);
-      }
+      // Save the qcData to localStorage
+      localStorage.setItem('selectedQCData', JSON.stringify(selectedQC));
+      // Navigate to the AnalyteInputPage
+      navigate(`/molecular/analyte_selection`);
     } else {
       alert('Please select a QC record to proceed.');
     }
