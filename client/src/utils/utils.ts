@@ -51,6 +51,21 @@ export const hemeTypeLinkList = [
   {name: "Erythrocyte Sedimentation Rate QC", link: 'esr_qc'},
 ]
 
+export const CoagTypeLinkList = [
+    { name: "Normal Coag", link: 'norm_coag' },
+    { name: "Abnormal Coag", link: 'abnorm_coag' },
+    { name: "Normal DIC", link: 'norm_dic' },
+    { name: "Abnormal DIC", link: 'abnorm_dic' },
+    { name: "FDP QC", link: 'fdp_qc' },
+    { name: "Factor Level QC", link: 'fact_lvl_qc' },
+    { name: "Lupus Anticoagulant Positive", link: 'lupus_anticoag_pos' },
+    { name: "Lupus Anticoagulant Negative", link: 'lupus_anticoag_neg' },
+    { name: "APCR V Screen (+)", link: 'apcr_v_screen_pos' },
+    { name: "APCR V Screen (=)", link: 'apcr_v_screen_neg' },
+    { name: "Von Willebrand Factor", link: 'von_will_fact' },
+    { name: "Anti-Xa QC", link: 'anti_xa_qc' },
+]
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -307,6 +322,7 @@ export enum Department {
   Serology,
   Blood_Bank,
   Hematology,
+  Coagulation,
   Microbiology,
   Molecular,
   Urinalysis,

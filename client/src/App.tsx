@@ -27,15 +27,18 @@ import ChemistryLeveyJennings from "./pages/General/Chemistry/ChemistryLeveyJenn
 import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInputPage";
 import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
 import { hemeTypeLinkList } from "./utils/utils";
+import { CoagTypeLinkList } from "./utils/utils";
 
 // Heme/Coag 
 import HemeCoagQCBuilderPage from "./pages/General/Hema_Coag/HemeCoagQCBuilderPage";
 import HemeEditQCPage from "./pages/General/Hema_Coag/Heme/HemeEditQCPage";
+import CoagEditQCPage from "./pages/General/Hema_Coag/Coag/CoagEditQCPage";
 // Custom QC Panels
 import CustomCreateNewPage from "./pages/General/Hema_Coag/Custom/CustomCreateNewPage";
 import CustomSelectPage from "./pages/General/Hema_Coag/Custom/CustomSelectPage";
 import HemeCoagQCTypeButtonsPage from "./pages/General/Hema_Coag/Custom/HemeCoagQCTypeSelection";
 import { HemeTestInputPage } from "./pages/General/Hema_Coag/Heme/HemeTestInputPage";
+import { CoagTestInputPage } from "./pages/General/Hema_Coag/Coag/CoagTestInputPage";
 
 function App() {
   initIDB();
@@ -199,6 +202,42 @@ function AppWithRouter() {
                       }
                       return null; 
                     }
+                  }
+                ]
+              },
+              {
+                //Coag path
+                path: 'coag',
+                children: [
+                  {
+                    path: 'coag_editQC',
+                    element: <CoagEditQCPage />,
+                  },
+                  {
+                    path: 'coag_editQC/:item',
+                    element: <CoagTestInputPage />,
+                    loader: async ({ params, request }) => {
+                      const { item } = params;
+                      const searchParams = new URL(request.url).searchParams;
+                      //const qcName = searchParams.get("name");
+                      const dep = searchParams.get("dep");
+                      const qcName = CoagTypeLinkList.find(qcType => qcType.link.includes(item ?? "undefined"))?.name;
+
+                      if (qcName) {
+                        try {
+                          const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByName?dep=${dep}&name=${qcName}`);
+
+                          if (res.ok) {
+                            return res.json();
+                          }
+                        } catch (e) {
+                          console.error("Error fetching QC data", e);
+                        }
+                      }
+
+                      return null;
+                    }
+
                   }
                 ]
               },
