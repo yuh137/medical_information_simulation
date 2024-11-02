@@ -142,7 +142,7 @@ export const MicrobiologyTestInputPage = (props: { name: string }) => {
 // ---------------------------------------------------------------------------------------------------
   return (
     <>
-      <NavBar name={`Chemistry QC Builder`} />
+      <NavBar name={`Microbiology QC Builder`} />
       <div className="basic-container relative sm:space-y-4 pb-24">
         <div className="input-container flex justify-center">
           <div className="drawer-container sm:h-full flex items-center py-4 sm:space-x-12">
