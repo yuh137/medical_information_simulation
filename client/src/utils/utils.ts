@@ -231,10 +231,17 @@ export const CustomHemeList = [
   { name: "Test Validation", acronymName: "TEST" },
   { name: "Erythrocyte Sedimentation Rate I", acronymName: "TEST" },
   { name: "Erythrocyte Sedimentation Rate II", acronymName: "TEST" },
-]
+];
 
 export const qcHemeLinkList = [
-  { name: "Red Blood Cell", link: "red_blood" },
+
+  { name: "Custom Tests", link: "heme_custom_tests" }
+  
+];
+
+
+
+/*   { name: "Red Blood Cell", link: "red_blood" },
   { name: "Hemoglobin", link: "hemoglobin"},
   { name: "Hematocrit", link: "hematocrit"},
   { name: "Mean Corp. Value", link: "mean_corp_val" },
@@ -259,7 +266,7 @@ export const qcHemeLinkList = [
   { name: "Test Validation", link: "test_validation" },
   { name: "Erythrocyte Sedimentation Rate I", link: "erythrocyte_rate_one" },
   { name: "Erythrocyte Sedimentation Rate II", link: "erythrocyte_rate_two" },
-]
+] */
 
 
 export const isTokenExpired = (token: string) => {

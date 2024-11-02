@@ -171,9 +171,7 @@ function AppWithRouter() {
                 path: 'qc_builder',
                 element: <HemeCoagQCBuilderPage />,
               },
-          
               {
-                //im just using a seperate file for all of the heme specific pages, if anyone wants to do the same just declare the folder here and its kids
                 path: 'heme',
                 children: [
                   {
@@ -186,14 +184,12 @@ function AppWithRouter() {
                     loader: async ({ params, request }) => {
                       const { item } = params;
                       const searchParams = new URL(request.url).searchParams;
-                      //const qcName = searchParams.get("name");
                       const dep = searchParams.get("dep");
                       const qcName = hemeTypeLinkList.find(qcType => qcType.link.includes(item ?? "undefined"))?.name;
-    
+          
                       if (qcName) {
                         try {
                           const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByName?dep=${dep}&name=${qcName}`);
-    
                           if (res.ok) {
                             return res.json();
                           }
@@ -201,35 +197,50 @@ function AppWithRouter() {
                           console.error("Error fetching QC data", e);
                         }
                       }
-    
                       return null; 
                     }
-
                   }
                 ]
               },
-
+              // Move the custom section here under hema_coag
               {
-                //Custom QC Builder - Carson 
-                 path: 'custom',
+                path: 'custom',
                 children: [
-                    {
-                      path: 'select_custom',
-                      element: <CustomSelectPage />,
-                    },
-                    {
-                      path: 'probably_wont_use',
-                      element: <HemeCoagQCTypeButtonsPage />,
-                    },
-                    {
-                      path: 'create_custom',
-                      element: <CustomCreateNewPage name="Custom" />,
+                  {
+                    path: 'select_custom',
+                    element: <CustomSelectPage />,
+                  },
+                  {
+                    path: 'front_page',
+                    element: <HemeCoagQCTypeButtonsPage />,
+                  },
+                  {
+                    path: 'create_custom/:item',
+                    element: <CustomCreateNewPage name="Custom" />,
+                    loader: async ({ params, request }) => {
+                      const { item } = params;
+                      const searchParams = new URL(request.url).searchParams;
+                      const dep = searchParams.get("dep");
+                      const qcName = hemeTypeLinkList.find(qcType => qcType.link.includes(item ?? "undefined"))?.name;
+          
+                      if (qcName) {
+                        try {
+                          const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByName?dep=${dep}&name=${qcName}`);
+                          if (res.ok) {
+                            return res.json();
+                          }
+                        } catch (e) {
+                          console.error("Error fetching QC data", e);
+                        }
+                      }
+                      return null; 
                     }
-
+                  },
                 ]
               }
             ]
           },
+          
 
           // MICROBIOLOGY PATHS
           {

@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../../../components/ui/table";
-import { CMP, Cardiac, Thyroid, Iron, Lipid, Liver, Drug, Hormone, Pancreatic, Diabetes, Cancer, Vitamins } from "../../../../utils/MOCK_DATA";
+import { CustomHemeCoagMock } from "../../../../utils/MOCK_DATA";
 import { renderSubString } from "../../../../utils/utils";
 import { CustomHemeList } from "../../../../utils/utils";
 import { ButtonBase, Checkbox, Drawer } from "@mui/material";
@@ -42,7 +42,6 @@ interface QCRangeElements {
   maxLevel: string;
   mean: string;
   stdDevi: string;
-  electrolyte: boolean;
 }
 
 interface CustomPanel {
@@ -67,7 +66,7 @@ const CustomCreateNewPage = (props: { name: string }) => {
 
   const { checkSession, checkUserType, isAuthenticated, logout } = useAuth();
   const { theme } = useTheme();
-  const [CustomHemeList, setQCElements] = useState<QCRangeElements[]>([]);
+  const [QCElements, setQCElements] = useState<QCRangeElements[]>([]);
   const [isValid, setIsValid] = useState<boolean>(false);
   const [isDrawerOpen, openDrawer] = useState<boolean>(false);
   const { register, handleSubmit } = useForm<QCTemplateBatch>();
@@ -81,7 +80,7 @@ const CustomCreateNewPage = (props: { name: string }) => {
     }
   
 
-    const savedAnalyte = CustomHemeList.map(
+    const savedAnalyte = QCElements.map(
       ({
         analyteName,
         analyteAcronym,
@@ -116,7 +115,7 @@ const CustomCreateNewPage = (props: { name: string }) => {
 
   const saveToCustomList = () => {
     const customTests: CustomPanel[] = JSON.parse(localStorage.getItem("customTests") || "[]");
-    const selectedTests = CustomHemeList.filter(item => SelectedQCItems.includes(item.analyteName));
+    const selectedTests = QCElements.filter(item => SelectedQCItems.includes(item.analyteName));
 
     let ongoingPanel = customTests.find(panel => panel.isOngoing);
 
@@ -427,8 +426,8 @@ const CustomCreateNewPage = (props: { name: string }) => {
   ];
     const table = useReactTable({
       data: useMemo(
-        () => CustomHemeList.filter((item) => SelectedQCItems.includes(item.analyteName)),
-        [CustomHemeList, SelectedQCItems]
+        () => QCElements.filter((item) => SelectedQCItems.includes(item.analyteName)),
+        [QCElements, SelectedQCItems]
       ),
       columns,
       getCoreRowModel: getCoreRowModel(),
@@ -439,6 +438,15 @@ const CustomCreateNewPage = (props: { name: string }) => {
         navigate("/unauthorized");
       }
     }, []);
+
+    useEffect(() => {
+      switch (item) {
+        case "heme_custom_tests":
+          setOrderControlsItems(CustomHemeList.map((item) => item.name));
+          setDraggableItems(CustomHemeList);
+          setQCElements(CustomHemeCoagMock);
+        }
+      }, [item]);
 
 
   const onDragEnd = (result: DropResult) => {

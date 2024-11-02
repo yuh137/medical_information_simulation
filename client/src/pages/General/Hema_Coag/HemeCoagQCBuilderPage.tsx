@@ -17,7 +17,7 @@ const HemeCoagQCBuilderPage = () => {
 
   const Custom_options = [
     { name: "Select Custom Built", link: "hema_coag/custom/select_custom" },
-    { name: "Create New Custom", link: "hema_coag/custom/create_custom" },
+    { name: "Create New Custom", link: "hema_coag/custom/front_page" },
   ];
 
   return (
