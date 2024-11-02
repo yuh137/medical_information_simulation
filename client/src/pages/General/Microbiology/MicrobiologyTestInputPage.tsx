@@ -54,7 +54,8 @@ export const MicrobiologyTestInputPage = (props: { name: string }) => {
 
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(initialData);
   const [isValid, setIsValid] = useState(false);
-  const { register, handleSubmit } = useForm<MicroQCTemplateBatch>();
+  const { register, handleSubmit, formState: {errors} } = useForm<MicroQCTemplateBatch>();
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const saveQC: SubmitHandler<MicroQCTemplateBatch> = async (data) => {
     const qcDataToSave: MicroQCTemplateBatch = {
         fileName: props.name,
@@ -71,8 +72,10 @@ export const MicrobiologyTestInputPage = (props: { name: string }) => {
     try {
         await saveToDB("qc_store", qcDataToSave);
         console.log("Data saved successfully.");
+        setSuccessMessage("Saved to Results in Progress!");
     } catch (error) {
         console.error("Failed to save data:", error);
+        setSuccessMessage(null);
     }
   };
 
@@ -145,20 +148,57 @@ export const MicrobiologyTestInputPage = (props: { name: string }) => {
           <div className="drawer-container sm:h-full flex items-center py-4 sm:space-x-12">
             <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
               <div className="lotnumber-label sm:text-xl font-semibold text-white">QC Lot Number</div>
-              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center" {...register("lotNumber")}/>
+              <input 
+                type="text" 
+                className={`p-1 rounded-lg border border-solid ${errors.lotNumber ? 'border-red-500' : 'border-[#548235]'} sm:w-[250px] text-center`}
+                {...register("lotNumber", {
+                  required: "Lot number is required",
+                  pattern: {
+                    value: /^\d+$/,
+                    message: "Please input a number",
+                  },
+                })}
+              />
+              {errors.lotNumber && (
+                <span className="text-red-500 sm:text-l font-semibold">{errors.lotNumber.message}</span>
+              )}
             </div>
-            <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
-              <div className="lotnumber-label sm:text-xl font-semibold text-white">Expiration Date</div>
-              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center" {...register("closedDate")}/>
-            </div>
+
             <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
               <div className="lotnumber-label sm:text-xl font-semibold text-white">Open Date</div>
-              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center"/>
+              <input
+                type="text"
+                className={`p-1 rounded-lg border border-solid ${errors.openDate ? 'border-red-500' : 'border-[#548235]'} sm:w-[250px] text-center`}
+                {...register("openDate", {
+                  required: "Open date is required",
+                  pattern: {
+                    value: /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/,
+                    message: "Invalid date mm/dd/yyyy"
+                  }
+                })}
+              />
+              {errors.openDate && (
+                <span className="text-red-500 sm:text-l font-semibold">{errors.openDate.message}</span>
+              )}
             </div>
+
             <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
-              <div className="lotnumber-label sm:text-xl font-semibold text-white">Close Date</div>
-              <input type="text" className="p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center"/>
-            </div>            
+              <div className="lotnumber-label sm:text-xl font-semibold text-white">Expiration Date</div>
+              <input 
+                type="text" 
+                className={`p-1 rounded-lg border border-solid ${errors.closedDate ? 'border-red-500' : 'border-[#548235]'} sm:w-[250px] text-center`}
+                {...register("closedDate", {
+                  required: "Expiration date is required",
+                  pattern: {
+                    value: /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/,
+                    message: "Invalid date mm/dd/yyyy"
+                  }
+                })}
+              />
+              {errors.closedDate && (
+                <span className="text-red-500 sm:text-l font-semibold">{errors.closedDate.message}</span>
+              )}
+            </div>
           </div>
         </div>
         <div className="table-container flex flex-col mt-8 sm:w-[80svw] sm:h-[20svh] sm:mx-auto w-100svw bg-[#FFFFFF] relative">
@@ -246,9 +286,14 @@ export const MicrobiologyTestInputPage = (props: { name: string }) => {
             </TableBody>
           </Table>
         </div>
-        <ButtonBase disabled={!isValid} className="save-button !absolute left-1/2 -translate-x-1/2 sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold" onClick={handleSubmit(saveQC)}>
+        <ButtonBase disabled={!isValid} className="save-button left-1/2 -translate-x-1/2 sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold" onClick={handleSubmit(saveQC)}>
           Save QC File
         </ButtonBase>
+        {successMessage && (
+          <div className="success-message text-green-600 text-center mt-20">
+            {successMessage}
+          </div>
+        )}
         </div>
     </>
   );
