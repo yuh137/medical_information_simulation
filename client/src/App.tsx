@@ -34,7 +34,7 @@ import HemeEditQCPage from "./pages/General/Hema_Coag/Heme/HemeEditQCPage";
 // Custom QC Panels
 import CustomCreateNewPage from "./pages/General/Hema_Coag/Custom/CustomCreateNewPage";
 import CustomSelectPage from "./pages/General/Hema_Coag/Custom/CustomSelectPage";
-import CustomHemeCoagQCTypeButtonsPage from "./pages/General/Hema_Coag/Custom/HemeCoagQCTypeSelection";
+import HemeCoagQCTypeButtonsPage from "./pages/General/Hema_Coag/Custom/HemeCoagQCTypeSelection";
 import { HemeTestInputPage } from "./pages/General/Hema_Coag/Heme/HemeTestInputPage";
 
 function App() {
@@ -217,12 +217,16 @@ function AppWithRouter() {
                       path: 'select_custom',
                       element: <CustomSelectPage />,
                     },
-
+                    {
+                      path: 'probably_wont_use',
+                      element: <HemeCoagQCTypeButtonsPage />,
+                    },
                     {
                       path: 'create_custom',
-                      element: <CustomHemeCoagQCTypeButtonsPage />,
+                      element: <CustomCreateNewPage name="Custom" />,
                     }
-                 ]
+
+                ]
               }
             ]
           },
@@ -281,3 +285,5 @@ function AppWithRouter() {
 }
 
 export default App;
+
+

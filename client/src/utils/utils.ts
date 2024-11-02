@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { jwtDecode } from "jwt-decode";
-import { Component, MonitorCheck } from "lucide-react";
+import { Component, Link, MonitorCheck } from "lucide-react";
 import { twMerge } from "tailwind-merge"
 
 export const testTypeLinkList = [
@@ -202,6 +202,63 @@ export const CBCLevelIList = [
   { name: "Absolute Basophil Ct", acronymName: "BA #" },
   { name: "Platelet Count", acronymName: "PLT" },
   { name: "Mean Platelet Volume", acronymName: "MPV" },
+]
+
+export const CustomHemeList = [
+  { name: "White Blood Cell", acronymName: "WBC"},
+  { name: "Red Blood Cell", acronymName: "RBC" },
+  { name: "Hemoglobin", acronymName: "Hgb"},
+  { name: "Hematocrit", acronymName: "Hct"},
+  { name: "Mean Corp. Value", acronymName: "MCV" },
+  { name: "Mean Corp. Hgb", acronymName: "MCH"  },
+  { name: "Mean Corp. Hgb Conc.", acronymName: "MCHC" },
+  { name: "RBC Distribution Width", acronymName: "RDW" },
+  { name: "Neutrophil %", acronymName: "NE" },
+  { name: "Absolute Neutrophil Ct", acronymName: "NE #" },
+  { name: "Lymphocyte %", acronymName: "LY" },
+  { name: "Absolute Lymphocyte Ct", acronymName: "LY #" },
+  { name: "Monocyte %", acronymName: "MO" },
+  { name: "Absolute Monocyte Ct", acronymName: "MO #" },
+  { name: "Eosinophil %", acronymName: "EO" },
+  { name: "Absoltue Eosinophil Ct", acronymName: "EO #" },
+  { name: "Basophil %", acronymName: "BA" },
+  { name: "Absolute Basophil Ct", acronymName: "BA #" },
+  { name: "Platelet Count", acronymName: "PLT" },
+  { name: "Mean Platelet Volume", acronymName: "MPV" },
+  { name: "Retic %", acronymName: "RET %" },
+  { name: "Sickle Cell Positive", acronymName: "TEST" },
+  { name: "Sickle Cell Negative", acronymName: "TEST" },
+  { name: "Test Validation", acronymName: "TEST" },
+  { name: "Erythrocyte Sedimentation Rate I", acronymName: "TEST" },
+  { name: "Erythrocyte Sedimentation Rate II", acronymName: "TEST" },
+]
+
+export const qcHemeLinkList = [
+  { name: "Red Blood Cell", link: "red_blood" },
+  { name: "Hemoglobin", link: "hemoglobin"},
+  { name: "Hematocrit", link: "hematocrit"},
+  { name: "Mean Corp. Value", link: "mean_corp_val" },
+  { name: "Mean Corp. Hgb", link: "mean_corp_hgb"  },
+  { name: "Mean Corp. Hgb Conc.", link: "mean_corp_hgb_conc" },
+  { name: "RBC Distribution Width", link: "rbc_dist" },
+  { name: "Neutrophil %", link: "neutrophil" },
+  { name: "Absolute Neutrophil Ct", link: "abs_neutrophil_ct" },
+  { name: "Lymphocyte %", link: "lymphocyte_perc" },
+  { name: "Absolute Lymphocyte Ct", link: "abs_lymphocyte_ct" },
+  { name: "Monocyte %", link: "monocyte_perc" },
+  { name: "Absolute Monocyte Ct", link: "absolute_monocyte_ct" },
+  { name: "Eosinophil %", link: "eosinophil_perc" },
+  { name: "Absoltue Eosinophil Ct", link: "absoltue_eosinophil_ct" },
+  { name: "Basophil %", link: "basophil_perc" },
+  { name: "Absolute Basophil Ct", link: "absolute_Basophil_ct" },
+  { name: "Platelet Count", link: "platelet_count" },
+  { name: "Mean Platelet Volume", link: "mean_platelet_volume" },
+  { name: "Retic %", link: "retic_perc" },
+  { name: "Sickle Cell Positive", link: "sickle_cell_pos" },
+  { name: "Sickle Cell Negative", link: "sickle_cell_neg" },
+  { name: "Test Validation", link: "test_validation" },
+  { name: "Erythrocyte Sedimentation Rate I", link: "erythrocyte_rate_one" },
+  { name: "Erythrocyte Sedimentation Rate II", link: "erythrocyte_rate_two" },
 ]
 
 
