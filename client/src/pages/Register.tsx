@@ -135,7 +135,6 @@ const Register = () => {
                   );
                 }}
               >
-                <img src="/student-icon.png" alt="" />
                 <div className="self-center font-semibold text-xl">Student</div>
               </div>
               <div
@@ -150,7 +149,6 @@ const Register = () => {
                   );
                 }}
               >
-                <img src="/admin-icon.png" alt="" />
                 <div className="self-center font-semibold text-xl">Faculty</div>
               </div>
             </div>

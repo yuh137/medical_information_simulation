@@ -155,7 +155,6 @@ const Login = () => {
                 );
               }}
             >
-              <img src="/student-icon.png" alt="" />
               <div className="self-center font-semibold text-xl">Student</div>
             </div>
             <div
@@ -170,7 +169,6 @@ const Login = () => {
                 );
               }}
             >
-              <img src="/admin-icon.png" alt="" />
               <div className="self-center font-semibold text-xl">Faculty</div>
             </div>
           </div>
