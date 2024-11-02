@@ -20,7 +20,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   gap: theme.spacing(2),
   margin: '10px',
   [theme.breakpoints.up('sm')]: {
-    maxWidth: '450px',
+    maxWidth: '1920px',
   },
   backgroundColor: theme.palette.mode === 'dark' ? '#457A64' : '#607D8B', // Darker steel blue for dark mode, lighter steel blue for light mode
   boxShadow:
@@ -58,7 +58,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 const StyledFormBox = styled(Box)(({ theme }) => ({
   '& > :not(style)': {
     margin: theme.spacing(1),
-    width: '30ch',
+    width: '80%',
   },
   //position: 'fixed',
   //top: '44%',       // 44% down from the top of the viewport
@@ -93,7 +93,7 @@ const StyledGridItem = styled(Grid)(({ theme }) => ({
   color: theme.palette.text.primary,
 }));
 
-// The main BasicGrid component
+/* The main BasicGrid component
 const BasicGrid = () => (
   <StyledGridContainer>
     <Grid container spacing={2}>
@@ -112,6 +112,7 @@ const BasicGrid = () => (
     </Grid>
   </StyledGridContainer>
 );
+*/
 export default function AccountMessage(props: { disableCustomTheme?: boolean }) {
   return (
     <AppTheme {...props}>
@@ -122,13 +123,59 @@ export default function AccountMessage(props: { disableCustomTheme?: boolean }) 
         {/*<h1>Account Page</h1>*/}
         <Card><h1>Account Page</h1>
           <div>
-            <div class = "column">
+            <Grid container spacing={4}>
+              <Grid size = {6}>
+                <Item>
+                <div>
+                  <h3>Basic Info</h3>
+                  First Name: <br />
+                  Last Name: <br />
+                  E-mail: <br />
+                  Department, Section: <br />
+                </div>
+                </Item>
+              </Grid>
+              <Grid size = {6}>
+                <Item>
+                  <div>
+                <br />
+                <h3>User Settings</h3>
+                Privacy Info? <br />
+                <br />
+                <Button variant="outlined">SIGN OUT</Button> <br />
+                <br />
+                Send message to Professor: <br />
+                <StyledFormBox component="form" noValidate autoComplete="off">
+                <TextField
+                  id="standard-basic"
+                  label="professor@email.com"
+                  variant="standard"
+                />
+                </StyledFormBox> 
+                <StyledFormBox component="form" noValidate autoComplete="off">
+                <TextField
+                  id="standard-basic"
+                  label="Enter message here."
+                  variant="standard"
+                  multiline
+                  rows={4}
+                />
+                </StyledFormBox> <br />
+                <Button variant="outlined">SEND</Button> <br />
+                </div>
+                </Item>
+              </Grid>
+            </Grid>
+            {/*
+            <div>
             <h3>Basic Info</h3>
             First Name: <br />
             Last Name: <br />
             E-mail: <br />
+            Department, Section: <br />
             </div>
-            <div class = "column">
+            <div>
+            <br />
             <h3>User Settings</h3>
             Privacy Info? <br />
             <br />
@@ -141,9 +188,9 @@ export default function AccountMessage(props: { disableCustomTheme?: boolean }) 
               label="professor@email.com"
               variant="standard"
               /*multiline
-              rows={1}*/
+              rows={1}
             />
-            </StyledFormBox> <br />
+            </StyledFormBox> 
             <StyledFormBox component="form" noValidate autoComplete="off">
             <TextField
               id="standard-basic"
@@ -154,7 +201,7 @@ export default function AccountMessage(props: { disableCustomTheme?: boolean }) 
             />
             </StyledFormBox> <br />
             <Button variant="outlined">SEND</Button> <br />
-            </div>
+            </div>*/}
           </div>
         </Card>
       </SignInContainer>
