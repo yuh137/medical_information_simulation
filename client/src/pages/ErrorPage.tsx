@@ -8,7 +8,7 @@ const ErrorPage = () => {
     return (
         <>
             <div>Error 404</div>
-            <button className={`border border-solid border-[${theme.primaryBorderColor}] bg-[${theme.primaryColor}] px-4 py-3 text-white font-semibold text-xl rounded-xl transition delay-75 hover:scale-110`} onClick={() => navigate("/login")}>Go back to login page</button>
+            <button className={`border border-solid border-[${theme.primaryBorderColor}] bg-[${theme.primaryColor}] px-4 py-3 text-white font-semibold text-xl rounded-xl transition delay-75 hover:scale-110`} onClick={() => navigate("/login")}>Go back to home page</button>
         </>
     )
 }
