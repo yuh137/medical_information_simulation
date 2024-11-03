@@ -1,0 +1,98 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/joshuaduplaa/Fall2024/Capstone/medical_information_simulation/api/ScrumDumpsterMolecularDiagnostic/ScrumDumpsterMolecularDiagnostic.csproj": {}
+  },
+  "projects": {
+    "/home/joshuaduplaa/Fall2024/Capstone/medical_information_simulation/api/ScrumDumpsterMolecularDiagnostic/ScrumDumpsterMolecularDiagnostic.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/joshuaduplaa/Fall2024/Capstone/medical_information_simulation/api/ScrumDumpsterMolecularDiagnostic/ScrumDumpsterMolecularDiagnostic.csproj",
+        "projectName": "ScrumDumpsterMolecularDiagnostic",
+        "projectPath": "/home/joshuaduplaa/Fall2024/Capstone/medical_information_simulation/api/ScrumDumpsterMolecularDiagnostic/ScrumDumpsterMolecularDiagnostic.csproj",
+        "packagesPath": "/home/joshuaduplaa/.nuget/packages/",
+        "outputPath": "/home/joshuaduplaa/Fall2024/Capstone/medical_information_simulation/api/ScrumDumpsterMolecularDiagnostic/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/joshuaduplaa/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.10, )"
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.10, )"
+            },
+            "Microsoft.AspNetCore.OpenApi": {
+              "target": "Package",
+              "version": "[8.0.4, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.10, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.10, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.4.0, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[8.1.2, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/8.0.104/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
