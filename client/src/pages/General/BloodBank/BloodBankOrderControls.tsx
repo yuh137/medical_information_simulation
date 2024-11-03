@@ -73,7 +73,7 @@ const BloodBankOrderControls = () => {
       <DragDropContext onDragEnd={onDragEnd}>
         <NavBar name="Blood Bank Order Controls" />
         <div
-          className="flex justify-center gap-8 items-start"
+          className="flex justify-center gap-8 items-start mt-3"
           style={{ minWidth: "100svw", minHeight: "90svh" }}
         >
           <Droppable droppableId="Order_QC" type="group">
@@ -123,10 +123,10 @@ const BloodBankOrderControls = () => {
           </Droppable>
           <div className="control-buttons flex flex-col gap-4">
             <ButtonBase onClick= {handleClearSelection}>
-                <div className="!rounded-lg sm:w-36 sm:h-14 !bg-[#dae3f3] !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[2px] font-semibold text-lg leading-[3.5rem]">Clear Selection</div>
+                <div className="!rounded-lg sm:w-36 sm:h-14 !bg-[#dae3f3] !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[2px] font-semibold text-md leading-[3.5rem]">Clear Selection</div>
             </ButtonBase>
             <ButtonBase onClick={handleOrderSelectedQC}>
-                <div className="!rounded-lg sm:w-36 sm:h-14 !bg-[#dae3f3] !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[2px] font-semibold text-lg leading-[3.5rem]">Order Selected QC</div>
+                <div className="!rounded-lg sm:w-36 sm:h-14 !bg-[#dae3f3] !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[2px] font-semibold text-md leading-[3.5rem]">Order Selected QC</div>
             </ButtonBase>
           </div>
           <Droppable droppableId="QC_Selected" type="group">
