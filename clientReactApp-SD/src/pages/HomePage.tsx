@@ -1,6 +1,5 @@
 
 import './pageStyles/homePage.css';
-import HomeTable from '../components/table/DataTable';
 import HomePageComponents from '../components/homepage_Components/HomePageComponents';
 
 

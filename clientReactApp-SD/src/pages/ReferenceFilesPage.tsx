@@ -80,7 +80,7 @@ const rows = [
 
 const paginationModel = { page: 0, pageSize: 5 };
 
-export default function QuizzesPage(props: { disableCustomTheme?: boolean }) {
+export default function ReferenceFilesPage(props: { disableCustomTheme?: boolean }) {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
