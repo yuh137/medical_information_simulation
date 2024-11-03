@@ -2,9 +2,6 @@
 import { useLocation, Link } from 'react-router-dom'; // Import Link
 import './pageStyles/splashPage.css';
 import SignIn from '../components/SignIn';
-import BaseCard from '../components/BaseCard';
-import SliderComponent from '../components/SliderComponent';
-import SignUp from '../components/SignUp';
 
 export default function SplashPage(){
   return(

@@ -10,6 +10,7 @@ import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import QCSubmitButton from './Buttons/QCSubmitButton';
+import SubmittedQCTable from './SubmittedQCTable';
 
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
@@ -103,8 +104,14 @@ export default function InputQCValuesTable(props: { disableCustomTheme?: boolean
     // Log current items for debugging
     console.log("Submitting QC values:", items);
   
-    // Save selected quality controls with their input values to localStorage
-    localStorage.setItem('submittedQualityControls', JSON.stringify(items));
+    // Retrieve existing submitted quality controls array from localStorage
+    const existingSubmissions = JSON.parse(localStorage.getItem('SubmittedQCs') || '[]');
+  
+    // Append the current submission to the existing array
+    const updatedSubmissions = [...existingSubmissions, items];
+  
+    // Save the updated array back to localStorage
+    localStorage.setItem('SubmittedQCs', JSON.stringify(updatedSubmissions));
   
     // Provide feedback to the user (can be a toast, alert, or UI update)
     alert('Quality Control values submitted successfully.');
@@ -112,6 +119,7 @@ export default function InputQCValuesTable(props: { disableCustomTheme?: boolean
     // Optionally reset the form
     setItems(getItemsFromLocalStorage());
   };
+  
 
   return (
     <AppTheme {...props}>
@@ -145,6 +153,9 @@ export default function InputQCValuesTable(props: { disableCustomTheme?: boolean
           </Grid>
           <Grid container direction="column" sx={{ alignItems: 'center' }}>
             <QCSubmitButton onSubmitQC={handleSubmitQC} />
+          </Grid>
+          <Grid container direction="column" sx={{ alignItems: 'center' }}>
+            <SubmittedQCTable></SubmittedQCTable>
           </Grid>
         </Paper>
       </DataTableContainer>
