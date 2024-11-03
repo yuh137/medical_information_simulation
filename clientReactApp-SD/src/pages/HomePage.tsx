@@ -1,13 +1,13 @@
 
 import './pageStyles/homePage.css';
 import HomeTable from '../components/table/DataTable';
+import HomePageComponents from '../components/homepage_Components/HomePageComponents';
 
 
 export default function HomePage(){
   return(
     <>
-        <h1>HOME PAGE</h1>
-        <HomeTable></HomeTable>
+        <HomePageComponents></HomePageComponents>
         <div>
             Home page
         </div>
