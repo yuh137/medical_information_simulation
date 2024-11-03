@@ -128,10 +128,10 @@ export default function AccountMessage(props: { disableCustomTheme?: boolean }) 
                 <Item>
                 <div>
                   <h3>Basic Info</h3>
-                  First Name: <br />
-                  Last Name: <br />
-                  E-mail: <br />
-                  Department, Section: <br />
+                  First Name: Bob<br />
+                  Last Name: Carter<br />
+                  E-mail: bob.carter@example.com<br />
+                  Department, Section: NULL<br />
                 </div>
                 </Item>
               </Grid>

@@ -5,8 +5,8 @@ export default function AccountPage() {
   /*if student*/
   return (
     <>
-      {/* <AccountMessage></AccountMessage> */}
-      <APIT></APIT>
+      <AccountMessage></AccountMessage>
+      {/*<APIT></APIT>*/}
     </>
   );
   /*if statement to return Staff page*/
