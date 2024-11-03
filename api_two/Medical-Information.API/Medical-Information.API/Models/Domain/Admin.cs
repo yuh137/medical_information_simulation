@@ -11,6 +11,7 @@ namespace Medical_Information.API.Models.Domain
         public string? Firstname { get; set; }
         public string? Lastname { get; set; }
         public string Initials { get; set; }
+        public string Password { get; set; }
         public ICollection<Student> Students { get; set; } = [];
     }
 }

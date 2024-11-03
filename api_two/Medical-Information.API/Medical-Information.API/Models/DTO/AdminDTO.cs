@@ -9,6 +9,7 @@ namespace Medical_Information.API.Models.DTO
         public string? Lastname { get; set; }
         public string Email { get; set; }
         public string Initials { get; set; }
+        public string Password { get; set; }
         public ICollection<Student> Students { get; set; } = [];
     }
 }

@@ -22,7 +22,7 @@ Env.Load();
 
 // store the .env variable DATABASE_CONNECTION_STRING
 string dbConnectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING");
-//string authConnectionString = Environment.GetEnvironmentVariable("AUTH_DATABASE_CONNECTION_STRING");
+string authConnectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION_AUTH_STRING");
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -64,7 +64,7 @@ builder.Services.AddDbContext<MedicalInformationDbContext>(options =>
 options.UseSqlServer(dbConnectionString));
 
 builder.Services.AddDbContext<MedicalInformationAuthDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("MedicalInformationAuthConnectionString")));
+options.UseSqlServer(authConnectionString));
 
 builder.Services.AddCors(options =>
 {
