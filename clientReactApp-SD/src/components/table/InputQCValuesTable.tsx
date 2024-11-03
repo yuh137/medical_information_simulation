@@ -107,8 +107,12 @@ export default function InputQCValuesTable(props: { disableCustomTheme?: boolean
     // Retrieve existing submitted quality controls array from localStorage
     const existingSubmissions = JSON.parse(localStorage.getItem('SubmittedQCs') || '[]');
   
-    // Append the current submission to the existing array
-    const updatedSubmissions = [...existingSubmissions, items];
+    // Append the current submission to the existing array with date and time
+    const submissionWithTimestamp = {
+      items,
+      submittedAt: new Date().toISOString(),
+    };
+    const updatedSubmissions = [...existingSubmissions, submissionWithTimestamp];
   
     // Save the updated array back to localStorage
     localStorage.setItem('SubmittedQCs', JSON.stringify(updatedSubmissions));
@@ -119,7 +123,6 @@ export default function InputQCValuesTable(props: { disableCustomTheme?: boolean
     // Optionally reset the form
     setItems(getItemsFromLocalStorage());
   };
-  
 
   return (
     <AppTheme {...props}>

@@ -10,9 +10,11 @@ import DialogActions from '@mui/material/DialogActions';
 
 const submissionColumns: GridColDef[] = [
   { field: 'id', headerName: 'QC ID', width: 150 },
+  { field: 'issuer', headerName: 'Student Name', width: 150 },
+  { field: 'submittedAt', headerName: 'Submitted At', width: 300 },
   {
     field: 'view',
-    headerName: 'Actions',
+    headerName: 'Details',
     width: 150,
     renderCell: (params) => (
       <Button variant="contained" onClick={() => params.row.onView(params.row.id)}>
@@ -33,8 +35,10 @@ const getSubmittedItemsFromLocalStorage = () => {
   const storedSubmissions = localStorage.getItem('SubmittedQCs');
   if (storedSubmissions) {
     try {
-      return JSON.parse(storedSubmissions).map((submission: any[], index: number) => ({
+      return JSON.parse(storedSubmissions).map((submission: any, index: number) => ({
         id: index + 1, // Use index as unique ID for each submission batch
+        issuer: submission.issuer || 'Unknown',
+        submittedAt: new Date(submission.submittedAt).toLocaleString(),
         onView: (id: number) => {}, // Placeholder for view handler
       }));
     } catch (error) {
@@ -52,7 +56,7 @@ export default function SubmittedQCTable() {
 
   const handleViewDetails = (id: number) => {
     const storedSubmissions = JSON.parse(localStorage.getItem('SubmittedQCs') || '[]');
-    setDetails(storedSubmissions[id - 1] || []);
+    setDetails(storedSubmissions[id - 1]?.items || []);
     setOpenDialog(true);
   };
 
