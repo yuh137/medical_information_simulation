@@ -1,4 +1,4 @@
-import ReportSubTable from "../components/table/REport_Submission_Table";
+import ReportSubTable from "../components/table/Report_Submission_Table";
 export default function ReportSubmissionsPage(){
   /*if statement student*/
     return(

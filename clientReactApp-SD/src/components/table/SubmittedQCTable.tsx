@@ -9,7 +9,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 
 const submissionColumns: GridColDef[] = [
-  { field: 'id', headerName: 'Submission ID', width: 150 },
+  { field: 'id', headerName: 'QC ID', width: 150 },
   {
     field: 'view',
     headerName: 'Actions',
@@ -28,6 +28,7 @@ const detailColumns: GridColDef[] = [
   { field: 'value', headerName: 'Value', width: 200 },
 ];
 
+//CHANGE FROM LOCAL STORAGE TO THE DATABASE WHEN READY
 const getSubmittedItemsFromLocalStorage = () => {
   const storedSubmissions = localStorage.getItem('SubmittedQCs');
   if (storedSubmissions) {
