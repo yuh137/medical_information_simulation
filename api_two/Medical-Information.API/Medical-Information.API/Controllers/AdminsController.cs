@@ -23,7 +23,7 @@ namespace Medical_Information.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllAdmins([FromQuery] string? filterQuery)
         {
             var adminsDomain = await adminRepository.GetAdminAsync(filterQuery);
