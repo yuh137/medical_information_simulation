@@ -1,7 +1,9 @@
+import ReportSubTable from "../components/table/REport_Submission_Table";
 export default function ReportSubmissionsPage(){
   /*if statement student*/
     return(
       <>
+          <ReportSubTable></ReportSubTable>
           <div>
             Report submission page for students
           </div>

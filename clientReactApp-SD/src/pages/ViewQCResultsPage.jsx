@@ -1,6 +1,9 @@
+import QCReviewTable from "../components/table/QC_Review_Table";
+
 export default function ViewQCResultsPage(){
     return(
       <>
+          <QCReviewTable></QCReviewTable>
           <div>
             View QC Results Page
           </div>
