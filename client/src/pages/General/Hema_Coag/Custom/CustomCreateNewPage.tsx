@@ -506,7 +506,52 @@ const CustomCreateNewPage = (props: { name: string }) => {
                 >
                   <div className="order-qc-container h-[80svh] rounded-lg bg-[#dae3f3] px-6 py-4 flex flex-col gap-4">
                     <div className="order-qc-title sm:text-4xl text-center font-semibold">
-                      Order QC
+                      Hematology
+                    </div>
+                    <div className="order-qc-items-container flex flex-col gap-4 overflow-scroll">
+                      {OrderControlsItems.length === 0 ? (
+                        <div className="text-center">All items selected</div>
+                      ) : (
+                        <></>
+                      )}
+                      {OrderControlsItems.map((item, index) => (
+                        <Draggable draggableId={`${item}`} index={index} key={`${item}`}>
+                          {(drag_provided) => (
+                            <div
+                              ref={drag_provided.innerRef}
+                              {...drag_provided.dragHandleProps}
+                              {...drag_provided.draggableProps}
+                              className="order-qc-item bg-[#47669C] p-4 rounded-md text-white"
+                              onClick={() => {
+                                let orderQCs = [...OrderControlsItems];
+                                let selectedQCs = [...SelectedQCItems];
+                                const [deletedQC] = orderQCs.splice(index, 1);
+                                selectedQCs.push(deletedQC);
+                                setOrderControlsItems(orderQCs);
+                                setSelectedQCItems(selectedQCs);
+                              }}
+                            >
+                              {item}
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {drop_provided.placeholder}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </Droppable>
+            <Droppable droppableId="Order_QC" type="group">
+              {(drop_provided) => (
+                <div
+                  ref={drop_provided.innerRef}
+                  {...drop_provided.droppableProps}
+                  className="w-[20%] h-[80svh]"
+                >
+                  <div className="order-qc-container h-[80svh] rounded-lg bg-[#dae3f3] px-6 py-4 flex flex-col gap-4">
+                    <div className="order-qc-title sm:text-4xl text-center font-semibold">
+                      Coagulation
                     </div>
                     <div className="order-qc-items-container flex flex-col gap-4 overflow-scroll">
                       {OrderControlsItems.length === 0 ? (
