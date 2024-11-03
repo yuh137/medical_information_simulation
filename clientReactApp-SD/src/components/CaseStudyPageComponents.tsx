@@ -8,11 +8,11 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-import AppTheme from '../../shared-theme/AppTheme';
-import ColorModeSelect from '../../shared-theme/ColorModeSelect';
+import AppTheme from '../shared-theme/AppTheme';
+import ColorModeSelect from '../shared-theme/ColorModeSelect';
 import Container from '@mui/material/Container';
-import MainContent from './components/MainContent';
-import Latest from './components/Latest';
+import MainContent from './homepage_Components/components/MainContent';
+import Latest from './homepage_Components/components/Latest';
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -61,7 +61,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 
 
 
-export default function HomePageComponents(props: { disableCustomTheme?: boolean }) {
+export default function CaseStudyPageComponents(props: { disableCustomTheme?: boolean }) {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
