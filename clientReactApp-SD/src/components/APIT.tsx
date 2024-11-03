@@ -12,8 +12,8 @@ import MuiAlert from "@mui/material/Alert";
 
 interface Student {
   studentID: string;
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
 }
 
 const APIT: React.FC = () => {
@@ -24,6 +24,7 @@ const APIT: React.FC = () => {
     const fetchStudents = async () => {
       try {
         const response = await axios.get("http://localhost:5029/api/students");
+        console.log(response.data);
         setStudents(response.data);
       } catch (err) {
         setError(true);
@@ -53,7 +54,7 @@ const APIT: React.FC = () => {
           {students.map((student) => (
             <ListItem key={student.studentID} divider>
               <ListItemText
-                primary={`${student.firstName} ${student.lastName}`}
+                primary={`${student.firstname} ${student.lastname}`}
                 secondary={`ID: ${student.studentID}`}
               />
             </ListItem>
