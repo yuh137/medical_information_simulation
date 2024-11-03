@@ -248,9 +248,38 @@ export const CustomHemeList = [
   { name: "Erythrocyte Sedimentation Rate II", acronymName: "TEST" },
 ];
 
+export const CustomCoagList = [
+  { name: "TEST", acronymName: "WBC"},
+  { name: "Red Blood Cell", acronymName: "RBC" },
+  { name: "Hemoglobin", acronymName: "Hgb"},
+  { name: "Hematocrit", acronymName: "Hct"},
+  { name: "Mean Corp. Value", acronymName: "MCV" },
+  { name: "Mean Corp. Hgb", acronymName: "MCH"  },
+  { name: "Mean Corp. Hgb Conc.", acronymName: "MCHC" },
+  { name: "RBC Distribution Width", acronymName: "RDW" },
+  { name: "Neutrophil %", acronymName: "NE" },
+  { name: "Absolute Neutrophil Ct", acronymName: "NE #" },
+  { name: "Lymphocyte %", acronymName: "LY" },
+  { name: "Absolute Lymphocyte Ct", acronymName: "LY #" },
+  { name: "Monocyte %", acronymName: "MO" },
+  { name: "Absolute Monocyte Ct", acronymName: "MO #" },
+  { name: "Eosinophil %", acronymName: "EO" },
+  { name: "Absoltue Eosinophil Ct", acronymName: "EO #" },
+  { name: "Basophil %", acronymName: "BA" },
+  { name: "Absolute Basophil Ct", acronymName: "BA #" },
+  { name: "Platelet Count", acronymName: "PLT" },
+  { name: "Mean Platelet Volume", acronymName: "MPV" },
+  { name: "Retic %", acronymName: "RET %" },
+  { name: "Sickle Cell Positive", acronymName: "TEST" },
+  { name: "Sickle Cell Negative", acronymName: "TEST" },
+  { name: "Test Validation", acronymName: "TEST" },
+  { name: "Erythrocyte Sedimentation Rate I", acronymName: "TEST" },
+  { name: "Erythrocyte Sedimentation Rate II", acronymName: "TEST" },
+];
+
 export const qcHemeLinkList = [
 
-  { name: "Custom Tests", link: "heme_custom_tests" }
+  { name: "Custom Tests", link: "heme_custom_tests" },
   
 ];
 
