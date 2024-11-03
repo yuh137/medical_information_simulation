@@ -1,19 +1,12 @@
-
-
-
-
-
 import * as React from 'react';
+import FinishedQCTable from '../components/table/FinishedQCTable.tsx';
 import CssBaseline from '@mui/material/CssBaseline';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-import AppTheme from '../../shared-theme/AppTheme';
-import ColorModeSelect from '../../shared-theme/ColorModeSelect';
-import Container from '@mui/material/Container';
-import MainContent from './components/MainContent';
-import Latest from './components/Latest';
-
+import AppTheme from '../shared-theme/AppTheme.tsx';
+import ColorModeSelect from '../shared-theme/ColorModeSelect.tsx';
+import { Typography } from '@mui/material';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -61,20 +54,14 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 
 
 
-
-export default function PatientsReportsComponents(props: { disableCustomTheme?: boolean }) {
+// @ts-ignore
+export default function BaseCard(props: { disableCustomTheme?: boolean }) {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
-          <Container
-            maxWidth="lg"
-            component="main"
-            sx={{ display: 'flex', flexDirection: 'column', my: 16, gap: 4, margin: '0px', border: '0px', padding: '0px' }}
-          >
-            <MainContent />
-          </Container>
+        <FinishedQCTable></FinishedQCTable>
       </SignInContainer>
     </AppTheme>
   );
