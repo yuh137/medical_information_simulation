@@ -306,7 +306,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       );
 
       if (userFound) {
-        navigate("/dashboard");
+        navigate("/home");
       } else {
         setLoginError(true);
       }
@@ -419,4 +419,3 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     </AppTheme>
   );
 }
-
