@@ -29,7 +29,7 @@ export default function ButtonAppBar() {
         <ThemeProvider theme={logoTheme}>
         <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
           {/*Change below with MIS logo*/}
-          <img className='MIS_Logo' src="https://i.imgur.com/dhjCDSv.png"/>
+          <img className='MIS_Logo' src="https://i.imgur.com/qdxXVgn.png"/>
 
         </Link>
         </ThemeProvider>
