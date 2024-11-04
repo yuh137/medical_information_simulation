@@ -6,6 +6,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { CredentialsInput } from './Register';
 import { AuthToken, UserType, useAuth } from '../context/AuthContext';
 import { getAdminByName, getStudentByName } from '../utils/indexedDB/getData';
+import { Icon } from "@iconify/react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,6 +15,8 @@ const Login = () => {
   const [loginOptions, setLoginOptions] = useState<"Admin" | "Student" | string>("");
   const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState(false);
   const { register, handleSubmit } = useForm<CredentialsInput>();
+  const [isErrorNotiOpen, setErrorNotiOpen] = useState(false); // For error button
+  const [errorMsg, setErrorMsg] = useState("TBD")
   const onSubmit: SubmitHandler<CredentialsInput> = async (data) => {
     if (loginOptions === "Admin") {
       // const check = await getAdminByName(data.username);
@@ -42,9 +45,14 @@ const Login = () => {
           console.log(localStorage.getItem('token'));
           navigate('/admin-home');
           // if ()
+        } else {
+          setErrorMsg("Invalid username or password");
+          setErrorNotiOpen(true);
         }
       } catch(e) {
         console.log("Error in login ", e);
+        setErrorMsg("Login failed");
+        setErrorNotiOpen(true);
       }
 
       // if (check && check.password === data.password) {
@@ -92,7 +100,9 @@ const Login = () => {
       // } else {
       //   console.log(new Error("Invalid credentials"));
       // }
-    } else {
+    } else {  // No faculty or student
+      setErrorMsg("Please select an account type");
+      setErrorNotiOpen(true);
       console.log(new Error("Invalid type"));
     }
   }
@@ -113,7 +123,12 @@ const Login = () => {
 
   useEffect(() => {
     checkCurrentSession();
-  }, [])
+    if (isErrorNotiOpen) {
+      setTimeout(() => {
+        setErrorNotiOpen(false);
+      }, 4000);
+    }
+  }, [isErrorNotiOpen])
 
   useEffect(() => {
     //If notification is enabled, disable after 3 seconds
@@ -131,14 +146,14 @@ const Login = () => {
         style={{ minHeight: "100svh", minWidth: "100svw" }}
       >
         <div
-          className="title w-fit mb-0 mx-auto mt-28 bg-[#3a6cc6] px-12"
+          className="title w-fit mb-0 mx-auto mt-8 bg-[#3a6cc6] px-12"
           style={{ maxWidth: "66.67%" }}
         >
           <div className="title-text font-bold text-ellipsis drop-shadow-xl text-white text-center text-3xl sm:text-6xl py-10">
             Medical Information Simulations
           </div>
         </div>
-        <div className="login-form sm:w-1/4 w-3/4 mb-0 mt-24 mx-auto bg-slate-100 flex flex-col gap-4 py-10 px-4 bg-local bg-cover">
+        <div className="login-form sm:w-1/4 w-3/4 mb-0 mt-8 mx-auto bg-slate-100 flex flex-col gap-4 py-10 px-4 bg-local bg-cover">
           <div className="login-title text-center text-3xl font-semibold">
             Choose Account Type
           </div>
@@ -146,7 +161,7 @@ const Login = () => {
             <div
               className={`student-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${
                 loginOptions === "Student"
-                  ? "border-2 !border-[#2f5597]"
+                  ? "border-4 !border-[#2f5597]"
                   : ""
               }`}
               onClick={() => {
@@ -161,7 +176,7 @@ const Login = () => {
             <div
               className={`admin-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${
                 loginOptions === "Admin"
-                  ? "border-2 !border-[#2f5597]"
+                  ? "border-4 !border-[#2f5597]"
                   : ""
               }`}
               onClick={() => {
@@ -202,13 +217,46 @@ const Login = () => {
           </form>
           <div className="register-link">
             <Link to="/register">
-              <div className="register-link-text text-center text-blue-400 ">
+              <div className="register-link-text text-center text-blue-400 text-xl">
                 Don't have an account?
               </div>
             </Link>
           </div>
         </div>
       </div>
+      <Backdrop  // ERROR BACKDROP
+        open={isErrorNotiOpen}
+        
+        onClick={() => {
+          setErrorNotiOpen(false);
+        }}
+      >
+        <div className="bg-white rounded-xl">
+          <div className="sm:p-8 flex flex-col sm:gap-4">
+            <div className="text-center text-gray-600 text-xl font-semibold">
+              { 
+                <>
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                    <div>{errorMsg}</div>
+                  </div>
+                </>
+              }
+            </div>
+            <div className="flex justify-center">
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setErrorNotiOpen(false);
+                }}
+                className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+              >
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Backdrop>
     </>
   )
 }

@@ -34,11 +34,11 @@ const Register = () => {
     if (isFeedbackNotiOpen) {
       setTimeout(() => {
         setFeedbackNotiOpen(false);
-      }, 3000);
+      }, 4000);
     } else if (isErrorNotiOpen) {
       setTimeout(() => {
         setErrorNotiOpen(false);
-      }, 3000);
+      }, 4000);
     }
   }, [isFeedbackNotiOpen, isErrorNotiOpen])
   
@@ -151,14 +151,14 @@ const Register = () => {
         style={{ minHeight: "100svh", minWidth: "100svw" }}
       >
         <div
-          className="title w-fit mb-0 mx-auto mt-28 bg-[#3a6cc6] px-12"
+          className="title w-fit mb-0 mx-auto mt-8 bg-[#3a6cc6] px-12"
           style={{ maxWidth: "66.67%" }}
         >
           <div className="title-text font-bold text-ellipsis drop-shadow-xl text-white text-center text-3xl sm:text-6xl py-10">
             Medical Information Simulations
           </div>
         </div>
-        <div className="register-form sm:w-1/4 w-3/4 mb-0 mt-24 mx-auto bg-slate-100 flex flex-col gap-4 py-10 px-4 bg-local bg-cover">
+        <div className="register-form sm:w-1/4 w-3/4 mb-0 mt-8 mx-auto bg-slate-100 flex flex-col gap-4 py-10 px-4 bg-local bg-cover">
           <div className="register-form-container rounded-xl sm:space-y-2">
             <div className="login-title text-center sm:text-2xl font-semibold">
               Choose Account Type
@@ -167,7 +167,7 @@ const Register = () => {
               <div
                 className={`student-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${
                   registerOptions === "Student"
-                    ? "border-2 !border-[#2f5597]"
+                    ? "border-4 !border-[#2f5597]"
                     : ""
                 }`}
                 onClick={() => {
@@ -182,7 +182,7 @@ const Register = () => {
               <div
                 className={`admin-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${
                   registerOptions === "Admin"
-                    ? "border-2 !border-[#2f5597]"
+                    ? "border-4 !border-[#2f5597]"
                     : ""
                 }`}
                 onClick={() => {
@@ -247,7 +247,7 @@ const Register = () => {
           </div>
           <div className="login-link">
             <Link to="/login">
-              <div className="login-link-text text-center text-blue-400 ">
+              <div className="login-link-text text-center text-blue-400 text-xl">
                 Already have an account?
               </div>
             </Link>

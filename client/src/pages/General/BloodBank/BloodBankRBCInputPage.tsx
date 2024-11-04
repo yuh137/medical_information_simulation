@@ -28,6 +28,7 @@ import { BloodBankRBC } from "../../../utils/indexedDB/IDBSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { getDataByKey } from "../../../utils/indexedDB/getData";
 import { deleteData } from "../../../utils/indexedDB/deleteData";
+import { Button, Backdrop } from "@mui/material";
 import NavBar from "../../../components/NavBar";
 
 interface QCRangeElements {
@@ -59,6 +60,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
   const { checkSession, checkUserType, isAuthenticated, logout } = useAuth();
   const { theme } = useTheme();
   const initialData = item?.includes("Rh") ? rh : kell;
+  const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState(false);  // For feedback
   console.log("DataType:", item);
 
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(initialData);
@@ -185,6 +187,11 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
   useEffect(() => {
     if (!checkSession() || checkUserType() === "Student") { }
     // navigate("/unauthorized");
+    if (isFeedbackNotiOpen) {
+      setTimeout(() => {
+        setFeedbackNotiOpen(false);
+      }, 4000);
+    } 
   }, []);
 
   useEffect(() => {
@@ -561,10 +568,48 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
             </TableBody>
           </Table>
         </div>
-        <ButtonBase className="save-button !absolute left-1/2 -translate-x-1/2 sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold" onClick={handleSubmit(saveQC)}>
-          Save QC File
+        <ButtonBase
+         className="save-button !absolute left-1/2 -translate-x-1/2 sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold" 
+         onClick={() => {
+          setFeedbackNotiOpen(true);
+          handleSubmit(saveQC);}
+        }>
+        Save QC File
         </ButtonBase>
       </div>
+      <Backdrop // OK BACKDROP
+        open={isFeedbackNotiOpen}
+        
+        onClick={() => {
+          setFeedbackNotiOpen(false);
+        }}
+      >
+        <div className="bg-white rounded-xl">
+          <div className="sm:p-8 flex flex-col sm:gap-4">
+            <div className="text-center text-gray-600 text-xl font-semibold">
+              { 
+                <>
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon icon="clarity:success-standard-line" className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                    <div>Successfully Saved</div>
+                  </div>
+                </>
+              }
+            </div>
+            <div className="flex justify-center">
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setFeedbackNotiOpen(false);
+                }}
+                className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+              >
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Backdrop>
     </>
   );
 };
