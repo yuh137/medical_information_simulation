@@ -23,7 +23,11 @@ const Register = () => {
   const [registerOptions, setRegisterOptions] = useState<
     "Admin" | "Student" | string
   >("");
+
+  // let error_msg: string = "";  // Errors for Error Notification
   const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState(false);
+  const [isErrorNotiOpen, setErrorNotiOpen] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("TBD")
 
   useEffect(() => {
     //If notification is enabled, disable after 3 seconds
@@ -31,8 +35,12 @@ const Register = () => {
       setTimeout(() => {
         setFeedbackNotiOpen(false);
       }, 3000);
+    } else if (isErrorNotiOpen) {
+      setTimeout(() => {
+        setErrorNotiOpen(false);
+      }, 3000);
     }
-  }, [isFeedbackNotiOpen])
+  }, [isFeedbackNotiOpen, isErrorNotiOpen])
   
   const { register, handleSubmit } = useForm<CredentialsInput>();
 
@@ -91,15 +99,30 @@ const Register = () => {
         if (res.ok) {
           setFeedbackNotiOpen(true);
           console.log(res.text());
-        } else {
+        } else {  // Res not OK
           console.error("Failed to register");
+          try {
+            const resJSON = await res.json();  // Check if this is a JSON formatted error
+            console.log(resJSON);
+            if (resJSON["errors"]) {
+              let resKeys = Object.keys(resJSON["errors"]);
+              if (resKeys[0] == "Password") {  // Password error
+                console.log(resJSON["errors"]["Password"]);
+                setErrorMsg(resJSON["errors"]["Password"][0]);
+              }
+            } 
+          } catch {
+            setErrorMsg("This account already exists");
+          }
+          setErrorNotiOpen(true);
         }
       } catch (e) {
         console.error("Failed to register", e);
       }
     } else {
       console.log(new Error("Invalid type"));
-      setFeedbackNotiOpen(true);
+      setErrorMsg("Please select an account type")
+      setErrorNotiOpen(true);
     }
   };
 
@@ -213,7 +236,7 @@ const Register = () => {
           </div>
         </div>
       </div>
-      <Backdrop
+      <Backdrop // OK BACKDROP
         open={isFeedbackNotiOpen}
         
         onClick={() => {
@@ -223,33 +246,53 @@ const Register = () => {
         <div className="bg-white rounded-xl">
           <div className="sm:p-8 flex flex-col sm:gap-4">
             <div className="text-center text-gray-600 text-xl font-semibold">
-              { isFeedbackNotiOpen ? (
+              { 
                 <>
                   <div className="flex flex-col sm:gap-y-2">
                     <Icon icon="clarity:success-standard-line" className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
                     <div>Registration Successful</div>
                   </div>
                 </>
-              ) : (
-                <>
-                  <div className="flex flex-col sm:gap-y-2">
-                    <Icon icon="clarity:success-standard-line" className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
-                    <div>Registration Successful</div>
-                  </div>
-                </>
-                // <>
-                //   <div className="flex flex-col sm:gap-y-2">
-                //    <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
-                //    <div>Error Occurred</div>
-                //  </div>
-                // </>
-              ) }
+              }
             </div>
             <div className="flex justify-center">
               <Button
                 variant="contained"
                 onClick={() => {
                   setFeedbackNotiOpen(false);
+                }}
+                className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+              >
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Backdrop>
+      <Backdrop  // ERROR BACKDROP
+        open={isErrorNotiOpen}
+        
+        onClick={() => {
+          setErrorNotiOpen(false);
+        }}
+      >
+        <div className="bg-white rounded-xl">
+          <div className="sm:p-8 flex flex-col sm:gap-4">
+            <div className="text-center text-gray-600 text-xl font-semibold">
+              { 
+                <>
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                    <div>{errorMsg}</div>
+                  </div>
+                </>
+              }
+            </div>
+            <div className="flex justify-center">
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setErrorNotiOpen(false);
                 }}
                 className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
               >
