@@ -233,10 +233,16 @@ const Register = () => {
               ) : (
                 <>
                   <div className="flex flex-col sm:gap-y-2">
-                    <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
-                    <div>Error Occurred</div>
+                    <Icon icon="clarity:success-standard-line" className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                    <div>Registration Successful</div>
                   </div>
                 </>
+                // <>
+                //   <div className="flex flex-col sm:gap-y-2">
+                //    <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                //    <div>Error Occurred</div>
+                //  </div>
+                // </>
               ) }
             </div>
             <div className="flex justify-center">

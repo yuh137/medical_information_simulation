@@ -32,7 +32,7 @@ const columns: ColumnDef<QCItem>[] = [
     cell: info => info.getValue(),
   },
   {
-    accessorKey: "closedDate",
+    accessorKey: "expDate",
     header: () => <span>Expiration Date</span>,
     cell: info => info.getValue(),
   },
