@@ -122,7 +122,7 @@ export default function DrawerToggle() {
       <Divider />
       <List>
         <ListItem disablePadding>
-          <ListItemButton onClick={() => handleNavigation('/error')}>
+          <ListItemButton onClick={() => handleNavigation('/')}>
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>
