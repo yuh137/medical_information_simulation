@@ -156,47 +156,56 @@ export default function MainContent() {
           }}
         >
           <Link to="/orderentries" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <Chip onClick={handleClick} size="medium" label="In Progress QC Reports" />
-          <Chip
-            onClick={handleClick}
-            size="medium"
-            label="Finished QC Reports"
-            sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
-            }}
-          />
+            <Chip onClick={handleClick} size="medium" label="In Progress QC Reports" />
           </Link>
-          {/* This button changes to Student Report Submissions Page if user is faculty */}
-          <Link to="/orderentries" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <Chip
-            onClick={handleClick}
-            size="medium"
-            label="Report Submission Page"
-            sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
-            }}
-          />
+
+          <Link to="/viewqcresults" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Chip
+              onClick={handleClick}
+              size="medium"
+              label="Finished QC Reports"
+              sx={{
+                backgroundColor: 'transparent',
+                border: 'none',
+              }}
+            />
           </Link>
-          <Chip
-            onClick={handleClick}
-            size="medium"
-            label="Grade Book"
-            sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
-            }}
-          />
-          <Chip
-            onClick={handleClick}
-            size="medium"
-            label="Patient Reports"
-            sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
-            }}
-          />
+
+          <Link to="/reportsubmissions" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Chip
+              onClick={handleClick}
+              size="medium"
+              label="Report Submission Page"
+              sx={{
+                backgroundColor: 'transparent',
+                border: 'none',
+              }}
+            />
+          </Link>
+
+          <Link to="/gradebook" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Chip
+              onClick={handleClick}
+              size="medium"
+              label="Grade Book"
+              sx={{
+                backgroundColor: 'transparent',
+                border: 'none',
+              }}
+            />
+          </Link>
+
+          <Link to="/patientreports" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Chip
+              onClick={handleClick}
+              size="medium"
+              label="Patient Reports"
+              sx={{
+                backgroundColor: 'transparent',
+                border: 'none',
+              }}
+            />
+          </Link>
         </Box>
         <Box
           sx={{
@@ -213,6 +222,7 @@ export default function MainContent() {
           </IconButton>
         </Box>
       </Box>
+
       <Grid container spacing={2} columns={12}>
       
         {/*Card 1*/}
