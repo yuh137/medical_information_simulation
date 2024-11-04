@@ -8,93 +8,93 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Medical_Information.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    //[Authorize]
-    public class AdminsController : ControllerBase
-    {
-        private readonly IAdminRepository adminRepository;
-        private readonly IMapper mapper;
+   [Route("api/[controller]")]
+   [ApiController]
+   //[Authorize]
+   public class AdminsController : ControllerBase
+   {
+      private readonly IAdminRepository adminRepository;
+      private readonly IMapper mapper;
 
-        public AdminsController(IAdminRepository adminRepository, IMapper mapper)
-        {
-            this.adminRepository = adminRepository;
-            this.mapper = mapper;
-        }
+      public AdminsController(IAdminRepository adminRepository, IMapper mapper)
+      {
+         this.adminRepository = adminRepository;
+         this.mapper = mapper;
+      }
 
-        [HttpGet]
-        // [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAllAdmins([FromQuery] string? filterQuery)
-        {
-            var adminsDomain = await adminRepository.GetAdminAsync(filterQuery);
+      [HttpGet]
+      // [Authorize(Roles = "Admin")]
+      public async Task<IActionResult> GetAllAdmins([FromQuery] string? filterQuery)
+      {
+         var adminsDomain = await adminRepository.GetAdminAsync(filterQuery);
 
-            var adminsDTO = mapper.Map<List<AdminDTO>>(adminsDomain);
+         var adminsDTO = mapper.Map<List<AdminDTO>>(adminsDomain);
 
-            return Ok(adminsDTO);
-        }
+         return Ok(adminsDTO);
+      }
 
-        [HttpGet]
-        [Route("{id:Guid}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAdminById([FromRoute] Guid id)
-        {
-            var adminDomain = await adminRepository.GetAdminByIdAsync(id);
+      [HttpGet]
+      [Route("{id:Guid}")]
+      [Authorize(Roles = "Admin")]
+      public async Task<IActionResult> GetAdminById([FromRoute] Guid id)
+      {
+         var adminDomain = await adminRepository.GetAdminByIdAsync(id);
 
-            if (adminDomain == null)
-            {
-                return NotFound();
-            }
+         if (adminDomain == null)
+         {
+            return NotFound();
+         }
 
-            var adminDTO = mapper.Map<AdminDTO>(adminDomain);
+         var adminDTO = mapper.Map<AdminDTO>(adminDomain);
 
-            return Ok(adminDTO);
-        }
+         return Ok(adminDTO);
+      }
 
-        //[HttpPost]
-        //[ValidateModel]
-        //public async Task<IActionResult> CreateNewAdmin([FromBody] AddAdminRequestDTO request)
-        //{
-        //    var newAdmin = mapper.Map<Admin>(request);
+      [HttpPost]
+      [ValidateModel]
+      public async Task<IActionResult> CreateNewAdmin([FromBody] AddAdminRequestDTO request)
+      {
+         var newAdmin = mapper.Map<Admin>(request);
 
-        //    await adminRepository.CreateAdminAsync(newAdmin);
+         await adminRepository.CreateAdminAsync(newAdmin);
 
-        //    var adminDTO = mapper.Map<AdminDTO>(newAdmin);
+         var adminDTO = mapper.Map<AdminDTO>(newAdmin);
 
-        //    return CreatedAtAction(nameof(GetAdminById), new { id = adminDTO.AdminID }, adminDTO);
-        //}
+         return CreatedAtAction(nameof(GetAdminById), new { id = adminDTO.AdminID }, adminDTO);
+      }
 
-        //[HttpPut]
-        //[Route("{id:Guid}")]
-        //[Authorize(Roles = "Admin")]
-        //public async Task<IActionResult> UpdateAdmin([FromRoute] Guid id, [FromBody] UpdatePasswordDTO updatePasswordDTO)
-        //{
-        //    var adminDomain = await adminRepository.UpdateAdminPasswordAsync(id, updatePasswordDTO);
+      //[HttpPut]
+      //[Route("{id:Guid}")]
+      //[Authorize(Roles = "Admin")]
+      //public async Task<IActionResult> UpdateAdmin([FromRoute] Guid id, [FromBody] UpdatePasswordDTO updatePasswordDTO)
+      //{
+      //    var adminDomain = await adminRepository.UpdateAdminPasswordAsync(id, updatePasswordDTO);
 
-        //    if (adminDomain == null)
-        //    {
-        //        return NotFound("Admin not found");
-        //    }
+      //    if (adminDomain == null)
+      //    {
+      //        return NotFound("Admin not found");
+      //    }
 
-        //    var adminDTO = mapper.Map<AdminDTO>(adminDomain);
+      //    var adminDTO = mapper.Map<AdminDTO>(adminDomain);
 
-        //    return Ok(adminDTO);
-        //}
+      //    return Ok(adminDTO);
+      //}
 
-        [HttpDelete]
-        [Route("{id:Guid}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteAdmin([FromRoute] Guid id)
-        {
-            var adminModel = await adminRepository.DeleteAdminAsync(id);
+      [HttpDelete]
+      [Route("{id:Guid}")]
+      [Authorize(Roles = "Admin")]
+      public async Task<IActionResult> DeleteAdmin([FromRoute] Guid id)
+      {
+         var adminModel = await adminRepository.DeleteAdminAsync(id);
 
-            if (adminModel == null)
-            {
-                return NotFound("Admin does not exist");
-            }
+         if (adminModel == null)
+         {
+            return NotFound("Admin does not exist");
+         }
 
-            var adminDTO = mapper.Map<AdminDTO>(adminModel);
+         var adminDTO = mapper.Map<AdminDTO>(adminModel);
 
-            return Ok(adminDTO);
-        }
-    }
+         return Ok(adminDTO);
+      }
+   }
 }

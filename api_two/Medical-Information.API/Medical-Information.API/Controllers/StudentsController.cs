@@ -7,96 +7,97 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Medical_Information.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class StudentsController : ControllerBase
-    {
-        private readonly IStudentRepository studentRepository;
-        private readonly IMapper mapper;
+   [Route("api/[controller]")]
+   [ApiController]
+   public class StudentsController : ControllerBase
+   {
+      private readonly IStudentRepository studentRepository;
+      private readonly IMapper mapper;
 
-        public StudentsController(IStudentRepository studentRepository, IMapper mapper)
-        {
-            this.studentRepository = studentRepository;
-            this.mapper = mapper;
-        }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllStudents()
-        {
-            var studentsModel = await studentRepository.GetAllStudentsAsync();
+      public StudentsController(IStudentRepository studentRepository, IMapper mapper)
+      {
+         this.studentRepository = studentRepository;
+         this.mapper = mapper;
+      }
 
-            var studentsDTO = mapper.Map<List<StudentDTO>>(studentsModel);
+      [HttpGet]
+      public async Task<IActionResult> GetAllStudents()
+      {
+         var studentsModel = await studentRepository.GetAllStudentsAsync();
 
-            return Ok(studentsDTO);
-        }
+         var studentsDTO = mapper.Map<List<StudentDTO>>(studentsModel);
 
-        [HttpGet]
-        [Route("{id:Guid}")]
-        public async Task<IActionResult> GetStudentByID([FromRoute] Guid id)
-        {
-            var studentModel = await studentRepository.GetStudentByIDAsync(id);
+         return Ok(studentsDTO);
+      }
 
-            if (studentModel == null)
+      [HttpGet]
+      [Route("{id:Guid}")]
+      public async Task<IActionResult> GetStudentByID([FromRoute] Guid id)
+      {
+         var studentModel = await studentRepository.GetStudentByIDAsync(id);
+
+         if (studentModel == null)
+         {
+            return NotFound("Student not found");
+         }
+
+         return Ok(studentModel);
+      }
+
+      [HttpPost]
+      public async Task<IActionResult> CreateStudent([FromBody] AddStudentRequestDTO addStudentRequestDTO)
+      {
+         var existingStudent = await studentRepository.GetStudentByNameAsync(addStudentRequestDTO.Username);
+
+         if (existingStudent != null)
+         {
+            return Conflict(new
             {
-                return NotFound("Student not found");
-            }
+               message = "Student already existed",
+               student = existingStudent
+            });
+         }
 
-            return Ok(studentModel);
-        }
+         var studentModel = mapper.Map<Student>(addStudentRequestDTO);
 
-        //[HttpPost]
-        //public async Task<IActionResult> CreateStudent([FromBody] AddStudentRequestDTO addStudentRequestDTO)
-        //{
-        //    var existingStudent = await studentRepository.GetStudentByNameAsync(addStudentRequestDTO.Username);
+         await studentRepository.CreateStudentAsync(studentModel);
 
-        //    if (existingStudent != null)
-        //    {
-        //        return Conflict(new
-        //        {
-        //            message = "Student already existed",
-        //            student = existingStudent
-        //        });
-        //    }
+         var studentDTO = mapper.Map<StudentDTO>(studentModel);
 
-        //    var studentModel = mapper.Map<Student>(addStudentRequestDTO);
+         return CreatedAtAction(nameof(GetStudentByID), new { id = studentDTO.StudentID }, studentDTO);
+      }
 
-        //    await studentRepository.CreateStudentAsync(studentModel);
+      // [HttpPut]
+      // [Route("{id:Guid}")]
+      // public async Task<IActionResult> UpdateStudentPassword([FromRoute] Guid id, [FromBody] UpdatePasswordDTO dto)
+      // {
+      //     var studentModel = await studentRepository.UpdateStudentPasswordAsync(id, dto);
 
-        //    var studentDTO = mapper.Map<StudentDTO>(studentModel);
+      //     if (studentModel == null)
+      //     {
+      //         return NotFound("Student not found");
+      //     }
 
-        //    return CreatedAtAction(nameof(GetStudentByID), new { id = studentDTO.StudentID }, studentDTO);
-        //}
+      //     var studentDTO = mapper.Map<StudentDTO>(studentModel);
 
-        // [HttpPut]
-        // [Route("{id:Guid}")]
-        // public async Task<IActionResult> UpdateStudentPassword([FromRoute] Guid id, [FromBody] UpdatePasswordDTO dto)
-        // {
-        //     var studentModel = await studentRepository.UpdateStudentPasswordAsync(id, dto);
+      //     return Ok(studentDTO);
+      // }
 
-        //     if (studentModel == null)
-        //     {
-        //         return NotFound("Student not found");
-        //     }
+      [HttpDelete]
+      [Route("{id:Guid}")]
+      public async Task<IActionResult> DeleteStudent([FromRoute] Guid id)
+      {
+         var studentModel = await studentRepository.DeleteStudentAsync(id);
 
-        //     var studentDTO = mapper.Map<StudentDTO>(studentModel);
+         if (studentModel == null)
+         {
+            return NotFound("Student not found");
+         }
 
-        //     return Ok(studentDTO);
-        // }
+         var studentDTO = mapper.Map<StudentDTO>(studentModel);
 
-        [HttpDelete]
-        [Route("{id:Guid}")]
-        public async Task<IActionResult> DeleteStudent([FromRoute] Guid id)
-        {
-            var studentModel = await studentRepository.DeleteStudentAsync(id);
-
-            if (studentModel == null)
-            {
-                return NotFound("Student not found");
-            }
-
-            var studentDTO = mapper.Map<StudentDTO>(studentModel);
-            
-            return Ok(studentDTO);
-        }
-    }
+         return Ok(studentDTO);
+      }
+   }
 }
