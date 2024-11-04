@@ -1,10 +1,10 @@
-import QCBuilderTable from "../components/table/QC_Builder_Table";
+import GradeBookTable from "../components/table/GradeBookTable";
 
 export default function GradeBookPage(){
   /*if statement student*/
     return(
       <>
-        <QCBuilderTable></QCBuilderTable>
+        <GradeBookTable></GradeBookTable>
           <div>
             GradeBook page for students
           </div>

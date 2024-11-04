@@ -121,6 +121,7 @@ export default function MainContent() {
         </Typography>
         <Typography>MIS Learning Information System and Quality Control Dashboards<br></br>Texas Health Sciences Center</Typography>
       </div>
+
       <Box
         sx={{
           display: { xs: 'flex', sm: 'none' },
@@ -154,6 +155,7 @@ export default function MainContent() {
             overflow: 'auto',
           }}
         >
+          <Link to="/orderentries" style={{ textDecoration: 'none', color: 'inherit' }}>
           <Chip onClick={handleClick} size="medium" label="In Progress QC Reports" />
           <Chip
             onClick={handleClick}
@@ -164,7 +166,9 @@ export default function MainContent() {
               border: 'none',
             }}
           />
+          </Link>
           {/* This button changes to Student Report Submissions Page if user is faculty */}
+          <Link to="/orderentries" style={{ textDecoration: 'none', color: 'inherit' }}>
           <Chip
             onClick={handleClick}
             size="medium"
@@ -174,6 +178,7 @@ export default function MainContent() {
               border: 'none',
             }}
           />
+          </Link>
           <Chip
             onClick={handleClick}
             size="medium"

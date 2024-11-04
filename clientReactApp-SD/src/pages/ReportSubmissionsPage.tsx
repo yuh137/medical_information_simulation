@@ -1,9 +1,11 @@
 import ReportSubTable from "../components/table/Report_Submission_Table";
+import HandleSubmit from "../components/HandleSubmit";
+
 export default function ReportSubmissionsPage(){
   /*if statement student*/
     return(
       <>
-          <ReportSubTable></ReportSubTable>
+          <HandleSubmit></HandleSubmit>
           <div>
             Report submission page for students
           </div>
