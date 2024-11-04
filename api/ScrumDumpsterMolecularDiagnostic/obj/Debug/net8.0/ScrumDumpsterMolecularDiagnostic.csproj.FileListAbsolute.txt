@@ -1,3 +1,4 @@
+/home/joshuaduplaa/Fall2024/Capstone/medical_information_simulation/api/ScrumDumpsterMolecularDiagnostic/bin/Debug/net8.0/package-lock.json
 /home/joshuaduplaa/Fall2024/Capstone/medical_information_simulation/api/ScrumDumpsterMolecularDiagnostic/bin/Debug/net8.0/appsettings.Development.json
 /home/joshuaduplaa/Fall2024/Capstone/medical_information_simulation/api/ScrumDumpsterMolecularDiagnostic/bin/Debug/net8.0/appsettings.json
 /home/joshuaduplaa/Fall2024/Capstone/medical_information_simulation/api/ScrumDumpsterMolecularDiagnostic/bin/Debug/net8.0/ScrumDumpsterMolecularDiagnostic
