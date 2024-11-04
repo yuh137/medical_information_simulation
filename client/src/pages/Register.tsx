@@ -63,11 +63,27 @@ const Register = () => {
         if (res.ok) {
           setFeedbackNotiOpen(true);
           console.log(res.text());
-        } else {
-          console.error("Failed to register");
+        } else {  // Res not OK
+          console.log("Failed to register");
+          try {
+            const resJSON = await res.json();  // Check if this is a JSON formatted error
+            console.log(resJSON);
+            if (resJSON["errors"]) {
+              let resKeys = Object.keys(resJSON["errors"]);
+              if (resKeys[0] == "Password") {  // Password error
+                console.log(resJSON["errors"]["Password"]);
+                setErrorMsg(resJSON["errors"]["Password"][0]);
+              }
+            } 
+          } catch {
+            setErrorMsg("This account already exists");
+          }
+          setErrorNotiOpen(true);
         }
       } catch (e) {
         console.error("Failed to register", e);
+        setErrorMsg("Failed to register");
+        setErrorNotiOpen(true);
       }
 
       // if ((await check) === null) {
@@ -118,6 +134,8 @@ const Register = () => {
         }
       } catch (e) {
         console.error("Failed to register", e);
+        setErrorMsg("Failed to register");
+        setErrorNotiOpen(true);
       }
     } else {
       console.log(new Error("Invalid type"));
