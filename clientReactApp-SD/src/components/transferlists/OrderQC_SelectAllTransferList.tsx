@@ -11,6 +11,18 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import QCOrderButtons from './Buttons/QCOrderButtons';
 
+const panelNames = [
+  "GI Panel Level I",
+  "GI Panel Level II",
+  "Respiratory Panel Level I",
+  "Respiratory Panel Level II",
+  "STI-PCR Panel Level I",
+  "STI-PCR Panel Level II",
+  "HIV RT-PCR Panel: Negative Control",
+  "HIV RT-PCR Panel: Low Control",
+  "HIV RT-PCR Panel: High Control"
+];
+
 function not(a: readonly number[], b: readonly number[]) {
   return a.filter((value) => !b.includes(value));
 }
@@ -25,7 +37,7 @@ function union(a: readonly number[], b: readonly number[]) {
 
 export default function OrderQC_SelectAllTransferList() {
   const [checked, setChecked] = React.useState<readonly number[]>([]);
-  const [left, setLeft] = React.useState<readonly number[]>([0, 1, 2, 3, 4, 5, 6, 7]);
+  const [left, setLeft] = React.useState<readonly number[]>(panelNames.map((_, index) => index));
   const [right, setRight] = React.useState<readonly number[]>([]);
 
   const leftChecked = intersection(checked, left);
@@ -74,14 +86,14 @@ export default function OrderQC_SelectAllTransferList() {
   };
 
   const handleOrderQC = () => {
-    // Save selected quality controls to localStorage
-    localStorage.setItem('selectedQualityControls', JSON.stringify(right));
-    // Redirect to input QC results page
+    const selectedPanelNames = right.map(index => panelNames[index]); // Maps indices to panel names
+    localStorage.setItem('selectedQualityControls', JSON.stringify(selectedPanelNames));
     window.location.href = '/inputqcresults';
   };
+  
 
   const customList = (title: React.ReactNode, items: readonly number[]) => (
-    <Card>
+    <Card sx={{ width: 300, height: 350 }}> {/* Increased the width and height */}
       <CardHeader
         sx={{ px: 2, py: 1 }}
         avatar={
@@ -103,8 +115,8 @@ export default function OrderQC_SelectAllTransferList() {
       <Divider />
       <List
         sx={{
-          width: 200,
-          height: 230,
+          width: '100%', // Use full width of the card
+          height: 'calc(100% - 72px)', // Adjust height based on CardHeader and Divider
           bgcolor: 'background.paper',
           overflow: 'auto',
         }}
@@ -114,7 +126,7 @@ export default function OrderQC_SelectAllTransferList() {
       >
         {items.map((value: number) => {
           const labelId = `transfer-list-all-item-${value}-label`;
-
+  
           return (
             <ListItemButton
               key={value}
@@ -131,13 +143,14 @@ export default function OrderQC_SelectAllTransferList() {
                   }}
                 />
               </ListItemIcon>
-              <ListItemText id={labelId} primary={`List item ${value + 1}`} />
+              <ListItemText id={labelId} primary={panelNames[value]} />
             </ListItemButton>
           );
         })}
       </List>
     </Card>
   );
+  
 
   return (
     <>
@@ -146,7 +159,7 @@ export default function OrderQC_SelectAllTransferList() {
         spacing={2}
         sx={{ justifyContent: 'center', alignItems: 'center' }}
       >
-        <Grid item>{customList('Order Quality Controls', left)}</Grid>
+        <Grid item>{customList('Quality Control Panels', left)}</Grid>
         <Grid item>
           <Grid container direction="column" sx={{ alignItems: 'center' }}>
             <Button

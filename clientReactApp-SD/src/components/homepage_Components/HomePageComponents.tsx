@@ -15,30 +15,13 @@ import MainContent from './components/MainContent';
 import Latest from './components/Latest';
 
 
-const Card = styled(MuiCard)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignSelf: 'center',
-  width: '100%',
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: '10px',
-  [theme.breakpoints.up('sm')]: {
-    maxWidth: '450px',
-  },
-  backgroundColor: theme.palette.mode === 'dark' ? '#457A64' : '#607D8B', // Darker steel blue for dark mode, lighter steel blue for light mode
-  boxShadow:
-    'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
-  ...theme.applyStyles('dark', {
-    boxShadow:
-      'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
-  }),
-}));
 
-const SignInContainer = styled(Stack)(({ theme }) => ({
+const HomeContainer = styled(Stack)(({ theme }) => ({
   height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
   minHeight: '100%',
   padding: theme.spacing(2),
+  display: 'flex',
+  alignItems: 'center',
   [theme.breakpoints.up('sm')]: {
     padding: theme.spacing(4),
   },
@@ -65,17 +48,16 @@ export default function HomePageComponents(props: { disableCustomTheme?: boolean
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-      <SignInContainer direction="column" justifyContent="space-between">
+      <HomeContainer direction="column" justifyContent="space-between">
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
           <Container
             maxWidth="lg"
             component="main"
-            sx={{ display: 'flex', flexDirection: 'column', my: 16, gap: 4, margin: '0px', border: '0px', padding: '0px' }}
+            sx={{ display: 'flex', flexDirection: 'column', my: 16, gap: 4, margin: '0px'}}
           >
             <MainContent />
-            <Latest />
           </Container>
-      </SignInContainer>
+      </HomeContainer>
     </AppTheme>
   );
 }

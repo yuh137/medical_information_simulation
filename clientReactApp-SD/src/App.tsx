@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 //import base components for entire website
-import NavBar from './components/NavBar.jsx';
+import NavBar from './components/NavBar.tsx';
 import './App.css';
 //import react pages
 import SplashPage from './pages/SplashPage.jsx';

@@ -7,7 +7,7 @@ import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import { useNavigate } from 'react-router-dom';
+import { To, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { ListItemIcon } from '@mui/material';
@@ -19,7 +19,7 @@ export default function DrawerToggle() {
 
   const navigate = useNavigate();
 
-  const toggleDrawer = (anchor, open) => (event) => {
+  const toggleDrawer = (anchor: string, open: boolean) => (event: { type: string; key: string; }) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
@@ -27,12 +27,12 @@ export default function DrawerToggle() {
     setState({ ...state, [anchor]: open });
   };
 
-  const handleNavigation = (path) => {
+  const handleNavigation = (path: To) => {
     navigate(path);
     setState({ right: false }); // Close the drawer after navigation
   };
 
-  const list = (anchor) => (
+  const list = (anchor: string) => (
     <Box
       sx={{ width: anchor === 'right' ? 'auto' : 250 }}
       role="presentation"
@@ -42,23 +42,7 @@ export default function DrawerToggle() {
       <List>
         <ListItem disablePadding>
           <ListItemButton onClick={() => handleNavigation('/qc')}>
-            <ListItemText primary="QC Builder" />
-          </ListItemButton>
-        </ListItem>
-      </List>
-      <Divider />
-      <List>
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => handleNavigation('/inputqcresults')}>
-            <ListItemText primary="Input QC Results" />
-          </ListItemButton>
-        </ListItem>
-      </List>
-      <Divider />
-      <List>
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => handleNavigation('/viewqcresults')}>
-            <ListItemText primary="View QC Results" />
+            <ListItemText primary="Quality Control" />
           </ListItemButton>
         </ListItem>
       </List>
@@ -66,11 +50,28 @@ export default function DrawerToggle() {
       <List>
         <ListItem disablePadding>
           <ListItemButton onClick={() => handleNavigation('/orderentries')}>
-            <ListItemText primary="QC Order Entries" />
+            <ListItemText primary="In Progress QC Order Entries" />
           </ListItemButton>
         </ListItem>
       </List>
       <Divider />
+      <List>
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/viewqcresults')}>
+            <ListItemText primary="Finished QC Order Entries" />
+          </ListItemButton>
+        </ListItem>
+      </List>
+      <Divider />
+      <List>
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/viewqcresults')}>
+            <ListItemText primary="All QC Order Entries" />
+          </ListItemButton>
+        </ListItem>
+      </List>
+      <Divider />
+
       <List>
         <ListItem disablePadding>
           <ListItemButton onClick={() => handleNavigation('/patientreports')}>

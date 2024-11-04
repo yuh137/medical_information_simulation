@@ -15,69 +15,35 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import { styled } from '@mui/material/styles';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
+import { useLocation, Link } from 'react-router-dom'; // Import Link
+import IntroDivider from '../../IntroDivider';
+
+//Import username from Json Web Token
+
 
 const cardData = [
+  //Description of card Data changes for faculty
+  {
+    img: 'https://i.imgur.com/vLTX91C.png',
+    title: 'Quality Controls',
+    description:
+      'Order or review quality control panels for different Analytes',
+  },
   {
     img: 'https://picsum.photos/800/450?random=1',
-    tag: 'Engineering',
-    title: 'Revolutionizing software development with cutting-edge tools',
+    title: 'Quizzes',
     description:
       'Our latest engineering tools are designed to streamline workflows and boost productivity. Discover how these innovations are transforming the software development landscape.',
-    authors: [
-      { name: 'Remy Sharp', avatar: '/static/images/avatar/1.jpg' },
-      { name: 'Travis Howard', avatar: '/static/images/avatar/2.jpg' },
-    ],
   },
-  {
-    img: 'https://picsum.photos/800/450?random=2',
-    tag: 'Product',
-    title: 'Innovative product features that drive success',
-    description:
-      'Explore the key features of our latest product release that are helping businesses achieve their goals. From user-friendly interfaces to robust functionality, learn why our product stands out.',
-    authors: [{ name: 'Erica Johns', avatar: '/static/images/avatar/6.jpg' }],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=3',
-    tag: 'Design',
-    title: 'Designing for the future: trends and insights',
-    description:
-      'Stay ahead of the curve with the latest design trends and insights. Our design team shares their expertise on creating intuitive and visually stunning user experiences.',
-    authors: [{ name: 'Kate Morrison', avatar: '/static/images/avatar/7.jpg' }],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=4',
-    tag: 'Company',
-    title: "Our company's journey: milestones and achievements",
-    description:
-      "Take a look at our company's journey and the milestones we've achieved along the way. From humble beginnings to industry leader, discover our story of growth and success.",
-    authors: [{ name: 'Cindy Baker', avatar: '/static/images/avatar/3.jpg' }],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=45',
-    tag: 'Engineering',
-    title: 'Pioneering sustainable engineering solutions',
-    description:
-      "Learn about our commitment to sustainability and the innovative engineering solutions we're implementing to create a greener future. Discover the impact of our eco-friendly initiatives.",
-    authors: [
-      { name: 'Agnes Walker', avatar: '/static/images/avatar/4.jpg' },
-      { name: 'Trevor Henderson', avatar: '/static/images/avatar/5.jpg' },
-    ],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=6',
-    tag: 'Product',
-    title: 'Maximizing efficiency with our latest product updates',
-    description:
-      'Our recent product updates are designed to help you maximize efficiency and achieve more. Get a detailed overview of the new features and improvements that can elevate your workflow.',
-    authors: [{ name: 'Travis Howard', avatar: '/static/images/avatar/2.jpg' }],
-  },
+
 ];
 
-const SyledCard = styled(Card)(({ theme }) => ({
+const StyledCard = styled(Card)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   padding: 0,
-  height: '100%',
+  //margin changes the size of the card
+  margin: '5%',
   backgroundColor: (theme).palette.background.paper,
   '&:hover': {
     backgroundColor: 'transparent',
@@ -90,7 +56,7 @@ const SyledCard = styled(Card)(({ theme }) => ({
   },
 }));
 
-const SyledCardContent = styled(CardContent)({
+const StyledCardContent = styled(CardContent)({
   display: 'flex',
   flexDirection: 'column',
   gap: 4,
@@ -109,47 +75,13 @@ const StyledTypography = styled(Typography)({
   textOverflow: 'ellipsis',
 });
 
-function Author({ authors }: { authors: { name: string; avatar: string }[] }) {
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 2,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '16px',
-      }}
-    >
-      <Box
-        sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center' }}
-      >
-        <AvatarGroup max={3}>
-          {authors.map((author, index) => (
-            <Avatar
-              key={index}
-              alt={author.name}
-              src={author.avatar}
-              sx={{ width: 24, height: 24 }}
-            />
-          ))}
-        </AvatarGroup>
-        <Typography variant="caption">
-          {authors.map((author) => author.name).join(', ')}
-        </Typography>
-      </Box>
-      <Typography variant="caption">July 14, 2021</Typography>
-    </Box>
-  );
-}
-
 export function Search() {
   return (
     <FormControl sx={{ width: { xs: '100%', md: '25ch' } }} variant="outlined">
       <OutlinedInput
         size="small"
         id="search"
-        placeholder="Search…"
+        placeholder="Search for QC Report"
         sx={{ flexGrow: 1 }}
         startAdornment={
           <InputAdornment position="start" sx={{ color: 'text.primary' }}>
@@ -185,9 +117,9 @@ export default function MainContent() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <div>
         <Typography variant="h1" gutterBottom>
-          Welcome, User! Home page
+          Welcome, User!
         </Typography>
-        <Typography>Stay in the loop with the latest about our products</Typography>
+        <Typography>MIS Learning Information System and Quality Control Dashboards<br></br>Texas Health Sciences Center</Typography>
       </div>
       <Box
         sx={{
@@ -222,11 +154,21 @@ export default function MainContent() {
             overflow: 'auto',
           }}
         >
-          <Chip onClick={handleClick} size="medium" label="All categories" />
+          <Chip onClick={handleClick} size="medium" label="In Progress QC Reports" />
           <Chip
             onClick={handleClick}
             size="medium"
-            label="Company"
+            label="Finished QC Reports"
+            sx={{
+              backgroundColor: 'transparent',
+              border: 'none',
+            }}
+          />
+          {/* This button changes to Student Report Submissions Page if user is faculty */}
+          <Chip
+            onClick={handleClick}
+            size="medium"
+            label="Report Submission Page"
             sx={{
               backgroundColor: 'transparent',
               border: 'none',
@@ -235,7 +177,7 @@ export default function MainContent() {
           <Chip
             onClick={handleClick}
             size="medium"
-            label="Product"
+            label="Grade Book"
             sx={{
               backgroundColor: 'transparent',
               border: 'none',
@@ -244,16 +186,7 @@ export default function MainContent() {
           <Chip
             onClick={handleClick}
             size="medium"
-            label="Design"
-            sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
-            }}
-          />
-          <Chip
-            onClick={handleClick}
-            size="medium"
-            label="Engineering"
+            label="Patient Reports"
             sx={{
               backgroundColor: 'transparent',
               border: 'none',
@@ -276,8 +209,11 @@ export default function MainContent() {
         </Box>
       </Box>
       <Grid container spacing={2} columns={12}>
+      
+        {/*Card 1*/}
         <Grid size={{ xs: 12, md: 6 }}>
-          <SyledCard
+          <Link to="/qc" style={{ textDecoration: 'none', color: 'inherit' }}>     
+          <StyledCard
             variant="outlined"
             onFocus={() => handleFocus(0)}
             onBlur={handleBlur}
@@ -286,7 +222,6 @@ export default function MainContent() {
           >
             <CardMedia
               component="img"
-              alt="green iguana"
               image={cardData[0].img}
               sx={{
                 aspectRatio: '16 / 9',
@@ -294,190 +229,24 @@ export default function MainContent() {
                 borderColor: 'divider',
               }}
             />
-            <SyledCardContent>
-              <Typography gutterBottom variant="caption" component="div">
-                {cardData[0].tag}
-              </Typography>
+            <StyledCardContent>
               <Typography gutterBottom variant="h6" component="div">
                 {cardData[0].title}
               </Typography>
               <StyledTypography variant="body2" color="text.secondary" gutterBottom>
                 {cardData[0].description}
               </StyledTypography>
-            </SyledCardContent>
-            <Author authors={cardData[0].authors} />
-          </SyledCard>
+            </StyledCardContent>
+          </StyledCard>
+          </Link>
         </Grid>
+        
+        {/*Card 2*/}
         <Grid size={{ xs: 12, md: 6 }}>
-          <SyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(1)}
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 1 ? 'Mui-focused' : ''}
-          >
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              image={cardData[1].img}
-              aspect-ratio="16 / 9"
-              sx={{
-                borderBottom: '1px solid',
-                borderColor: 'divider',
-              }}
-            />
-            <SyledCardContent>
-              <Typography gutterBottom variant="caption" component="div">
-                {cardData[1].tag}
-              </Typography>
-              <Typography gutterBottom variant="h6" component="div">
-                {cardData[1].title}
-              </Typography>
-              <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                {cardData[1].description}
-              </StyledTypography>
-            </SyledCardContent>
-            <Author authors={cardData[1].authors} />
-          </SyledCard>
+          <IntroDivider></IntroDivider>
+
         </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <SyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(2)}
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 2 ? 'Mui-focused' : ''}
-            sx={{ height: '100%' }}
-          >
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              image={cardData[2].img}
-              sx={{
-                height: { sm: 'auto', md: '50%' },
-                aspectRatio: { sm: '16 / 9', md: '' },
-              }}
-            />
-            <SyledCardContent>
-              <Typography gutterBottom variant="caption" component="div">
-                {cardData[2].tag}
-              </Typography>
-              <Typography gutterBottom variant="h6" component="div">
-                {cardData[2].title}
-              </Typography>
-              <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                {cardData[2].description}
-              </StyledTypography>
-            </SyledCardContent>
-            <Author authors={cardData[2].authors} />
-          </SyledCard>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Box
-            sx={{ display: 'flex', flexDirection: 'column', gap: 2, height: '100%' }}
-          >
-            <SyledCard
-              variant="outlined"
-              onFocus={() => handleFocus(3)}
-              onBlur={handleBlur}
-              tabIndex={0}
-              className={focusedCardIndex === 3 ? 'Mui-focused' : ''}
-              sx={{ height: '100%' }}
-            >
-              <SyledCardContent
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  height: '100%',
-                }}
-              >
-                <div>
-                  <Typography gutterBottom variant="caption" component="div">
-                    {cardData[3].tag}
-                  </Typography>
-                  <Typography gutterBottom variant="h6" component="div">
-                    {cardData[3].title}
-                  </Typography>
-                  <StyledTypography
-                    variant="body2"
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    {cardData[3].description}
-                  </StyledTypography>
-                </div>
-              </SyledCardContent>
-              <Author authors={cardData[3].authors} />
-            </SyledCard>
-            <SyledCard
-              variant="outlined"
-              onFocus={() => handleFocus(4)}
-              onBlur={handleBlur}
-              tabIndex={0}
-              className={focusedCardIndex === 4 ? 'Mui-focused' : ''}
-              sx={{ height: '100%' }}
-            >
-              <SyledCardContent
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  height: '100%',
-                }}
-              >
-                <div>
-                  <Typography gutterBottom variant="caption" component="div">
-                    {cardData[4].tag}
-                  </Typography>
-                  <Typography gutterBottom variant="h6" component="div">
-                    {cardData[4].title}
-                  </Typography>
-                  <StyledTypography
-                    variant="body2"
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    {cardData[4].description}
-                  </StyledTypography>
-                </div>
-              </SyledCardContent>
-              <Author authors={cardData[4].authors} />
-            </SyledCard>
-          </Box>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <SyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(5)}
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 5 ? 'Mui-focused' : ''}
-            sx={{ height: '100%' }}
-          >
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              image={cardData[5].img}
-              sx={{
-                height: { sm: 'auto', md: '50%' },
-                aspectRatio: { sm: '16 / 9', md: '' },
-              }}
-            />
-            <SyledCardContent>
-              <Typography gutterBottom variant="caption" component="div">
-                {cardData[5].tag}
-              </Typography>
-              <Typography gutterBottom variant="h6" component="div">
-                {cardData[5].title}
-              </Typography>
-              <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                {cardData[5].description}
-              </StyledTypography>
-            </SyledCardContent>
-            <Author authors={cardData[5].authors} />
-          </SyledCard>
-        </Grid>
+        {/*End of cards*/}
       </Grid>
     </Box>
   );

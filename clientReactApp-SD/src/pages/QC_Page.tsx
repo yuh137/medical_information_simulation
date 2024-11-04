@@ -7,9 +7,10 @@ import AppTheme from '../shared-theme/AppTheme';
 import ColorModeSelect from '../shared-theme/ColorModeSelect';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
-import NativeSelectDemo from '../components/Dropdowns/NativeSelectDemo';
+import QCSelectAction from '../components/Dropdowns/QCSelectAction';
 import CheckboxLabels from '../components/checkboxes/CheckboxLabels';
 import OrderQC_SelectAllTransferList from '../components/transferlists/OrderQC_SelectAllTransferList';
+import SubmittedQCTable from '../components/table/SubmittedQCTable';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -43,6 +44,7 @@ const QCTableContainer = styled(Stack)(({ theme }) => ({
     position: 'absolute',
     zIndex: -1,
     inset: 0,
+    backgroundColor: theme.palette.mode === 'dark' ? '#457A64' : '#607D8B',
     backgroundImage:
       'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
     backgroundRepeat: 'no-repeat',
@@ -80,29 +82,22 @@ const rows = [
 const paginationModel = { page: 0, pageSize: 5 };
 
 export default function QC_Page(props: { disableCustomTheme?: boolean }) {
-  const [showOrderQC, setShowOrderQC] = React.useState(true); // Default to true to match the defaultChecked in Checkbox
+  const [selectedQC, setSelectedQC] = React.useState<string | null>(null); // State to track which QC is selected
+
+  const handleQCChange = (qcType: string) => {
+    setSelectedQC(qcType);
+  };
 
   return (
     <AppTheme {...props}>
-      <CssBaseline enableColorScheme />
-      <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
-      <h1>QC Page</h1>
-      <CheckboxLabels onOrderQCChange={setShowOrderQC} />
-      <NativeSelectDemo />
-      {showOrderQC && <OrderQC_SelectAllTransferList />}
-      <QCTableContainer direction="column" justifyContent="space-between">
-        <Card variant="outlined">
-          <Paper sx={{ height: 400, width: '100%' }}>
-            <DataGrid
-              rows={rows}
-              columns={columns}
-              initialState={{ pagination: { paginationModel } }}
-              pageSizeOptions={[5, 10]}
-              checkboxSelection
-              sx={{ border: 0 }}
-            />
-          </Paper>
-        </Card>
+      <QCTableContainer>
+        <CssBaseline enableColorScheme />
+        <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
+        <h1>Quality Controls</h1>
+        <CheckboxLabels onQCChange={handleQCChange} />
+        <QCSelectAction />
+        {selectedQC === 'orderQC' && <OrderQC_SelectAllTransferList />}
+        {selectedQC === 'reviewQC' && <SubmittedQCTable />}
       </QCTableContainer>
     </AppTheme>
   );

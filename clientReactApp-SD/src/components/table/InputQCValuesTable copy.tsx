@@ -48,7 +48,6 @@ const DataTableContainer = styled(Stack)(({ theme }) => ({
     position: 'absolute',
     zIndex: -1,
     inset: 0,
-    backgroundColor: theme.palette.mode === 'dark' ? '#457A64' : '#607D8B', // Darker steel blue for dark mode, lighter steel blue for light mode
     backgroundImage:
       'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
     backgroundRepeat: 'no-repeat',
@@ -94,6 +93,14 @@ const getItemsFromLocalStorage = () => {
 export default function InputQCValuesTable(props: { disableCustomTheme?: boolean }) {
   const [items, setItems] = React.useState(getItemsFromLocalStorage());
 
+  // Handler to update the value field in the items state
+  const handleValueChange = (id: number, newValue: string) => {
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, value: newValue } : item
+      )
+    );
+  };
   const handleSubmitQC = () => {
     // Log current items for debugging
     console.log("Submitting QC values:", items);
@@ -123,7 +130,7 @@ export default function InputQCValuesTable(props: { disableCustomTheme?: boolean
       <CssBaseline enableColorScheme />
       <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
       <DataTableContainer direction="column" justifyContent="space-between">
-          <Typography variant="h1" component="div">Quality Control Panels to be ordered</Typography>
+        <Paper sx={{ padding: 2, width: '100%' }}>
           <Grid container spacing={3}>
             {items.map((item) => (
               <Grid item xs={12} sm={6} md={4} key={item.id}>
@@ -132,6 +139,17 @@ export default function InputQCValuesTable(props: { disableCustomTheme?: boolean
                     <Typography variant="h6" component="div">
                       {item.description}
                     </Typography>
+                    <TextField
+                      fullWidth
+                      label="Value"
+                      variant="outlined"
+                      size="small"
+                      value={item.value}
+                      onChange={(event) =>
+                        handleValueChange(item.id, event.target.value)
+                      }
+                      sx={{ marginTop: 2 }}
+                    />
                   </CardContent>
                 </Card>
               </Grid>
@@ -143,6 +161,7 @@ export default function InputQCValuesTable(props: { disableCustomTheme?: boolean
           <Grid container direction="column" sx={{ alignItems: 'center' }}>
             <SubmittedQCTable></SubmittedQCTable>
           </Grid>
+        </Paper>
       </DataTableContainer>
     </AppTheme>
   );

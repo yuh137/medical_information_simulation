@@ -3,9 +3,9 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 
-export default function CheckboxLabels({ onOrderQCChange }) {
+export default function CheckboxLabels({ onQCChange }) {
   const [checkedState, setCheckedState] = React.useState({
-    orderQC: true,
+    orderQC: false,
     reviewQC: false,
     buildQC: false,
   });
@@ -19,11 +19,8 @@ export default function CheckboxLabels({ onOrderQCChange }) {
     };
     setCheckedState(newState);
 
-    if (label === 'orderQC') {
-      onOrderQCChange(true);
-    } else {
-      onOrderQCChange(false);
-    }
+    // Handle QC visibility changes by passing the label to onQCChange
+    onQCChange(label);
   };
 
   return (

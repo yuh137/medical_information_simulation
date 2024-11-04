@@ -4,7 +4,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material';
 import Button from '@mui/material/Button';
-import DrawerToggle from './DrawerToggle.jsx';
+import DrawerToggle from './DrawerToggle.tsx';
 import { useLocation, Link } from 'react-router-dom'; // Import Link
 import './componentStyles/navbar.css';
 
@@ -27,11 +27,17 @@ export default function ButtonAppBar() {
     <AppBar className='Appbar' position="relative" sx={{ backgroundColor: "transparent", boxShadow: 'none', width: '100%' }}>
       <Toolbar>
         <ThemeProvider theme={logoTheme}>
-        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-          {/*Change below with MIS logo*/}
-          <img className='MIS_Logo' src="https://i.imgur.com/qdxXVgn.png"/>
+        {/*Logo can't be used as button on splash page*/}
+        {(location.pathname !== '/' && location.pathname !== '/register') && (
+          <Link to="/home" style={{ textDecoration: 'none', color: 'inherit' }}>
+            {/*Change below with MIS logo*/}
+            <img className='MIS_Logo' src="https://i.imgur.com/qdxXVgn.png" />
+          </Link>
+        )}
+        {location.pathname === '/' && (
+          <img className='MIS_Logo' src="https://i.imgur.com/qdxXVgn.png" />
+        )}
 
-        </Link>
         </ThemeProvider>
 
         {/*keeps buttons to the right of nav bar*/}
