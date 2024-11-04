@@ -19,6 +19,11 @@ import AppTheme from "../shared-theme/AppTheme.tsx";
 import ColorModeSelect from "../shared-theme/ColorModeSelect.tsx";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
+
+import addData from "../util/indexedDB/addData.ts";
+import { Admin } from "../util/indexedDB/IDBSchema.ts";
+import { Student } from "../util/indexedDB/IDBSchema.ts";
+
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -51,7 +56,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
     position: "absolute",
     zIndex: -1,
     inset: 0,
-    backgroundColor: theme.palette.mode === 'dark' ? '#457A64' : '#607D8B', // Darker steel blue for dark mode, lighter steel blue for light mode
+    backgroundColor: theme.palette.mode === "dark" ? "#457A64" : "#607D8B", // Darker steel blue for dark mode, lighter steel blue for light mode
     backgroundImage:
       "radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))",
     backgroundRepeat: "no-repeat",
@@ -114,15 +119,87 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       const students = studentsResponse.data;
       const admins = adminsResponse.data;
 
-      const userFound = [...students, ...admins].some(
-        (user: any) => user.email === email && user.password === password,
+      console.log("student local data: ", students);
+      console.log("admin loacal data: ", admins);
+
+      const studentFound = students.find(
+        (studentFound: any) =>
+          studentFound.email === email && studentFound.password === password,
       );
 
-      if (userFound) {
+      const adminFound = admins.find(
+        (adminFound: any) =>
+          adminFound.email === email && adminFound.password === password,
+      );
+
+      if (studentFound) {
+        console.log("studentFound: ", studentFound);
+        // takes student object matching username and password and conforms it to local DB schema
+        const studentLocalData = {
+          id: studentFound.adminID as string,
+          email: studentFound.email as string,
+          username: studentFound.username as string,
+          password: studentFound.password as string,
+          firstname: studentFound.firstname as string,
+          lastname: studentFound.lastname as string,
+          initials: studentFound.initials as string,
+        };
+        // adds the data to the local DB
+        addData("students", studentLocalData)
+          .then((result) => {
+            if (typeof result === "string") {
+              // Handle specific error message from addData
+              console.error("Failed to store student in IndexedDB:", result);
+            } else {
+              // Successfully stored
+              console.log("Student successfully stored in IndexedDB:", result);
+            }
+          })
+          .catch((error) => {
+            // Handle unexpected errors during the addData execution
+            console.error(
+              "Unexpected error while storing student in IndexedDB:",
+              error,
+            );
+          });
+        navigate("/home");
+      } else if (adminFound) {
+        const adminLocalData = {
+          id: adminFound.adminID as string,
+          email: adminFound.email as string,
+          username: adminFound.username as string,
+          password: adminFound.password as string,
+          firstname: adminFound.firstname as string,
+          lastname: adminFound.lastname as string,
+          initials: adminFound.initials as string,
+        };
+        addData("admins", adminLocalData)
+          .then((result) => {
+            if (typeof result === "string") {
+              // Handle specific error message from addData
+              console.error("Failed to store admin in IndexedDB:", result);
+            } else {
+              // Successfully stored
+              console.log("Admin successfully stored in IndexedDB:", result);
+            }
+          })
+          .catch((error) => {
+            // Handle unexpected errors during the addData execution
+            console.error(
+              "Unexpected error while storing admin in IndexedDB:",
+              error,
+            );
+          });
         navigate("/home");
       } else {
         setLoginError(true);
       }
+
+      // if (userFound) {
+      //   navigate("/home");
+      // } else {
+      //   setLoginError(true);
+      // }
     } catch (err) {
       setLoginError(true);
     }
