@@ -1,5 +1,6 @@
 export interface Admin {
   id: string;
+  email: string;
   username: string;
   password: string;
   firstname: string;
@@ -9,6 +10,7 @@ export interface Admin {
 
 export interface Student {
   id: string;
+  email: string;
   username: string;
   password: string;
   firstname: string;
@@ -45,4 +47,3 @@ export interface QCTemplateBatch {
     value?: string; // Optional value field, since it might not exist initially
   }[];
 }
-
