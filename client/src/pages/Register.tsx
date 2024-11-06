@@ -46,7 +46,13 @@ const Register = () => {
 
   //Register form logic handling
   const onSubmit: SubmitHandler<CredentialsInput> = async (data) => {
-    if (registerOptions === "Admin") {
+    // First, some checks regardless of class 
+    console.log(data);  
+    if ( (!data["email"].endsWith("@ttu.edu") && !data["email"].endsWith("@ttuhsc.edu")) || data["email"].charAt(0) === '@') {
+      setErrorMsg("Please enter a valid TTU or TTUHSC email");
+      setErrorNotiOpen(true);
+    }  // Now check if Admin or Student
+    else if (registerOptions === "Admin") {
       console.log("Data object: ", data);
       // const check = await getAdminByName(data.username);
       // console.log("Check", await check);
@@ -70,7 +76,7 @@ const Register = () => {
             console.log(resJSON);
             if (resJSON["errors"]) {
               let resKeys = Object.keys(resJSON["errors"]);
-              if (resKeys[0] == "Password") {  // Password error
+              if (resKeys[0] === "Password") {  // Password error
                 console.log(resJSON["errors"]["Password"]);
                 setErrorMsg(resJSON["errors"]["Password"][0]);
               }
@@ -122,7 +128,7 @@ const Register = () => {
             console.log(resJSON);
             if (resJSON["errors"]) {
               let resKeys = Object.keys(resJSON["errors"]);
-              if (resKeys[0] == "Password") {  // Password error
+              if (resKeys[0] === "Password") {  // Password error
                 console.log(resJSON["errors"]["Password"]);
                 setErrorMsg(resJSON["errors"]["Password"][0]);
               }

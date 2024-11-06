@@ -69,8 +69,8 @@ const BloodBankQCResult = (props: { name: string, link: string }) => {
           // Save the qcData to localStorage
           localStorage.setItem('selectedQCData', JSON.stringify(qcData));
   
-          // Navigate to the AnalyteInputPage
-          navigate(`/blood_bank/simple-analyte-input-page`);
+          // Navigate to the ReagentInputPage
+          navigate(`/blood_bank/reagent-input-page`);
         } else {
           console.warn('No matching QC data found in the database.');
           alert('No matching QC data found in the database.');

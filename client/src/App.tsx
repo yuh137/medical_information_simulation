@@ -42,6 +42,7 @@ import BloodBankCustomQCBuild from "./pages/General/BloodBank/BloodBankCustomQCB
 import BloodBankCustomTests from "./pages/General/BloodBank/BloodBankCustomTests";
 import BloodBankQCTypeButtonsPage from "./pages/General/BloodBank/BloodBankQCTypeSelection";
 import {BloodBankRBCEdit} from "./pages/General/BloodBank/BloodBankRBCInputPage";
+import BloodBankReagentInputPage from "./pages/General/BloodBank/BloodBankReagentInputPage";
 
 function App() {
   initIDB();
@@ -195,12 +196,12 @@ function AppWithRouter() {
                 element: <BloodBankQCResult link="blood_bank" name="BloodBank" />,
               },
               {
-                path: 'simple-analyte-input-page',
-                element: <SimpleAnalyteInputPage name="BloodBank" />,  
+                path: 'reagent-input-page',
+                element: <BloodBankReagentInputPage name="BloodBank" />,  
               },
               {
                 path: "qc_results/:link",
-                element: <BloodBankAnalyteInputPage name="" />,
+                element: <BloodBankReagentInputPage name="" />,
                 loader: async ({ params }) => {
                   const { link } = params;
                   console.log("loader function: ", link);

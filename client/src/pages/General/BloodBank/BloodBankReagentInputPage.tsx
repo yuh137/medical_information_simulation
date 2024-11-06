@@ -12,7 +12,7 @@ import { saveToDB } from "../../../utils/indexedDB/getData";
 import { useAuth } from "../../../context/AuthContext";
 
 
-const SimpleAnalyteInputPage = (props: { name: string }) => {
+const BloodBankReagentInputPage = (props: { name: string }) => {
   const { theme } = useTheme();
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const analyteNameRefs = useRef<HTMLDivElement[]>([]);
@@ -49,14 +49,16 @@ const SimpleAnalyteInputPage = (props: { name: string }) => {
   const handleInputChange = (index: number, value: string, min: number, max: number) => {
     const newValues = [...analyteValues];
     newValues[index] = value;
+    console.log("AAA");
     setAnalyteValues(newValues);
-
+    
     if (
       isNaN(parseFloat(value)) ||
       parseFloat(value) < min ||
       parseFloat(value) > max ||
       typeof value === "undefined"
     ) {
+      console.log(invalidIndexes);
       if (!invalidIndexes) {
         let newInvalidIndexes = new Set<number>();
         newInvalidIndexes.add(index);
@@ -167,11 +169,17 @@ const SimpleAnalyteInputPage = (props: { name: string }) => {
   }, [invalidIndexes]);
 
   const isValid = useMemo(() => {
-    if ((!invalidIndexes || invalidIndexes.size === 0) && analyteValues.length === qcData?.analytes.length) return true;
+    console.log("Hi guys");
+    console.log(analyteValues.length);
+    // TEMP!
+    // if ((!invalidIndexes || invalidIndexes.size === 0) && analyteValues.length === qcData?.analytes.length) return true;
+    if ((!invalidIndexes || invalidIndexes.size === 0)) return true;
+    
     else return false;
   }, [analyteValues, invalidIndexes, qcData]);
 
   const handleAcceptQC = async () => {
+    console.log("CCC");
     if (!qcData) {
       console.error("No QC data available to save.");
       return;
@@ -214,6 +222,7 @@ const SimpleAnalyteInputPage = (props: { name: string }) => {
           {qcData.analytes.map((item, index) => (
             <div
               onKeyDown={(event) => {
+                console.log("BBB");
                 handleKeyPress(event, index);
               }}
               key={item.analyteName}
@@ -227,6 +236,7 @@ const SimpleAnalyteInputPage = (props: { name: string }) => {
                 // level={detectLevel(props.name)}
                 measUnit={item.unit_of_measure}
                 handleInputChange={(val: string) => {
+                  console.log("DDD");
                   // Convert string to number but pass the string to handleInputChange
                   const numericValue = +val;
                   if (item.min_level !== "" && item.max_level !== "") {
@@ -313,4 +323,4 @@ const SimpleAnalyteInputPage = (props: { name: string }) => {
   );
 };
 
-export default SimpleAnalyteInputPage;
+export default BloodBankReagentInputPage;
