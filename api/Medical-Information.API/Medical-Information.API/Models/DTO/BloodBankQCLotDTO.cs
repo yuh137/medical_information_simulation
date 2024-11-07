@@ -1,8 +1,10 @@
-﻿using Medical_Information.API.Enums;
+﻿
+using Medical_Information.API.Enums;
+using Medical_Information.API.Models.Domain;
 
-namespace Medical_Information.API.Models.Domain
+namespace Medical_Information.API.Models.DTO
 {
-    public class BloodBankQCLot
+    public class BloodBankQCLotDTO
     {
         public Guid BloodBankQCLotID { get; set; }
         public string QCName { get; set; }

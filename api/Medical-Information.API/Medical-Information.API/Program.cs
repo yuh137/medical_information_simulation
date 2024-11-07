@@ -69,6 +69,7 @@ builder.Services.AddScoped<IAdminRepository, SQLAdminRepository>();
 builder.Services.AddScoped<IStudentRepository, SQLStudentRepository>();
 builder.Services.AddScoped<IAdminQCLotRepository, SQLAdminQCLotRepository>();
 builder.Services.AddScoped<IAnalyteRepository, SQLAnalyteRepository>();
+builder.Services.AddScoped<IBloodBankQCLotRepository, SQLBloodBankQCLotRepository>();
 
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 

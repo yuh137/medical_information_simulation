@@ -17,14 +17,21 @@ namespace Medical_Information.API.Data
         public DbSet<Student> Students { get; set; }
         public DbSet<StudentReport> StudentReports { get; set; }
         public DbSet<AnalyteInput> AnalyteInputs { get; set; }
+        public DbSet<BloodBankQCLot> BloodBankQCLots { get; set; }
+        public DbSet<Reagent> Reagents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            // Update-Database -Context MedicalInformationDbContext
 
             modelBuilder.Entity<AdminQCLot>().HasMany(p => p.Analytes).WithOne().HasForeignKey(e => e.AdminQCLotID);
 
             modelBuilder.Entity<AdminQCLot>().HasMany(p => p.Reports).WithOne().HasForeignKey(e => e.AdminQCLotID);
+
+            // modelBuilder.Entity<BloodBankQCLot>().HasMany(p => p.Reagents).WithOne().HasForeignKey(e => e.BloodBankQCLotID);
+
+            // modelBuilder.Entity<BloodBankQCLot>().HasMany(p => p.Reports).WithOne().HasForeignKey(e => e.AdminQCLotID);
 
             //modelBuilder.Entity<Analyte>().HasOne(e => e.AdminQCLot).WithMany(e => e.Analytes).HasForeignKey(e => e.AdminQCLotID);
 
@@ -42,6 +49,17 @@ namespace Medical_Information.API.Data
                 Department = Enums.Department.Chemistry,
                 //Analytes = [],
             };
+
+            /*
+            var mockBBLot = new BloodBankQCLot(){
+                BloodBankQCLotID = Guid.Parse("ccc59aca-6c27-424c-852c-21656a88f449")
+                QCName = "Test",
+                LotNumber = "777777777777",
+                OpenDate = DateTime.Now,
+                Department = Enums.Department.BloodBank,
+                Reagents = []
+            };
+            */
 
             var analytes = new List<Analyte>()
             {
@@ -234,6 +252,8 @@ namespace Medical_Information.API.Data
             modelBuilder.Entity<AdminQCLot>().HasData(mockQCLot);
 
             modelBuilder.Entity<Analyte>().HasData(analytes);
+
+            // modelBuilder.Entity<BloodBankQCLot>().HasData(mockBBLOT);
 
             //ICollection<Analyte> analytesInQCLot = new List<Analyte>(analytes);
         }
