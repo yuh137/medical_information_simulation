@@ -87,8 +87,8 @@ const MolecularQualitativeAnalysis = () => {
         <div style={{ flex: '0 0 180px', marginRight: '20px' }}>
           <div style={{ fontWeight: 'bold', marginTop: '30px' }}>
             <div>QC Panel: {qcData?.fileName}</div>
-            <div >Lot #: {qcData?.lotNumber}</div>
-            <div style = {{fontWeight: 'normal'}}>Closed Date: {qcData?.closedDate}</div>
+            <div>Lot #: {qcData?.lotNumber}</div>
+            <div>Closed Date: {qcData?.closedDate}</div>
             <div>Analyte: {selectedAnalyteId}</div>
           </div>
         </div>
