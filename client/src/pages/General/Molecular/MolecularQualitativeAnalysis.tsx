@@ -92,6 +92,62 @@ const MolecularQualitativeAnalysis = () => {
             <div>Analyte: {selectedAnalyteId}</div>
           </div>
         </div>
+
+        <div style={{ flex: '1', margin: '0 20px' }}>
+          <div style={{ marginBottom: '10px', textAlign: 'center' }}>
+            <span style={{ fontWeight: 'bold', textDecoration: 'underline' }}>Qualitative Analysis:</span> <span style={{ fontSize: 'inherit' }}>{selectedAnalyteId}</span>
+          </div>
+          <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #ccc' }}>
+            <thead>
+              {table.getHeaderGroups().map(headerGroup => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map(header => (
+                    <th
+                      key={header.id}
+                      style={{
+                        padding: '10px',
+                        borderBottom: '1px solid #ccc',
+                        textAlign: 'left',
+                        backgroundColor: '#3A6CC6',
+                        color: 'white',
+                        border: '1px solid #ccc',
+                        width: header.column.columnDef.minSize || 100, 
+                      }}
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row, rowIndex) => (
+                <tr
+                  key={row.id}
+                  style={{
+                    backgroundColor: rowIndex % 2 === 0 ? '#DAE3F3' : '#B0C4DE',
+                    height: '40px',
+                  }}
+                >
+                  {row.getVisibleCells().map(cell => (
+                    <td
+                      key={cell.id}
+                      style={{
+                        padding: '10px',
+                        borderBottom: '1px solid #ccc',
+                        border: '1px solid #ccc',
+                        width: cell.column.columnDef.minSize || 100,
+                      }}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
         <div style={{ flex: '0 0 180px', marginLeft: '20px', marginTop: '30px' }}>
           <div style = {{fontWeight: 'bold'}}>Review Date:</div>
           <div>Start Date: {startDate}</div>
@@ -102,57 +158,7 @@ const MolecularQualitativeAnalysis = () => {
           <Button variant="outlined" style={{ marginTop: '80px', width: '100%' }} onClick={() => {navigate('/molecular/qc_analysis_report')}}>Qualitative Analysis Report</Button>
         </div>
       </div>
-      <div style={{ marginTop: '40px', width: '70%', marginLeft: 'auto', marginRight: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #ccc' }}>
-          <thead>
-            {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
-                  <th
-                    key={header.id}
-                    style={{
-                      padding: '10px',
-                      borderBottom: '1px solid #ccc',
-                      textAlign: 'left',
-                      backgroundColor: '#3A6CC6',
-                      color: 'white',
-                      border: '1px solid #ccc',
-                      width: header.column.columnDef.minSize || 100, 
-                    }}
-                  >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row, rowIndex) => (
-              <tr
-                key={row.id}
-                style={{
-                  backgroundColor: rowIndex % 2 === 0 ? '#DAE3F3' : '#B0C4DE',
-                  height: '40px',
-                }}
-              >
-                {row.getVisibleCells().map(cell => (
-                  <td
-                    key={cell.id}
-                    style={{
-                      padding: '10px',
-                      borderBottom: '1px solid #ccc',
-                      border: '1px solid #ccc',
-                      width: cell.column.columnDef.minSize || 100,
-                    }}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+
       {/* Modal for review comments */}
       <Modal open={modalOpen} onClose={handleModalClose}>
         <div style={{ backgroundColor: 'white', padding: '20px', margin: 'auto', marginTop: '100px', width: '400px', borderRadius: '8px' }}>

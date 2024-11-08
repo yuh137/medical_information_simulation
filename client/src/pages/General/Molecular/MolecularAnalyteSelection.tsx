@@ -98,40 +98,53 @@ const MolecularAnalyteSelection = () => {
               borderRadius: '20px',}}
             onClick={() => navigate('/molecular/levey-jennings')}>Levey-Jennings</Button>
         </div>
+
+
+
         <Dialog open={openDateDialog} onClose={() => setOpenDateDialog(false)}>
-          <DialogTitle>Date Range Selection</DialogTitle>
-          <DialogContent>
-          <table>
-            <tbody>
-              <tr>
-                <td style={{ textAlign: 'center', padding: '10px' }}>
-                  <input
-                    type="text"
-                    value={startDate || ""}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    placeholder="MM/DD/YYYY"
-                    aria-label="Start Date"
-                    style={{ textAlign: 'center', width: '100%' }}
-                  />
-                </td>
-                <td style={{ textAlign: 'center', padding: '10px' }}>
-                  <input
-                    type="text"
-                    value={endDate || ""}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    placeholder="MM/DD/YYYY"
-                    aria-label="End Date"
-                    style={{ textAlign: 'center', width: '100%' }}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleContinue}>Continue</Button>
-          </DialogActions>
+          <div style={{ backgroundColor: '#3A6CC6', padding: '15px', borderRadius: '8px' }}>
+            <DialogTitle style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', margin: 0 }}>Date Range Selection</DialogTitle>
+            <DialogContent style={{ backgroundColor: 'white', borderRadius: '8px', padding: '20px', marginTop: '10px' }}>
+              <table style={{ width: '100%' }}>
+                <thead>
+                  <tr>
+                    <th style={{ fontWeight: 'bold', textAlign: 'center', paddingBottom: '10px' }}>Start Date</th>
+                    <th style={{ fontWeight: 'bold', textAlign: 'center', paddingBottom: '10px' }}>End Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style={{ textAlign: 'center', padding: '10px' }}>
+                      <input
+                        type="text"
+                        value={startDate || ""}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        placeholder="MM/DD/YYYY"
+                        aria-label="Start Date"
+                        style={{ textAlign: 'center', width: '100%', padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }}
+                      />
+                    </td>
+                    <td style={{ textAlign: 'center', padding: '10px' }}>
+                      <input
+                        type="text"
+                        value={endDate || ""}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        placeholder="MM/DD/YYYY"
+                        aria-label="End Date"
+                        style={{ textAlign: 'center', width: '100%', padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </DialogContent>
+    
+            <DialogActions style={{ justifyContent: 'center', padding: '10px' }}>
+              <Button onClick={handleContinue} variant="contained" color="primary">Continue</Button>
+            </DialogActions>
+          </div>
         </Dialog>
+
       </div>
     </>
   );
