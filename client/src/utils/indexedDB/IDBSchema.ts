@@ -50,43 +50,69 @@ export interface QCTemplateBatch {
 }
 
 export interface MolecularQCReport {
-  studentID: string;
-  creationDate: Date;
-  analyteInputs: AnalyteInput[];
+    studentID: string;
+    creationDate: Date;
+    analyteInputs: AnalyteInput[];
 }
 
 export interface AnalyteInput {
-  analyteName: string;
-  value: string;
-  comment: string;
+    analyteName: string;
+    value: string;
+    comment: string;
 }
 
 export enum AnalyteReportType {
-	Qualitative,
-	QualitativeViralLoadRange
+    Qualitative,
+    QualitativeViralLoadRange
 }
 
 export interface MolecularQCTemplateBatchAnalyte {
-	reportType: AnalyteReportType;
-	analyteName: string;
-	analyteAcronym: string;
+    reportType: AnalyteReportType;
+    analyteName: string;
+    analyteAcronym: string;
 }
 
 export interface QualitativeMolecularQCTemplateBatchAnalyte extends MolecularQCTemplateBatchAnalyte {
-	expectedRange: string;
+    expectedRange: string;
 }
 
 export interface QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte extends MolecularQCTemplateBatchAnalyte {
-	conventionalUnits: string;
-	minLevel: string;
-	maxLevel: string;
+    conventionalUnits: string;
+    minLevel: string;
+    maxLevel: string;
 }
 
 export interface MolecularQCTemplateBatch {
-  fileName: string;
-  lotNumber: string;
-  openDate: string;
-  closedDate: string;
-  analytes: MolecularQCTemplateBatchAnalyte[];
-  reports: MolecularQCReport[];
+    fileName: string;
+    lotNumber: string;
+    openDate: string;
+    closedDate: string;
+    analytes: MolecularQCTemplateBatchAnalyte[];
+    reports: MolecularQCReport[];
+}
+
+export interface Analyte {
+    analyteID: string,
+    analyteName: string,
+    analyteAcronym: string,
+    type: string,
+    unitOfMeasure: string | null,
+    minLevel: number | null,
+    maxLevel: number | null,
+    expectedRange: string | null,
+    adminQCLotID: string
+}
+
+export interface QCPanel {
+    adminQCLotID: string,
+    qcName: string,
+    lotNumber: string,
+    openDate: string,
+    closedDate: string | null,
+    fileDate: string | null,
+    expirationDate: string,
+    isActive: boolean,
+    department: number,
+    analytes: Analyte[],
+    reports?: MolecularQCReport[]
 }

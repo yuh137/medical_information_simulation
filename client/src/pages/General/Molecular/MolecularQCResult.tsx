@@ -2,10 +2,12 @@ import { Button } from "@mui/material";
 import { Icon } from "@iconify/react";
 import NavBar from "../../../components/NavBar";
 import React, { useState, useEffect } from "react";
-import { MolecularQCTemplateBatch } from  '../../../utils/indexedDB/IDBSchema';
+import { MolecularQCTemplateBatch } from '../../../utils/indexedDB/IDBSchema';
 import { useNavigate } from "react-router-dom";
 import { getAllDataByFileName, getQCRangeByDetails } from "../../../utils/indexedDB/getData";
 import { Table, TableBody, TableCell, TableHead, TableRow, TableHeader } from "../../../components/ui/table";
+import { AuthToken } from '../../../context/AuthContext';
+import { QCPanel } from "../../../utils/indexedDB/IDBSchema";
 import {
   ColumnDef,
   useReactTable,
@@ -21,34 +23,48 @@ interface QCItem {
   closedDate: string;
 }
 
-const columns: ColumnDef<QCItem>[] = [
+const columns: ColumnDef<QCPanel>[] = [
   {
     id: 'departmentColumn',
     header: () => <span>Department</span>,
     cell: () => <span>Molecular</span>
   },
   {
-    accessorKey: "fileName",
+    accessorKey: "qcName",
     header: () => <span>Test Name</span>,
     cell: info => info.getValue(),
   },
 ];
 
 const MolecularQCResult = () => {
-  const [qcData, setQcData] = useState<MolecularQCTemplateBatch[]>([]);
-  const [selectedQC, setSelectedQC] = useState<QCItem | null>(null);
+  const [qcData, setQcData] = useState<QCPanel[]>([]);
+  const [selectedQC, setSelectedQC] = useState<QCPanel | null>(null);
   const navigate = useNavigate();
+
+  const fetchFromDB = async (QCItem: string) => {
+    const token = localStorage.getItem("token");
+    const authToken: AuthToken = JSON.parse(token as string);
+    const item = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByName?${(new URLSearchParams({ name: QCItem })).toString()}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${authToken.jwtToken}`,
+      },
+    });
+    return (((await item.json()) as unknown) as QCPanel);
+  };
 
   const fetchQCData = async () => {
     console.log("Fetching QC data...");
     const selectedQCs: string[] = JSON.parse(localStorage.getItem('selectedQCItems') || '[]');
     const allDataPromises = selectedQCs.map(qcName => getAllDataByFileName("qc_store", qcName));
     const results = await Promise.all(allDataPromises);
-		const retyped_results = (results as unknown) as MolecularQCTemplateBatch[][]
-    setQcData(retyped_results.flat());
-    console.log("Fetched QC data:", retyped_results.flat());
+    const retyped_results = await Promise.all(selectedQCs.map(fetchFromDB));
+    setQcData(retyped_results);
+    console.log("Fetched QC data:", retyped_results);
   };
-  
+
   useEffect(() => {
 
     fetchQCData();
@@ -56,20 +72,11 @@ const MolecularQCResult = () => {
 
   const handleSelectQC = async () => {
     if (selectedQC) {
-      console.log("Selected QC:", selectedQC);  
+      console.log("Selected QC:", selectedQC);
       try {
-        const qcData = await getQCRangeByDetails(selectedQC.fileName, selectedQC.lotNumber, selectedQC.closedDate);
-        if (qcData) {
-          console.log("QC Data found:", qcData);
-          // Save the qcData to localStorage
-          localStorage.setItem('selectedQCData', JSON.stringify(qcData));
-          // Navigate to the AnalyteInputPage
-          navigate(`/molecular/simple-analyte-input-page`);
-  
-        } else {
-          console.warn('No matching QC data found in the database.');
-          alert('No matching QC data found in the database.');
-        }
+        localStorage.setItem('selectedQCData', JSON.stringify(selectedQC));
+        // Navigate to the AnalyteInputPage
+        navigate(`/molecular/simple-analyte-input-page`);
       } catch (error) {
         console.error("Error fetching QC data:", error);
       }
@@ -127,7 +134,7 @@ const MolecularQCResult = () => {
                 </TableRow>
               )}
             </TableBody>
-          </Table>  
+          </Table>
         </div>
         <div className="flex items-center justify-center space-x-2 py-4">
           <div className="space-x-2">

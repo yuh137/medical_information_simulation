@@ -1,16 +1,18 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte, QualitativeMolecularQCTemplateBatchAnalyte, QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte, AnalyteReportType, MolecularQCReport } from  '../../../utils/indexedDB/IDBSchema';
+import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte, QualitativeMolecularQCTemplateBatchAnalyte, QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte, AnalyteReportType, MolecularQCReport, Analyte } from '../../../utils/indexedDB/IDBSchema';
 import NavBar from '../../../components/NavBar';
 import MolecularAnalyte from '../../../components/MolecularAnalyte';
 import { AuthToken } from "../../../context/AuthContext";
+import { QCPanel } from "../../../utils/indexedDB/IDBSchema";
 import { Button, ButtonBase, Modal } from "@mui/material";
 import { useTheme } from "../../../context/ThemeContext";
-import { saveToDB } from "../../../utils/indexedDB/getData";
+import { saveToDB, getQCRangeByDetails } from "../../../utils/indexedDB/getData";
+import { min } from 'd3';
 
 
 const SimpleMolecularAnalyteInputPage = () => {
   const { theme } = useTheme();
-  const [qcData, setQcData] = useState<MolecularQCTemplateBatch | null>(null);
+  const [qcData, setQcData] = useState<QCPanel | null>(null);
   const [modalData, setModalData] = useState<{ invalidIndex: number; comment: string }[]>([]);
   const [invalidIndexes, setInvalidIndexes] = useState<Set<number> | null>(null);
   const [analyteValues, setAnalyteValues] = useState<string[]>([]);
@@ -69,28 +71,32 @@ const SimpleMolecularAnalyteInputPage = () => {
     else return false;
   }, [analyteValues, invalidIndexes, qcData]);
 
-	const setInvalidIndex = (index: number) => {
-  	if (!invalidIndexes) {
-			let newInvalidIndexes = new Set<number>();
+  const setInvalidIndex = (index: number) => {
+    if (!invalidIndexes) {
+      let newInvalidIndexes = new Set<number>();
       newInvalidIndexes.add(index);
       setInvalidIndexes(newInvalidIndexes);
     } else {
-    	let newInvalidIndexes = new Set<number>(invalidIndexes);
+      let newInvalidIndexes = new Set<number>(invalidIndexes);
       newInvalidIndexes.add(index);
       setInvalidIndexes(newInvalidIndexes);
     }
-	}
-		
+  }
+
   const handleAcceptQC = async () => {
     if (!qcData) {
       console.error("No QC data available to save.");
       return;
     }
-    const report: MolecularQCReport = { studentID: username, creationDate: new Date(), analyteInputs: qcData.analytes.map((analyte, index) => ({ analyteName: analyte.analyteName, value: analyteValues[index], comment: modalData.find(element => element.invalidIndex === index)?.comment || "" }))};
-    qcData.reports.push(report);
+    const report: MolecularQCReport = { studentID: username, creationDate: new Date(), analyteInputs: qcData.analytes.map((analyte, index) => ({ analyteName: analyte.analyteName, value: analyteValues[index], comment: modalData.find(element => element.invalidIndex === index)?.comment || "" })) };
+    let data = ((await getQCRangeByDetails(qcData.qcName, qcData.lotNumber, '')) as unknown) as MolecularQCTemplateBatch;
+    if (!data) {
+      data = { fileName: qcData.qcName, lotNumber: qcData.lotNumber, closedDate: '', reports: [], openDate: '', analytes: [] };
+    }
+    data.reports.push(report);
     console.log("Data to save:", qcData);
     try {
-      await saveToDB("qc_store", qcData);
+      await saveToDB("qc_store", data);
       console.log("QC data saved successfully.");
       setAnalyteValues([]);
       setInvalidIndexes(null);
@@ -100,34 +106,40 @@ const SimpleMolecularAnalyteInputPage = () => {
       console.error("Error saving QC data:", error);
     }
   };
-  
-  const handleInputChange = (index: number, value: string, old_analyte: MolecularQCTemplateBatchAnalyte) => {
+
+  const handleInputChange = (index: number, value: string, old_analyte: Analyte) => {
     const newValues = [...analyteValues];
     newValues[index] = value;
     setAnalyteValues(newValues);
-    if (old_analyte.reportType === AnalyteReportType.QualitativeViralLoadRange) {
-			const viralLoadAnalyte = old_analyte as QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte;
-			if (isNaN(parseFloat(value)) ||
-      (parseFloat(value) < +viralLoadAnalyte.minLevel) ||
-      (parseFloat(value) > +viralLoadAnalyte.maxLevel)) {
-				setInvalidIndex(index);
-    	} else {
-      	let newInvalidIndexes = new Set<number>(invalidIndexes);
-      	newInvalidIndexes.delete(index);
-      	setInvalidIndexes(newInvalidIndexes);
-    	}
-    } else if (old_analyte.reportType === AnalyteReportType.Qualitative) {
-				const qualitativeAnalyte = old_analyte as QualitativeMolecularQCTemplateBatchAnalyte;
-				if (qualitativeAnalyte.expectedRange !== value) {
-					setInvalidIndex(index);
-				} else {
-      		let newInvalidIndexes = new Set<number>(invalidIndexes);
-      		newInvalidIndexes.delete(index);
-      		setInvalidIndexes(newInvalidIndexes);
-				}
+    if (old_analyte.type === 'QuanitativeAnalyte') {
+      let minLevel = -1;
+      if (old_analyte.minLevel) {
+        minLevel = old_analyte.minLevel;
+      }
+      let maxLevel = -1;
+      if (old_analyte.maxLevel) {
+        maxLevel = old_analyte.maxLevel;
+      }
+      if (isNaN(parseFloat(value)) ||
+        (parseFloat(value) < minLevel) ||
+        (parseFloat(value) > maxLevel)) {
+        setInvalidIndex(index);
+      } else {
+        let newInvalidIndexes = new Set<number>(invalidIndexes);
+        newInvalidIndexes.delete(index);
+        setInvalidIndexes(newInvalidIndexes);
+      }
+    } else if (old_analyte.type === 'QualitativeAnalyte') {
+      if (old_analyte.expectedRange !== value) {
+        setInvalidIndex(index);
+      } else {
+        let newInvalidIndexes = new Set<number>(invalidIndexes);
+        newInvalidIndexes.delete(index);
+        setInvalidIndexes(newInvalidIndexes);
+      }
     } else if (typeof value === 'undefined') {
-			setInvalidIndex(index);
-		}
+      setInvalidIndex(index);
+    }
     setIsInputFull(newValues.length === qcData?.analytes.length && newValues.length > 0);
   };
 
@@ -169,11 +181,11 @@ const SimpleMolecularAnalyteInputPage = () => {
               key={item.analyteName}
             >
               <MolecularAnalyte
-		analyte = {item}
+                analyte={item}
                 handleInputChange={(val: string) => {
-	      	handleInputChange(index, val, item);
-              }}
-              
+                  handleInputChange(index, val, item);
+                }}
+
                 ref={(childRef: { inputRef: React.RefObject<HTMLInputElement>; nameRef: React.RefObject<HTMLDivElement> }) => {
                   if (childRef) {
                     inputRefs.current.push(childRef.inputRef.current as HTMLInputElement);
@@ -190,19 +202,17 @@ const SimpleMolecularAnalyteInputPage = () => {
           </Button>
           <div className="sm:space-x-16 max-sm:w-full max-sm:space-y-4">
             <Button
-              className={`sm:w-32 sm:h-[50px] !font-semibold !border !border-solid !border-[#6781AF] max-sm:w-full ${
-                isInputFull ? "!bg-[#DAE3F3] !text-black" : "!bg-[#AFABAB] !text-white"
-              }`}
+              className={`sm:w-32 sm:h-[50px] !font-semibold !border !border-solid !border-[#6781AF] max-sm:w-full ${isInputFull ? "!bg-[#DAE3F3] !text-black" : "!bg-[#AFABAB] !text-white"
+                }`}
               disabled={!isInputFull}
               onClick={() => setIsModalOpen(true)}
             >
               Apply QC Comment
             </Button>
             <Button
-              className={`sm:w-32 sm:h-[50px] !font-semibold !border !border-solid !border-[#6781AF] max-sm:w-full ${
-                (isValid || isValidManual) ? "!bg-[#DAE3F3] !text-black" : "!bg-[#AFABAB] !text-white"
-              }`}
-             disabled={!isValid && !isValidManual}
+              className={`sm:w-32 sm:h-[50px] !font-semibold !border !border-solid !border-[#6781AF] max-sm:w-full ${(isValid || isValidManual) ? "!bg-[#DAE3F3] !text-black" : "!bg-[#AFABAB] !text-white"
+                }`}
+              disabled={!isValid && !isValidManual}
               onClick={() => handleAcceptQC()}
             >
               Accept QC
@@ -229,7 +239,7 @@ const SimpleMolecularAnalyteInputPage = () => {
                   </div>
                 ))}
                 <ButtonBase className={`!rounded-lg sm!my-10 sm:!py-6 sm:!px-10 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] sm:w-1/2 self-center`} onClick={() => {
-                  setIsValidManual(modalData.every(item => item.comment !== "")); 
+                  setIsValidManual(modalData.every(item => item.comment !== ""));
                 }}>
                   Apply Comments
                 </ButtonBase>

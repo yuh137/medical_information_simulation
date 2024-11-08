@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { getAllDataFromStore } from '../../../utils/indexedDB/getData';
-import { MolecularQCTemplateBatch } from '../../../utils/indexedDB/IDBSchema';
+import { getQCRangeByDetails } from '../../../utils/indexedDB/getData';
+import { MolecularQCTemplateBatch, QCPanel } from '../../../utils/indexedDB/IDBSchema';
 import NavBar from '../../../components/NavBar';
 import { Modal, Radio, RadioGroup, FormControlLabel, TextField } from '@mui/material';
 import { Button } from '@mui/material';
+import { getAllDataByFileName } from '../../../utils/indexedDB/getData';
 
 import {
   ColumnDef,
@@ -14,7 +15,7 @@ import {
   getPaginationRowModel
 } from '@tanstack/react-table';
 
-interface TableData {creationDate: string; creationTime: string; tech: string; value: string; comment: string;}
+interface TableData { creationDate: string; creationTime: string; tech: string; value: string; comment: string; }
 
 const MolecularQualitativeAnalysis = () => {
   const { encodedSelectedAnalyteId, encodedStartDate, encodedEndDate } = useParams<{ encodedSelectedAnalyteId: string; encodedStartDate: string; encodedEndDate: string }>();
@@ -36,9 +37,9 @@ const MolecularQualitativeAnalysis = () => {
   useEffect(() => {
     const fetchAnalyteData = async () => {
       try {
-        const data = localStorage.getItem("selectedQCData");
-        if (data) {
-          const qcData = JSON.parse(data) as MolecularQCTemplateBatch;
+        const dbData = JSON.parse(localStorage.getItem("selectedQCData") as string) as QCPanel;
+        if (dbData) {
+          const qcData = ((await getQCRangeByDetails(dbData.qcName, dbData.lotNumber, '')) as unknown) as MolecularQCTemplateBatch;
           const isoStartDate = isoFormatDate(startDate as string);
           const isoEndDate = isoFormatDate(endDate as string);
           const inRangeReports = qcData.reports.filter(report => ((new Date(isoStartDate)).getTime() <= (new Date(report.creationDate)).getTime()) && ((new Date(report.creationDate)).getTime() <= (new Date(isoEndDate)).getTime()) && report.analyteInputs.some(input => input.analyteName === selectedAnalyteId));
@@ -57,31 +58,34 @@ const MolecularQualitativeAnalysis = () => {
         console.error("Error fetching analyte data:", error);
       }
     };
-      fetchAnalyteData();
-    }, []);
+    fetchAnalyteData();
+  }, []);
 
-    const handleModalOpen = () => setModalOpen(true);
-    const handleModalClose = () => setModalOpen(false);
-  
-    const handleQcStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {setQCStatus(event.target.value);
-      if (event.target.value === 'approved') {setQCComment('');}};
-    const saveComment = () => {
-      if (qcStatus === 'concern') {} handleModalClose();};
-  
-  
+  const handleModalOpen = () => setModalOpen(true);
+  const handleModalClose = () => setModalOpen(false);
+
+  const handleQcStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQCStatus(event.target.value);
+    if (event.target.value === 'approved') { setQCComment(''); }
+  };
+  const saveComment = () => {
+    if (qcStatus === 'concern') { } handleModalClose();
+  };
+
+
   const columns: ColumnDef<TableData>[] = [
-    {accessorKey: 'creationDate', header: 'Run Date', cell: (info) => info.getValue(), minSize: 50, maxSize: 50,},
-    {accessorKey: 'creationTime', header: 'Run Time', cell: (info) => info.getValue(), minSize: 50, maxSize: 50,},
-    {accessorKey: 'tech', header: 'Tech', cell: (info) => info.getValue(), minSize: 20, maxSize: 20,},
-    {accessorKey: 'value', header: 'Test Range', cell: (info) => info.getValue(), minSize: 20, maxSize: 20,},
-    {accessorKey: 'comment', header: 'Comments', cell: (info) => info.getValue(), minSize: 300, maxSize: 500,},
+    { accessorKey: 'creationDate', header: 'Run Date', cell: (info) => info.getValue(), minSize: 50, maxSize: 50, },
+    { accessorKey: 'creationTime', header: 'Run Time', cell: (info) => info.getValue(), minSize: 50, maxSize: 50, },
+    { accessorKey: 'tech', header: 'Tech', cell: (info) => info.getValue(), minSize: 20, maxSize: 20, },
+    { accessorKey: 'value', header: 'Test Range', cell: (info) => info.getValue(), minSize: 20, maxSize: 20, },
+    { accessorKey: 'comment', header: 'Comments', cell: (info) => info.getValue(), minSize: 300, maxSize: 500, },
   ];
 
-  const table = useReactTable({data: tableData, columns, getCoreRowModel: getCoreRowModel(), getPaginationRowModel: getPaginationRowModel(),});
+  const table = useReactTable({ data: tableData, columns, getCoreRowModel: getCoreRowModel(), getPaginationRowModel: getPaginationRowModel(), });
 
   return (
     <div>
-      <NavBar name = "Review Controls: Molecular"/>
+      <NavBar name="Review Controls: Molecular" />
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', marginLeft: '10px', marginRight: '10px' }}>
         <div style={{ flex: '0 0 180px', marginRight: '20px' }}>
@@ -111,7 +115,7 @@ const MolecularQualitativeAnalysis = () => {
                         backgroundColor: '#3A6CC6',
                         color: 'white',
                         border: '1px solid #ccc',
-                        width: header.column.columnDef.minSize || 100, 
+                        width: header.column.columnDef.minSize || 100,
                       }}
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
@@ -149,13 +153,13 @@ const MolecularQualitativeAnalysis = () => {
         </div>
 
         <div style={{ flex: '0 0 180px', marginLeft: '20px', marginTop: '30px' }}>
-          <div style = {{fontWeight: 'bold'}}>Review Date:</div>
+          <div style={{ fontWeight: 'bold' }}>Review Date:</div>
           <div>Start Date: {startDate}</div>
           <div>Close Date: {endDate}</div>
           <Button variant="outlined" style={{ marginTop: '30px', width: '100%' }}>LEARN</Button>
           <Button variant="outlined" style={{ marginTop: '10px', width: '100%' }}>STUDENT NOTES</Button>
           <Button variant="outlined" style={{ marginTop: '80px', width: '100%' }} onClick={handleModalOpen}>Review Comments</Button>
-          <Button variant="outlined" style={{ marginTop: '80px', width: '100%' }} onClick={() => {navigate('/molecular/qc_analysis_report')}}>Qualitative Analysis Report</Button>
+          <Button variant="outlined" style={{ marginTop: '80px', width: '100%' }} onClick={() => { navigate('/molecular/qc_analysis_report') }}>Qualitative Analysis Report</Button>
         </div>
       </div>
 

@@ -25,7 +25,7 @@ import ChemistryQCTypeButtonsPage from "./pages/General/Chemistry/ChemistryQCTyp
 import Layout from "./utils/Layout";
 import ChemistryLeveyJennings from "./pages/General/Chemistry/ChemistryLeveyJennings";
 import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInputPage";
-import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
+import Simple_Faculty_QC_Review from "./pages/FacultyView/Simple_Faculty_Review_Controls";
 import { qcTypeLinkList } from "./utils/utils";
 import MolecularQCResult from "./pages/General/Molecular/MolecularQCResult";
 import SimpleMolecularAnalyteInputPage from "./pages/General/Molecular/SimpleMolecularAnalyteInputPage";
@@ -87,12 +87,12 @@ function AppWithRouter() {
             path: 'admin-review_controls',
             element: <Simple_Faculty_QC_Review />,
           },
-          
+
           { path: 'student-results', element: <StudentResultsInProgress /> },
-          
+
           // CHEMISTRY PATHS
-          { 
-            path: 'chemistry', 
+          {
+            path: 'chemistry',
             children: [
               {
                 path: 'qc_results',
@@ -100,7 +100,7 @@ function AppWithRouter() {
               },
               {
                 path: 'simple-analyte-input-page',
-                element: <SimpleAnalyteInputPage name="Chemistry" />,  
+                element: <SimpleAnalyteInputPage name="Chemistry" />,
               },
               {
                 path: "qc_results/:link",
@@ -112,9 +112,9 @@ function AppWithRouter() {
                   return null;
                 }
               },
-              { 
-                path: 'order_controls', 
-                element: <ChemistryOrderControls /> 
+              {
+                path: 'order_controls',
+                element: <ChemistryOrderControls />
               },
               {
                 path: "qc_builder",
@@ -150,7 +150,7 @@ function AppWithRouter() {
                     }
                   }
 
-                  return null; 
+                  return null;
                 }
               },
               {
@@ -169,8 +169,8 @@ function AppWithRouter() {
           },
 
           //  HEMATOLOGY/COAG PATHS
-          { 
-            path: 'hema_coag', 
+          {
+            path: 'hema_coag',
             children: [
 
             ]
@@ -217,12 +217,12 @@ function AppWithRouter() {
                 element: <MolecularEditQCPage />,
               },
               {
-                path: "edit_qc/:item",
+                path: "edit_qc/:encodedItem",
                 element: <MolecularTestingInputPage />,
               },
-              { 
-                path: 'order_controls', 
-                element: <MolecularOrderControls /> 
+              {
+                path: 'order_controls',
+                element: <MolecularOrderControls />
               },
               {
                 path: 'qc_results',
@@ -234,27 +234,27 @@ function AppWithRouter() {
               },
               {
                 path: 'simple-analyte-input-page',
-                element: <SimpleMolecularAnalyteInputPage/>,  
+                element: <SimpleMolecularAnalyteInputPage />,
               },
               {
-	        path: 'admin-review_controls',
-	        element: <MolecularReviewControls />,
+                path: 'admin-review_controls',
+                element: <MolecularReviewControls />,
               },
               {
                 path: 'student-review_controls',
-                element: <MolecularReviewControls/>
+                element: <MolecularReviewControls />
               },
               {
                 path: 'analyte_selection',
-                element: <MolecularAnalyteSelection/>
+                element: <MolecularAnalyteSelection />
               },
               {
                 path: 'qc_analysis/:encodedSelectedAnalyteId/:encodedStartDate/:encodedEndDate',
-                element: <MolecularQualitativeAnalysis/>,
+                element: <MolecularQualitativeAnalysis />,
               },
               {
                 path: 'qc_analysis_report',
-                element: <MolecularQualitativeAnalysisReport/>
+                element: <MolecularQualitativeAnalysisReport />
               },
               {
                 path: 'levey-jennings',

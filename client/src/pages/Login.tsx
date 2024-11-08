@@ -18,16 +18,16 @@ const Login = () => {
   const [loginOptions, setLoginOptions] = useState<"Admin" | "Student" | string>("");
   const { register, handleSubmit } = useForm<CredentialsInput>();
 
-	const initMolecularIDB = async () => {
+  const initMolecularIDB = async () => {
     const QCPanels = ['GI Panel Level I', 'GI Panel Level II', 'Respiratory Panel Level I', 'Respiratory Panel Level II', 'STI-PCR Panel Level I', 'STI-PCR Panel Level II', 'HIV Real-Time PCR Panel: Negative Control', 'HIV Real-Time PCR Panel: Low Control', 'HIV Real-Time PCR Panel: High Control'];
     await DEBUG_add_molecular_data_to_idb(QCPanels);
-	};
+  };
 
   useEffect(() => {
     checkCurrentSession();
-// TODO(colby): DEBUG CODE
-		initMolecularIDB();
-//
+    // TODO(colby): DEBUG CODE
+    initMolecularIDB();
+    //
   }, [])
 
   const onSubmit: SubmitHandler<CredentialsInput> = async (data) => {
@@ -57,7 +57,7 @@ const Login = () => {
           setIsLoggingIn(false);
           navigate('/admin-home');
         }
-      } catch(e) {
+      } catch (e) {
         console.log("Error in login ", e);
         setIsLoggingIn(false);
       }
@@ -130,11 +130,10 @@ const Login = () => {
           </div>
           <div className="user-type flex sm:gap-x-2 box-border">
             <div
-              className={`student-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${
-                loginOptions === "Student"
+              className={`student-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${loginOptions === "Student"
                   ? "border-2 !border-[#2f5597]"
                   : ""
-              }`}
+                }`}
               onClick={() => {
                 setLoginOptions((prevState) =>
                   prevState === "Student" ? "" : "Student"
@@ -145,11 +144,10 @@ const Login = () => {
               <div className="self-center font-semibold text-xl">Student</div>
             </div>
             <div
-              className={`admin-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${
-                loginOptions === "Admin"
+              className={`admin-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${loginOptions === "Admin"
                   ? "border-2 !border-[#2f5597]"
                   : ""
-              }`}
+                }`}
               onClick={() => {
                 setLoginOptions((prevState) =>
                   prevState === "Admin" ? "" : "Admin"
@@ -182,7 +180,7 @@ const Login = () => {
               onClick={handleSubmit(onSubmit)}
               className={`!text-black !bg-[${theme.secondaryColor}] !border !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F]`}
             >
-              { isLoggingIn ? (<Icon icon="eos-icons:three-dots-loading" />) : "Login" }
+              {isLoggingIn ? (<Icon icon="eos-icons:three-dots-loading" />) : "Login"}
             </Button>
           </form>
           <div className="register-link">

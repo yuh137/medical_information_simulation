@@ -2,7 +2,9 @@ import { Button } from "@mui/material";
 import { Icon } from "@iconify/react";
 import NavBar from "../../../components/NavBar";
 import { useState, useEffect } from "react";
-import { MolecularQCTemplateBatch } from  '../../../utils/indexedDB/IDBSchema';
+import { MolecularQCTemplateBatch } from '../../../utils/indexedDB/IDBSchema';
+import { AuthToken } from '../../../context/AuthContext';
+import { QCPanel } from "../../../utils/indexedDB/IDBSchema";
 import { useNavigate } from "react-router-dom";
 import { getAllDataFromStore, getAllDataByFileName, getQCRangeByDetails } from "../../../utils/indexedDB/getData";
 import { Table, TableBody, TableCell, TableHead, TableRow, TableHeader } from "../../../components/ui/table";
@@ -20,32 +22,43 @@ interface QCItem {
   closedDate: string;
 }
 
-const columns: ColumnDef<QCItem>[] = [
+const columns: ColumnDef<QCPanel>[] = [
   {
     id: 'departmentColumn',
     header: () => <span>Department</span>,
     cell: () => <span>Molecular</span>
   },
   {
-    accessorKey: "fileName",
+    accessorKey: "qcName",
     header: () => <span>Test</span>,
     cell: info => info.getValue(),
   },
 ];
 
 const MolecularReviewControls = () => {
-  const [qcData, setQcData] = useState<MolecularQCTemplateBatch[]>([]);
-  const [selectedQC, setSelectedQC] = useState<QCItem | null>(null);
+  const [qcData, setQcData] = useState<QCPanel[]>([]);
+  const [selectedQC, setSelectedQC] = useState<QCPanel | null>(null);
   const navigate = useNavigate();
 
   const fetchQCData = async () => {
     console.log("Fetching QC Panels...");
-		const results = await getAllDataFromStore<MolecularQCTemplateBatch>('qc_store');
+    const results = await getAllDataFromStore<MolecularQCTemplateBatch>('qc_store');
     console.log("Fetched QC Panels:", results);
-		const retyped_results = (results as unknown) as MolecularQCTemplateBatch[];
+    const token = localStorage.getItem("token");
+    const authToken: AuthToken = JSON.parse(token as string);
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${authToken.jwtToken}`,
+      },
+    });
+    const retyped_results = ((await res.json()) as unknown) as QCPanel[];
+    console.log(`Results ${retyped_results}`);
     setQcData(retyped_results);
   };
-  
+
   useEffect(() => {
 
     fetchQCData();
@@ -53,7 +66,7 @@ const MolecularReviewControls = () => {
 
   const handleSelectQC = async () => {
     if (selectedQC) {
-      console.log("Selected QC:", selectedQC);  
+      console.log("Selected QC:", selectedQC);
       // Save the qcData to localStorage
       localStorage.setItem('selectedQCData', JSON.stringify(selectedQC));
       // Navigate to the AnalyteInputPage
@@ -72,7 +85,7 @@ const MolecularReviewControls = () => {
 
   return (
     <>
-      <NavBar name = "Review Controls: Molecular"/>
+      <NavBar name="Review Controls: Molecular" />
 
       <div className="relative">
         <div className="table-container flex flex-col mt-8 sm:max-w-[75svw] sm:max-h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA]">
@@ -113,7 +126,7 @@ const MolecularReviewControls = () => {
                 </TableRow>
               )}
             </TableBody>
-          </Table>  
+          </Table>
         </div>
         <div className="flex items-center justify-center space-x-2 py-4">
           <div className="space-x-2">

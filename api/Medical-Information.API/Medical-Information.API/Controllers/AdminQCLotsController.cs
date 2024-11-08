@@ -54,7 +54,8 @@ namespace Medical_Information.API.Controllers
             if (Enum.TryParse(dep, true, out Department department))
             {
                 qcLotModel = await adminQCLotRepository.GetAdminQCLotByNameAsync(name, department);
-            } else
+            }
+            else
             {
                 qcLotModel = await adminQCLotRepository.GetAdminQCLotByNameAsync(name);
             }
@@ -94,11 +95,11 @@ namespace Medical_Information.API.Controllers
 
             if (checkExistingModel != null)
             {
-                 return BadRequest(new RequestErrorObject
-                 {
-                     ErrorCode = ErrorCode.AlreadyExist,
-                     Message = "Lot Number Already Exist!",
-                 });
+                return BadRequest(new RequestErrorObject
+                {
+                    ErrorCode = ErrorCode.AlreadyExist,
+                    Message = "Lot Number Already Exist!",
+                });
             }
 
             foreach (var analyteDTO in dto.Analytes)
@@ -147,7 +148,19 @@ namespace Medical_Information.API.Controllers
             //    }
             //};
 
+            var analytesDTO = dto.Analytes;
+            var analytes = new List<Analyte>();
+            foreach (var analyteDTO in analytesDTO)
+            {
+                if (analytesDTO != null)
+                {
+                    var analyte = mapper.Map<Analyte>(analyteDTO);
+                    analytes.Add(analyte);
+                }
+            }
+
             var qclotModel = mapper.Map<AdminQCLot>(dto);
+            qclotModel.Analytes = analytes;
 
             qclotModel = await adminQCLotRepository.UpdateQCLotAsync(id, qclotModel);
 

@@ -96,6 +96,7 @@ namespace Medical_Information.API.Repositories.SQLImplementation
                     existingAnalyte.MinLevel = analyte.MinLevel;
                     existingAnalyte.UnitOfMeasure = analyte.UnitOfMeasure;
                     existingAnalyte.Mean = analyte.Mean;
+                    existingAnalyte.ExpectedRange = analyte.ExpectedRange;
                 }
             }
 
