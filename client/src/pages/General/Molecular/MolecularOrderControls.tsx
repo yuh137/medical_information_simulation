@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import NavBar from "../../../components/NavBar";
 import { qcTypeLinkListMolecular } from "../../../utils/utils"; 
 import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { useAuth } from "../../../context/AuthContext";
 import { getAllDataFromStore } from "../../../utils/indexedDB/getData";
 import {
   DragDropContext,
@@ -19,6 +20,7 @@ const MolecularOrderControls = () => {
   const [SelectedQCItems, setSelectedQCItems] = useState<string[]>([]);
   const [OrderControlsItems, setOrderControlsItems] = useState<string[]>([]);
   const [OrderPlaced, setOrderPlaced] = useState(false);
+  const { checkUserType } = useAuth();
   const navigate = useNavigate();
 
   const fetchQCData = async () => {
@@ -78,7 +80,10 @@ const MolecularOrderControls = () => {
 
   //navigate to review controls
   const handleReviewQC = () => {
-      navigate('/student-review_controls');
+    if(checkUserType() === 'Admin')
+      navigate('/admin-review_controls');
+    else if(checkUserType() === 'Student')
+      navigate('/molecular/student-review_controls')
   };
   
   const handleClearSelection = () => {

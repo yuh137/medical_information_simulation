@@ -19,10 +19,8 @@ const FacultyHomeScreen = () => {
 
   async function validateSession() {
     const status = await checkSession();
-
     console.log("Session state: ", status);
-
-    //if (!status || checkUserType() === 'Student') navigate('/unauthorized');
+    if (!status || checkUserType() === 'Student') navigate('/unauthorized');
   }
 		
   useEffect(() => {
