@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical_Information.API.Migrations
 {
     [DbContext(typeof(MedicalInformationDbContext))]
-    [Migration("20240911062539_Updated Relationship")]
-    partial class UpdatedRelationship
+    [Migration("20241108065234_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -87,9 +87,12 @@ namespace Medical_Information.API.Migrations
                     b.Property<DateTime?>("FileDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LotNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("OpenDate")
                         .HasColumnType("datetime2");
@@ -100,18 +103,10 @@ namespace Medical_Information.API.Migrations
 
                     b.HasKey("AdminQCLotID");
 
-                    b.ToTable("AdminQCLots");
+                    b.HasIndex("LotNumber")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
-                            Department = 0,
-                            ExpirationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LotNumber = "888888888888",
-                            OpenDate = new DateTime(2024, 9, 11, 1, 25, 38, 718, DateTimeKind.Local).AddTicks(8349),
-                            QCName = "CMP Level I"
-                        });
+                    b.ToTable("AdminQCLots");
                 });
 
             modelBuilder.Entity("Medical_Information.API.Models.Domain.Analyte", b =>
@@ -131,20 +126,25 @@ namespace Medical_Information.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("MaxLevel")
+                    b.Property<string>("ExpectedRange")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float?>("MaxLevel")
                         .HasColumnType("real");
 
-                    b.Property<float>("Mean")
+                    b.Property<float?>("Mean")
                         .HasColumnType("real");
 
-                    b.Property<float>("MinLevel")
+                    b.Property<float?>("MinLevel")
                         .HasColumnType("real");
 
-                    b.Property<float>("StdDevi")
+                    b.Property<float?>("StdDevi")
                         .HasColumnType("real");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.Property<string>("UnitOfMeasure")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AnalyteID");
@@ -152,176 +152,6 @@ namespace Medical_Information.API.Migrations
                     b.HasIndex("AdminQCLotID");
 
                     b.ToTable("Analytes");
-
-                    b.HasData(
-                        new
-                        {
-                            AnalyteID = new Guid("b05e9c30-3f03-4fad-a703-ad532bd39ae5"),
-                            AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
-                            AnalyteAcronym = "Na",
-                            AnalyteName = "Sodium",
-                            MaxLevel = 0f,
-                            Mean = 0f,
-                            MinLevel = 0f,
-                            StdDevi = 0f,
-                            UnitOfMeasure = "mEq/L"
-                        },
-                        new
-                        {
-                            AnalyteID = new Guid("ce5ba2a7-6543-4f81-b906-64599b274f97"),
-                            AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
-                            AnalyteAcronym = "K",
-                            AnalyteName = "Potassium",
-                            MaxLevel = 0f,
-                            Mean = 0f,
-                            MinLevel = 0f,
-                            StdDevi = 0f,
-                            UnitOfMeasure = "mEq/L"
-                        },
-                        new
-                        {
-                            AnalyteID = new Guid("46baac82-7390-4139-b4ae-9c284de63860"),
-                            AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
-                            AnalyteAcronym = "Cl",
-                            AnalyteName = "Chloride",
-                            MaxLevel = 0f,
-                            Mean = 0f,
-                            MinLevel = 0f,
-                            StdDevi = 0f,
-                            UnitOfMeasure = "mEq/L"
-                        },
-                        new
-                        {
-                            AnalyteID = new Guid("6e52026c-5cc5-4175-b476-29a1f5bd4c02"),
-                            AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
-                            AnalyteAcronym = "CO_2",
-                            AnalyteName = "Carbon Dioxide",
-                            MaxLevel = 0f,
-                            Mean = 0f,
-                            MinLevel = 0f,
-                            StdDevi = 0f,
-                            UnitOfMeasure = "mEq/L"
-                        },
-                        new
-                        {
-                            AnalyteID = new Guid("9d5b1c89-7b7e-4c1f-b0c7-1d8b1d4f3587"),
-                            AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
-                            AnalyteAcronym = "BUN",
-                            AnalyteName = "Blood Urea Nitrogen",
-                            MaxLevel = 0f,
-                            Mean = 0f,
-                            MinLevel = 0f,
-                            StdDevi = 0f,
-                            UnitOfMeasure = "mg/dL"
-                        },
-                        new
-                        {
-                            AnalyteID = new Guid("e01c6f52-07ab-4995-88de-bb83072aef5a"),
-                            AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
-                            AnalyteAcronym = "CREA",
-                            AnalyteName = "Creatinine",
-                            MaxLevel = 0f,
-                            Mean = 0f,
-                            MinLevel = 0f,
-                            StdDevi = 0f,
-                            UnitOfMeasure = "mg/dL"
-                        },
-                        new
-                        {
-                            AnalyteID = new Guid("b886f8d0-798d-4c0f-aa91-4e5b2f6f0a07"),
-                            AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
-                            AnalyteAcronym = "CA",
-                            AnalyteName = "Calcium",
-                            MaxLevel = 0f,
-                            Mean = 0f,
-                            MinLevel = 0f,
-                            StdDevi = 0f,
-                            UnitOfMeasure = "mg/dL"
-                        },
-                        new
-                        {
-                            AnalyteID = new Guid("f5012c5e-4d05-46ff-b6fd-4c53789bafdb"),
-                            AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
-                            AnalyteAcronym = "GLU",
-                            AnalyteName = "Glucose",
-                            MaxLevel = 0f,
-                            Mean = 0f,
-                            MinLevel = 0f,
-                            StdDevi = 0f,
-                            UnitOfMeasure = "mg/dL"
-                        },
-                        new
-                        {
-                            AnalyteID = new Guid("a50e49c0-c80d-4347-a2d4-186f22c7bb3f"),
-                            AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
-                            AnalyteAcronym = "ALB",
-                            AnalyteName = "Albumin",
-                            MaxLevel = 0f,
-                            Mean = 0f,
-                            MinLevel = 0f,
-                            StdDevi = 0f,
-                            UnitOfMeasure = "g/dL"
-                        },
-                        new
-                        {
-                            AnalyteID = new Guid("f3033c25-0d20-41db-89a9-69b6bb66f2d2"),
-                            AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
-                            AnalyteAcronym = "ALT",
-                            AnalyteName = "Alanine Aminotransferase",
-                            MaxLevel = 0f,
-                            Mean = 0f,
-                            MinLevel = 0f,
-                            StdDevi = 0f,
-                            UnitOfMeasure = "U/L"
-                        },
-                        new
-                        {
-                            AnalyteID = new Guid("9cf3ff8a-208d-4b05-b108-3e4fb82f2b7f"),
-                            AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
-                            AnalyteAcronym = "AST",
-                            AnalyteName = "Aspartate Aminotransferase",
-                            MaxLevel = 0f,
-                            Mean = 0f,
-                            MinLevel = 0f,
-                            StdDevi = 0f,
-                            UnitOfMeasure = "U/L"
-                        },
-                        new
-                        {
-                            AnalyteID = new Guid("6a14f038-4f68-488a-93bb-0f1c9f33f09a"),
-                            AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
-                            AnalyteAcronym = "ALP",
-                            AnalyteName = "Akaline Phosphatse",
-                            MaxLevel = 0f,
-                            Mean = 0f,
-                            MinLevel = 0f,
-                            StdDevi = 0f,
-                            UnitOfMeasure = "U/L"
-                        },
-                        new
-                        {
-                            AnalyteID = new Guid("e783a56d-5fc4-4a8e-8509-aa99b0e64b1c"),
-                            AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
-                            AnalyteAcronym = "BIL",
-                            AnalyteName = "Bilirubin",
-                            MaxLevel = 0f,
-                            Mean = 0f,
-                            MinLevel = 0f,
-                            StdDevi = 0f,
-                            UnitOfMeasure = "mg/dL"
-                        },
-                        new
-                        {
-                            AnalyteID = new Guid("d614a66d-fc2d-4518-bb0f-1787ed48f5c1"),
-                            AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
-                            AnalyteAcronym = "TP",
-                            AnalyteName = "Total Protein",
-                            MaxLevel = 0f,
-                            Mean = 0f,
-                            MinLevel = 0f,
-                            StdDevi = 0f,
-                            UnitOfMeasure = "mg/dL"
-                        });
                 });
 
             modelBuilder.Entity("Medical_Information.API.Models.Domain.AnalyteInput", b =>
@@ -345,6 +175,35 @@ namespace Medical_Information.API.Migrations
                     b.HasIndex("ReportID");
 
                     b.ToTable("AnalyteInputs");
+                });
+
+            modelBuilder.Entity("Medical_Information.API.Models.Domain.Images", b =>
+                {
+                    b.Property<Guid>("ImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FileDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileExtension")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("FileSizeInBytes")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ImageId");
+
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("Medical_Information.API.Models.Domain.Student", b =>

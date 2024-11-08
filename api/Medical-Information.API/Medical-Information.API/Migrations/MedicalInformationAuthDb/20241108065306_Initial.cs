@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Medical_Information.API.Migrations.MedicalInformationAuthDb
 {
     /// <inheritdoc />
-    public partial class CreatingAuthDatabase : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

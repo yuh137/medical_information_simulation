@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical_Information.API.Migrations.MedicalInformationAuthDb
 {
     [DbContext(typeof(MedicalInformationAuthDbContext))]
-    [Migration("20240830224305_Creating Auth Database")]
-    partial class CreatingAuthDatabase
+    [Migration("20241108065306_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
