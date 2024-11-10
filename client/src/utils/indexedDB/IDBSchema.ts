@@ -27,9 +27,9 @@ export interface ChemistryQCTemplate {
     stdDevi: number;
 }
 
-export interface QCTemplateBatch {
+export interface AdminQCLot {
     adminQCLotID?: string;
-    fileName: string;
+    qcName: string;
     lotNumber: string;
     openDate: string;
     closedDate: string;

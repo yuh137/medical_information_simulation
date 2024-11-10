@@ -6,6 +6,7 @@ using Medical_Information.API.Models.ErrorHandling;
 using Medical_Information.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static Azure.Core.HttpHeader;
 
 namespace Medical_Information.API.Controllers
 {
@@ -43,6 +44,27 @@ namespace Medical_Information.API.Controllers
             var qcLotDTO = mapper.Map<AdminQCLotDTO>(qcLotModel);
 
             return Ok(qcLotDTO);
+        }
+        [HttpGet]
+        [Route("ByNameList")]
+        public async Task<IActionResult> GetQCLotByNameList([FromQuery] List<string> names)
+        {
+            var qclotModels = await adminQCLotRepository.GetAdminQCLotsByNameListAsync(names);
+
+            var qclotDTOs = mapper.Map<List<AdminQCLotDTO>>(qclotModels);
+
+            return Ok(qclotDTOs);
+        }
+
+        [HttpGet]
+        [Route("ByIdList")]
+        public async Task<IActionResult> GetQCLotByIdList([FromQuery] List<Guid> lotId)
+        {
+            var qclotModels = await adminQCLotRepository.GetAdminQCLotsByIdListAsync(lotId);
+
+            var qclotDTOs = mapper.Map<List<AdminQCLotDTO>>(qclotModels);
+
+            return Ok(qclotDTOs);
         }
 
         [HttpGet]
@@ -123,29 +145,6 @@ namespace Medical_Information.API.Controllers
         [Route("UpdateQCLot/{id:Guid}")]
         public async Task<IActionResult> UpdateQCLot([FromRoute] Guid id, [FromBody] UpdateAdminQCLotDTO dto)
         {
-            //var qclotModel = new AdminQCLot
-            //{
-            //    QCName = dto.QCName,
-            //    LotNumber = dto.LotNumber,
-            //    OpenDate = dto.OpenDate,
-            //    ClosedDate = dto.ClosedDate,
-            //    ExpirationDate = dto.ExpirationDate,
-            //    IsActive = true,
-            //    FileDate = dto.FileDate,
-            //    Department = dto.Department,
-            //    Analytes = new List<Analyte>(),
-            //    Reports = new List<StudentReport>()
-            //};
-
-            //foreach (var analyteDTO in dto.Analytes)
-            //{
-            //    if (analyteDTO != null)
-            //    {
-            //        var analyteModel = mapper.Map<Analyte>(analyteDTO);
-
-            //        qclotModel.Analytes.Add(analyteModel);
-            //    }
-            //};
 
             var qclotModel = mapper.Map<AdminQCLot>(dto);
 

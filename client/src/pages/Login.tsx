@@ -13,7 +13,7 @@ const Login = () => {
 
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const { checkSession, checkUserType } = useAuth();
+  const { checkSession, checkUserType, login } = useAuth();
   const [loginOptions, setLoginOptions] = useState<"Admin" | "Student" | string>("");
   const { register, handleSubmit } = useForm<CredentialsInput>();
   const onSubmit: SubmitHandler<CredentialsInput> = async (data) => {
@@ -39,7 +39,8 @@ const Login = () => {
         if (checkServer.status === 200) {
           const token: AuthToken = await checkServer.json();
 
-          localStorage.setItem('token', JSON.stringify(token));
+          // localStorage.setItem('token', JSON.stringify(token));
+          login(JSON.stringify(token), token.userID, UserType.Admin);
           console.log(localStorage.getItem('token'));
           setIsLoggingIn(false);
           navigate('/admin-home');
@@ -68,7 +69,8 @@ const Login = () => {
         if (checkServer.status === 200) {
           const token: AuthToken = await checkServer.json();
 
-          localStorage.setItem('token', JSON.stringify(token));
+          // localStorage.setItem('token', JSON.stringify(token));
+          login(JSON.stringify(token), token.userID, UserType.Student);
           console.log(localStorage.getItem('token'));
           setIsLoggingIn(false);
           navigate('/student-home');
@@ -104,9 +106,10 @@ const Login = () => {
   return (
     <>
       <div
-        className=" flex flex-col w-svw bg-[#2f5597] pb-12"
-        style={{ minHeight: "100svh", minWidth: "100svw" }}
+        className="relative flex flex-col w-svw bg-black pb-12 bg-no-repeat bg-center bg-contain"
+        style={{ minHeight: "100svh", minWidth: "100svw", backgroundImage: "url('(MIS)-MidiSims-Main icon_ Login Slide 2.png')" }}
       >
+        <img src="(MIS)-Logo-Horizontal.png" alt="" className='absolute sm:w-48 sm:-top-10'/>
         <div
           className="title w-fit mb-0 mx-auto mt-28 bg-[#3a6cc6] px-12"
           style={{ maxWidth: "66.67%" }}
@@ -115,7 +118,7 @@ const Login = () => {
             Medical Information Simulations
           </div>
         </div>
-        <div className="login-form sm:w-1/4 w-3/4 mb-0 mt-24 mx-auto bg-slate-100 flex flex-col gap-4 py-10 px-4 bg-local bg-cover">
+        <div className="login-form sm:w-1/4 w-3/4 mb-0 mt-24 mx-auto bg-slate-100/80 flex flex-col gap-4 py-10 px-4 bg-local bg-cover">
           <div className="login-title text-center text-3xl font-semibold">
             Choose Account Type
           </div>

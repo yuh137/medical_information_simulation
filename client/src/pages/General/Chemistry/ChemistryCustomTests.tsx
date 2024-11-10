@@ -3,7 +3,7 @@ import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table";
 import { ButtonBase, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { QCTemplateBatch } from "../../../utils/indexedDB/IDBSchema";
+import { AdminQCLot } from "../../../utils/indexedDB/IDBSchema";
 import NavBar from "../../../components/NavBar";
 import { useTheme } from "../../../context/ThemeContext";
 

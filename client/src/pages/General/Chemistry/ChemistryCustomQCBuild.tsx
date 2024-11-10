@@ -21,7 +21,7 @@ import { CMPLevelList, CardiacLevelList, HormoneLevelList, ThyroidLevelList, Lip
 import { ButtonBase, Checkbox, Drawer } from "@mui/material";
 import { useTheme } from "../../../context/ThemeContext";
 import addData from "../../../utils/indexedDB/addData";
-import { QCTemplateBatch } from "../../../utils/indexedDB/IDBSchema";
+import { AdminQCLot } from "../../../utils/indexedDB/IDBSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { getDataByKey } from "../../../utils/indexedDB/getData";
 import { deleteData } from "../../../utils/indexedDB/deleteData";
@@ -69,10 +69,10 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
   const [QCElements, setQCElements] = useState<QCRangeElements[]>([]);
   const [isValid, setIsValid] = useState<boolean>(false);
   const [isDrawerOpen, openDrawer] = useState<boolean>(false);
-  const { register, handleSubmit } = useForm<QCTemplateBatch>();
+  const { register, handleSubmit } = useForm<AdminQCLot>();
 
-  const saveQC: SubmitHandler<QCTemplateBatch> = async (data) => {
-    const check = await getDataByKey<QCTemplateBatch>("qc_store", props.name);
+  const saveQC: SubmitHandler<AdminQCLot> = async (data) => {
+    const check = await getDataByKey<AdminQCLot>("qc_store", props.name);
 
     if (check) {
       const deleteStatus = await deleteData("qc_store", props.name);
@@ -99,8 +99,8 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
       })
     );
 
-    const res = await addData<QCTemplateBatch>("qc_store", {
-      fileName: props.name,
+    const res = await addData<AdminQCLot>("qc_store", {
+      qcName: props.name,
       lotNumber: data.lotNumber || "",
       openDate: data.openDate || "",
       fileDate: data.fileDate || "",

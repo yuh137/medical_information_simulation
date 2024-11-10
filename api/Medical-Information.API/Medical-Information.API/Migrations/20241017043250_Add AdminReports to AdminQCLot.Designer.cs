@@ -4,6 +4,7 @@ using Medical_Information.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical_Information.API.Migrations
 {
     [DbContext(typeof(MedicalInformationDbContext))]
-    partial class MedicalInformationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241017043250_Add AdminReports to AdminQCLot")]
+    partial class AddAdminReportstoAdminQCLot
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,10 +138,10 @@ namespace Medical_Information.API.Migrations
                             AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
                             Department = 0,
                             ExpirationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FileDate = new DateTime(2024, 11, 5, 22, 5, 12, 313, DateTimeKind.Local).AddTicks(505),
+                            FileDate = new DateTime(2024, 10, 16, 23, 32, 50, 46, DateTimeKind.Local).AddTicks(5236),
                             IsActive = false,
                             LotNumber = "888888888888",
-                            OpenDate = new DateTime(2024, 11, 5, 22, 5, 12, 313, DateTimeKind.Local).AddTicks(519),
+                            OpenDate = new DateTime(2024, 10, 16, 23, 32, 50, 46, DateTimeKind.Local).AddTicks(5256),
                             QCName = "CMP Level I"
                         });
                 });
@@ -368,13 +371,6 @@ namespace Medical_Information.API.Migrations
 
                     b.Property<float>("AnalyteValue")
                         .HasColumnType("real");
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("ReportID")
                         .HasColumnType("uniqueidentifier");

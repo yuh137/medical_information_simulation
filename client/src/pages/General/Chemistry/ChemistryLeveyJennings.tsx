@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { getAllDataFromStore } from '../../../utils/indexedDB/getData';
-import { QCTemplateBatch } from '../../../utils/indexedDB/IDBSchema';
+import { AdminQCLot } from '../../../utils/indexedDB/IDBSchema';
 import NavBar from '../../../components/NavBar';
 
 import { Modal, Radio, RadioGroup, FormControlLabel, TextField } from '@mui/material';
@@ -47,10 +47,10 @@ const ChemistryLeveyJennings = () => {
   useEffect(() => {
     const fetchAnalyteData = async () => {
       try {
-        const data = (await getAllDataFromStore('qc_store')) as unknown as QCTemplateBatch[];
+        const data = (await getAllDataFromStore('qc_store')) as unknown as AdminQCLot[];
 
         const matchingRecords = data.filter(
-          (item) => item.fileName === fileName && item.lotNumber === lotNumber
+          (item) => item.qcName === fileName && item.lotNumber === lotNumber
         );
 
         const analyteValues = matchingRecords.map((record) => {
@@ -104,7 +104,7 @@ const ChemistryLeveyJennings = () => {
     const parseDate = d3.timeParse("%m/%d/%Y");
 
     const xScale = d3.scaleTime()
-      .domain([new Date(2024, 0, 1), new Date(2024, 11, 31)])
+      .domain([new Date(2024, 1, 1), new Date(2024, 11, 31)])
       .range([0, width]);
 
     const yMax = d3.max(analyteData, d => d.mean + 3 * d.stdDevi) || 0;
@@ -325,12 +325,12 @@ const ChemistryLeveyJennings = () => {
           <Button variant="outlined" style={{ marginTop: '30px', width: '100%' }}>LEARN</Button>
           <Button variant="outlined" style={{ marginTop: '10px', width: '100%' }}>STUDENT NOTES</Button>
           <Button 
-  variant="outlined" 
-  style={{ marginTop: '80px', width: '100%' }} 
-  onClick={handleModalOpen}
->
-  Review Comments
-</Button>
+            variant="outlined" 
+            style={{ marginTop: '80px', width: '100%' }} 
+            onClick={handleModalOpen}
+          >
+            Review Comments
+          </Button>
           <Button variant="outlined" onClick={generatePDF} style={{ marginTop: '10px', width: '100%' }}>Levey Jennings Report</Button>
         </div>
       </div>

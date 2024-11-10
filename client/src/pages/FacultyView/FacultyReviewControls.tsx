@@ -11,7 +11,7 @@ import {
 import { Button, Checkbox, Modal, Box } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
-import { QCTemplateBatch } from "../../utils/indexedDB/IDBSchema";
+import { AdminQCLot } from "../../utils/indexedDB/IDBSchema";
 import { getAllDataFromStore } from "../../utils/indexedDB/getData";  // Use this function
 import {
   ColumnDef,
@@ -65,14 +65,14 @@ const Faculty_QC_Review: React.FC<FacultyQCReviewProps> = (props) => {
   useEffect(() => {
     const storedQCData = localStorage.getItem("selectedQCData");
     if (storedQCData) {
-      const qcData = JSON.parse(storedQCData) as QCTemplateBatch[];
+      const qcData = JSON.parse(storedQCData) as AdminQCLot[];
       console.log(qcData);
 
       // Convert the saved QC data into the format required by the table
       const items = qcData.map((qc) => ({
-        id: `${qc.fileName}-${qc.lotNumber}`,
+        id: `${qc.qcName}-${qc.lotNumber}`,
         dep: props.name,
-        test: qc.fileName,  // Assuming `fileName` is used for the test column
+        test: qc.qcName,  // Assuming `fileName` is used for the test column
         status: "Open",  // You can adjust this based on the actual status
         openDate: qc.openDate,
         closeDate: qc.closedDate || "",
@@ -112,10 +112,10 @@ const Faculty_QC_Review: React.FC<FacultyQCReviewProps> = (props) => {
       try {
         const storedQCData = localStorage.getItem("selectedQCData");
         if (storedQCData) {
-          const qcData = JSON.parse(storedQCData) as QCTemplateBatch[];
+          const qcData = JSON.parse(storedQCData) as AdminQCLot[];
 
           const selectedQC = qcData.find(
-            (qc) => qc.fileName === selectedRowData.test
+            (qc) => qc.qcName === selectedRowData.test
           );
 
           if (selectedQC) {

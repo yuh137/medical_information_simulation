@@ -62,6 +62,20 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             return await QCLot.Include(item => item.Analytes).FirstOrDefaultAsync();
         }
 
+        public async Task<List<AdminQCLot>> GetAdminQCLotsByIdListAsync(List<Guid> lotId)
+        {
+            return await dbContext.AdminQCLots.Where(item => lotId.Contains(item.AdminQCLotID) && item.IsActive).ToListAsync();
+        }
+
+        public async Task<List<AdminQCLot>> GetAdminQCLotsByNameListAsync(List<string> names)
+        {
+            foreach ( var name in names)
+            {
+                name.ToLower();
+            }
+            return await dbContext.AdminQCLots.Include(item => item.Analytes).Include(item => item.Reports).Where(item => names.Contains(item.QCName.ToLower()) && item.IsActive).ToListAsync();
+        }
+
         public async Task<List<AdminQCLot>> GetAllQCLotsAsync()
         {
             return await dbContext.AdminQCLots.Include(item => item.Analytes).Include(item => item.Reports).ToListAsync();
@@ -74,7 +88,7 @@ namespace Medical_Information.API.Repositories.SQLImplementation
 
         public async Task<AdminQCLot?> UpdateQCLotAsync(Guid lotId, AdminQCLot qcLot)
         {
-            var existingQCLot = await dbContext.AdminQCLots.Include(e => e.Analytes).FirstOrDefaultAsync(item => item.AdminQCLotID == lotId);
+            var existingQCLot = await dbContext.AdminQCLots.Include(e => e.Analytes).Include(item => item.Reports).FirstOrDefaultAsync(item => item.AdminQCLotID == lotId);
 
             if (existingQCLot == null)
             {

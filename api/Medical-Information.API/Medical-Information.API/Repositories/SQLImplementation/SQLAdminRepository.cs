@@ -51,12 +51,12 @@ namespace Medical_Information.API.Repositories.SQLImplementation
 
         public async Task<Admin?> GetAdminByIdAsync(Guid id)
         {
-            return await dbContext.Admins.Include(item => item.Students).FirstOrDefaultAsync(item => item.AdminID == id);
+            return await dbContext.Admins.Include(item => item.Reports).FirstOrDefaultAsync(item => item.AdminID == id);
         }
 
-        async Task<Admin?> IAdminRepository.GetAdminByNameAsync(string name)
+        public async Task<Admin?> GetAdminByNameAsync(string name)
         {
-            return await dbContext.Admins.FirstOrDefaultAsync(item => item.Username == name);
+            return await dbContext.Admins.Include(item => item.Reports).FirstOrDefaultAsync(item => item.Username == name);
         }
     }
 }

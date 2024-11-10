@@ -31,9 +31,8 @@ import {
 } from "../../../utils/MOCK_DATA";
 import { DefinedRequestError, Department, ErrorCode, qcTypeLinkList, renderSubString } from "../../../utils/utils";
 import { Backdrop, Button, ButtonBase } from "@mui/material";
-import { QCTemplateBatch } from "../../../utils/indexedDB/IDBSchema";
+import { AdminQCLot } from "../../../utils/indexedDB/IDBSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { getDataByKey } from "../../../utils/indexedDB/getData";
 import NavBar from "../../../components/NavBar";
 import { DatePicker } from "antd";
 import { Icon } from "@iconify/react";
@@ -66,19 +65,17 @@ enum SaveButtonActionType {
 };
 
 export const ChemistryTestInputPage = () => {
-
   // Managing states
   const [isSavingQCLot, setIsSavingQCLot] = useState<boolean>(false);
   const [isSavingQCLotSuccessful, setIsSavingQCLotSuccessful] = useState<boolean>(false);
   const [isUpdatingQCLotSuccessful, setIsUpdatingQCLotSuccessful] = useState<boolean>(false);
   const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState<boolean>(false);
   
-  
   // 
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { item } = useParams() as { item: string };
-  const loaderData = useLoaderData() as QCTemplateBatch;
+  const loaderData = useLoaderData() as AdminQCLot;
   const { checkSession, checkUserType } = useAuth();
 
   // Placeholder data if the database is empty
@@ -132,10 +129,10 @@ export const ChemistryTestInputPage = () => {
   const prevQCElements = useRef(QCElements);
 
   // React-hook-form states
-  const { register, handleSubmit, setValue } = useForm<QCTemplateBatch>();
+  const { register, handleSubmit, setValue } = useForm<AdminQCLot>();
 
   // Function to handle the Save QC Button
-  const saveQC: SubmitHandler<QCTemplateBatch> = async (data) => {
+  const saveQC: SubmitHandler<AdminQCLot> = async (data) => {
     // console.log("Entered save QC button", data);
 
     if (loaderData && loaderData.lotNumber === data.lotNumber) {
@@ -144,9 +141,9 @@ export const ChemistryTestInputPage = () => {
       return;
     }
 
-    // Map the input data to QCTemplateBatch
-    const qcDataToSave: QCTemplateBatch = {
-      fileName:
+    // Map the input data to AdminQCLot
+    const qcDataToSave: AdminQCLot = {
+      qcName:
         qcTypeLinkList.find((qcType) => qcType.link.includes(item))?.name ?? "",
       lotNumber: data.lotNumber || "",
       openDate: dayjs().toISOString(),
@@ -186,7 +183,7 @@ export const ChemistryTestInputPage = () => {
         },
         body: JSON.stringify({
           "lotNumber": qcDataToSave.lotNumber,
-          "qcName": qcDataToSave.fileName,
+          "qcName": qcDataToSave.qcName,
           "openDate": qcDataToSave.openDate ?? dayjs().toISOString(),
           "expirationDate": qcDataToSave.expirationDate,
           "fileDate": qcDataToSave.fileDate ?? dayjs().toISOString(),
@@ -420,14 +417,6 @@ export const ChemistryTestInputPage = () => {
     prevQCLotInput.current = QCLotInput;
     prevQCElements.current = QCElements;
   }, [expDate, fileDate, QCLotInput, QCElements])
-
-  // useEffect(() => {
-  //   console.log(feedbackNotiType, isFeedbackNotiOpen)
-  // }, [feedbackNotiType, isFeedbackNotiOpen])
-
-  // useEffect(() => {
-  //   console.log("From loader function: ", loaderData);
-  // }, [loaderData])
 
   const columns: ColumnDef<QCRangeElements, string>[] = [
     {

@@ -1,12 +1,10 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import Analyte from "../../../components/Analyte";
 import NavBar from "../../../components/NavBar";
-import { getQCRangeByDetails } from "../../../utils/indexedDB/getData";
 import { Button, ButtonBase, Modal } from "@mui/material";
 import { useTheme } from "../../../context/ThemeContext";
-import { renderSubString } from "../../../utils/utils";
-import { QCTemplateBatch } from "../../../utils/indexedDB/IDBSchema";
-import { saveToDB } from "../../../utils/indexedDB/getData";
+import { AnalyteInput, renderSubString, StudentReport } from "../../../utils/utils";
+import { AdminQCLot } from "../../../utils/indexedDB/IDBSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
   Document,
@@ -18,20 +16,13 @@ import {
 } from "@react-pdf/renderer";
 import { createTw } from "react-pdf-tailwind";
 import { useAuth } from "../../../context/AuthContext";
-import { useParams } from "react-router-dom";
+import { useLoaderData, useParams } from "react-router-dom";
+import { Skeleton } from "antd";
 
 const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
-  const { link } = useParams();
-  const { theme } = useTheme();
-  const inputRefs = useRef<HTMLInputElement[]>([]);
-  const analyteNameRefs = useRef<HTMLDivElement[]>([]);
-
-  const [records, setRecords] = useState([]);
-  const [selectedRecord, setSelectedRecord] = useState(null);
-  const { username } = useAuth();
- 
+  
   // Function to print out the report pdf file
-  const reportPDF = (analyteValues?: string[], QCData?: QCTemplateBatch) => {
+  const reportPDF = (analyteValues?: string[], QCData?: AdminQCLot) => {
     const currentDate = new Date();
 
     const tw = createTw({
@@ -86,7 +77,7 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
                 </View>
               ))}
             </View>
-            <Text style={tw("mt-8 text-[13px]")}>Approved by: {username}</Text>
+            <Text style={tw("mt-8 text-[13px]")}>Approved by: {}</Text>
             <Text style={tw("mt-2 text-[13px]")}>Date: {currentDate.getMonth() + 1}/{currentDate.getDate()}/{currentDate.getFullYear()}</Text>
             <Text style={tw("mt-2 text-[13px]")}>Time: {currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</Text>
           </Page>
@@ -95,20 +86,42 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
     )
   }
 
+  async function fetchQCData() {
+    setIsFetchingData(true);
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/${loaderData.adminQCLotID}`);
+
+      if (res.ok) {
+        const data = await res.json();
+        setQCData(data);
+      }
+    } catch (error) {
+      console.error("Error fetching QC data:", error);
+    } finally {
+      setIsFetchingData(false);
+    }
+  }
+
  /*const openPDF = async () => {
     const blob = await pdf(reportPDF(analyteValues, QCData)).toBlob();
     const pdfUrl = URL.createObjectURL(blob);
     window.open(pdfUrl, "_blank");
   }*/
+  const { link } = useParams();
+  const { theme } = useTheme();
+  const inputRefs = useRef<HTMLInputElement[]>([]);
+  const analyteNameRefs = useRef<HTMLDivElement[]>([]);
 
-  // const [isValid, setIsValid] = useState<boolean>(false);
   const [isInputFull, setIsInputFull] = useState<boolean>(false);
-  const [analyteValues, setAnalyteValues] = useState<string[]>([]);
+  const [analyteValues, setAnalyteValues] = useState<AnalyteInput[]>([]);
   const [invalidIndexes, setInvalidIndexes] = useState<Set<number> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalData, setModalData] = useState<{ invalidIndex: number, comment: string }[]>([]);
   const { fileName, lotNumber, closedDate } = useParams<{ fileName: string, lotNumber: string, closedDate: string }>();
-  const [QCData, setQCData] = useState<QCTemplateBatch | null>(null);
+  const [QCData, setQCData] = useState<AdminQCLot | null>(null);
+  const [isFetchingData, setIsFetchingData] = useState<boolean>(false);
+
+  const loaderData = useLoaderData() as StudentReport;
 
   const invalidIndexArray: number[] | null = useMemo(() => {
     if (!invalidIndexes) return null;
@@ -135,11 +148,13 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
 
   function handleKeyPress(event: React.KeyboardEvent, index: number) {
     // console.log("From handleKeyPress function: ", inputRefs.current[index]);
+    console.log("From handleKeyPress function: ", index);
     if (
       event.key === "Enter" &&
       index < inputRefs.current.length - 1 &&
       inputRefs.current[index + 1]
     ) {
+      console.log("entetred")
       inputRefs.current[index + 1]?.focus();
     }
   }
@@ -155,7 +170,6 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
     })
   }
   
-  
   const handleAcceptQC = async () => {
     if (!QCData) {
         console.error("No QC data available to save.");
@@ -163,20 +177,18 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
     }
 
     // Prepare the data to be saved
-    const qcDataToSave: QCTemplateBatch = {
-      ...QCData,
-      analytes: QCData.analytes.map((analyte, index) => ({
-          ...analyte,
-          value: analyteValues[index], // Ensure this is the correct format and key
-      })),
-  };
-  
-
-    console.log("Data to save:", qcDataToSave); // Debug log
+    // const qcDataToSave: AdminQCLot = {
+    //   ...QCData,
+    //   analytes: QCData.analytes.map((analyte, index) => ({
+    //       ...analyte,
+    //       value: analyteValues[index], // Ensure this is the correct format and key
+    //   })),
+    // };
+    // console.log("Data to save:", qcDataToSave); // Debug log
 
     try {
-        await saveToDB("qc_store", qcDataToSave);
-        console.log("QC data saved successfully.");
+        // await saveToDB("qc_store", qcDataToSave);
+        // console.log("QC data saved successfully.");
 
         // Optionally, you might want to reset or clear the form after saving
         setAnalyteValues([]);
@@ -186,8 +198,7 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
     } catch (error) {
         console.error("Error saving QC data:", error);
     }
-};
-
+  };
   
   function handleInputChange(
     index: number,
@@ -195,8 +206,18 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
     min: number,
     max: number
   ) {
-    const newValues = [...analyteValues];
-    newValues[index] = value;
+    const newValues: AnalyteInput[] = [...analyteValues];
+    newValues[index] = {
+      analyteInputID: "",
+      reportID: "",
+      analyteName: "",
+      analyteValue: 0,
+      createdDate: "",
+      comment: "",
+    }
+    newValues[index].analyteName = "";
+    newValues[index].analyteValue = parseFloat(value);
+    newValues[index].createdDate = new Date().toISOString();
     setAnalyteValues(newValues);
     if (
       isNaN(parseFloat(value)) ||
@@ -223,15 +244,22 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
     setIsInputFull(newValues.length === QCData?.analytes.length && newValues.length > 0);
   }
 
-useEffect(() => {
-  const storedQCData = localStorage.getItem('selectedQCData');
-  if (storedQCData) {
-    setQCData(JSON.parse(storedQCData));
-  } else {
-    console.error("No QC data found.");
-  }
-}, []);
+  useEffect(() => {
+    const storedQCData = localStorage.getItem('selectedQCData');
+    if (storedQCData) {
+      setQCData(JSON.parse(storedQCData));
+    } else {
+      console.error("No QC data found.");
+    }
+  }, []);
 
+  useEffect(() => {
+    fetchQCData();
+  }, []);
+
+  useEffect(() => {
+    console.log(inputRefs)
+  }, [inputRefs])
 
   useEffect(() => {
     console.log(invalidIndexes, invalidIndexArray, isValid)
@@ -240,8 +268,15 @@ useEffect(() => {
   return (
     <>
       <NavBar name={`Chemistry QC Results`} />
+      {isFetchingData && (
+        <div className="sm:w-[80svw] flex justify-center items-center sm:mt-4 my-0 mx-auto">
+          <Skeleton active />
+          <Skeleton active />
+          <Skeleton active />
+        </div>
+      )}
       {!QCData ? <div>No data recorded</div> : <></>}
-      {QCData && <div
+      {QCData && !isFetchingData && <div
         className=" flex flex-col space-y-12 pb-8 justify-center px-[100px] relative"
         style={{ minWidth: "100svw", minHeight: "100svh" }}
       >
@@ -258,6 +293,7 @@ useEffect(() => {
                 acronym={item.analyteAcronym}
                 minLevel={+item.minLevel}
                 maxLevel={+item.maxLevel}
+                value={analyteValues[index]?.analyteValue.toString() || ""}
                 // level={detectLevel(props.name)}
                 measUnit={item.unitOfMeasure}
                 handleInputChange={(val) => {

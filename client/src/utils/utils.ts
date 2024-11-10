@@ -37,8 +37,25 @@ export const qcTypeLinkList = [
   {name: "Diabetes Level II", link: "diabetes_2", },
   {name: "Cancer Level I", link: "cancer_1", },
   {name: "Cancer Level II", link: "cancer_2", },
-
 ];
+
+export const panelTypeLinkList = [
+  {name: "Complete Metabolic Panel", link: "cmp"},
+  {name: "Basic Metabolic Panel", link: "bmp"},
+  {name: "Liver Panel", link: "liver"},
+  {name: "Renal Panel", link: "renal"},
+  {name: "Lipid Panel", link: "lipid"},
+  {name: "Thyroid Panel", link: "thyroid"},
+  {name: "Cardiac Panel", link: "cardiac"},
+  {name: "Drugs of Abuse Panel", link: "drug"},
+  {name: "Diabetes Panel", link: "diabetes"},
+  {name: "Special Thyroid Panel", link: "special_thyroid"},
+  {name: "Iron Studies Panel", link: "iron"},
+  {name:'Sex Hormone Panel', link: 'sex_hormone'},
+  {name:'Vitamin Panel', link: 'vitamin'},
+  {name:'Cancer Panel', link: 'cancer'},
+  {name:'Pancreatic Panel', link: 'pancreatic'},
+]
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -194,6 +211,23 @@ export interface Student {
   firstname: string;
   lastname: string;
   initials: string;
+}
+
+export interface StudentReport {
+  reportID: string;
+  studentID: string;
+  adminQCLotID: string;
+  createdDate: string;
+  analyteInputs: AnalyteInput[];
+}
+
+export interface AnalyteInput {
+  analyteInputID: string;
+  reportID: string;
+  analyteName: string;
+  analyteValue: number;
+  createdDate: string;
+  comment: string;
 }
 
 export enum Department {

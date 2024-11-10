@@ -15,5 +15,6 @@ namespace Medical_Information.API.Models.Domain
         public Department Department { get; set; }
         public ICollection<Analyte> Analytes { get; set; } = [];
         public ICollection<StudentReport> Reports { get; set; } = [];
+        public ICollection<AdminAnalyteReport> AdminReports { get; set; } = [];
     }
 }

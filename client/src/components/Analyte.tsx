@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useRef, useImperativeHandle } from "react";
+import React, { forwardRef, useState, useRef, useImperativeHandle, useEffect } from "react";
 import { renderSubString } from "../utils/utils";
 
 export interface AnalyteProps {
@@ -9,12 +9,17 @@ export interface AnalyteProps {
   minLevel: number;
   maxLevel: number;
   measUnit: string;
+  value: string;
   handleInputChange: (value: string) => void;
 }
 
 const Analyte = forwardRef((props: AnalyteProps, ref) => {
 
   const [inputValue, setInputValue] = useState('');
+
+  useEffect(() => {
+    setInputValue(props.value);
+  }, [])
 
   const inputRef = useRef<HTMLInputElement>(null);
   const nameRef = useRef<HTMLDivElement>(null);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { QCTemplateBatch } from '../../../utils/indexedDB/IDBSchema';
+import { AdminQCLot } from '../../../utils/indexedDB/IDBSchema';
 import Analyte from '../../../components/Analyte';
 import NavBar from '../../../components/NavBar';
 import { useParams } from 'react-router-dom';
@@ -16,9 +16,8 @@ const SimpleAnalyteInputPage = (props: { name: string }) => {
   const { theme } = useTheme();
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const analyteNameRefs = useRef<HTMLDivElement[]>([]);
-  const { username } = useAuth();
 
-  const [qcData, setQcData] = useState<QCTemplateBatch | null>(null);
+  const [qcData, setQcData] = useState<AdminQCLot | null>(null);
   const [analyteValues, setAnalyteValues] = useState<string[]>([]);
   const [invalidIndexes, setInvalidIndexes] = useState<Set<number> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -92,7 +91,7 @@ const SimpleAnalyteInputPage = (props: { name: string }) => {
     });
   };
 
-  const reportPDF = (analyteValues?: string[], QCData?: QCTemplateBatch) => {
+  const reportPDF = (analyteValues?: string[], QCData?: AdminQCLot) => {
     const currentDate = new Date();
     const tw = createTw({
       theme: {},
@@ -145,7 +144,7 @@ const SimpleAnalyteInputPage = (props: { name: string }) => {
               </View>
             ))}
           </View>
-          <Text style={tw("mt-8 text-[13px]")}>Approved by: {username}</Text>
+          <Text style={tw("mt-8 text-[13px]")}>Approved by: {}</Text>
           <Text style={tw("mt-2 text-[13px]")}>Date: {currentDate.getMonth() + 1}/{currentDate.getDate()}/{currentDate.getFullYear()}</Text>
           <Text style={tw("mt-2 text-[13px]")}>Time: {currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</Text>
         </Page>
@@ -177,7 +176,7 @@ const SimpleAnalyteInputPage = (props: { name: string }) => {
       return;
     }
 
-    const qcDataToSave: QCTemplateBatch = {
+    const qcDataToSave: AdminQCLot = {
       ...qcData,
       analytes: qcData.analytes.map((analyte, index) => ({
         ...analyte,
@@ -188,8 +187,8 @@ const SimpleAnalyteInputPage = (props: { name: string }) => {
     console.log("Data to save:", qcDataToSave);
 
     try {
-      await saveToDB("qc_store", qcDataToSave);
-      console.log("QC data saved successfully.");
+      // await saveToDB("qc_store", qcDataToSave);
+      // console.log("QC data saved successfully.");
       setAnalyteValues([]);
       setInvalidIndexes(null);
       setModalData([]);
@@ -225,6 +224,7 @@ const SimpleAnalyteInputPage = (props: { name: string }) => {
                 maxLevel={+item.maxLevel}
                 // level={detectLevel(props.name)}
                 measUnit={item.unitOfMeasure}
+                value=''
                 handleInputChange={(val: string) => {
                   // Convert string to number but pass the string to handleInputChange
                   const numericValue = +val;

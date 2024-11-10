@@ -11,7 +11,7 @@ import {
 import { Button, Modal, Box, Typography } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
-import { QCTemplateBatch } from "../../utils/indexedDB/IDBSchema";
+import { AdminQCLot } from "../../utils/indexedDB/IDBSchema";
 import { getAllDataFromStore } from "../../utils/indexedDB/getData";
 
 import {
@@ -71,12 +71,12 @@ const Simple_Faculty_QC_Review = () => {
   useEffect(() => {
     const fetchQCData = async () => {
       try {
-        const data = (await getAllDataFromStore('qc_store')) as unknown as QCTemplateBatch[];
+        const data = (await getAllDataFromStore('qc_store')) as unknown as AdminQCLot[];
 
         // Map over the data and ensure type consistency
         setQcItems(
           data.map((item) => ({
-            fileName: String(item.fileName),  // Ensure these are strings
+            fileName: String(item.qcName),  // Ensure these are strings
             lotNumber: String(item.lotNumber),
             closedDate: String(item.closedDate),
             analytes: item.analytes.map(analyte => ({ analyteName: analyte.analyteName }))

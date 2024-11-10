@@ -1,4 +1,4 @@
-import { Admin, QCTemplateBatch, Student } from "./IDBSchema";
+import { Admin, AdminQCLot, Student } from "./IDBSchema";
 
 export function getAllDataFromStore<T>(storeName: string): Promise<T[] | string | null> {
     return new Promise((resolve) => {
@@ -42,7 +42,7 @@ export const getDataByCompositeKey = async (
     fileName: string, 
     lotNumber: string, 
     closedDate: string
-  ): Promise<QCTemplateBatch | null> => {
+  ): Promise<AdminQCLot | null> => {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open("MIS_database");
   
@@ -182,7 +182,7 @@ export function getStudentByName(name: string): Promise<Student | null> {
     })
 }
 
-/*export function getQCRangeByName(name: string): Promise<QCTemplateBatch | null> {
+/*export function getQCRangeByName(name: string): Promise<AdminQCLot | null> {
     return new Promise((resolve) => {
         let request = indexedDB.open("MIS_database");
 
@@ -212,7 +212,7 @@ export function getStudentByName(name: string): Promise<Student | null> {
         }
     })
 }*/
-export function getAllDataByFileName(storeName: string, fileName: string): Promise<QCTemplateBatch[]> {
+export function getAllDataByFileName(storeName: string, fileName: string): Promise<AdminQCLot[]> {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open("MIS_database");
         request.onsuccess = () => {
@@ -240,7 +240,7 @@ export const getQCRangeByDetails = (
     fileName: string,
     lotNumber: string,
     closedDate: string
-): Promise<QCTemplateBatch | null> => {
+): Promise<AdminQCLot | null> => {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open("MIS_database");
 
@@ -269,7 +269,7 @@ export const getQCRangeByDetails = (
                 const result = getRequest.result;
                 if (result) {
                     console.log("Data retrieved successfully:", result);
-                    resolve(result as QCTemplateBatch);
+                    resolve(result as AdminQCLot);
                 } else {
                     console.warn("No data found for key:", key);
                     resolve(null);

@@ -26,7 +26,12 @@ import Layout from "./utils/Layout";
 import ChemistryLeveyJennings from "./pages/General/Chemistry/ChemistryLeveyJennings";
 import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInputPage";
 import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
-import { qcTypeLinkList } from "./utils/utils";
+import { qcTypeLinkList, StudentReport } from "./utils/utils";
+import { AuthToken } from "./context/AuthContext";
+import { AdminQCLot } from "./utils/indexedDB/IDBSchema";
+import ChemistryPanel from "./pages/General/Chemistry/ChemistryPanel";
+import FacultyOrderEntry from "./pages/FacultyView/FacultyOrderEntry";
+import ChemistryOEBuilder from "./pages/General/Chemistry/ChemistryOEBuilder";
 
 function App() {
   initIDB();
@@ -56,6 +61,10 @@ function AppWithRouter() {
           {
             path: 'admin-home',
             element: <FacultyHomeScreen />,
+          },
+          {
+            path: 'admin-order-entry',
+            element: <FacultyOrderEntry />,
           },
           {
             path: 'student-qc',
@@ -93,7 +102,11 @@ function AppWithRouter() {
                 element: <ChemistryAnalyteInputPage name="" />,
                 loader: async ({ params }) => {
                   const { link } = params;
-                  console.log("loader function: ", link);
+
+                  const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/${link}`);
+                  if (res.ok) {
+                    return res.json();
+                  }
 
                   return null;
                 }
@@ -150,6 +163,14 @@ function AppWithRouter() {
               {
                 path: "qc_types",
                 element: <ChemistryQCTypeButtonsPage />,
+              },
+              {
+                path: "panel",
+                element: <ChemistryPanel />
+              },
+              {
+                path: "panel/:link",
+                element: <ChemistryOEBuilder />
               }
             ]
           },
