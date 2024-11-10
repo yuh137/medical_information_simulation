@@ -122,11 +122,15 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       console.log("student local data: ", students);
       console.log("admin loacal data: ", admins);
 
+      // Uses the students object defined from the api call to match email and password
+      // Returns the matching student.
       const studentFound = students.find(
         (studentFound: any) =>
           studentFound.email === email && studentFound.password === password,
       );
 
+      // Uses the admins object defined from the api call to match email and password
+      // Returns the matching admin.
       const adminFound = admins.find(
         (adminFound: any) =>
           adminFound.email === email && adminFound.password === password,

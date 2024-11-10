@@ -1,27 +1,30 @@
-import * as React from 'react';
-import Grid from '@mui/material/Grid';
-import List from '@mui/material/List';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Checkbox from '@mui/material/Checkbox';
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import QCOrderButtons from './Buttons/QCOrderButtons';
+import * as React from "react";
+import Grid from "@mui/material/Grid";
+import List from "@mui/material/List";
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Checkbox from "@mui/material/Checkbox";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
+import QCOrderButtons from "./Buttons/QCOrderButtons";
+import axios from "axios";
 
-const panelNames = [
-  "GI Panel Level I",
-  "GI Panel Level II",
-  "Respiratory Panel Level I",
-  "Respiratory Panel Level II",
-  "STI-PCR Panel Level I",
-  "STI-PCR Panel Level II",
-  "HIV RT-PCR Panel: Negative Control",
-  "HIV RT-PCR Panel: Low Control",
-  "HIV RT-PCR Panel: High Control"
-];
+// const panelNames = [
+//   "GI Panel Level I",
+//   "GI Panel Level II",
+//   "Respiratory Panel Level I",
+//   "Respiratory Panel Level II",
+//   "STI-PCR Panel Level I",
+//   "STI-PCR Panel Level II",
+//   "HIV RT-PCR Panel: Negative Control",
+//   "HIV RT-PCR Panel: Low Control",
+//   "HIV RT-PCR Panel: High Control",
+// ];
+//
+// let panelNamesFromBackend: string[] = [];
 
 function not(a: readonly number[], b: readonly number[]) {
   return a.filter((value) => !b.includes(value));
@@ -36,13 +39,37 @@ function union(a: readonly number[], b: readonly number[]) {
 }
 
 export default function OrderQC_SelectAllTransferList() {
+  const [panelNames, setPanelNames] = React.useState<string[]>([]);
   const [checked, setChecked] = React.useState<readonly number[]>([]);
-  const [left, setLeft] = React.useState<readonly number[]>(panelNames.map((_, index) => index));
+  const [left, setLeft] = React.useState<readonly number[]>([]);
   const [right, setRight] = React.useState<readonly number[]>([]);
+  React.useEffect(() => {
+    // Fetch data from the API when the component mounts
+    const fetchBackendData = async () => {
+      // panelNamesFromBackend = [];
+      const responseQCLots = await axios.get(
+        "http://localhost:5029/api/AdminQCLots",
+      );
+      const dataQCLots = responseQCLots.data;
+      const dataQCLotsLength = dataQCLots.length;
+      console.log("QC Lots", dataQCLots);
+
+      // Gets the names of the QCLots in the database
+      const fetchedPanelNames = dataQCLots.map((lot: any) => lot.qcName);
+      setPanelNames(fetchedPanelNames);
+      setLeft(fetchedPanelNames.map((_: string, index: number) => index));
+    };
+    fetchBackendData();
+  }, []);
+
+  // const [checked, setChecked] = React.useState<readonly number[]>([]);
+  // const [left, setLeft] = React.useState<readonly number[]>(
+  //   panelNamesFromBackend.map((_, index) => index),
+  // );
+  // const [right, setRight] = React.useState<readonly number[]>([]);
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
-
   const handleToggle = (value: number) => () => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
@@ -86,26 +113,33 @@ export default function OrderQC_SelectAllTransferList() {
   };
 
   const handleOrderQC = () => {
-    const selectedPanelNames = right.map(index => panelNames[index]); // Maps indices to panel names
-    localStorage.setItem('selectedQualityControls', JSON.stringify(selectedPanelNames));
-    window.location.href = '/inputqcresults';
+    const selectedPanelNames = right.map((index) => panelNames[index]); // Maps indices to panel names
+    localStorage.setItem(
+      "selectedQualityControls",
+      JSON.stringify(selectedPanelNames),
+    );
+    window.location.href = "/inputqcresults";
   };
-  
 
   const customList = (title: React.ReactNode, items: readonly number[]) => (
-    <Card sx={{ width: 300, height: 350 }}> {/* Increased the width and height */}
+    <Card sx={{ width: 300, height: 350 }}>
+      {" "}
+      {/* Increased the width and height */}
       <CardHeader
         sx={{ px: 2, py: 1 }}
         avatar={
           <Checkbox
             onClick={handleToggleAll(items)}
-            checked={numberOfChecked(items) === items.length && items.length !== 0}
+            checked={
+              numberOfChecked(items) === items.length && items.length !== 0
+            }
             indeterminate={
-              numberOfChecked(items) !== items.length && numberOfChecked(items) !== 0
+              numberOfChecked(items) !== items.length &&
+              numberOfChecked(items) !== 0
             }
             disabled={items.length === 0}
             inputProps={{
-              'aria-label': 'all items selected',
+              "aria-label": "all items selected",
             }}
           />
         }
@@ -115,10 +149,10 @@ export default function OrderQC_SelectAllTransferList() {
       <Divider />
       <List
         sx={{
-          width: '100%', // Use full width of the card
-          height: 'calc(100% - 72px)', // Adjust height based on CardHeader and Divider
-          bgcolor: 'background.paper',
-          overflow: 'auto',
+          width: "100%", // Use full width of the card
+          height: "calc(100% - 72px)", // Adjust height based on CardHeader and Divider
+          bgcolor: "background.paper",
+          overflow: "auto",
         }}
         dense
         component="div"
@@ -126,7 +160,7 @@ export default function OrderQC_SelectAllTransferList() {
       >
         {items.map((value: number) => {
           const labelId = `transfer-list-all-item-${value}-label`;
-  
+
           return (
             <ListItemButton
               key={value}
@@ -139,7 +173,7 @@ export default function OrderQC_SelectAllTransferList() {
                   tabIndex={-1}
                   disableRipple
                   inputProps={{
-                    'aria-labelledby': labelId,
+                    "aria-labelledby": labelId,
                   }}
                 />
               </ListItemIcon>
@@ -150,18 +184,17 @@ export default function OrderQC_SelectAllTransferList() {
       </List>
     </Card>
   );
-  
 
   return (
     <>
       <Grid
         container
         spacing={2}
-        sx={{ justifyContent: 'center', alignItems: 'center' }}
+        sx={{ justifyContent: "center", alignItems: "center" }}
       >
-        <Grid item>{customList('Quality Control Panels', left)}</Grid>
+        <Grid item>{customList("Quality Control Panels", left)}</Grid>
         <Grid item>
-          <Grid container direction="column" sx={{ alignItems: 'center' }}>
+          <Grid container direction="column" sx={{ alignItems: "center" }}>
             <Button
               sx={{ my: 0.5 }}
               variant="outlined"
@@ -184,10 +217,13 @@ export default function OrderQC_SelectAllTransferList() {
             </Button>
           </Grid>
         </Grid>
-        <Grid item>{customList('Selected Quality Controls', right)}</Grid>
+        <Grid item>{customList("Selected Quality Controls", right)}</Grid>
       </Grid>
-      <Grid container direction="column" sx={{ alignItems: 'center' }}>
-        <QCOrderButtons onClearSelection={handleClearSelection} onOrderQC={handleOrderQC} />
+      <Grid container direction="column" sx={{ alignItems: "center" }}>
+        <QCOrderButtons
+          onClearSelection={handleClearSelection}
+          onOrderQC={handleOrderQC}
+        />
       </Grid>
     </>
   );
