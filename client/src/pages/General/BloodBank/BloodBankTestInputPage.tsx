@@ -91,6 +91,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
       else return;
     }
   }
+  
   const validateInput = () => {
     const minInputArray = inputRefs.current;
   
