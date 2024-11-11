@@ -69,7 +69,7 @@ const MicrobiologyQCResult = (props: { name: string, link: string }) => {
           localStorage.setItem('selectedQCData', JSON.stringify(qcData));
   
           // Navigate to the AnalyteInputPage
-          navigate(`/mircrobiology/simple-analyte-input-page`);
+          navigate(`/microbiology/micro-simple-analyte-input-page`);
         } else {
           console.warn('No matching QC data found in the database.');
           alert('No matching QC data found in the database.');
