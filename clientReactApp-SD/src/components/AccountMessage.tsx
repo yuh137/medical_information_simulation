@@ -11,6 +11,11 @@ import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid2";
 
+import { useEffect, useState } from "react";
+import { UserProvider,useUser } from "./AccessIndexedDB.tsx"
+import { getAccountData, getDataByKey } from "../util/indexedDB/getData.ts";
+import { Admin, Student } from "../util/indexedDB/IDBSchema";
+
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -113,15 +118,94 @@ const BasicGrid = () => (
   </StyledGridContainer>
 );
 */
+/*
+async function getData(storeName, id) {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("MIS_database");
 
-// import {
-//   isStoreEmpty,
-//   getAllDataFromStore,
-// } from "../util/indexedDB/getData.ts";
+    request.onsuccess = () => {
+      const db = request.result;
+      const transaction = db.transaction(storeName, "readonly");
+      const store = transaction.objectStore(storeName);
+      const dataRequest = id ? store.get(id) : store.getAll();
 
+      dataRequest.onsuccess = () => resolve(dataRequest.result);
+      dataRequest.onerror = (event) => reject(event);
+    };
+
+    request.onerror = (event) => reject(event);
+  });
+}
+*/
+const AccountDataPage = () => {
+  const [accountData, setAccountData] = useState<Admin[] | Student[] | null>(
+    JSON.parse(localStorage.getItem('accountData') || 'null')
+  );
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!accountData) {
+        const data = await getAccountData();
+        setAccountData(data);
+        localStorage.setItem('accountData', JSON.stringify(data)); // Save data in localStorage
+      }
+    }
+
+    fetchData();
+  }, [accountData]);
+}
+type Admin = {
+    id: string;
+    email: string;
+    username: string;
+    password: string;
+    firstname: string;
+    lastname: string;
+    initials: string;
+  }
+type Student = {
+    id: string;
+    email: string;
+    username: string;
+    password: string;
+    firstname: string;
+    lastname: string;
+    initials: string;
+}
 export default function AccountMessage(props: {
   disableCustomTheme?: boolean;
 }) {
+  const [userData, setUserData] = useState<Admin[] | Student[] | null>(null);
+
+  useEffect(() => {
+    async function fetchAccountData() {
+      try {
+        const storeName = "students"; // Example: "students" store
+        const id = "5a1f9e80-5b21-11d3-9a0c-0305e82c3301"; // Example user ID
+        const data = await getDataByKey(storeName, id);
+
+        if (data === null) {
+          console.error("No data found for this ID");
+        } else if (typeof data === "string") {
+          console.error("Error:", data);
+        } else {
+          setUserData(data); // Store data in state if it's not null or an error message
+        }/*
+        const data = await getDataByKey("students", "5a1f9e80-5b21-11d3-9a0c-0305e82c3301");//getAccountData();
+        if (data) {
+          setUserData(data);
+        } else {
+          console.error("No data found");
+        }*/
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+    fetchAccountData();
+  }, []);
+  //getData("students", "5a1f9e80-5b21-11d3-9a0c-0305e82c3301");
+  //const userData = getAccountData();
+  
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
@@ -131,6 +215,7 @@ export default function AccountMessage(props: {
         />
         {/* Replace card with you*/}
         {/*<h1>Account Page</h1>*/}
+        {/*<UserProvider>*/}
         <Card>
           <h1>Account Page</h1>
           <div>
@@ -138,15 +223,30 @@ export default function AccountMessage(props: {
               <Grid size={6}>
                 <Item>
                   <div>
+                    {userData && userData[1] ? (
+                      <>
+                        First Name: <p>{userData[1].firstname}</p>
+                        <br />
+                        Last Name: <p>{userData[1].lastname}</p>
+                        <br />
+                        E-mail: <p>{userData[1].email}</p>
+                        <br />
+                        Department, Section: NULL
+                      </>
+                    ) : (
+                      <p>Loading...</p>
+                    )}
+                    {/*
                     <h3>Basic Info</h3>
-                    First Name: Bob
+                    First Name: <p>userData[1].firstname</p>
                     <br />
-                    Last Name: Carter
+                    Last Name: {/*user.lastname/}
                     <br />
-                    E-mail: bob.carter@example.com
+                    E-mail: {/*user.email/}
                     <br />
                     Department, Section: NULL
                     <br />
+                    */}
                   </div>
                 </Item>
               </Grid>
@@ -228,6 +328,7 @@ export default function AccountMessage(props: {
             </div>*/}
           </div>
         </Card>
+        {/*</UserProvider>*/}
       </SignInContainer>
     </AppTheme>
   );
