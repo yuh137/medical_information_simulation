@@ -13,15 +13,15 @@ namespace Medical_Information.API.Controllers
     {
         private readonly IBloodBankQCLotRepository bloodBankQCLotRepository;
         private readonly IMapper mapper;
-        // private readonly IAnalyteRepository analyteRepository;
+        private readonly IReagentRepository reagentRepository;
 
 
         // public BloodBankQCLotsController(IBloodBankQCLotRepository bloodBankQCLotRepository, IMapper mapper, IAnalyteRepository analyteRepository)
-        public BloodBankQCLotsController(IBloodBankQCLotRepository bloodBankQCLotRepository, IMapper mapper)
+        public BloodBankQCLotsController(IBloodBankQCLotRepository bloodBankQCLotRepository, IMapper mapper, IReagentRepository reagentRepository)
         {
             this.bloodBankQCLotRepository = bloodBankQCLotRepository;
             this.mapper = mapper;
-            // this.analyteRepository = analyteRepository;
+            this.reagentRepository = reagentRepository;
         }
 
         [HttpGet]
@@ -57,22 +57,21 @@ namespace Medical_Information.API.Controllers
                 ClosedDate = dto.ClosedDate,
                 ExpirationDate = dto.ExpirationDate,
                 FileDate = dto.FileDate,
-                // Analytes = new List<Analyte>(),
+                Reagents = new List<Reagent>(),
                 Reports = new List<StudentReport>()
             };
 
-            // REPLACE WITH REAGENTS
-            /*
-            foreach (var analyteDTO in dto.Analytes)
+         
+            foreach (var reagentDTO in dto.Reagents)
             {
-                if (analyteDTO != null)
+                if (reagentDTO != null)
                 {
-                    var analyteModel = mapper.Map<Analyte>(analyteDTO);
+                    var reagentModel = mapper.Map<Reagent>(reagentDTO);
 
-                    // qclotModel.Analytes.Add(analyteModel);
+                    qclotModel.Reagents.Add(reagentModel);
                 }
             }
-            */
+            
 
 await bloodBankQCLotRepository.CreateBBQCLotAsync(qclotModel);
 

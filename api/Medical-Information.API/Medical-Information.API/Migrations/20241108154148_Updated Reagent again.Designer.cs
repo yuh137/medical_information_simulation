@@ -4,6 +4,7 @@ using Medical_Information.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical_Information.API.Migrations
 {
     [DbContext(typeof(MedicalInformationDbContext))]
-    partial class MedicalInformationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241108154148_Updated Reagent again")]
+    partial class UpdatedReagentagain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,10 +107,10 @@ namespace Medical_Information.API.Migrations
                         {
                             AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
                             Department = 0,
-                            ExpirationDate = new DateTime(2024, 12, 11, 9, 10, 57, 761, DateTimeKind.Local).AddTicks(8183),
-                            FileDate = new DateTime(2024, 11, 11, 9, 10, 57, 761, DateTimeKind.Local).AddTicks(8192),
+                            ExpirationDate = new DateTime(2024, 12, 8, 9, 41, 48, 257, DateTimeKind.Local).AddTicks(550),
+                            FileDate = new DateTime(2024, 11, 8, 9, 41, 48, 257, DateTimeKind.Local).AddTicks(556),
                             LotNumber = "888888888888",
-                            OpenDate = new DateTime(2024, 11, 11, 9, 10, 57, 761, DateTimeKind.Local).AddTicks(8212),
+                            OpenDate = new DateTime(2024, 11, 8, 9, 41, 48, 257, DateTimeKind.Local).AddTicks(584),
                             QCName = "CMP Level I"
                         });
                 });

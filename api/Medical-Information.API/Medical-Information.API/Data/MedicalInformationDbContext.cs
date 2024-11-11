@@ -25,15 +25,17 @@ namespace Medical_Information.API.Data
             base.OnModelCreating(modelBuilder);
             // Update-Database -Context MedicalInformationDbContext
 
-            modelBuilder.Entity<AdminQCLot>().HasMany(p => p.Analytes).WithOne().HasForeignKey(e => e.AdminQCLotID);
+            modelBuilder.Entity<AdminQCLot>().HasMany(p => p.Analytes).WithOne().HasForeignKey(e => e.AdminQCLotID).OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<AdminQCLot>().HasMany(p => p.Reports).WithOne().HasForeignKey(e => e.AdminQCLotID);
+            modelBuilder.Entity<AdminQCLot>().HasMany(p => p.Reports).WithOne().HasForeignKey(e => e.AdminQCLotID).OnDelete(DeleteBehavior.Cascade);
 
-            // modelBuilder.Entity<BloodBankQCLot>().HasMany(p => p.Reagents).WithOne().HasForeignKey(e => e.BloodBankQCLotID);
+            modelBuilder.Entity<BloodBankQCLot>().HasMany(p => p.Reagents).WithOne().HasForeignKey(e => e.BloodBankQCLotID).OnDelete(DeleteBehavior.Cascade);
 
-            // modelBuilder.Entity<BloodBankQCLot>().HasMany(p => p.Reports).WithOne().HasForeignKey(e => e.AdminQCLotID);
+            // modelBuilder.Entity<BloodBankQCLot>().HasMany(p => p.Reports).WithOne().HasForeignKey(e => e.BloodBankQCLotID);
 
-            //modelBuilder.Entity<Analyte>().HasOne(e => e.AdminQCLot).WithMany(e => e.Analytes).HasForeignKey(e => e.AdminQCLotID);
+            // modelBuilder.Entity<Reagent>().HasOne(e => e.BloodBankQCLot).WithMany(e => e.Reagents).HasForeignKey(e => e.BloodBankQCLotID);
+
+            // modelBuilder.Entity<Analyte>().HasOne(e => e.AdminQCLot).WithMany(e => e.Analytes).HasForeignKey(e => e.AdminQCLotID);
 
             modelBuilder.Entity<Student>().HasMany(p => p.Reports).WithOne().HasForeignKey(e => e.StudentID);
 
