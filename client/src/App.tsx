@@ -33,6 +33,7 @@ import MicrobiologyTestInput from "./pages/General/Microbiology/MicrobiologyTest
 import MicrobiologyOrderControls from "./pages/General/Microbiology/MicrobiologyOrderControls";
 import MicrobiologyQCResult from "./pages/General/Microbiology/MicrobiologyQCResultPage";
 import { getAllDataFromStore } from "./utils/indexedDB/getData";
+import MicroSimpleAnalyteInputPage from "./pages/General/Microbiology/MiciroSimpleAnalyteInputPage";
 
 function App() {
   initIDB();
@@ -170,7 +171,11 @@ function AppWithRouter() {
               {
                 path: "qc_results",
                 element: <MicrobiologyQCResult link="microbiology" name="Microbiology"/>,
-              }
+              },
+              {
+                path: 'micro-simple-analyte-input-page',
+                element: <MicroSimpleAnalyteInputPage name="Microbiology" />,  
+              },
             ]
           },
 
