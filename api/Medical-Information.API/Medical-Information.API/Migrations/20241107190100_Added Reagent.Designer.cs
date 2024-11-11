@@ -4,6 +4,7 @@ using Medical_Information.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical_Information.API.Migrations
 {
     [DbContext(typeof(MedicalInformationDbContext))]
-    partial class MedicalInformationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241107190100_Added Reagent")]
+    partial class AddedReagent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,10 +107,10 @@ namespace Medical_Information.API.Migrations
                         {
                             AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
                             Department = 0,
-                            ExpirationDate = new DateTime(2024, 12, 11, 9, 10, 57, 761, DateTimeKind.Local).AddTicks(8183),
-                            FileDate = new DateTime(2024, 11, 11, 9, 10, 57, 761, DateTimeKind.Local).AddTicks(8192),
+                            ExpirationDate = new DateTime(2024, 12, 7, 13, 0, 59, 392, DateTimeKind.Local).AddTicks(6035),
+                            FileDate = new DateTime(2024, 11, 7, 13, 0, 59, 392, DateTimeKind.Local).AddTicks(6042),
                             LotNumber = "888888888888",
-                            OpenDate = new DateTime(2024, 11, 11, 9, 10, 57, 761, DateTimeKind.Local).AddTicks(8212),
+                            OpenDate = new DateTime(2024, 11, 7, 13, 0, 59, 392, DateTimeKind.Local).AddTicks(6064),
                             QCName = "CMP Level I"
                         });
                 });
@@ -382,9 +385,6 @@ namespace Medical_Information.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AHG")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Abbreviation")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -392,20 +392,14 @@ namespace Medical_Information.API.Migrations
                     b.Property<Guid>("BloodBankQCLotID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CheckCell")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ImmediateSpin")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("NegExpectedRange")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("NegExpectedRange")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PosExpectedRange")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("PosExpectedRange")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ReagentLotNum")
                         .IsRequired()
@@ -413,9 +407,6 @@ namespace Medical_Information.API.Migrations
 
                     b.Property<string>("ReagentName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ThirtySevenDegree")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ReagentID");
