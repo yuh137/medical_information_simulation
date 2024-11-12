@@ -63,6 +63,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
   // const [isDrawerOpen, openDrawer] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const validValues = ["W+", "1+", "2+", "3+", "4+", "H+","0"];
+  
   const { register, handleSubmit, setValue } = useForm<BloodBankQC>();
   const saveQC: SubmitHandler<BloodBankQC> = async (data) => {
     // AGF Test: Try the actual database
