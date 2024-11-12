@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -7,6 +8,20 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import { Admin, Student } from '../../util/indexedDB/IDBSchema';
+import { getAccountData } from '../../util/indexedDB/getData';
+
+
+//Grab user sname from table created at sign in.
+async function fetchUserName(): Promise<string> {
+  const accountData = await getAccountData();
+  if (accountData && Array.isArray(accountData) && accountData.length > 0) {
+    const user = accountData[0] as Admin | Student;
+    return `${user.firstname} ${user.lastname}`;
+  }
+  return 'doos';
+}
+
 
 const submissionColumns: GridColDef[] = [
   { field: 'id', headerName: 'QC Report ID', width: 150 },
@@ -88,9 +103,21 @@ const handleInputAnalyte = (id: number) => {
 };
 
 export default function SubmittedQCTable() {
+  const [userName, setUserName] = useState<string>('User');
   const [submissions, setSubmissions] = React.useState(getSubmittedItemsFromLocalStorage());
   const [openDialog, setOpenDialog] = React.useState(false);
   const [details, setDetails] = React.useState([]);
+
+  // Fetch the user's name from IndexedDB on component mount
+  useEffect(() => {
+    async function fetchName() {
+      const name = await fetchUserName();
+      setUserName(name);
+    }
+    fetchName();
+  }, []);
+
+
 
   const handleViewDetails = (id: number) => {
     const storedSubmissions = JSON.parse(localStorage.getItem('SubmittedQCs') || '[]');

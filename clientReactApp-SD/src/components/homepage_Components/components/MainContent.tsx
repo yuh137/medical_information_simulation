@@ -28,7 +28,7 @@ async function fetchUserName(): Promise<string> {
   const accountData = await getAccountData();
   if (accountData && Array.isArray(accountData) && accountData.length > 0) {
     const user = accountData[0] as Admin | Student;
-    return `${user.firstname} ${user.lastname}`;
+    return `${user.firstname}`;
   }
   return 'doos';
 }
