@@ -11,7 +11,7 @@ import { Icon } from "@iconify/react";
 const Login = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const { login, checkSession, checkUserType } = useAuth();
+  const { checkSession, checkUserType, login } = useAuth();
   const [loginOptions, setLoginOptions] = useState<"Admin" | "Student" | string>("");
   const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState(false);
   const { register, handleSubmit } = useForm<CredentialsInput>();
@@ -43,6 +43,7 @@ const Login = () => {
 
           localStorage.setItem('token', JSON.stringify(token));
           console.log(localStorage.getItem('token'));
+          login(JSON.stringify(token), token.userID, UserType.Admin);
           navigate('/admin-home');
           // if ()
         } else {
@@ -86,6 +87,7 @@ const Login = () => {
 
           localStorage.setItem('token', JSON.stringify(token));
           console.log(localStorage.getItem('token'));
+          login(JSON.stringify(token), token.userID, UserType.Student);
           navigate('/student-home');
           // if ()
         }

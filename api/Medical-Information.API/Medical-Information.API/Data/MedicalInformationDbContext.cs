@@ -19,6 +19,7 @@ namespace Medical_Information.API.Data
         public DbSet<AnalyteInput> AnalyteInputs { get; set; }
         public DbSet<BloodBankQCLot> BloodBankQCLots { get; set; }
         public DbSet<Reagent> Reagents { get; set; }
+        public DbSet<BBStudentReport> BBStudentReports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

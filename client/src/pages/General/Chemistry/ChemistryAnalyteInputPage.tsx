@@ -28,7 +28,7 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
 
   const [records, setRecords] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
-  const { username } = useAuth();
+  // const { username } = useAuth();
  
   // Function to print out the report pdf file
   const reportPDF = (analyteValues?: string[], QCData?: QCTemplateBatch) => {
@@ -86,7 +86,7 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
                 </View>
               ))}
             </View>
-            <Text style={tw("mt-8 text-[13px]")}>Approved by: {username}</Text>
+            <Text style={tw("mt-8 text-[13px]")}>Approved by: username</Text>
             <Text style={tw("mt-2 text-[13px]")}>Date: {currentDate.getMonth() + 1}/{currentDate.getDate()}/{currentDate.getFullYear()}</Text>
             <Text style={tw("mt-2 text-[13px]")}>Time: {currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</Text>
           </Page>

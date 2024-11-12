@@ -1,4 +1,5 @@
 ﻿using Medical_Information.API.Data;
+using Medical_Information.API.Enums;
 using Medical_Information.API.Models.Domain;
 using Medical_Information.API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,15 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             await dbContext.BloodBankQCLots.AddAsync(qclot);
             await dbContext.SaveChangesAsync();
             return qclot;
+        }
+
+        public async Task<List<BloodBankQCLot>> GetBBQCLotsByNameListAsync(List<string> names)
+        {
+            foreach (var name in names)
+            {
+                name.ToLower();
+            }
+            return await dbContext.BloodBankQCLots.Include(item => item.Reagents).Include(item => item.Reports).Where(item => names.Contains(item.QCName.ToLower()) && item.IsActive).ToListAsync();  // && item.IsActive
         }
 
         public async Task<BloodBankQCLot?> DeleteBBQCLotAsync(Guid id)

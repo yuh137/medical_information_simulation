@@ -16,7 +16,7 @@ const SimpleAnalyteInputPage = (props: { name: string }) => {
   const { theme } = useTheme();
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const analyteNameRefs = useRef<HTMLDivElement[]>([]);
-  const { username } = useAuth();
+  // const { username } = useAuth();
 
   const [qcData, setQcData] = useState<QCTemplateBatch | null>(null);
   const [analyteValues, setAnalyteValues] = useState<string[]>([]);
@@ -145,7 +145,7 @@ const SimpleAnalyteInputPage = (props: { name: string }) => {
               </View>
             ))}
           </View>
-          <Text style={tw("mt-8 text-[13px]")}>Approved by: {username}</Text>
+          <Text style={tw("mt-8 text-[13px]")}>Approved by: username</Text>
           <Text style={tw("mt-2 text-[13px]")}>Date: {currentDate.getMonth() + 1}/{currentDate.getDate()}/{currentDate.getFullYear()}</Text>
           <Text style={tw("mt-2 text-[13px]")}>Time: {currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</Text>
         </Page>

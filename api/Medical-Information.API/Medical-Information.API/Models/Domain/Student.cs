@@ -13,6 +13,7 @@ namespace Medical_Information.API.Models.Domain
         public string Lastname { get; set; }
         public string Initials { get; set; }
         public ICollection<StudentReport> Reports { get; set; } = [];
+        public ICollection<BBStudentReport> BBReports { get; set; } = [];
         public ICollection<Admin> Admins { get; set; } = [];
     }
 }

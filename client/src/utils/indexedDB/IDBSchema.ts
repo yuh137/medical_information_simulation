@@ -46,6 +46,26 @@ export interface QCTemplateBatch {
     }[];
 }
 
+export interface BloodBankQCLot {
+    BloodBankQCLotID?: string;
+    qcName: string;
+    lotNumber: string;
+    openDate: string;
+    expirationDate: string;
+    reagents: {
+        reagentName: string;
+        abbreviation: string;
+        reagentLotNum: string;
+        expirationDate: string;
+        posExpectedRange: string;
+        negExpectedRange: string;
+        immediateSpin: string;
+        thirtySevenDegree: string; 
+        AHG: string;
+        checkCell: string;
+    }[];
+}
+
 export interface BloodBankQC {
     fileName: string;
     lotNumber: string;
