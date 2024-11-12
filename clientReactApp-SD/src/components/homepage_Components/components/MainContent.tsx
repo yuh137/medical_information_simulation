@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import Box from '@mui/material/Box';
@@ -17,9 +18,20 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
 import { useLocation, Link } from 'react-router-dom'; // Import Link
 import IntroDivider from '../../IntroDivider';
+import { Admin, Student } from '../../../util/indexedDB/IDBSchema';
+import { getAccountData } from '../../../util/indexedDB/getData';
+
 
 //Import username from Json Web Token
-
+// Extract user's name from JWT token
+async function fetchUserName(): Promise<string> {
+  const accountData = await getAccountData();
+  if (accountData && Array.isArray(accountData) && accountData.length > 0) {
+    const user = accountData[0] as Admin | Student;
+    return `${user.firstname} ${user.lastname}`;
+  }
+  return 'doos';
+}
 
 const cardData = [
   //Description of card Data changes for faculty
@@ -97,9 +109,21 @@ export function Search() {
 }
 
 export default function MainContent() {
+  const [userName, setUserName] = useState<string>('User');
   const [focusedCardIndex, setFocusedCardIndex] = React.useState<number | null>(
     null,
   );
+
+    // Fetch the user's name from IndexedDB on component mount
+    useEffect(() => {
+      async function fetchName() {
+        const name = await fetchUserName();
+        setUserName(name);
+      }
+      fetchName();
+    }, []);
+  
+
 
   const handleFocus = (index: number) => {
     setFocusedCardIndex(index);
@@ -117,7 +141,7 @@ export default function MainContent() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <div>
         <Typography variant="h1" gutterBottom>
-          Welcome, User!
+          Welcome, {userName}!
         </Typography>
         <Typography>MIS Learning Information System and Quality Control Dashboards<br></br>Texas Health Sciences Center</Typography>
       </div>

@@ -26,14 +26,13 @@ const submissionColumns: GridColDef[] = [
 
 const detailColumns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'description', headerName: 'Description', width: 200 },
   {
     field: 'input',
-    headerName: 'Input Analyte Values',
+    headerName: 'Select QC Orders to Edit',
     width: 200,
     renderCell: (params) => (
       <Button variant="contained" onClick={() => { handleInputAnalyte(params.row.id); console.log("hello"); }}>
-        Input Analyte Values
+        Edit Analyte Values
       </Button>
     ),
   },
