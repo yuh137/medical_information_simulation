@@ -22,8 +22,8 @@ import { Admin, Student } from '../../../util/indexedDB/IDBSchema';
 import { getAccountData } from '../../../util/indexedDB/getData';
 
 
-//Import username from Json Web Token
-// Extract user's name from JWT token
+
+//Grab name from one of the account tables
 async function fetchUserName(): Promise<string> {
   const accountData = await getAccountData();
   if (accountData && Array.isArray(accountData) && accountData.length > 0) {

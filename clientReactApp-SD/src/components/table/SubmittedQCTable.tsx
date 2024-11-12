@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -8,33 +7,11 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import { Admin, Student } from '../../util/indexedDB/IDBSchema';
-import { getAccountData } from '../../util/indexedDB/getData';
-
-
-//Grab user sname from table created at sign in.
-async function fetchUserName(): Promise<string> {
-  const accountData = await getAccountData();
-  if (accountData && Array.isArray(accountData) && accountData.length > 0) {
-    const user = accountData[0] as Admin | Student;
-    return `${user.firstname} ${user.lastname}`;
-  }
-  return 'doos';
-}
-
 
 const submissionColumns: GridColDef[] = [
   { field: 'id', headerName: 'QC Report ID', width: 150 },
   { field: 'issuer', headerName: 'Student Name', width: 150 },
-  { field: 'submittedAt', headerName: 'Submitted At', width: 200 },
-  { field: 'AdminQCLotID', headerName: 'Admin QC Lot ID', width: 200 },
-  { field: 'LotNumber', headerName: 'Lot Number', width: 150 },
-  { field: 'OpenDate', headerName: 'Open Date', width: 200 },
-  { field: 'Department', headerName: 'Department', width: 150 },
-  { field: 'ExpirationDate', headerName: 'Expiration Date', width: 200 },
-  { field: 'FileDate', headerName: 'File Date', width: 200 },
-  { field: 'QCName', headerName: 'QC Name', width: 200 },
-  { field: 'IsActive', headerName: 'Is Active', width: 100 },
+  { field: 'submittedAt', headerName: 'Submitted At', width: 300 },
   {
     field: 'view',
     headerName: 'Details',
@@ -49,13 +26,14 @@ const submissionColumns: GridColDef[] = [
 
 const detailColumns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 70 },
+  { field: 'description', headerName: 'Description', width: 200 },
   {
     field: 'input',
-    headerName: 'Select QC Orders to Edit',
+    headerName: 'Input Analyte Values',
     width: 200,
     renderCell: (params) => (
-      <Button variant="contained" onClick={() => { handleInputAnalyte(params.row.id); }}>
-        Edit Analyte Values
+      <Button variant="contained" onClick={() => { handleInputAnalyte(params.row.id); console.log("hello"); }}>
+        Input Analyte Values
       </Button>
     ),
   },
@@ -64,31 +42,24 @@ const detailColumns: GridColDef[] = [
     headerName: 'Review',
     width: 200,
     renderCell: (params) => (
-      <Button variant="contained" onClick={() => { handleInputAnalyte(params.row.id); }}>
+      <Button variant="contained" onClick={() => { handleInputAnalyte(params.row.id); console.log("hello"); }}>
         Review QC Panel
       </Button>
     ),
   },
+  
 ];
 
-// Fetch data from local storage
+//CHANGE FROM LOCAL STORAGE TO THE DATABASE WHEN READY
 const getSubmittedItemsFromLocalStorage = () => {
   const storedSubmissions = localStorage.getItem('SubmittedQCs');
   if (storedSubmissions) {
     try {
       return JSON.parse(storedSubmissions).map((submission: any, index: number) => ({
-        id: index + 1,
+        id: index + 1, // Use index as unique ID for each submission batch
         issuer: submission.issuer || 'Unknown',
         submittedAt: new Date(submission.submittedAt).toLocaleString(),
-        AdminQCLotID: submission.AdminQCLotID || 'N/A',
-        LotNumber: submission.LotNumber || 'N/A',
-        OpenDate: submission.OpenDate ? new Date(submission.OpenDate).toLocaleString() : 'N/A',
-        Department: submission.Department || 'N/A',
-        ExpirationDate: submission.ExpirationDate ? new Date(submission.ExpirationDate).toLocaleDateString() : 'N/A',
-        FileDate: submission.FileDate ? new Date(submission.FileDate).toLocaleString() : 'N/A',
-        QCName: submission.QCName || 'N/A',
-        IsActive: submission.IsActive ? 'Yes' : 'No',
-        onView: (id: number) => {},
+        onView: (id: number) => {}, // Placeholder for view handler
       }));
     } catch (error) {
       console.error('Error parsing SubmittedQCs:', error);
@@ -99,25 +70,14 @@ const getSubmittedItemsFromLocalStorage = () => {
 };
 
 const handleInputAnalyte = (id: number) => {
+  // Placeholder for the logic to handle input analyte values
   console.log(`Input analyte values for row with ID: ${id}`);
 };
 
 export default function SubmittedQCTable() {
-  const [userName, setUserName] = useState<string>('User');
   const [submissions, setSubmissions] = React.useState(getSubmittedItemsFromLocalStorage());
   const [openDialog, setOpenDialog] = React.useState(false);
   const [details, setDetails] = React.useState([]);
-
-  // Fetch the user's name from IndexedDB on component mount
-  useEffect(() => {
-    async function fetchName() {
-      const name = await fetchUserName();
-      setUserName(name);
-    }
-    fetchName();
-  }, []);
-
-
 
   const handleViewDetails = (id: number) => {
     const storedSubmissions = JSON.parse(localStorage.getItem('SubmittedQCs') || '[]');

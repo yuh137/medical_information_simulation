@@ -9,7 +9,7 @@ import RegisterPage from "./pages/RegisterPage.jsx";
 import HomePage from "./pages/HomePage.tsx";
 import CaseStudiesPage from "./pages/CaseStudiesPage.jsx";
 import GradeBookPage from "./pages/GradeBookPage.jsx";
-import InputQC_ResultsPage from "./pages/InputQC_ResultsPage.jsx";
+import SubmitQCOrderEntry from "./pages/submitQCOrderEntry.js";
 import PatientReportsPage from "./pages/PatientReportsPage.jsx";
 import QC_OrderEntriesPage from "./pages/QC_OrderEntriesPage.jsx";
 import QC_Page from "./pages/QC_Page.jsx";
@@ -67,7 +67,7 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/casestudies" element={<CaseStudiesPage />} />
         <Route path="/gradebook" element={<GradeBookPage />} />
-        <Route path="/inputqcresults" element={<InputQC_ResultsPage />} />
+        <Route path="/submitQCOrder" element={<SubmitQCOrderEntry />} />
         <Route path="/patientreports" element={<PatientReportsPage />} />
         <Route path="/orderentries" element={<QC_OrderEntriesPage />} />
         <Route path="/qc" element={<QC_Page />} />

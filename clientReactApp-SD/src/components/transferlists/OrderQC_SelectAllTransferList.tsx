@@ -118,7 +118,7 @@ export default function OrderQC_SelectAllTransferList() {
       "selectedQualityControls",
       JSON.stringify(selectedPanelNames),
     );
-    window.location.href = "/inputqcresults";
+    window.location.href = "/submitQCOrder";
   };
 
   const customList = (title: React.ReactNode, items: readonly number[]) => (

@@ -91,7 +91,7 @@ const getItemsFromLocalStorage = () => {
   return [];
 };
 
-export default function InputQCValuesTable(props: { disableCustomTheme?: boolean }) {
+export default function PanelsToOrderTable(props: { disableCustomTheme?: boolean }) {
   const [items, setItems] = React.useState(getItemsFromLocalStorage());
 
   const handleSubmitQC = () => {
