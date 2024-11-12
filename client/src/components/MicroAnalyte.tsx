@@ -106,7 +106,7 @@ const MicroAnalyte = forwardRef((props: MicroAnalyteProps, ref) => {
           type="text"
           ref={inputRef}
           value={inputValue}
-          className="text-base sm:w-[10rem] sm:h-[4rem] w-[8rem] h-[3rem] absolute rounded-lg text-center top-0 right-0 border border-solid border-[#7F9458]"
+          className="text-base sm:w-[12rem] sm:h-[4rem] w-[8rem] h-[3rem] absolute rounded-lg text-center top-0 right-0 border border-solid border-[#7F9458]"
           onKeyDown={handleKeyDown}
           onChange={handleChange} // Allow typing any value
         />
