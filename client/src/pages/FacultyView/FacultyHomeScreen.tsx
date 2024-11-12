@@ -10,7 +10,7 @@ import NavBar from "../../components/NavBar";
 import Password from "antd/es/input/Password";
 
 const FacultyHomeScreen = () => {
-  const { initials, username, logout, checkUserType, checkSession } = useAuth();
+  const { checkUserType, checkSession } = useAuth();
   const navigate = useNavigate();
   const { theme } = useTheme();
 
@@ -32,18 +32,19 @@ const FacultyHomeScreen = () => {
     <>
       <NavBar name="MIS Home Screen" />
       <div
-        className=" bg-[#fff] flex flex-wrap justify-center px-24 py-12 sm:gap-x-6 sm:max-w-[1460px] my-0 mx-auto"
+        className=" bg-[#fff] relative flex flex-wrap justify-center px-24 py-12 sm:gap-x-6 sm:max-w-[1460px] my-0 mx-auto"
         style={{ minHeight: "90svh" }}
       >
+        <img src="(MIS)-MidiSims-Main-Logo_Login top left.png" alt="" className="absolute sm:w-48 sm:-left-24 sm:bottom-0"/>
         <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`} onClick={() => navigate("/admin-qc")}>
           <div className="button-text font-bold text-2xl">Quality Controls</div>
         </ButtonBase>
-        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
+        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`} onClick={() => navigate("/admin-order-entry")}>
           <div className="button-text font-bold text-2xl">Order Entry</div>
         </ButtonBase>
         <DropDown name="Results In Progress" options={dropdownOptions} />
         <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
-          <div className="button-text font-bold text-2xl">Patients Reports</div>
+          <div className="button-text font-bold text-2xl">Patient Reports</div>
         </ButtonBase>
         <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
           <div className="button-text font-bold text-2xl">Quizzes</div>
@@ -60,21 +61,6 @@ const FacultyHomeScreen = () => {
         <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
           <div className="button-text font-bold text-2xl">Student Roster</div>
         </ButtonBase>
-        {/* <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`} onClick={async () => {
-          const test = await fetch(`${process.env.REACT_APP_API_URL}/Admins`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            },
-            body: JSON.stringify({ "username": username + '11111111', "password": 'whatever' }),
-          });
-
-          
-          console.log('Added data: ', await test.json());
-        }}>
-          <div className="button-text font-bold text-2xl">Test</div>
-        </ButtonBase> */}
       </div>
     </>
   );

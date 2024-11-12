@@ -29,7 +29,7 @@ import { getDataByKey } from "../../../utils/indexedDB/getData";
 import { deleteData } from "../../../utils/indexedDB/deleteData";
 
 import NavBar from "../../../components/NavBar";
-import { Row } from "antd";
+
 interface QCRangeElements {
   reagentName: string;
   Abbreviation: string;
@@ -38,6 +38,14 @@ interface QCRangeElements {
   ExpectedRange: string;
 }
 
+// To change the date format to what is needed for back-end requests
+function formatDate(dateString: string): string {
+  // Split the input string by "/"
+  const [month, day, year] = dateString.split("/");
+
+  // Goes to YYYY-MM-DD
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+}
 
 export const BloodBankTestInputPage = (props: { name: string }) => {
   const navigate = useNavigate();
@@ -57,6 +65,19 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
   const validValues = ["W+", "1+", "2+", "3+", "4+", "H+","0"];
   const { register, handleSubmit, setValue } = useForm<BloodBankQC>();
   const saveQC: SubmitHandler<BloodBankQC> = async (data) => {
+    // AGF Test: Try the actual database
+    console.log(data.openDate);
+    const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'  // application/json
+      },
+      body: JSON.stringify({ qcName: fileName_Item, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), expirationDate: formatDate(data.qcExpDate), reagents: [] }),
+      })
+    console.log(checkServer);
+    // Index DB 
+    /*
     const qcDataToSave: BloodBankQC = {
       fileName: fileName_Item,
       lotNumber: data.lotNumber || "",
@@ -77,6 +98,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
     } catch (error) {
       console.error("Failed to save data:", error);
     }
+      */
   };
 
   const inputRefs = useRef<HTMLInputElement[]>([]);

@@ -25,6 +25,17 @@ namespace Medical_Information.API.Controllers
         }
 
         [HttpGet]
+        [Route("ByNameList")]
+        public async Task<IActionResult> GetBBQCLotsByNameList([FromQuery] List<string> names)
+        {
+            var qclotModels = await bloodBankQCLotRepository.GetBBQCLotsByNameListAsync(names);
+
+            var qclotDTOs = mapper.Map<List<BloodBankQCLotDTO>>(qclotModels);
+
+            return Ok(qclotDTOs);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetAllBBQCLots()
         {
             var qcLotsModels = await bloodBankQCLotRepository.GetAllBBQCLotsAsync();
@@ -58,7 +69,7 @@ namespace Medical_Information.API.Controllers
                 ExpirationDate = dto.ExpirationDate,
                 FileDate = dto.FileDate,
                 Reagents = new List<Reagent>(),
-                Reports = new List<StudentReport>()
+                Reports = new List<BBStudentReport>()
             };
 
          

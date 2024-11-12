@@ -4,6 +4,7 @@ using Medical_Information.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical_Information.API.Migrations
 {
     [DbContext(typeof(MedicalInformationDbContext))]
-    partial class MedicalInformationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241111180323_Updated ReagentInput")]
+    partial class UpdatedReagentInput
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,10 +107,10 @@ namespace Medical_Information.API.Migrations
                         {
                             AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
                             Department = 0,
-                            ExpirationDate = new DateTime(2024, 12, 12, 11, 43, 59, 777, DateTimeKind.Local).AddTicks(8688),
-                            FileDate = new DateTime(2024, 11, 12, 11, 43, 59, 777, DateTimeKind.Local).AddTicks(8701),
+                            ExpirationDate = new DateTime(2024, 12, 11, 12, 3, 22, 997, DateTimeKind.Local).AddTicks(1414),
+                            FileDate = new DateTime(2024, 11, 11, 12, 3, 22, 997, DateTimeKind.Local).AddTicks(1419),
                             LotNumber = "888888888888",
-                            OpenDate = new DateTime(2024, 11, 12, 11, 43, 59, 777, DateTimeKind.Local).AddTicks(8739),
+                            OpenDate = new DateTime(2024, 11, 11, 12, 3, 22, 997, DateTimeKind.Local).AddTicks(1444),
                             QCName = "CMP Level I"
                         });
                 });
@@ -345,30 +348,6 @@ namespace Medical_Information.API.Migrations
                     b.ToTable("AnalyteInputs");
                 });
 
-            modelBuilder.Entity("Medical_Information.API.Models.Domain.BBStudentReport", b =>
-                {
-                    b.Property<Guid>("ReportID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BloodBankQCLotID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("StudentID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ReportID");
-
-                    b.HasIndex("BloodBankQCLotID");
-
-                    b.HasIndex("StudentID");
-
-                    b.ToTable("BBStudentReports");
-                });
-
             modelBuilder.Entity("Medical_Information.API.Models.Domain.BloodBankQCLot", b =>
                 {
                     b.Property<Guid>("BloodBankQCLotID")
@@ -452,54 +431,6 @@ namespace Medical_Information.API.Migrations
                     b.ToTable("Reagents");
                 });
 
-            modelBuilder.Entity("Medical_Information.API.Models.Domain.ReagentInput", b =>
-                {
-                    b.Property<Guid>("ReagentInputID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AHG")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("BBStudentReportReportID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CheckCell")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ImmediateSpin")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NegExpectedRange")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PosExpectedRange")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReagentName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ReportID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ThirtySevenDegree")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ReagentInputID");
-
-                    b.HasIndex("BBStudentReportReportID");
-
-                    b.ToTable("ReagentInput");
-                });
-
             modelBuilder.Entity("Medical_Information.API.Models.Domain.Student", b =>
                 {
                     b.Property<Guid>("StudentID")
@@ -540,6 +471,9 @@ namespace Medical_Information.API.Migrations
                     b.Property<Guid>("AdminQCLotID")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("BloodBankQCLotID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -549,6 +483,8 @@ namespace Medical_Information.API.Migrations
                     b.HasKey("ReportID");
 
                     b.HasIndex("AdminQCLotID");
+
+                    b.HasIndex("BloodBankQCLotID");
 
                     b.HasIndex("StudentID");
 
@@ -588,21 +524,6 @@ namespace Medical_Information.API.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Medical_Information.API.Models.Domain.BBStudentReport", b =>
-                {
-                    b.HasOne("Medical_Information.API.Models.Domain.BloodBankQCLot", null)
-                        .WithMany("Reports")
-                        .HasForeignKey("BloodBankQCLotID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Medical_Information.API.Models.Domain.Student", null)
-                        .WithMany("BBReports")
-                        .HasForeignKey("StudentID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Medical_Information.API.Models.Domain.Reagent", b =>
                 {
                     b.HasOne("Medical_Information.API.Models.Domain.BloodBankQCLot", null)
@@ -612,13 +533,6 @@ namespace Medical_Information.API.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Medical_Information.API.Models.Domain.ReagentInput", b =>
-                {
-                    b.HasOne("Medical_Information.API.Models.Domain.BBStudentReport", null)
-                        .WithMany("ReagentInputs")
-                        .HasForeignKey("BBStudentReportReportID");
-                });
-
             modelBuilder.Entity("Medical_Information.API.Models.Domain.StudentReport", b =>
                 {
                     b.HasOne("Medical_Information.API.Models.Domain.AdminQCLot", null)
@@ -626,6 +540,10 @@ namespace Medical_Information.API.Migrations
                         .HasForeignKey("AdminQCLotID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Medical_Information.API.Models.Domain.BloodBankQCLot", null)
+                        .WithMany("Reports")
+                        .HasForeignKey("BloodBankQCLotID");
 
                     b.HasOne("Medical_Information.API.Models.Domain.Student", null)
                         .WithMany("Reports")
@@ -641,11 +559,6 @@ namespace Medical_Information.API.Migrations
                     b.Navigation("Reports");
                 });
 
-            modelBuilder.Entity("Medical_Information.API.Models.Domain.BBStudentReport", b =>
-                {
-                    b.Navigation("ReagentInputs");
-                });
-
             modelBuilder.Entity("Medical_Information.API.Models.Domain.BloodBankQCLot", b =>
                 {
                     b.Navigation("Reagents");
@@ -655,8 +568,6 @@ namespace Medical_Information.API.Migrations
 
             modelBuilder.Entity("Medical_Information.API.Models.Domain.Student", b =>
                 {
-                    b.Navigation("BBReports");
-
                     b.Navigation("Reports");
                 });
 

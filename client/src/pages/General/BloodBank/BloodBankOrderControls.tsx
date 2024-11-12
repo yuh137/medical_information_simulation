@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import NavBar from "../../../components/NavBar";
 import { bloodBankQC, bloodBankRBC_QC } from "../../../utils/utils";
+import { BloodBankQCLot } from "../../../utils/indexedDB/IDBSchema";
+import dayjs from "dayjs";
+import { AuthToken, useAuth } from "../../../context/AuthContext";
 
 import {
   DragDropContext,
@@ -11,6 +14,7 @@ import {
 import { ButtonBase } from "@mui/material";
 
 const BloodBankOrderControls = () => {
+  const { userId } = useAuth();
   const [SelectedQCItems, setSelectedQCItems] = useState<string[]>([]);
   
   // Combine items from both lists and initialize OrderControlsItems
@@ -52,7 +56,64 @@ const BloodBankOrderControls = () => {
     }
   };
   
-  const handleOrderSelectedQC = () => {
+  const handleOrderSelectedQC = async () => {
+    const queryParams = new URLSearchParams();
+    SelectedQCItems.forEach(item => queryParams.append("names", item));
+    console.log("QC Items ordered: ", SelectedQCItems);
+    // setIsOrderLoading(true);
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots/ByNameList?${queryParams.toString()}`);
+      
+      if (res.ok){
+        const savedQCItems: BloodBankQCLot[] = await res.json();
+        console.log(savedQCItems);
+        // If there are QCs that are not found or have expired, return error
+        /*
+        if (savedQCItems.length !== SelectedQCItems.length) {
+          const notFoundItems = SelectedQCItems.filter(item => !savedQCItems.some(qc => qc.qcName.toLowerCase() === item.toLowerCase()));
+          console.log("Not found items: ", notFoundItems);
+          setNotFoundQCItems(notFoundItems);
+          setNotiType(NotiType.QCNotFoundOrExpired);
+          setIsFeedbackNotiOpen(true);
+          setIsOrderLoading(false);
+          return;
+        }
+          */
+        // REPORTS
+        console.log(userId);
+        console.log("---");
+        const reportsToSave = savedQCItems.map(item => ({
+          studentID: userId,
+          bloodBankQCLotID: item.BloodBankQCLotID,
+          createdDate: dayjs().toISOString(),
+        }));
+        console.log(JSON.stringify(reportsToSave));
+
+        const createRes = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/Create`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(reportsToSave),
+        })
+        
+        if (createRes.ok){
+          console.log("Created QC reports successfully");
+          // setNotiType(NotiType.OrderCreated);
+          // setIsFeedbackNotiOpen(true);
+          // setIsOrderLoading(false);
+        }
+        
+      }
+    } catch (e) {
+      console.error("Error ordering QC: ", e);
+      // setNotiType(NotiType.SomethingWrong);
+      // setIsFeedbackNotiOpen(true);
+      // setIsOrderLoading(false);
+    }
+  }
+  const oldHandleOrderSelectedQC = () => {
+    // AGF 
     localStorage.setItem('selectedQCItems', JSON.stringify(SelectedQCItems));
     console.log("QC Items ordered: ", SelectedQCItems);
   };
