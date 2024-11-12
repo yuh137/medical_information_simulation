@@ -29,7 +29,7 @@ import { getDataByKey } from "../../../utils/indexedDB/getData";
 import { deleteData } from "../../../utils/indexedDB/deleteData";
 
 import NavBar from "../../../components/NavBar";
-import DateInput from "./DateInputComp"
+
 interface QCRangeElements {
   reagentName: string;
   Abbreviation: string;
@@ -73,7 +73,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
         'Content-Type': 'application/json',
         'Accept': 'application/json'  // application/json
       },
-      body: JSON.stringify({ qcName: fileName_Item, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), expirationDate: formatDate(data.expDate), reagents: [] }),
+      body: JSON.stringify({ qcName: fileName_Item, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), expirationDate: formatDate(data.qcExpDate), reagents: [] }),
       })
     console.log(checkServer);
     // Index DB 
