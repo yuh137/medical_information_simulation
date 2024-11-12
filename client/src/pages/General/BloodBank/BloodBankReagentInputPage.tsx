@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { QCTemplateBatch } from '../../../utils/indexedDB/IDBSchema';
+import { QCTemplateBatch,BloodBankQC } from '../../../utils/indexedDB/IDBSchema';
 import Analyte from '../../../components/Analyte';
 import NavBar from '../../../components/NavBar';
 import { useParams } from 'react-router-dom';
@@ -18,7 +18,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
   const analyteNameRefs = useRef<HTMLDivElement[]>([]);
   // const { username } = useAuth();
 
-  const [qcData, setQcData] = useState<QCTemplateBatch | null>(null);
+  const [qcData, setQcData] = useState<BloodBankQC | null>(null);
   const [analyteValues, setAnalyteValues] = useState<string[]>([]);
   const [invalidIndexes, setInvalidIndexes] = useState<Set<number> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -30,6 +30,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
   useEffect(() => {
     const storedQCData = localStorage.getItem('selectedQCData');
     if (storedQCData) {
+      console.log("SET");
       setQcData(JSON.parse(storedQCData));
     } else {
       console.error("No QC data found.");
@@ -73,7 +74,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
       newInvalidIndexes.delete(index);
       setInvalidIndexes(newInvalidIndexes);
     }
-    setIsInputFull(newValues.length === qcData?.analytes.length && newValues.length > 0);
+    setIsInputFull(newValues.length === qcData?.reagents.length && newValues.length > 0);
   };
 
   const handleKeyPress = (event: React.KeyboardEvent, index: number) => {
@@ -94,7 +95,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
     });
   };
 
-  const reportPDF = (analyteValues?: string[], QCData?: QCTemplateBatch) => {
+  const reportPDF = (analyteValues?: string[], QCData?: BloodBankQC) => {
     const currentDate = new Date();
     const tw = createTw({
       theme: {},
@@ -123,31 +124,31 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
           <View style={tw("flex-row justify-between p-5")}>
             <View>
               {analyteValues?.map((value, index) => (
-                <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{QCData?.analytes[index].analyteName}</Text>
+                <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{QCData?.reagents[index].reagentName}</Text>
               ))}
             </View>
-            <View>
+            {/* <View>
               {analyteValues?.map((value, index) => (
-                <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{parseFloat(value)} {QCData?.analytes[index].unit_of_measure}</Text>
+                <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{parseFloat(value)} {QCData?.reagents[index].unit_of_measure}</Text>
               ))}
-            </View>
-            <View>
+            </View> */}
+            {/* <View>
               {analyteValues?.map((value, index) => (
-                <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{QCData?.analytes[index].min_level} - {QCData?.analytes[index].max_level} {QCData?.analytes[index].unit_of_measure}</Text>
+                <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{QCData?.reagents[index].min_level} - {QCData?.analytes[index].max_level} {QCData?.analytes[index].unit_of_measure}</Text>
               ))}
-            </View>
+            </View> */}
           </View>
           <View style={tw("w-full h-[1px] bg-black mt-2")} />
           <Text style={tw("mt-2")}>QC Comments:</Text>
-          <View>
+          {/* <View>
             {modalData.map((item, index) => (
               <View style={tw("flex-row items-center")} key={index}>
                 <View style={tw("self-center w-[4px] h-[4px] bg-black rounded-full")} />
-                <Text style={tw("text-[13px] w-full px-6 text-justify text-wrap mt-2")}>{QCData?.analytes[item.invalidIndex].analyteName}: {item.comment}</Text>
+                <Text style={tw("text-[13px] w-full px-6 text-justify text-wrap mt-2")}>{QCData?.reagents[item.invalidIndex].analyteName}: {item.comment}</Text>
               </View>
             ))}
-          </View>
-          <Text style={tw("mt-8 text-[13px]")}>Approved by: username</Text>
+          </View> */}
+          <Text style={tw("mt-8 text-[13px]")}>Approved by: {username}</Text>
           <Text style={tw("mt-2 text-[13px]")}>Date: {currentDate.getMonth() + 1}/{currentDate.getDate()}/{currentDate.getFullYear()}</Text>
           <Text style={tw("mt-2 text-[13px]")}>Time: {currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</Text>
         </Page>
@@ -185,9 +186,9 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
       return;
     }
 
-    const qcDataToSave: QCTemplateBatch = {
+    const qcDataToSave: BloodBankQC = {
       ...qcData,
-      analytes: qcData.analytes.map((analyte, index) => ({
+      reagents: qcData.reagents.map((analyte, index) => ({
         ...analyte,
         value: analyteValues[index],
       })),
@@ -219,31 +220,22 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
         style={{ minWidth: "100svw", minHeight: "100svh" }}
       >
         <div className="analyte-list-container flex flex-wrap gap-14 sm:w-[90svw] sm:px-[149.5px] max-sm:flex-col mt-8 px-3 justify-center">
-          {qcData.analytes.map((item, index) => (
+          {qcData.reagents.map((item, index) => (
             <div
               onKeyDown={(event) => {
                 console.log("BBB");
                 handleKeyPress(event, index);
               }}
-              key={item.analyteName}
+              key={item.reagentName}
             >
-              <Analyte
-                name={item.analyteName}
-                acronym={item.analyteAcronym}
-                electro={item.electrolyte}
-                min_level={+item.min_level}
-                max_level={+item.max_level}
+              {/* <Analyte
+                name={item.reagentName}
+                acronym={item.Abbreviation}
                 // level={detectLevel(props.name)}
-                measUnit={item.unit_of_measure}
                 handleInputChange={(val: string) => {
                   console.log("DDD");
                   // Convert string to number but pass the string to handleInputChange
-                  const numericValue = +val;
-                  if (item.min_level !== "" && item.max_level !== "") {
-                      handleInputChange(index, val, +item.min_level, +item.max_level);  // Pass `val` as a string
-                  } else {
-                      handleInputChange(index, val, -1, 9999);  // Pass `val` as a string
-                  }
+
               }}
               
                 ref={(childRef: { inputRef: React.RefObject<HTMLInputElement>; nameRef: React.RefObject<HTMLDivElement> }) => {
@@ -252,7 +244,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
                     analyteNameRefs.current.push(childRef.nameRef.current as HTMLDivElement);
                   }
                 }}
-              />
+              /> */}
             </div>
           ))}
         </div>

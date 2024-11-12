@@ -69,7 +69,7 @@ export interface BloodBankQCLot {
 export interface BloodBankQC {
     fileName: string;
     lotNumber: string;
-    expDate: string;
+    qcExpDate: string;
     openDate: string;
     closedDate: string;
     reportType:string;
@@ -77,7 +77,7 @@ export interface BloodBankQC {
         reagentName: string;
         Abbreviation: string;
         AntiSeraLot: string;
-        ExpDate: string;
+        reagentExpDate: string;
         ExpectedRange: string;
 
     }[];
@@ -85,7 +85,7 @@ export interface BloodBankQC {
 export interface BloodBankQC_Two__Three{
     fileName: string;
     lotNumber: string;
-    expDate: string;
+    qcExpDate: string;
     openDate: string;
     closedDate: string;
     reportType:string;
@@ -101,7 +101,7 @@ export interface BloodBankQC_Two__Three{
 export interface BloodBankRBC {
     fileName: string;
     lotNumber: string;
-    expDate: string;
+    qcExpDate: string;
     openDate: string;
     closedDate: string;
     reportType:string;
@@ -109,7 +109,7 @@ export interface BloodBankRBC {
         reagentName:string,
         Abbreviation:string,
         AntiSeraLot:string,
-        ExpDate:string,
+        reagentExpDate:string,
         ExpImmSpinRange:string,
         Exp37Range:string,
         ExpAHGRange:string,

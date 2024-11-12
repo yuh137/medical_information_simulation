@@ -21,114 +21,114 @@ export const RR_QC = [
         reagentName:"Anti-A",
         Abbreviation:"\u03B1-A",
         AntiSeraLot:"1",
-        ExpDate:"xx/xx/xx",
-        ExpectedRange:"0"
+        reagentExpDate:"dd/mm/yyyy",
+        ExpectedRange:"1+"
     },
     {
         reagentName:"Anti-B",
         Abbreviation:"\u03B1-B",
         AntiSeraLot:"2",
-        ExpDate:"xx/xx/xx",
-        ExpectedRange:"0"
+        reagentExpDate:"dd/mm/yyyy",
+        ExpectedRange:"1+"
     },
     {
         reagentName:"Anti-A,B",
         Abbreviation:"\u03B1-A,B",
         AntiSeraLot:"3",
-        ExpDate:"xx/xx/xx",
-        ExpectedRange:"0"
+        reagentExpDate:"dd/mm/yyyy",
+        ExpectedRange:"1+"
     },
     {
         reagentName:"Anti-D",
         Abbreviation:"\u03B1-D",
         AntiSeraLot:"4",
-        ExpDate:"xx/xx/xx",
-        ExpectedRange:"0"
+        reagentExpDate:"dd/mm/yyyy",
+        ExpectedRange:"1+"
     },
     {
         reagentName:"Control",
         Abbreviation:"Ctrl",
         AntiSeraLot:"5",
-        ExpDate:"xx/xx/xx",
-        ExpectedRange:"0"
+        reagentExpDate:"dd/mm/yyyy",
+        ExpectedRange:"1+"
     },
     {
         reagentName:"A1 Cells",
-        Abbreviation:"Ctrl",
+        Abbreviation: "A<sub>1</sub>",
         AntiSeraLot:"6",
-        ExpDate:"xx/xx/xx",
-        ExpectedRange:"0"
+        reagentExpDate:"dd/mm/yyyy",
+        ExpectedRange:"1+"
     },
     {
         reagentName:"B Cells",
         Abbreviation:"B",
         AntiSeraLot:"7",
-        ExpDate:"xx/xx/xx",
-        ExpectedRange:"0"
+        reagentExpDate:"dd/mm/yyyy",
+        ExpectedRange:"1+"
     },
     {
         reagentName:"Screen Cell 1",
         Abbreviation:"SC1",
         AntiSeraLot:"8",
-        ExpDate:"xx/xx/xx",
-        ExpectedRange:"0"
+        reagentExpDate:"dd/mm/yyyy",
+        ExpectedRange:"1+"
     },
     {
         reagentName:"Screen Cell 2",
         Abbreviation:"SC2",
         AntiSeraLot:"9",
-        ExpDate:"xx/xx/xx",
-        ExpectedRange:"0"
+        reagentExpDate:"dd/mm/yyyy",
+        ExpectedRange:"1+"
     },
     {
         reagentName:"Screen Cell 3",
         Abbreviation:"SC3",
         AntiSeraLot:"10",
-        ExpDate:"xx/xx/xx",
-        ExpectedRange:"0"
+        reagentExpDate:"dd/mm/yyyy",
+        ExpectedRange:"1+"
     }
 ]
 export const TWO_CELL =[
     {
         reagentName:"Screen Cell 1",
         Abbreviation:"SC1",
-        ExpImmSpinRange:"1",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     },
     {
         reagentName:"Screen Cell 2",
         Abbreviation:"SC2",
-        ExpImmSpinRange:"1",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     },
 ]
 export const THREE_CELL =[
     {
         reagentName:"Screen Cell 1",
         Abbreviation:"SC1",
-        ExpImmSpinRange:"1",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     },
     {
         reagentName:"Screen Cell 2",
         Abbreviation:"SC2",
-        ExpImmSpinRange:"1",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     },{
         reagentName:"Screen Cell 3",
         Abbreviation:"SC3",
-        ExpImmSpinRange:"1",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     }
 ]
 
@@ -136,52 +136,52 @@ export const rh= [
     {
         reagentName:"Anti-D",
         Abbreviation:"D",
-        AntiSeraLot:"",
-        ExpDate:"",
-        ExpImmSpinRange:"1",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     },
     {
         reagentName:"Anti-C",
         Abbreviation:"C",
-        AntiSeraLot:"",
-        ExpDate:"",
-        ExpImmSpinRange:"1",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     },
     {
         reagentName:"Anti-E",
         Abbreviation:"E",
-        AntiSeraLot:"",
-        ExpDate:"",
-        ExpImmSpinRange:"1",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     },
     {
         reagentName:"Anti-c",
         Abbreviation:"c",
-        AntiSeraLot:"",
-        ExpDate:"",
-        ExpImmSpinRange:"1",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     },
     {
         reagentName:"Anti-e",
         Abbreviation:"e",
-        AntiSeraLot:"",
-        ExpDate:"",
-        ExpImmSpinRange:"1",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     }
 ]
 
@@ -189,62 +189,62 @@ export const kell= [
     {
         reagentName:"Anti-K",
         Abbreviation:"K",
-        AntiSeraLot:"",
-        ExpDate:"",
-        ExpImmSpinRange:"1",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     },
     {
         reagentName:"Anti-k",
         Abbreviation:"k",
-        AntiSeraLot:"",
-        ExpDate:"",
-        ExpImmSpinRange:"1",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     },
     {
         reagentName:"Anti-Kp\u1D43",
         Abbreviation:"Kp\u1D43",
-        AntiSeraLot:"",
-        ExpDate:"",
-        ExpImmSpinRange:"1",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     },
     {
         reagentName:"Anti-Kp\u1D47",
         Abbreviation:"Kp\u1D47",
-        AntiSeraLot:"",
-        ExpDate:"",
-        ExpImmSpinRange:"1",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     },
     {
         reagentName:"Anti-Js\u1D43",
         Abbreviation:"Js\u1D43",
-        AntiSeraLot:"",
-        ExpDate:"",
-        ExpImmSpinRange:"1",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     },
     {
         reagentName:"Anti-Js\u1D47",
         Abbreviation:"Js\u1D47",
-        AntiSeraLot:"",
-        ExpDate:"",
-        ExpImmSpinRange:"1",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     }
 ]
 
@@ -252,51 +252,173 @@ export const kidd= [
     {
         reagentName:"Anti-D",
         Abbreviation:"D",
-        AntiSeraLot:"",
-        ExpDate:"",
-        ExpImmSpinRange:"1",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     },
     {
         reagentName:"Anti-C",
         Abbreviation:"C",
-        AntiSeraLot:"",
-        ExpDate:"",
-        ExpImmSpinRange:"1",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     },
     {
         reagentName:"Anti-E",
         Abbreviation:"E",
-        AntiSeraLot:"",
-        ExpDate:"",
-        ExpImmSpinRange:"1",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     },
     {
         reagentName:"Anti-c",
         Abbreviation:"c",
-        AntiSeraLot:"",
-        ExpDate:"",
-        ExpImmSpinRange:"1",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     },
     {
         reagentName:"Anti-e",
         Abbreviation:"e",
-        AntiSeraLot:"",
-        ExpDate:"",
-        ExpImmSpinRange:"1",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
-        ExpCheckCellsRange:"0"
+        ExpCheckCellsRange:"1+"
     }
+]
+export const lewis= [
+    {
+        reagentName:"Anti-Le<sup>a</sup>",
+        Abbreviation:"Le<sup>a</sup>",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
+        Exp37Range:"0",
+        ExpAHGRange:"0",
+        ExpCheckCellsRange:"1+"
+    },
+    {
+        reagentName:"Anti-Le<sup>b</sup>",
+        Abbreviation:"Le<sup>b</sup>",
+        AntiSeraLot:"2",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
+        Exp37Range:"0",
+        ExpAHGRange:"0",
+        ExpCheckCellsRange:"1+"
+    }
+]
+
+export const duffy= [
+    {
+        reagentName:"Anti-Fy<sup>a</sup>",
+        Abbreviation:"Fy<sup>a</sup>",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
+        Exp37Range:"0",
+        ExpAHGRange:"0",
+        ExpCheckCellsRange:"1+"
+    },
+    {
+        reagentName:"Anti-Fy<sup>b</sup>",
+        Abbreviation:"Fy<sup>b</sup>",
+        AntiSeraLot:"2",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
+        Exp37Range:"0",
+        ExpAHGRange:"0",
+        ExpCheckCellsRange:"1+"
+    }
+]
+export const mnss= [
+    {
+        reagentName:"Anti-M",
+        Abbreviation:"M",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
+        Exp37Range:"0",
+        ExpAHGRange:"0",
+        ExpCheckCellsRange:"1+"
+    },
+    {
+        reagentName:"Anti-N",
+        Abbreviation:"N",
+        AntiSeraLot:"2",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
+        Exp37Range:"0",
+        ExpAHGRange:"0",
+        ExpCheckCellsRange:"1+"
+    },
+    {
+        reagentName:"Anti-S",
+        Abbreviation:"N",
+        AntiSeraLot:"3",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
+        Exp37Range:"0",
+        ExpAHGRange:"0",
+        ExpCheckCellsRange:"1+"
+    },
+    {
+        reagentName:"Anti-s",
+        Abbreviation:"s",
+        AntiSeraLot:"4",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
+        Exp37Range:"0",
+        ExpAHGRange:"0",
+        ExpCheckCellsRange:"1+"
+    }
+]
+export const lutheran= [
+    {
+        reagentName:"Anti-Lu<sup>a</sup>",
+        Abbreviation:"Lu<sup>a</sup>",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
+        Exp37Range:"0",
+        ExpAHGRange:"0",
+        ExpCheckCellsRange:"1+"
+    },
+    {
+        reagentName:"Anti-Lu<sup>b</sup>",
+        Abbreviation:"Lu<sup>b</sup>",
+        AntiSeraLot:"2",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
+        Exp37Range:"0",
+        ExpAHGRange:"0",
+        ExpCheckCellsRange:"1+"
+    }
+]
+export const p1= [
+    {
+        reagentName:"Anti-P1",
+        Abbreviation:"P1",
+        AntiSeraLot:"1",
+        reagentExpDate:"dd/mm/yyyy",
+        ExpImmSpinRange:"0",
+        Exp37Range:"0",
+        ExpAHGRange:"0",
+        ExpCheckCellsRange:"1+"
+    },
+   
 ]
