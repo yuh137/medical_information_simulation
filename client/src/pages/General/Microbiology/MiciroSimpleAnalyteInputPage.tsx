@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { MicroQCTemplateBatch } from '../../../utils/indexedDB/IDBSchema';
-import MicroAnalyte from '../../../components/MicroAnaltyle';
+import { QCTemplateBatch } from '../../../utils/indexedDB/IDBSchema';
+import MicroAnalyte from '../../../components/MicroAnalyte';
 import NavBar from '../../../components/NavBar';
 import { useParams } from 'react-router-dom';
 import { pdf, Document, Page, Text, View } from '@react-pdf/renderer';
@@ -18,7 +18,7 @@ const MicroSimpleAnalyteInputPage = (props: { name: string }) => {
   const analyteNameRefs = useRef<HTMLDivElement[]>([]);
   const { username } = useAuth();
 
-  const [qcData, setQcData] = useState<MicroQCTemplateBatch | null>(null);
+  const [qcData, setQcData] = useState<QCTemplateBatch | null>(null);
   const [analyteValues, setAnalyteValues] = useState<string[]>([]);
   const [invalidIndexes, setInvalidIndexes] = useState<Set<number> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -36,17 +36,25 @@ const MicroSimpleAnalyteInputPage = (props: { name: string }) => {
     }
   }, []);
 
+  const detectLevel = (str: string): number => {
+    if (str.endsWith("I")) {
+      return 1;
+    } else if (str.endsWith("II")) {
+      return 2;
+    } else {
+      return 0;
+    }
+  };
+
   const handleInputChange = (index: number, value: string, min: number, max: number) => {
     const newValues = [...analyteValues];
     newValues[index] = value;
     setAnalyteValues(newValues);
-
-    if (
-      isNaN(parseFloat(value)) ||
-      parseFloat(value) < min ||
-      parseFloat(value) > max ||
-      typeof value === "undefined"
-    ) {
+  
+    // Check if the input is either "Bubbles" or "No Bubbles"
+    const isValidInput = value === "Postive-Bubbles" || value === "Negative-No Bubbles" || value === "Negative-Fluorescence" || value === "Positive- No Flourescence" || value === "Gram Negative Rod" || value === "Gram Positive Cocci" || value === "Negative-Not Blue" || value === "Positive-Blue";
+    
+    if (!isValidInput) {
       if (!invalidIndexes) {
         let newInvalidIndexes = new Set<number>();
         newInvalidIndexes.add(index);
@@ -61,8 +69,11 @@ const MicroSimpleAnalyteInputPage = (props: { name: string }) => {
       newInvalidIndexes.delete(index);
       setInvalidIndexes(newInvalidIndexes);
     }
+  
+    // Ensure the input is full when all analytes are filled
     setIsInputFull(newValues.length === qcData?.analytes.length && newValues.length > 0);
   };
+  
 
   const handleKeyPress = (event: React.KeyboardEvent, index: number) => {
     if (
@@ -82,7 +93,7 @@ const MicroSimpleAnalyteInputPage = (props: { name: string }) => {
     });
   };
 
-  const reportPDF = (analyteValues?: string[], QCData?: MicroQCTemplateBatch) => {
+  const reportPDF = (analyteValues?: string[], QCData?: QCTemplateBatch) => {
     const currentDate = new Date();
     const tw = createTw({
       theme: {},
@@ -101,21 +112,37 @@ const MicroSimpleAnalyteInputPage = (props: { name: string }) => {
           <Text style={tw("mt-8 mb-2 text-[13px]")}>Date: {monthNames[currentDate.getMonth()]} {currentDate.getDate()}, {currentDate.getFullYear()}</Text>
           <Text style={tw("mb-2 text-[13px]")}>Lot Number: {QCData?.lotNumber || "error"}</Text>
           <Text style={tw("mb-8 text-[13px]")}>QC Duration: {QCData?.openDate || "undetermined"} - {QCData?.closedDate || "undetermined"}</Text>
-          <Text style={tw("text-[22px] mb-8 text-center")}>Microbiology QC</Text>
-          <View style={tw("flex-row justify-around")}>
-            <Text style={tw("font-[700] text-[15px]")}>Analytes</Text>
-            <Text style={tw("font-[700] text-[15px]")}>Value</Text>
+          <Text style={tw("text-[22px] mb-8 text-center")}>Microbiology QC Results</Text>
+          <View style={tw("flex-row justify-between p-5")}>
+            <Text style={tw("font-[700] text-[15px] text-left flex-1")}>Analytes</Text>
+            <Text style={tw("font-[700] text-[15px] text-right flex-1")}>Expected Range</Text>
           </View>
           <View style={tw("w-full h-[1px] bg-black mt-2")} />
           <View style={tw("flex-row justify-between p-5")}>
-            <View>
-              {analyteValues?.map((value, index) => (
-                <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{QCData?.analytes[index].analyteName}</Text>
-              ))}
-            </View>
-          </View>
+  <View>
+    {analyteValues?.map((value, index) => (
+      <Text
+        style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)}
+        key={index}
+      >
+        {QCData?.analytes[index].analyteName}
+      </Text>
+    ))}
+  </View>
+  <View>
+    {analyteValues?.map((value, index) => (
+      <Text
+        style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)}
+        key={index}
+      >
+        {isNaN(parseFloat(value)) ? value : `${parseFloat(value)} ${QCData?.analytes[index].unit_of_measure}`}
+      </Text>
+    ))}
+  </View>
+</View>
+
           <View style={tw("w-full h-[1px] bg-black mt-2")} />
-          <Text style={tw("mt-2")}>Microbiology QC Comments:</Text>
+          <Text style={tw("mt-2")}>QC Comments:</Text>
           <View>
             {modalData.map((item, index) => (
               <View style={tw("flex-row items-center")} key={index}>
@@ -156,7 +183,7 @@ const MicroSimpleAnalyteInputPage = (props: { name: string }) => {
       return;
     }
 
-    const qcDataToSave: MicroQCTemplateBatch = {
+    const qcDataToSave: QCTemplateBatch = {
       ...qcData,
       analytes: qcData.analytes.map((analyte, index) => ({
         ...analyte,
@@ -184,7 +211,7 @@ const MicroSimpleAnalyteInputPage = (props: { name: string }) => {
 
   return (
     <>
-      <NavBar name={`Microbiolgy QC Results`} />
+      <NavBar name={`${props.name} QC Results`} />
       <div
         className="flex flex-col space-y-12 pb-8 justify-center px-[100px] relative"
         style={{ minWidth: "100svw", minHeight: "100svh" }}
@@ -200,9 +227,19 @@ const MicroSimpleAnalyteInputPage = (props: { name: string }) => {
               <MicroAnalyte
                 name={item.analyteName}
                 acronym={item.analyteAcronym}
-                expectedRange={item.expectedRange}
+                electro={item.electrolyte}
+                min_level={+item.min_level}
+                max_level={+item.max_level}
+                // level={detectLevel(props.name)}
+                measUnit={item.unit_of_measure}
                 handleInputChange={(val: string) => {
                   // Convert string to number but pass the string to handleInputChange
+                  const numericValue = +val;
+                  if (item.min_level !== "" && item.max_level !== "") {
+                      handleInputChange(index, val, +item.min_level, +item.max_level);  // Pass `val` as a string
+                  } else {
+                      handleInputChange(index, val, -1, 9999);  // Pass `val` as a string
+                  }
               }}
               
                 ref={(childRef: { inputRef: React.RefObject<HTMLInputElement>; nameRef: React.RefObject<HTMLDivElement> }) => {
