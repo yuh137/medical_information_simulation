@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -7,10 +8,13 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import { getAccountData } from '../../util/indexedDB/getData';
+import { Admin, Student } from '../../util/indexedDB/IDBSchema';
+
+
 
 const submissionColumns: GridColDef[] = [
   { field: 'id', headerName: 'QC Report ID', width: 150 },
-  { field: 'issuer', headerName: 'Student Name', width: 150 },
   { field: 'submittedAt', headerName: 'Submitted At', width: 300 },
   {
     field: 'view',
@@ -57,7 +61,6 @@ const getSubmittedItemsFromLocalStorage = () => {
     try {
       return JSON.parse(storedSubmissions).map((submission: any, index: number) => ({
         id: index + 1, // Use index as unique ID for each submission batch
-        issuer: submission.issuer || 'Unknown',
         submittedAt: new Date(submission.submittedAt).toLocaleString(),
         onView: (id: number) => {}, // Placeholder for view handler
       }));
@@ -74,10 +77,31 @@ const handleInputAnalyte = (id: number) => {
   console.log(`Input analyte values for row with ID: ${id}`);
 };
 
+//Grab user sname from table created at sign in.
+async function fetchUserName(): Promise<string> {
+  const accountData = await getAccountData();
+  if (accountData && Array.isArray(accountData) && accountData.length > 0) {
+    const user = accountData[0] as Admin | Student;
+    return `${user.firstname} ${user.lastname}`;
+  }
+  return 'doos';
+}
+
 export default function SubmittedQCTable() {
+  const [userName, setUserName] = useState<string>('User');
   const [submissions, setSubmissions] = React.useState(getSubmittedItemsFromLocalStorage());
   const [openDialog, setOpenDialog] = React.useState(false);
   const [details, setDetails] = React.useState([]);
+
+    // Fetch the user's name from IndexedDB on component mount
+    useEffect(() => {
+      async function fetchName() {
+        const name = await fetchUserName();
+        setUserName(name);
+      }
+      fetchName();
+    }, []);
+  
 
   const handleViewDetails = (id: number) => {
     const storedSubmissions = JSON.parse(localStorage.getItem('SubmittedQCs') || '[]');
@@ -88,7 +112,7 @@ export default function SubmittedQCTable() {
   return (
     <Paper sx={{ padding: 2, marginTop: 4 }}>
       <Typography variant="h6" component="div" sx={{ marginBottom: 2 }}>
-        Ordered Quality Control Reports in Progress
+        Quality Controls ordered by {userName}
       </Typography>
       <DataGrid
         rows={submissions.map((submission: any) => ({
