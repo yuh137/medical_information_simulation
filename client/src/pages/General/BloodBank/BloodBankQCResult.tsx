@@ -21,19 +21,29 @@ interface QCItem {
 }
 
 const columns: ColumnDef<QCItem>[] = [
-  {
-    accessorKey: "fileName",
-    header: () => <span>Test Name</span>,
-    cell: info => info.getValue(),
-  },
+  
   {
     accessorKey: "lotNumber",
     header: () => <span>Lot Number</span>,
     cell: info => info.getValue(),
   },
   {
-    accessorKey: "expDate",
+    accessorKey: "qcExpDate",
     header: () => <span>Expiration Date</span>,
+    cell: info => info.getValue(),
+  },
+  {
+    accessorKey: "closedDate",
+    header: () => <span>Closed Date</span>,
+    cell: info => info.getValue(),
+  },{
+    accessorKey: "openDate",
+    header: () => <span>Open Date</span>,
+    cell: info => info.getValue(),
+  },
+  {
+    accessorKey: "fileName",
+    header: () => <span>Test Name</span>,
     cell: info => info.getValue(),
   },
 ];
@@ -57,7 +67,7 @@ const BloodBankQCResult = (props: { name: string, link: string }) => {
 
     fetchQCData();
   }, []);
-  
+   
   
   const handleSelectQC = async () => {
     if (selectedQC) {
