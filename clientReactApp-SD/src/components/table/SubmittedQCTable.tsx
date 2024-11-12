@@ -11,7 +11,15 @@ import DialogActions from '@mui/material/DialogActions';
 const submissionColumns: GridColDef[] = [
   { field: 'id', headerName: 'QC Report ID', width: 150 },
   { field: 'issuer', headerName: 'Student Name', width: 150 },
-  { field: 'submittedAt', headerName: 'Submitted At', width: 300 },
+  { field: 'submittedAt', headerName: 'Submitted At', width: 200 },
+  { field: 'AdminQCLotID', headerName: 'Admin QC Lot ID', width: 200 },
+  { field: 'LotNumber', headerName: 'Lot Number', width: 150 },
+  { field: 'OpenDate', headerName: 'Open Date', width: 200 },
+  { field: 'Department', headerName: 'Department', width: 150 },
+  { field: 'ExpirationDate', headerName: 'Expiration Date', width: 200 },
+  { field: 'FileDate', headerName: 'File Date', width: 200 },
+  { field: 'QCName', headerName: 'QC Name', width: 200 },
+  { field: 'IsActive', headerName: 'Is Active', width: 100 },
   {
     field: 'view',
     headerName: 'Details',
@@ -31,7 +39,7 @@ const detailColumns: GridColDef[] = [
     headerName: 'Select QC Orders to Edit',
     width: 200,
     renderCell: (params) => (
-      <Button variant="contained" onClick={() => { handleInputAnalyte(params.row.id); console.log("hello"); }}>
+      <Button variant="contained" onClick={() => { handleInputAnalyte(params.row.id); }}>
         Edit Analyte Values
       </Button>
     ),
@@ -41,24 +49,31 @@ const detailColumns: GridColDef[] = [
     headerName: 'Review',
     width: 200,
     renderCell: (params) => (
-      <Button variant="contained" onClick={() => { handleInputAnalyte(params.row.id); console.log("hello"); }}>
+      <Button variant="contained" onClick={() => { handleInputAnalyte(params.row.id); }}>
         Review QC Panel
       </Button>
     ),
   },
-  
 ];
 
-//CHANGE FROM LOCAL STORAGE TO THE DATABASE WHEN READY
+// Fetch data from local storage
 const getSubmittedItemsFromLocalStorage = () => {
   const storedSubmissions = localStorage.getItem('SubmittedQCs');
   if (storedSubmissions) {
     try {
       return JSON.parse(storedSubmissions).map((submission: any, index: number) => ({
-        id: index + 1, // Use index as unique ID for each submission batch
+        id: index + 1,
         issuer: submission.issuer || 'Unknown',
         submittedAt: new Date(submission.submittedAt).toLocaleString(),
-        onView: (id: number) => {}, // Placeholder for view handler
+        AdminQCLotID: submission.AdminQCLotID || 'N/A',
+        LotNumber: submission.LotNumber || 'N/A',
+        OpenDate: submission.OpenDate ? new Date(submission.OpenDate).toLocaleString() : 'N/A',
+        Department: submission.Department || 'N/A',
+        ExpirationDate: submission.ExpirationDate ? new Date(submission.ExpirationDate).toLocaleDateString() : 'N/A',
+        FileDate: submission.FileDate ? new Date(submission.FileDate).toLocaleString() : 'N/A',
+        QCName: submission.QCName || 'N/A',
+        IsActive: submission.IsActive ? 'Yes' : 'No',
+        onView: (id: number) => {},
       }));
     } catch (error) {
       console.error('Error parsing SubmittedQCs:', error);
@@ -69,7 +84,6 @@ const getSubmittedItemsFromLocalStorage = () => {
 };
 
 const handleInputAnalyte = (id: number) => {
-  // Placeholder for the logic to handle input analyte values
   console.log(`Input analyte values for row with ID: ${id}`);
 };
 
