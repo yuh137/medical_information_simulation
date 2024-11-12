@@ -52,7 +52,7 @@ const MicroSimpleAnalyteInputPage = (props: { name: string }) => {
     setAnalyteValues(newValues);
   
     // Check if the input is either "Bubbles" or "No Bubbles"
-    const isValidInput = value === "Postive-Bubbles" || value === "Negative-No Bubbles" || value === "Negative-Fluorescence" || value === "Positive- No Flourescence" || value === "Gram Negative Rod" || value === "Gram Positive Cocci" || value === "Negative-Not Blue" || value === "Positive-Blue";
+    const isValidInput = value === "Positive-Bubbles" || value === "Negative-No Bubbles" || value === "Negative-Fluorescence" || value === "Positive- No Flourescence" || value === "Gram Negative Rod" || value === "Gram Positive Cocci" || value === "Negative-Not Blue" || value === "Positive-Blue";
     
     if (!isValidInput) {
       if (!invalidIndexes) {
