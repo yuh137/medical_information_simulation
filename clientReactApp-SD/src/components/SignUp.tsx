@@ -53,7 +53,7 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
   "&::before": {
     content: '""',
     display: "block",
-    position: "absolute",
+    position: "fixed",
     zIndex: -1,
     inset: 0,
     backgroundColor: theme.palette.mode === 'dark' ? '#457A64' : '#607D8B', // Darker steel blue for dark mode, lighter steel blue for light mode

@@ -13,6 +13,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import AppTheme from '../../shared-theme/AppTheme.tsx';
+import Button from '@mui/material/Button';
+
 
 interface QCData {
   adminQCLotID: string;
@@ -37,7 +39,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   '&::before': {
     content: '""',
     display: 'block',
-    position: 'absolute',
+    position: 'fixed',
     zIndex: -1,
     inset: 0,
     backgroundColor: theme.palette.mode === 'dark' ? '#457A64' : '#607D8B',
@@ -52,16 +54,33 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 const createQCColumns = [
-  { field: 'AdminQCLotID', headerName: 'QC Lot ID' },
-  { field: 'LotNumber', headerName: 'Lot Number' },
+  { field: 'QCName', headerName: 'Panel Name' },
+  //{ field: 'AdminQCLotID', headerName: 'QC Lot ID' },
+  //{ field: 'LotNumber', headerName: 'Lot Number' },
+  { field: 'Department', headerName: 'Department' },
   { field: 'OpenDate', headerName: 'Open' },
   { field: 'ClosedDate', headerName: 'Closed' },
-  { field: 'Department', headerName: 'Department' },
   { field: 'ExpirationDate', headerName: 'Expires' },
-  { field: 'FileDate', headerName: 'File Date' },
-  { field: 'QCName', headerName: 'Panel Name' },
+  //{ field: 'FileDate', headerName: 'File Date' },
   { field: 'IsActive', headerName: 'Active Panel?' },
+  {
+    field: 'edit',
+    headerName: 'Edit',
+    renderCell: (row: QCData) => (
+      <Button
+        variant="contained"
+        onClick={() => handleEditClick(row.adminQCLotID)}
+      >
+        View Details
+      </Button>
+    ),
+  },
 ];
+
+function handleEditClick(adminQCLotID: string) {
+  // Add your logic to handle row editing or redirection here
+  console.log('Editing lot with ID:', adminQCLotID);
+}
 
 function formatValue(value: any) {
   return value === null || value === undefined || value === "" ? "NULL" : value;
@@ -95,7 +114,7 @@ function LotTable() {
   return (
     <>
       <Typography variant="h6" component="div" sx={{ marginBottom: 2 }}>
-        Quality Controls
+        Quality Control Panels Available to Edit
       </Typography>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="QC table">
@@ -109,15 +128,20 @@ function LotTable() {
           <TableBody>
             {details.map((row) => (
               <TableRow key={row.adminQCLotID}>
-                <TableCell>{formatValue(row.adminQCLotID)}</TableCell>
-                <TableCell>{formatValue(row.lotNumber)}</TableCell>
+                <TableCell>{formatValue(row.qcName)}</TableCell>
+                <TableCell>{formatValue(row.department)}</TableCell>
                 <TableCell>{formatValue(row.openDate)}</TableCell>
                 <TableCell>{formatValue(row.closedDate)}</TableCell>
-                <TableCell>{formatValue(row.department)}</TableCell>
                 <TableCell>{formatValue(row.expirationDate)}</TableCell>
-                <TableCell>{formatValue(row.fileDate)}</TableCell>
-                <TableCell>{formatValue(row.qcName)}</TableCell>
                 <TableCell>{row.isActive ? 'Yes' : 'No'}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="contained"
+                    onClick={() => handleEditClick(row.adminQCLotID)}
+                  >
+                    Edit
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

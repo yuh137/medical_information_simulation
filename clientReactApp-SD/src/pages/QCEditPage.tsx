@@ -1,8 +1,3 @@
-
-
-
-
-
 import * as React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Stack from '@mui/material/Stack';
@@ -10,13 +5,13 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import AppTheme from '../shared-theme/AppTheme';
 import ColorModeSelect from '../shared-theme/ColorModeSelect';
-import Container from '@mui/material/Container';
-import MainContent from './homepage_Components/components/MainContent';
-import Latest from './casestudies/components_blog/Latest';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import QC_Edit_Table from '../components/table/QC_Edit_Table';
+import QCAnalytesGrid from '../components/table/QCAnalytesGrid';
 
-
-
-const SignInContainer = styled(Stack)(({ theme }) => ({
+const HomeTableContainer = styled(Stack)(({ theme }) => ({
   height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
   minHeight: '100%',
   padding: theme.spacing(2),
@@ -40,22 +35,16 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-
-
-export default function CaseStudyPageComponents(props: { disableCustomTheme?: boolean }) {
+export default function QCEditPage(props: { disableCustomTheme?: boolean }) {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-      <SignInContainer direction="column" justifyContent="space-between">
-          <Container
-            maxWidth="lg"
-            component="main"
-            sx={{ display: 'flex', flexDirection: 'column', my: 16, gap: 4, margin: '0px', border: '0px', padding: '0px' }}
-          >
-            <MainContent />
-            <Latest />
-          </Container>
-      </SignInContainer>
+      <h1>Edit the Analytes for the Panel</h1>
+      <HomeTableContainer direction="column" justifyContent="space-between">
+        <QCAnalytesGrid></QCAnalytesGrid>
+
+
+      </HomeTableContainer>
     </AppTheme>
   );
 }

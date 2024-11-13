@@ -42,7 +42,7 @@ export default function IntroDivider(props: { disableCustomTheme?: boolean }) {
     '&::before': {
       content: '""',
       display: 'block',
-      position: 'absolute',
+      position: 'fixed',
       zIndex: -1,
       inset: 0,
       backgroundColor: theme.palette.mode === 'dark' ? '#457A64' : '#607D8B', // Darker steel blue for dark mode, lighter steel blue for light mode
@@ -61,12 +61,12 @@ export default function IntroDivider(props: { disableCustomTheme?: boolean }) {
     <CssBaseline enableColorScheme />
     <SignInContainer direction="column" justifyContent="space-between">
       <Card variant="outlined" sx={{ maxWidth: 360 }}>
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ p: 2, justifyContent:' center' }}>
         <Stack
           direction="row"
-          sx={{ justifyContent: 'space-between', alignItems: 'center' }}
+          sx={{ justifyContent:' center' , alignItems: 'center' }}
         >
-          <Typography gutterBottom variant="h5" component="div">
+          <Typography gutterBottom variant="h5" component="div" >
             Notifications
           </Typography>
         </Stack>

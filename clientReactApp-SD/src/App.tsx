@@ -19,8 +19,7 @@ import ViewQCResultsPage from "./pages/ViewQCResultsPage.jsx";
 import ReportSubmissionsPage from "./pages/ReportSubmissionsPage.jsx";
 import AccountPage from "./pages/AccountPage.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
-import axios from "axios";
-import { CssBaseline } from "@mui/material";
+import QCEditPage from "./pages/QCEditPage.tsx";
 
 function App() {
   // Scroll to top when the component mounts
@@ -77,6 +76,7 @@ function App() {
         <Route path="/patientreports" element={<PatientReportsPage />} />
         <Route path="/orderentries" element={<QC_OrderEntriesPage />} />
         <Route path="/qc" element={<QC_Page />} />
+        <Route path="/qcedit" element={<QCEditPage />} />
         <Route path="/quizzes" element={<QuizzesPage />} />
         <Route path="/referencefiles" element={<ReferecnceFilesPage />} />
         <Route path="/viewqcresults" element={<ViewQCResultsPage />} />

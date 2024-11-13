@@ -38,7 +38,7 @@ const HomeTableContainer = styled(Stack)(({ theme }) => ({
   '&::before': {
     content: '""',
     display: 'block',
-    position: 'absolute',
+    position: 'fixed',
     zIndex: -1,
     inset: 0,
     backgroundImage:
