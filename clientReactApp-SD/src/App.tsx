@@ -76,7 +76,7 @@ function App() {
         <Route path="/patientreports" element={<PatientReportsPage />} />
         <Route path="/orderentries" element={<QC_OrderEntriesPage />} />
         <Route path="/qc" element={<QC_Page />} />
-        <Route path="/qcedit" element={<QCEditPage />} />
+        <Route path="/qcedit/:id" element={<QCEditPage />} />
         <Route path="/quizzes" element={<QuizzesPage />} />
         <Route path="/referencefiles" element={<ReferecnceFilesPage />} />
         <Route path="/viewqcresults" element={<ViewQCResultsPage />} />

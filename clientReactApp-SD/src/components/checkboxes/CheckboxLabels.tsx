@@ -51,6 +51,7 @@ export default function CheckboxLabels({ onQCChange }: CheckboxLabelsProps) {
   return (
     <FormGroup>
       <FormControlLabel
+        sx={{ display: 'inline-flex', width: '10%' }}
         control={
           <Checkbox
             checked={checkedState.orderQC}
@@ -60,6 +61,7 @@ export default function CheckboxLabels({ onQCChange }: CheckboxLabelsProps) {
         label="Order QC"
       />
       <FormControlLabel
+        sx={{ display: 'inline-flex', width: '10%' }}
         control={
           <Checkbox
             checked={checkedState.reviewQC}
@@ -70,6 +72,7 @@ export default function CheckboxLabels({ onQCChange }: CheckboxLabelsProps) {
       />
       {userType === 'admin' && (
         <FormControlLabel
+        sx={{ display: 'inline-flex', width: '10%' }}
           control={
             <Checkbox
               checked={checkedState.buildQC}

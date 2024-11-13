@@ -14,7 +14,7 @@ import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import AppTheme from '../../shared-theme/AppTheme.tsx';
 import Button from '@mui/material/Button';
-
+import { useNavigate } from 'react-router-dom';
 
 interface QCData {
   adminQCLotID: string;
@@ -27,7 +27,6 @@ interface QCData {
   qcName: string;
   isActive: boolean;
 }
-
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
   height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
@@ -53,42 +52,19 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-const createQCColumns = [
-  { field: 'QCName', headerName: 'Panel Name' },
-  //{ field: 'AdminQCLotID', headerName: 'QC Lot ID' },
-  //{ field: 'LotNumber', headerName: 'Lot Number' },
-  { field: 'Department', headerName: 'Department' },
-  { field: 'OpenDate', headerName: 'Open' },
-  { field: 'ClosedDate', headerName: 'Closed' },
-  { field: 'ExpirationDate', headerName: 'Expires' },
-  //{ field: 'FileDate', headerName: 'File Date' },
-  { field: 'IsActive', headerName: 'Active Panel?' },
-  {
-    field: 'edit',
-    headerName: 'Edit',
-    renderCell: (row: QCData) => (
-      <Button
-        variant="contained"
-        onClick={() => handleEditClick(row.adminQCLotID)}
-      >
-        View Details
-      </Button>
-    ),
-  },
-];
-
-function handleEditClick(adminQCLotID: string) {
-  // Add your logic to handle row editing or redirection here
-  console.log('Editing lot with ID:', adminQCLotID);
-}
-
 function formatValue(value: any) {
-  return value === null || value === undefined || value === "" ? "NULL" : value;
+  return value === null || value === undefined || value === '' ? 'NULL' : value;
 }
 
 function LotTable() {
   const [details, setDetails] = React.useState<QCData[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const navigate = useNavigate();
+
+  const handleEditClick = (adminQCLotID: string) => {
+    console.log('Editing lot with ID:', adminQCLotID);
+    navigate(`/qcedit/${adminQCLotID}`);
+  };
 
   // Fetch data from the API when the component mounts
   React.useEffect(() => {
@@ -113,16 +89,20 @@ function LotTable() {
 
   return (
     <>
-      <Typography variant="h6" component="div" sx={{ marginBottom: 2 }}>
+      <Typography variant="h6" sx={{ marginBottom: 2 , padding: 0, border: 0,}}>
         Quality Control Panels Available to Edit
       </Typography>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="QC table">
           <TableHead>
             <TableRow>
-              {createQCColumns.map((column) => (
-                <TableCell key={column.field}>{column.headerName}</TableCell>
-              ))}
+              <TableCell>Panel Name</TableCell>
+              <TableCell>Department</TableCell>
+              <TableCell>Open</TableCell>
+              <TableCell>Closed</TableCell>
+              <TableCell>Expires</TableCell>
+              <TableCell>Active Panel?</TableCell>
+              <TableCell>Edit</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -155,7 +135,7 @@ export default function QC_Edit_Table(props: { disableCustomTheme?: boolean }) {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-      <SignInContainer direction="column" justifyContent="space-between">
+      <SignInContainer direction="column">
         <LotTable />
       </SignInContainer>
     </AppTheme>
