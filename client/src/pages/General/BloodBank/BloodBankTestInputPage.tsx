@@ -62,7 +62,8 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
   const [isValid, setIsValid] = useState<boolean>(false);
   // const [isDrawerOpen, openDrawer] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const validValues = ["W+", "1+", "2+", "3+", "4+", "H+"];
+  const validValues = ["W+", "1+", "2+", "3+", "4+", "H+","0"];
+  
   const { register, handleSubmit, setValue } = useForm<BloodBankQC>();
 
   interface dbReagent {  // Used to add reagents in JSON format
@@ -142,6 +143,8 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
   
     minInputArray.forEach((item, index) => {
       const inputValue = item.value.trim();
+      const rowName = item.name
+      console.log("Row Name:",rowName);
       // Check if the input value is blank
       if (inputValue === '') {
         item.classList.remove('bg-yellow-500');
@@ -149,8 +152,9 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
       }
       else if (
         // If it's the 3rd column (index 2), check for "0" or invalid input
-        index % 3 === 2 &&  // Invalid specifically for 3rd column
-        !validValues.includes(inputValue)           // Invalid for other values
+        index % 3 === 2 && (  // Invalid specifically for 3rd column
+        !validValues.includes(inputValue) || (rowName==="Control" && inputValue!== "0")
+        )      // Invalid for other values
       ) {
         item.classList.remove('bg-red-500');
         item.classList.add('bg-yellow-500'); // Add yellow background for invalid input
@@ -535,6 +539,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                       maxLength={3}  // Ensure no more than 3 characters
                       type="text"
                       placeholder="1-4+"
+                      
                       ref={(el) => {
                         if (el && inputRefs.current.length < QCElements.length * 3) {
                           inputRefs.current[index * 3 + 2] = el;
@@ -542,6 +547,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                       }}
                       className="sm:w-20 p-1 border border-solid border-[#548235] rounded-lg text-center"
                       value={row.ExpectedRange || ''}
+                      name = {row.reagentName}
                       onChange={(e) => {
                         e.preventDefault();
                         const input = e.target.value;

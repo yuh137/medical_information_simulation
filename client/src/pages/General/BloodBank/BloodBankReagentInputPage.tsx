@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { QCTemplateBatch,BloodBankQC } from '../../../utils/indexedDB/IDBSchema';
-import Analyte from '../../../components/Analyte';
+import { QCTemplateBatch,BloodBankQC,BloodBankRBC} from '../../../utils/indexedDB/IDBSchema';
+import Reagent from '../../../components/Reagent';
 import NavBar from '../../../components/NavBar';
 import { useParams } from 'react-router-dom';
 import { pdf, Document, Page, Text, View } from '@react-pdf/renderer';
@@ -18,7 +18,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
   const analyteNameRefs = useRef<HTMLDivElement[]>([]);
   // const { username } = useAuth();
 
-  const [qcData, setQcData] = useState<BloodBankQC | null>(null);
+  const [qcData, setQcData] = useState<BloodBankRBC | null>(null);
   const [analyteValues, setAnalyteValues] = useState<string[]>([]);
   const [invalidIndexes, setInvalidIndexes] = useState<Set<number> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -95,7 +95,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
     });
   };
 
-  const reportPDF = (analyteValues?: string[], QCData?: BloodBankQC) => {
+  const reportPDF = (analyteValues?: string[], QCData?: BloodBankRBC) => {
     const currentDate = new Date();
     const tw = createTw({
       theme: {},
@@ -186,7 +186,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
       return;
     }
 
-    const qcDataToSave: BloodBankQC = {
+    const qcDataToSave: BloodBankRBC = {
       ...qcData,
       reagents: qcData.reagents.map((analyte, index) => ({
         ...analyte,
@@ -228,9 +228,16 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
               }}
               key={item.reagentName}
             >
-              {/* <Analyte
-                name={item.reagentName}
-                acronym={item.Abbreviation}
+              <Reagent
+                reagentName={item.reagentName}
+                Abbreviation={item.Abbreviation}
+                AntiSeraLot={item.AntiSeraLot}
+                reagentExpDate={item.reagentExpDate}
+                ExpImmSpinRange={item.ExpImmSpinRange}
+                Exp37Range={item.Exp37Range}
+                ExpAHGRange={item.ExpAHGRange}
+                ExpCheckCellsRange={item.ExpCheckCellsRange}
+
                 // level={detectLevel(props.name)}
                 handleInputChange={(val: string) => {
                   console.log("DDD");
@@ -244,14 +251,12 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
                     analyteNameRefs.current.push(childRef.nameRef.current as HTMLDivElement);
                   }
                 }}
-              /> */}
+              />
             </div>
           ))}
         </div>
         <div className="analyte-control-container sm:w-[90svw] w-[100svw] flex justify-between max-sm:flex-col max-sm:w-[100%] max-sm:space-y-4">
-          <Button className="shadow-lg sm:w-fit sm:h-[50px] sm:!px-4 !bg-[#DAE3F3] !text-black !font-semibold !border !border-solid !border-[#6781AF]">
-            QC Function Overview
-          </Button>
+          
           <div className="sm:space-x-16 max-sm:w-full max-sm:space-y-4">
             <Button
               className={`sm:w-32 sm:h-[50px] !font-semibold !border !border-solid !border-[#6781AF] max-sm:w-full ${

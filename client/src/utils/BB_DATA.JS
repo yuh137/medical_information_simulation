@@ -50,7 +50,7 @@ export const RR_QC = [
         Abbreviation:"Ctrl",
         AntiSeraLot:"5",
         reagentExpDate:"dd/mm/yyyy",
-        ExpectedRange:"1+"
+        ExpectedRange:"0"
     },
     {
         reagentName:"A1 Cells",
