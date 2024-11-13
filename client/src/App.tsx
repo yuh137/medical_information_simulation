@@ -34,7 +34,6 @@ import SimpleMolecularAnalyteInputPage from "./pages/General/Molecular/SimpleMol
 import MolecularOrderControls from "./pages/General/Molecular/MolecularOrderControls";
 import MolecularReviewControls from "./pages/General/Molecular/MolecularReviewControls";
 import MolecularAnalyteSelection from "./pages/General/Molecular/MolecularAnalyteSelection";
-import MolecularLeveyJennings from "./pages/General/Molecular/MolecularLeveyJennings";
 import MolecularQualitativeAnalysis from "./pages/General/Molecular/MolecularQualitativeAnalysis";
 import MolecularQualitativeAnalysisReport from "./pages/General/Molecular/MolecularQualitativeAnalysisReport";
 import MolecularQCBuilder from "./pages/General/Molecular/MolecularQCBuilderPage";
@@ -255,10 +254,6 @@ function AppWithRouter() {
               {
                 path: 'qc_analysis_report',
                 element: <MolecularQualitativeAnalysisReport/>
-              },
-              {
-                path: 'levey-jennings',
-                element: <MolecularLeveyJennings />,
               },
             ]
           },

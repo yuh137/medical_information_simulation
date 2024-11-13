@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { getAllDataFromStore } from '../../../utils/indexedDB/getData';
+import { useParams, useNavigate } from 'react-router-dom';
 import { MolecularQCTemplateBatch } from '../../../utils/indexedDB/IDBSchema';
 import NavBar from '../../../components/NavBar';
 import { Modal, Radio, RadioGroup, FormControlLabel, TextField } from '@mui/material';
@@ -74,7 +73,7 @@ const MolecularQualitativeAnalysis = () => {
     {accessorKey: 'creationTime', header: 'Run Time', cell: (info) => info.getValue(), minSize: 50, maxSize: 50,},
     {accessorKey: 'tech', header: 'Tech', cell: (info) => info.getValue(), minSize: 20, maxSize: 20,},
     {accessorKey: 'value', header: 'Test Range', cell: (info) => info.getValue(), minSize: 20, maxSize: 20,},
-    {accessorKey: 'comment', header: 'Comments', cell: (info) => info.getValue(), minSize: 300, maxSize: 500,},
+    {accessorKey: 'comment', header: 'QC Comments', cell: (info) => info.getValue(), minSize: 300, maxSize: 500,},
   ];
 
   const table = useReactTable({data: tableData, columns, getCoreRowModel: getCoreRowModel(), getPaginationRowModel: getPaginationRowModel(),});
@@ -83,19 +82,32 @@ const MolecularQualitativeAnalysis = () => {
     <div>
       <NavBar name = "Review Controls: Molecular"/>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', marginLeft: '10px', marginRight: '10px' }}>
-        <div style={{ flex: '0 0 180px', marginRight: '20px' }}>
-          <div style={{ fontWeight: 'bold', marginTop: '30px' }}>
-            <div>QC Panel: {qcData?.fileName}</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', marginLeft: '15px', marginRight: '15px' }}>
+        <div style={{ flex: '0 0 320px', marginRight: '20px' }}>
+          <div style={{ fontWeight: 'bold', marginTop: '10px', fontSize: '18px' }}>
+            <div style={{ marginBottom: '3px' }}>QC Panel: {qcData?.fileName}</div>
+          </div>
+          <div style={{ fontWeight: 'bold', marginBottom: '3px' }}>
             <div>Lot #: {qcData?.lotNumber}</div>
+          </div>
+          <div style={{ marginBottom: '3px' }}>
+            <div>Expiration Date: </div>
+            <div>Open Date: </div>
             <div>Closed Date: {qcData?.closedDate}</div>
+          </div>
+          <div style={{ marginTop: '40px', fontWeight: 'bold' }}>
             <div>Analyte: {selectedAnalyteId}</div>
           </div>
-        </div>
+          <div style={{ marginTop: '1px', fontWeight: 'bold', textDecoration: 'underline' }}>
+            <div>Expected Range:</div>
+          </div>
+        <div>
+      </div>
 
+      </div>
         <div style={{ flex: '1', margin: '0 20px' }}>
-          <div style={{ marginBottom: '10px', textAlign: 'center' }}>
-            <span style={{ fontWeight: 'bold', textDecoration: 'underline' }}>Qualitative Analysis:</span> <span style={{ fontSize: 'inherit' }}>{selectedAnalyteId}</span>
+          <div style={{ marginTop: '30px', marginBottom: '120px', textAlign: 'center' }}>
+            <span style={{ fontWeight: 'bold', textDecoration: 'underline', fontSize: '22px' }}>Qualitative Analysis:</span> <span style={{ fontSize: '22px' }}>{selectedAnalyteId}</span>
           </div>
           <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #ccc' }}>
             <thead>
@@ -148,14 +160,65 @@ const MolecularQualitativeAnalysis = () => {
           </table>
         </div>
 
-        <div style={{ flex: '0 0 180px', marginLeft: '20px', marginTop: '30px' }}>
+        <div style={{ flex: '0 0 180px', marginLeft: '20px', marginTop: '10px' }}>
           <div style = {{fontWeight: 'bold'}}>Review Date:</div>
           <div>Start Date: {startDate}</div>
           <div>Close Date: {endDate}</div>
-          <Button variant="outlined" style={{ marginTop: '30px', width: '100%' }}>LEARN</Button>
-          <Button variant="outlined" style={{ marginTop: '10px', width: '100%' }}>STUDENT NOTES</Button>
-          <Button variant="outlined" style={{ marginTop: '80px', width: '100%' }} onClick={handleModalOpen}>Review Comments</Button>
-          <Button variant="outlined" style={{ marginTop: '80px', width: '100%' }} onClick={() => {navigate('/molecular/qc_analysis_report')}}>Qualitative Analysis Report</Button>
+          <Button
+            variant="outlined"
+            style={{
+              width: '200px',
+              backgroundColor: '#DAE3F3',
+              color: 'black',
+              borderRadius: '10px',
+              textAlign: 'center',
+              padding: '10px 0',
+              border: '1px solid #3A6CC6',
+              marginTop: '50px'
+            }}>LEARN
+          </Button>
+          <Button
+            variant="outlined"
+            style={{
+              width: '200px',
+              backgroundColor: '#DAE3F3',
+              color: 'black',
+              borderRadius: '10px',
+              textAlign: 'center',
+              padding: '10px 0',
+              border: '1px solid #3A6CC6',
+              marginTop: '20px'
+            }}>STUDENT NOTES
+          </Button>
+          <Button
+            variant="outlined"
+            style={{
+              width: '200px',
+              backgroundColor: '#DAE3F3',
+              color: 'black',
+              borderRadius: '10px',
+              textAlign: 'center',
+              padding: '10px 0',
+              border: '1px solid #3A6CC6',
+              marginTop: '325px'
+            }}
+            onClick={handleModalOpen}>Review Comments
+          </Button>
+
+          <Button
+            variant="outlined"
+            style={{
+              width: '200px',
+              backgroundColor: '#DAE3F3',
+              color: 'black',
+              borderRadius: '10px',
+              textAlign: 'center',
+              padding: '10px 0',
+              border: '1px solid #3A6CC6',
+              marginTop: '20px'
+            }} 
+            onClick={() => {navigate('/molecular/qc_analysis_report')}}>Qualitative Analysis Report
+          </Button>
         </div>
       </div>
 

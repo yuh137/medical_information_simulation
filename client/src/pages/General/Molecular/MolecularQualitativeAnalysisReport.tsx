@@ -172,16 +172,16 @@ const MolecularQualitativeAnalysisReport = () => {
               <div style={{ fontWeight: 'bold' }}>
                 <div>QC Panel: </div>
                 <div>Lot #: </div>
-                <div>Expiration Date: 'mm/dd/yyyy' </div>
-                <div>Open Date: 'mm/dd/yyyy' </div>
+                <div>Expiration Date: mm/dd/yyyy </div>
+                <div>Open Date: mm/dd/yyyy </div>
                 <div>Closed Date: </div>
               </div>
             </div>
   
             <div style={{ flex: '0 0 120px', textAlign: 'left', fontSize: '12px' }}>
               <div style={{ fontWeight: 'bold', marginBottom: '1px' }}>Review Date:</div> {/* Added margin for spacing */}
-              <div style={{ marginBottom: '0px' }}>Start Date: {startDate || 'mm/dd/yyyy'}</div>
-              <div>End Date: {endDate || 'mm/dd/yyyy'}</div>
+              <div style={{ marginBottom: '0px' }}>Start Date: {startDate}</div>
+              <div>End Date: {endDate}</div>
             </div>
           </div>
   
@@ -305,7 +305,7 @@ const MolecularQualitativeAnalysisReport = () => {
 
           {/* Centered Approver Message */}
           {isSigned && (
-          <div style={{ textAlign: 'left', marginTop: '20px' }}>
+          <div style={{ textAlign: 'left', marginTop: '275px' }}>
             <p style={{ marginBottom: '5px' }}>
               <strong>Approved By:</strong> {reviewerName} <br />
               <strong>Date:</strong> {currentDate} <br />
