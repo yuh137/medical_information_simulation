@@ -182,6 +182,7 @@ export default function QCAnalytesGrid(props: { disableCustomTheme?: boolean }) 
         <Typography variant="h5" sx={{ marginBottom: 3 }}>
           Analytes for {panel.qcName} <br />
           Open Date: {formatDate(panel.openDate)}, Closed Date: {formatDate(panel.closedDate)}, Expiration Date: {formatDate(panel.expirationDate)}
+          <br />ID: {adminQCLotID} 
         </Typography>
 
         {/* Display Cards side-by-side */}
@@ -221,30 +222,53 @@ export default function QCAnalytesGrid(props: { disableCustomTheme?: boolean }) 
           <LeevyorQual onTestChange={handleTestChange} />
           <GreenCard><Button variant="contained" color="success"> Save QC File</Button></GreenCard>
         </CardContainer>
+        {(panel.qcName === 'STI-PCR Panel Level I' || panel.qcName === 'STI-PCR Panel Level II') && (
+          <>
+            <Typography>This QC involves a QC Titer Range (min and max level)</Typography>
+          </>
+        )}
 
-        <TableContainer component={Paper} >
-          <Table>
-            <TableHead>
-              <TableRow sx={{alignContent:'center'}}>
-                <TableCell>Name</TableCell>
-                <TableCell>Acronym</TableCell>
-                <TableCell>Expected Range</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {analytes.map((analyte) => (
-                <TableRow key={analyte.analyteID}>
-                  <TableCell>{analyte.analyteName}</TableCell>
-                  <TableCell>{analyte.analyteAcronym}</TableCell>
-                  <TableCell>
-                  <ColorTextFields></ColorTextFields>
+        <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Acronym</TableCell>
+              <TableCell>Expected Range</TableCell>
+              {/* Conditionally add extra columns based on QCName */}
+              {(panel.qcName === 'STI-PCR Panel Level I' || panel.qcName === 'STI-PCR Panel Level II') && (
+                <>
+                  <TableCell>Min Level</TableCell>
+                  <TableCell>Max Level</TableCell>
+                </>
+              )}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {analytes.map((analyte) => (
+              <TableRow key={analyte.analyteID}>
+                <TableCell>{analyte.analyteName}</TableCell>
+                <TableCell>{analyte.analyteAcronym}</TableCell>
+                <TableCell>
+                  <ColorTextFields />
                 </TableCell>
+                {/* Conditionally render extra cells based on QCName */}
+                {(panel.qcName === 'STI-PCR Panel Level I' || panel.qcName === 'STI-PCR Panel Level II') && (
+                  <>
+                    <TableCell>
+                      <ColorTextFields />
+                    </TableCell>
+                    <TableCell>
+                      <ColorTextFields />
+                    </TableCell>
+                  </>
+                )}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
       </SignInContainer>
     </AppTheme>
   );
