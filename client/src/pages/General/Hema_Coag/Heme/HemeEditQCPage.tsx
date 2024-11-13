@@ -34,7 +34,6 @@ const HematologyEditQC = () => {
     if (isFeedbackNotiOpen && (notiType === NotiType.NotSelected)) {
       setTimeout(() => {
         setIsFeedbackNotiOpen(false);
-
       }, 3000);
     }
   }, [isFeedbackNotiOpen])

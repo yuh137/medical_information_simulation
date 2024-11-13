@@ -1,7 +1,6 @@
 //ignore the indentation n shit its all awry rn 
 //im just adding the mock data im using at the top
 
-
 //HEME list? wtf even is this DS
 export const CBCLevelII = [
  { 
@@ -881,7 +880,7 @@ export const CBCLevelI = [
    sdminus3: 0,
  },
  {
-   analyteName: "Nonocyte %",
+   analyteName: "Monocyte %",
    analyteAcronym: "MO",
    unitOfMeasure: "",
    minLevel: "",
@@ -1007,8 +1006,8 @@ export const CBCLevelI = [
      analyteName: "White Blood Cell",
      analyteAcronym: "WBC",
      unitOfMeasure: "",
-     minLevel: "0",
-     maxLevel: "100",
+     minLevel: "",
+     maxLevel: "",
      mean: "",
      stdDevi: "",
      sdplus1: 0,
@@ -1325,8 +1324,8 @@ export const ReticLevelI = [
     analyteName: "Red Blood Cell",
    analyteAcronym: "RBC",
    unitOfMeasure: "",
-   minLevel: "100",
-   maxLevel: "100",
+   minLevel: "",
+   maxLevel: "",
    mean: "",
    stdDevi: "",
    sdplus1: 0,
@@ -1340,8 +1339,8 @@ export const ReticLevelI = [
    analyteName: "Retic %",
    analyteAcronym: "MPV",
    unitOfMeasure: "",
-   minLevel: "100",
-   maxLevel: "100",
+   minLevel: "",
+   maxLevel: "",
    mean: "",
    stdDevi: "",
    sdplus1: 0,

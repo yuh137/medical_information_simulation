@@ -15,21 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from "../../../../components/ui/table";
-import {
-  CMP,
-  Cardiac,
-  Thyroid,
-  Liver,
-  Lipid,
-  Iron,
-  Drug,
-  Hormone,
-  Cancer,
-  Pancreatic,
-  Vitamins,
-  Diabetes,
-
-} from "../../../../utils/MOCK_DATA";
 
 import {
   CBCLevelI,
@@ -41,7 +26,6 @@ import {
   SickleCellQCScreen,
   ErythrocyteSedimentationRate,  
 } from "../../../../utils/MOCK_DATA";
-
 
 import { DefinedRequestError, Department, ErrorCode, qcTypeLinkList, hemeTypeLinkList, renderSubString } from "../../../../utils/utils";
 import { Backdrop, Button, ButtonBase } from "@mui/material";
@@ -86,12 +70,12 @@ export const HemeTestInputPage = () => {
   const [isSavingQCLotSuccessful, setIsSavingQCLotSuccessful] = useState<boolean>(false);
   const [isUpdatingQCLotSuccessful, setIsUpdatingQCLotSuccessful] = useState<boolean>(false);
   const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState<boolean>(false);
-  
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { item } = useParams() as { item: string };
   const loaderData = useLoaderData() as QCTemplateBatch;
   const { checkSession, checkUserType } = useAuth();
+
 
   const mockData = item?.includes("cbc_1")
   ? CBCLevelI
@@ -99,20 +83,19 @@ export const HemeTestInputPage = () => {
   ? CBCLevelII
   : item?.includes("cbc_3")
   ? CBCLevelIII
-  : item?.includes("rl_1")
+  : item?.includes("retic_1")
   ? ReticLevelI
-  : item?.includes("rl_2")
+  : item?.includes("retic_2")
   ? ReticLevelII
-  : item?.includes("rl_3")
+  : item?.includes("retic_3")
   ? ReticLevelIII
-  : item?.includes("sc_c")
+  : item?.includes("sickle")
   ? SickleCellQCScreen
-  : item?.includes("esr_qc")
+  : item?.includes("erythrocyte")
   ? ErythrocyteSedimentationRate
   : CBCLevelI;
 
-  
-  // Set the initial vaue for QCPanel table, taken from the database. If none exist, use the mock data.
+  // Set the initial value for QCPanel table, taken from the database. If none exist, use the mock data.
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(loaderData ? loaderData.analytes : mockData);
 
   // State to manage what clicking the Save button does

@@ -44,11 +44,11 @@ export const hemeTypeLinkList = [
   {name: "CBC Level I", link: 'cbc_1'},
   {name: "CBC Level II", link: 'cbc_2'},
   {name: "CBC Level III", link: 'cbc_3'},
-  {name: "Retic Level I", link: 'rl_1'},
-  {name: "Retic Level II", link: 'rl_2'},
-  {name: "Retic Level III", link: 'rl_3'},
-  {name: "Sickle Cell QC Screen", link: 'sc_qc'},
-  {name: "Erythrocyte Sedimentation Rate QC", link: 'esr_qc'},
+  {name: "Retic Level I", link: 'retic_1'},
+  {name: "Retic Level II", link: 'retic_2'},
+  {name: "Retic Level III", link: 'retic_3'},
+  {name: "Sickle Cell QC Screen", link: 'sickle'},
+  {name: "Erythrocyte Sedimentation Rate QC", link: 'erythrocyte'},
 ]
 
 export const CoagTypeLinkList = [
