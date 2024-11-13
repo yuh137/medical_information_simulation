@@ -7,6 +7,7 @@ export interface Admin {
   type: "admin";
   lastname: string;
   initials: string;
+  loginTime?: string; // New optional field to store login timestamp
 }
 
 export interface Student {
@@ -18,6 +19,7 @@ export interface Student {
   type: "student";
   lastname: string;
   initials: string;
+  loginTime?: string; // New optional field to store login timestamp
 }
 
 export interface ChemistryQCTemplate {

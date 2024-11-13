@@ -133,8 +133,10 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         (adminFound: any) =>
           adminFound.email === email && adminFound.password === password,
       );
+
   
       if (studentFound) {
+        const loginStart = new Date().toISOString();
         console.log("studentFound: ", studentFound);
   
         const studentLocalData = {
@@ -145,6 +147,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
           firstname: studentFound.firstname as string,
           lastname: studentFound.lastname as string,
           initials: studentFound.initials as string,
+          loginTime: loginStart as string,
         };
   
         // Delete existing student entry if it exists
@@ -154,6 +157,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         await addData("students", studentLocalData);
         navigate("/home");
       } else if (adminFound) {
+        const loginStart = new Date().toISOString();
         console.log("adminFound: ", adminFound);
   
         const adminLocalData = {
@@ -164,6 +168,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
           firstname: adminFound.firstname as string,
           lastname: adminFound.lastname as string,
           initials: adminFound.initials as string,
+          loginTime: loginStart as string,
         };
   
         // Delete existing admin entry if it exists
@@ -172,6 +177,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         // Add the new admin data
         await addData("admins", adminLocalData);
         navigate("/home");
+
+
       } else {
         setLoginError(true);
       }

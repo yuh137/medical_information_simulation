@@ -24,6 +24,9 @@ import axios from "axios";
 function App() {
   // Scroll to top when the component mounts
   // initialize client-Side DB with data from azure database
+
+  
+
   useEffect(() => {
     window.scrollTo(0, 0);
     // const fetchBackEndData = async () => {
@@ -55,6 +58,8 @@ function App() {
   }, []);
 
   //Splash Page is login!
+
+  
 
   return (
     <Router>

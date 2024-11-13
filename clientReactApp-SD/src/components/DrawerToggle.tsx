@@ -32,6 +32,19 @@ export default function DrawerToggle() {
     setState({ right: false }); // Close the drawer after navigation
   };
 
+  const clearObjectStore = (dbName: string, storeName: string) => {
+    const request = indexedDB.open(dbName);
+    request.onsuccess = function (event) {
+      const db = event.target.result;
+      const transaction = db.transaction(storeName, 'readwrite');
+      const store = transaction.objectStore(storeName);
+      store.clear();
+      console.log(`Cleared object store: ${storeName}`);
+    
+    };
+  };
+  
+
   const list = (anchor: string) => (
     <Box
       sx={{ width: anchor === 'right' ? 'auto' : 250 }}
@@ -121,14 +134,22 @@ export default function DrawerToggle() {
       </List>
       <Divider />
       <List>
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => handleNavigation('/')}>
-            <ListItemIcon>
-              <LogoutIcon />
-            </ListItemIcon>
-            <ListItemText primary="Log Out" />
-          </ListItemButton>
-        </ListItem>
+      <ListItem disablePadding>
+        <ListItemButton
+          onClick={() => {
+            // Clear all relevant object stores
+            clearObjectStore('MIS_database', 'admins');
+            clearObjectStore('MIS_database', 'students');
+            clearObjectStore('MIS_database', 'qc_store');
+            handleNavigation('/');
+          }}
+        >
+          <ListItemIcon>
+            <LogoutIcon />
+          </ListItemIcon>
+          <ListItemText primary="Log Out" />
+        </ListItemButton>
+      </ListItem>
       </List>
       <Divider />
     </Box>
