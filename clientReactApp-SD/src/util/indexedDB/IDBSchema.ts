@@ -4,6 +4,7 @@ export interface Admin {
   username: string;
   password: string;
   firstname: string;
+  type: "admin";
   lastname: string;
   initials: string;
 }
@@ -14,6 +15,7 @@ export interface Student {
   username: string;
   password: string;
   firstname: string;
+  type: "student";
   lastname: string;
   initials: string;
 }

@@ -35,7 +35,8 @@ export default function SplashPage() {
             const id = account.id;
             if (account.type === "student") {
               await deleteData("students", id);
-            } else if (account.type === "admin") {
+            }
+            if (account.type === "admin") {
               await deleteData("admins", id);
             }
           }
