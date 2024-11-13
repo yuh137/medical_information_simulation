@@ -64,16 +64,39 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const validValues = ["W+", "1+", "2+", "3+", "4+", "H+"];
   const { register, handleSubmit, setValue } = useForm<BloodBankQC>();
+
+  interface dbReagent {  // Used to add reagents in JSON format
+    reagentName: string,
+    abbreviation: string,
+    reagentLotNum: string,
+    expirationDate: string,
+    posExpectedRange: string,
+    negExpectedRange: string
+  }
+
+  function getReagents(){
+    const rows = table.getRowModel().rows;
+    const reagents: dbReagent[] = [];
+    QCElements.forEach(function (row) {  // Iterate through each row of the React Table
+     const reag: dbReagent = {reagentName: row['reagentName'], abbreviation: row['Abbreviation'], reagentLotNum: row['AntiSeraLot'], expirationDate: formatDate(row['reagentExpDate']), posExpectedRange: row['ExpectedRange'], negExpectedRange: '0'};
+      reagents.push(reag);
+    })
+    return reagents;
+  }
+
   const saveQC: SubmitHandler<BloodBankQC> = async (data) => {
     // AGF Test: Try the actual database
-    console.log(data.openDate);
+    getReagents();
+    const reags = getReagents();
+    console.log(reags);
+    console.log("---/");
     const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'  // application/json
       },
-      body: JSON.stringify({ qcName: fileName_Item, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), expirationDate: formatDate(data.qcExpDate), reagents: [] }),
+      body: JSON.stringify({ qcName: fileName_Item, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), expirationDate: formatDate(data.qcExpDate), reagents: reags }),
       })
     console.log(checkServer);
     // Index DB 
