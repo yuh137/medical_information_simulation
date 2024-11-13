@@ -40,7 +40,7 @@ export default function QCEditPage(props: { disableCustomTheme?: boolean }) {
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <h1>Edit the Analytes for the Panel</h1>
-      <HomeTableContainer direction="column" justifyContent="space-between">
+      <HomeTableContainer direction="column">
         <QCAnalytesGrid></QCAnalytesGrid>
 
 

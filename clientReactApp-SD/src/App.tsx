@@ -20,6 +20,7 @@ import ReportSubmissionsPage from "./pages/ReportSubmissionsPage.jsx";
 import AccountPage from "./pages/AccountPage.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
 import QCEditPage from "./pages/QCEditPage.tsx";
+import QCAnalytesGrid from "./components/table/QCAnalytesGrid.tsx";
 
 function App() {
   // Scroll to top when the component mounts
@@ -76,7 +77,7 @@ function App() {
         <Route path="/patientreports" element={<PatientReportsPage />} />
         <Route path="/orderentries" element={<QC_OrderEntriesPage />} />
         <Route path="/qc" element={<QC_Page />} />
-        <Route path="/qcedit/:id" element={<QCEditPage />} />
+        <Route path="/qcedit/:adminQCLotID" element={<QCAnalytesGrid />} />
         <Route path="/quizzes" element={<QuizzesPage />} />
         <Route path="/referencefiles" element={<ReferecnceFilesPage />} />
         <Route path="/viewqcresults" element={<ViewQCResultsPage />} />
