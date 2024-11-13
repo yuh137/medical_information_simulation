@@ -59,7 +59,6 @@ export default function SliderComponent(props: { disableCustomTheme?: boolean })
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
-        <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Box sx={{ width: 300 }}>
           <Slider
             size="small"

@@ -12,7 +12,7 @@ import AppTheme from '../shared-theme/AppTheme';
 import ColorModeSelect from '../shared-theme/ColorModeSelect';
 import Container from '@mui/material/Container';
 import MainContent from './homepage_Components/components/MainContent';
-import Latest from './homepage_Components/components/Latest';
+import Latest from './casestudies/components_blog/Latest';
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -66,7 +66,6 @@ export default function CaseStudyPageComponents(props: { disableCustomTheme?: bo
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
-        <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
           <Container
             maxWidth="lg"
             component="main"

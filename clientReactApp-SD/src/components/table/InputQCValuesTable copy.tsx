@@ -128,7 +128,6 @@ export default function InputQCValuesTable(props: { disableCustomTheme?: boolean
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-      <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
       <DataTableContainer direction="column" justifyContent="space-between">
         <Paper sx={{ padding: 2, width: '100%' }}>
           <Grid container spacing={3}>

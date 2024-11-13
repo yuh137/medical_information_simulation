@@ -60,8 +60,6 @@ export default function IntroDivider(props: { disableCustomTheme?: boolean }) {
     <AppTheme {...props}>
     <CssBaseline enableColorScheme />
     <SignInContainer direction="column" justifyContent="space-between">
-      <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
-      {/* Replace card with you*/}
       <Card variant="outlined" sx={{ maxWidth: 360 }}>
       <Box sx={{ p: 2 }}>
         <Stack

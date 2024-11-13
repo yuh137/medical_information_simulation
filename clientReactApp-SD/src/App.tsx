@@ -20,6 +20,7 @@ import ReportSubmissionsPage from "./pages/ReportSubmissionsPage.jsx";
 import AccountPage from "./pages/AccountPage.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
 import axios from "axios";
+import { CssBaseline } from "@mui/material";
 
 function App() {
   // Scroll to top when the component mounts

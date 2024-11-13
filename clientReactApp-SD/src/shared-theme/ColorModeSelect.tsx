@@ -9,20 +9,22 @@ export default function ColorModeSelect(props: SelectProps) {
     return null;
   }
   return (
-    <Select
-      value={mode}
-      onChange={(event) =>
-        setMode(event.target.value as 'system' | 'light' | 'dark')
-      }
-      SelectDisplayProps={{
-        // @ts-ignore
-        'data-screenshot': 'toggle-mode',
-      }}
-      {...props}
-    >
-      <MenuItem value="system">System</MenuItem>
-      <MenuItem value="light">Light</MenuItem>
-      <MenuItem value="dark">Dark</MenuItem>
-    </Select>
+    <div>
+      <Select
+        value={mode}
+        onChange={(event) =>
+          setMode(event.target.value as 'system' | 'light' | 'dark')
+        }
+        SelectDisplayProps={{
+          // @ts-ignore
+          'data-screenshot': 'toggle-mode',
+        }}
+        {...props}
+      >
+        <MenuItem value="system">System</MenuItem>
+        <MenuItem value="light">Light</MenuItem>
+        <MenuItem value="dark">Dark</MenuItem>
+      </Select>
+    </div>
   );
 }

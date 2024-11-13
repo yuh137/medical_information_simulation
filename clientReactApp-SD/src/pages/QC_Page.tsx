@@ -11,6 +11,8 @@ import QCSelectAction from '../components/Dropdowns/QCSelectAction';
 import CheckboxLabels from '../components/checkboxes/CheckboxLabels';
 import OrderQC_SelectAllTransferList from '../components/transferlists/OrderQC_SelectAllTransferList';
 import SubmittedQCTable from '../components/table/SubmittedQCTable';
+import QCChoices from '../components/QCChoices';
+import QC_Edit_Table from '../components/table/QC_Edit_Table';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -55,49 +57,30 @@ const QCTableContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-const columns: GridColDef[] = [
-  { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'firstName', headerName: 'First name', width: 130 },
-  { field: 'lastName', headerName: 'Last name', width: 130 },
-  {
-    field: 'age',
-    headerName: 'Age',
-    type: 'number',
-    width: 90,
-  },
-  {
-    field: 'fullName',
-    headerName: 'Full name',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
-    width: 160,
-    valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
-  },
-];
-
-const rows = [
-  { id: 1, lastName: 'This is the QC PAGE', firstName: 'JOOON', age: 35 },
-];
-
-const paginationModel = { page: 0, pageSize: 5 };
 
 export default function QC_Page(props: { disableCustomTheme?: boolean }) {
   const [selectedQC, setSelectedQC] = React.useState<string | null>(null); // State to track which QC is selected
+  const [QCBuildOption, setQCBuild] = React.useState<string | null>(null); // State if admin will create or edit QC
 
   const handleQCChange = (qcType: string) => {
     setSelectedQC(qcType);
+  };
+
+  const handleQCBuilder = (QCBuildOption: string) => {
+    setQCBuild(QCBuildOption);
   };
 
   return (
     <AppTheme {...props}>
       <QCTableContainer>
         <CssBaseline enableColorScheme />
-        <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <h1>Quality Controls</h1>
         <CheckboxLabels onQCChange={handleQCChange} />
         <QCSelectAction />
         {selectedQC === 'orderQC' && <OrderQC_SelectAllTransferList />}
         {selectedQC === 'reviewQC' && <SubmittedQCTable />}
+        {selectedQC === 'buildQC' && <QCChoices onQCBuildChange={handleQCBuilder} />}
+        {QCBuildOption === 'editQC' && <QC_Edit_Table/>}
       </QCTableContainer>
     </AppTheme>
   );

@@ -12,19 +12,8 @@ import Divider from "@mui/material/Divider";
 import QCOrderButtons from "./Buttons/QCOrderButtons";
 import axios from "axios";
 
-// const panelNames = [
-//   "GI Panel Level I",
-//   "GI Panel Level II",
-//   "Respiratory Panel Level I",
-//   "Respiratory Panel Level II",
-//   "STI-PCR Panel Level I",
-//   "STI-PCR Panel Level II",
-//   "HIV RT-PCR Panel: Negative Control",
-//   "HIV RT-PCR Panel: Low Control",
-//   "HIV RT-PCR Panel: High Control",
-// ];
-//
-// let panelNamesFromBackend: string[] = [];
+
+
 
 function not(a: readonly number[], b: readonly number[]) {
   return a.filter((value) => !b.includes(value));

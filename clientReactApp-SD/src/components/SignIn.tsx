@@ -46,25 +46,27 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
-  height: "calc((1 - var(--template-frame-height, 0)) * 100dvh)",
-  minHeight: "100%",
+  height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
+  minHeight: '100%',
   padding: theme.spacing(2),
-  [theme.breakpoints.up("sm")]: {
+  display: 'flex',
+  alignItems: 'center',
+  [theme.breakpoints.up('sm')]: {
     padding: theme.spacing(4),
   },
-  "&::before": {
+  '&::before': {
     content: '""',
-    display: "block",
-    position: "absolute",
+    display: 'block',
+    position: 'absolute',
     zIndex: -1,
     inset: 0,
-    backgroundColor: theme.palette.mode === "dark" ? "#457A64" : "#607D8B", // Darker steel blue for dark mode, lighter steel blue for light mode
+    backgroundColor: theme.palette.mode === 'dark' ? '#457A64' : '#607D8B', // Darker steel blue for dark mode, lighter steel blue for light mode
     backgroundImage:
-      "radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))",
-    backgroundRepeat: "no-repeat",
-    ...theme.applyStyles("dark", {
+      'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
+    backgroundRepeat: 'no-repeat',
+    ...theme.applyStyles('dark', {
       backgroundImage:
-        "radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))",
+        'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
     }),
   },
 }));
@@ -148,6 +150,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
           lastname: studentFound.lastname as string,
           initials: studentFound.initials as string,
           loginTime: loginStart as string,
+          type: "student",
         };
   
         // Delete existing student entry if it exists
@@ -169,6 +172,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
           lastname: adminFound.lastname as string,
           initials: adminFound.initials as string,
           loginTime: loginStart as string,
+          type: "admin", 
         };
   
         // Delete existing admin entry if it exists
@@ -191,10 +195,10 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-      <SignInContainer direction="column" justifyContent="space-between">
-        <ColorModeSelect
+      <ColorModeSelect
           sx={{ position: "fixed", top: "1rem", right: "1rem" }}
         />
+      <SignInContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
           <Typography
             component="h1"

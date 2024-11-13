@@ -92,7 +92,6 @@ export default function QCReviewTable(props: { disableCustomTheme?: boolean }) {
   return (
     <AppTheme {...props}>
         <CssBaseline enableColorScheme />
-        <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <DataTableContainer direction="column" justifyContent="space-between">
             <Card variant="outlined">
                 <Paper sx={{ height: 400, width: '100%' }}>

@@ -67,7 +67,6 @@ export default function PatientsReportsComponents(props: { disableCustomTheme?: 
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
-        <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
           <Container
             maxWidth="lg"
             component="main"

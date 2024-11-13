@@ -6,13 +6,11 @@
 import * as React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Stack from '@mui/material/Stack';
-import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import AppTheme from '../../shared-theme/AppTheme';
-import ColorModeSelect from '../../shared-theme/ColorModeSelect';
 import Container from '@mui/material/Container';
 import MainContent from './components/MainContent';
-import Latest from './components/Latest';
+import ColorModeSelect from '../../shared-theme/ColorModeSelect';
 
 
 
@@ -48,8 +46,10 @@ export default function HomePageComponents(props: { disableCustomTheme?: boolean
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
+      <ColorModeSelect
+          sx={{ position: "absolute", top: "6.5rem", left: "2rem" }}
+        />
       <HomeContainer direction="column" justifyContent="space-between">
-        <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
           <Container
             maxWidth="lg"
             component="main"

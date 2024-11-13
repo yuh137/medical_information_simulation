@@ -33,6 +33,16 @@ async function fetchUserName(): Promise<string> {
   return 'doos';
 }
 
+//Grab name from one of the account tables
+async function fetchUserType(): Promise<string> {
+  const accountData = await getAccountData();
+  if (accountData && Array.isArray(accountData) && accountData.length > 0) {
+    const user = accountData[0] as Admin | Student;
+    return `${user.type}`;
+  }
+  return 'Not registered as student or admin';
+}
+
 const cardData = [
   //Description of card Data changes for faculty
   {
@@ -108,8 +118,13 @@ export function Search() {
   );
 }
 
+function capitalizeFirstLetter(val: string) {
+  return (val).charAt(0).toUpperCase() + (val).slice(1);
+}
+
 export default function MainContent() {
   const [userName, setUserName] = useState<string>('User');
+  const [userType, setUserType] = useState<string>('Type');
   const [focusedCardIndex, setFocusedCardIndex] = React.useState<number | null>(
     null,
   );
@@ -121,8 +136,14 @@ export default function MainContent() {
         setUserName(name);
       }
       fetchName();
+      async function fetchType() {
+        const user_type = await fetchUserType();
+        setUserType(user_type);
+      }
+      fetchType();
     }, []);
   
+  const capitalizedType = capitalizeFirstLetter(userType)
 
 
   const handleFocus = (index: number) => {
@@ -143,7 +164,7 @@ export default function MainContent() {
         <Typography variant="h1" gutterBottom>
           Welcome, {userName}!
         </Typography>
-        <Typography>MIS Learning Information System and Quality Control Dashboards<br></br>Texas Health Sciences Center</Typography>
+        <Typography>MIS Learning Information System and Quality Control Dashboards<br></br>Texas Health Sciences Center - {capitalizedType} Portal</Typography>
       </div>
 
       <Box

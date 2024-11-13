@@ -210,9 +210,6 @@ export default function AccountMessage(props: {
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
-        <ColorModeSelect
-          sx={{ position: "fixed", top: "1rem", right: "1rem" }}
-        />
         {/* Replace card with you*/}
         {/*<h1>Account Page</h1>*/}
         {/*<UserProvider>*/}

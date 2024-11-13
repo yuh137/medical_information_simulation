@@ -3,7 +3,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import AppTheme from '../shared-theme/AppTheme.tsx';
-import ColorModeSelect from '../shared-theme/ColorModeSelect.tsx';
 import SubmittedQCTable from '../components/table/SubmittedQCTable.tsx';
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
@@ -37,7 +36,6 @@ export default function QC_OrderEntriesPage(props: { disableCustomTheme?: boolea
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
-        <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         {/* Replace card with you*/}
         <SubmittedQCTable></SubmittedQCTable>
       </SignInContainer>

@@ -113,7 +113,6 @@ export default function GradeBookTable(props: { disableCustomTheme?: boolean }) 
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
-        <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
           <GradebookTable />
       </SignInContainer>
     </AppTheme>

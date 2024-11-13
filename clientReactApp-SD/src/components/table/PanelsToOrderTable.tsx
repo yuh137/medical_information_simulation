@@ -17,17 +17,15 @@ import Paper from '@mui/material/Paper';
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignSelf: 'center',
-  width: '100%',
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: '10px',
+
+  margin: '50px',
   boxShadow:
     'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
   [theme.breakpoints.up('sm')]: {
-    width: '450px',
+    width: '150px',
+  },
+  [theme.breakpoints.up('lg')]: {
+    width: '300px',
   },
   ...theme.applyStyles('dark', {
     boxShadow:
@@ -39,6 +37,7 @@ const DataTableContainer = styled(Stack)(({ theme }) => ({
   height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
   minHeight: '100%',
   padding: theme.spacing(2),
+  alignSelf: 'center',
   [theme.breakpoints.up('sm')]: {
     padding: theme.spacing(4),
   },
@@ -116,13 +115,16 @@ export default function PanelsToOrderTable(props: { disableCustomTheme?: boolean
   
     // Optionally reset the form
     setItems(getItemsFromLocalStorage());
+    location.reload();
   };
 
   return (
     <AppTheme {...props}>
-      <CssBaseline enableColorScheme />
-      <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
-      <DataTableContainer direction="column" justifyContent="space-between">
+    <CssBaseline enableColorScheme />
+    <ColorModeSelect
+        sx={{ position: "absolute", top: "6.5rem", left: "2rem" }}
+      />
+      <DataTableContainer direction="column" sx={{ alignItems: 'center' }}>
           <Typography variant="h1" component="div">Quality Control Panels to be ordered</Typography>
           <Grid container spacing={3}>
             {items.map((item) => (

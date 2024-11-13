@@ -13,10 +13,11 @@ export default function HomePage(){
 
   return(
     <>  
-        <div id='homeComp'><HomePageComponents></HomePageComponents></div>
+        <HomePageComponents></HomePageComponents>
         <div>
             Home page
         </div>
     </>
   );
 }
+
