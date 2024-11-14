@@ -8,6 +8,8 @@ import { Button, ButtonBase, Modal } from "@mui/material";
 import { useTheme } from "../../../context/ThemeContext";
 import { saveToDB, getQCRangeByDetails } from "../../../utils/indexedDB/getData";
 import { min } from 'd3';
+import { pdf, Document, Page, Text, View } from '@react-pdf/renderer';
+import { createTw } from 'react-pdf-tailwind';
 
 
 const SimpleMolecularAnalyteInputPage = () => {
@@ -161,6 +163,83 @@ const SimpleMolecularAnalyteInputPage = () => {
     }
   };
 
+  const detectLevel = (str: string): number => {
+    if (str.endsWith("I")) {
+      return 1;
+    } else if (str.endsWith("II")) {
+      return 2;
+    } else {
+      return 0;
+    }
+  };
+
+  const reportPDF = (analyteValues?: string[], QCData?: QCPanel) => {
+    const currentDate = new Date();
+    const tw = createTw({
+      theme: {},
+      extend: {},
+    });
+
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June", "July",
+      "August", "September", "October", "November", "December"
+    ];
+
+    return (
+      <Document style={tw("border border-solid border-black")}>
+        <Page style={tw("py-8 px-16 border border-solid border-black")}>
+          <Text style={tw("sm:text-[24px] text-center")}>Quality Controls Report</Text>
+          <Text style={tw("mt-8 mb-2 text-[13px]")}>Date: {monthNames[currentDate.getMonth()]} {currentDate.getDate()}, {currentDate.getFullYear()}</Text>
+          <Text style={tw("mb-2 text-[13px]")}>Lot Number: {QCData?.lotNumber || "error"}</Text>
+          <Text style={tw("mb-8 text-[13px]")}>QC Duration: {QCData?.openDate || "undetermined"} - {QCData?.closedDate || "undetermined"}</Text>
+          <Text style={tw("text-[22px] mb-8 text-center")}>Molecular QC</Text>
+          <View style={tw("flex-row justify-around")}>
+            <Text style={tw("font-[700] text-[15px]")}>Analytes</Text>
+            <Text style={tw("font-[700] text-[15px]")}>Value</Text>
+            <Text style={tw("font-[700] text-[15px]")}>Expected Value</Text>
+          </View>
+          <View style={tw("w-full h-[1px] bg-black mt-2")} />
+          <View style={tw("flex-row justify-between p-5")}>
+            <View>
+              {analyteValues?.map((value, index) => (
+                <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{QCData?.analytes[index].analyteName}</Text>
+              ))}
+            </View>
+            <View>
+              {analyteValues?.map((value, index) => (
+                <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{value}</Text>
+              ))}
+            </View>
+            <View>
+              {analyteValues?.map((value, index) => (
+                <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{QCData?.analytes[index].expectedRange}</Text>
+              ))}
+            </View>
+          </View>
+          <View style={tw("w-full h-[1px] bg-black mt-2")} />
+          <Text style={tw("mt-2")}>QC Comments:</Text>
+          <View>
+            {modalData.map((item, index) => (
+              <View style={tw("flex-row items-center")} key={index}>
+                <View style={tw("self-center w-[4px] h-[4px] bg-black rounded-full")} />
+                <Text style={tw("text-[13px] w-full px-6 text-justify text-wrap mt-2")}>{QCData?.analytes[item.invalidIndex].analyteName}: {item.comment}</Text>
+              </View>
+            ))}
+          </View>
+          <Text style={tw("mt-8 text-[13px]")}>Approved by: {username}</Text>
+          <Text style={tw("mt-2 text-[13px]")}>Date: {currentDate.getMonth() + 1}/{currentDate.getDate()}/{currentDate.getFullYear()}</Text>
+          <Text style={tw("mt-2 text-[13px]")}>Time: {currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</Text>
+        </Page>
+      </Document>
+    );
+  };
+
+  const openPDF = async () => {
+    const blob = await pdf(reportPDF(analyteValues, qcData || undefined)).toBlob();
+    const pdfUrl = URL.createObjectURL(blob);
+    window.open(pdfUrl, "_blank");
+  };
+
   if (!qcData) {
     return <p>No data available for this QC record.</p>;
   }
@@ -208,6 +287,14 @@ const SimpleMolecularAnalyteInputPage = () => {
               onClick={() => setIsModalOpen(true)}
             >
               Apply QC Comment
+            </Button>
+            <Button
+              className={`sm:w-32 sm:h-[50px] !font-semibold !border !border-solid !border-[#6781AF] max-sm:w-full ${isValid || isValidManual ? "!bg-[#DAE3F3] !text-black" : "!bg-[#AFABAB] !text-white"
+                }`}
+              disabled={!isValidManual && !isValid}
+              onClick={() => openPDF()}
+            >
+              Print QC
             </Button>
             <Button
               className={`sm:w-32 sm:h-[50px] !font-semibold !border !border-solid !border-[#6781AF] max-sm:w-full ${(isValid || isValidManual) ? "!bg-[#DAE3F3] !text-black" : "!bg-[#AFABAB] !text-white"

@@ -99,7 +99,7 @@ export interface Analyte {
     unitOfMeasure: string | null,
     minLevel: number | null,
     maxLevel: number | null,
-    expectedRange: string | null,
+    expectedRange: string,
     adminQCLotID: string
 }
 
