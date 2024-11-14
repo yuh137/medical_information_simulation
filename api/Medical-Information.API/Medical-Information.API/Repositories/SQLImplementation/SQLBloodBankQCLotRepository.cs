@@ -57,7 +57,7 @@ namespace Medical_Information.API.Repositories.SQLImplementation
 
         public async Task<BloodBankQCLot?> GetBBQCLotByIDAsync(Guid id)
         {
-            return await dbContext.BloodBankQCLots.FirstOrDefaultAsync(item => item.BloodBankQCLotID == id);
+            return await dbContext.BloodBankQCLots.Include(item => item.Reagents).FirstOrDefaultAsync(item => item.BloodBankQCLotID == id);
         // return await dbContext.BloodBankQCLots.Include(item => item.Analytes).Include(item => item.Reports).FirstOrDefaultAsync(item => item.AdminQCLotID == id);
     }
     }
