@@ -89,10 +89,10 @@ const MolecularOrderControls = () => {
 
   //navigate to review controls
   const handleReviewQC = () => {
-    if(checkUserType() === 'Admin')
-      navigate('/admin-review_controls');
-    else if(checkUserType() === 'Student')
-      navigate('/molecular/student-review_controls')
+    if (checkUserType() === 'Admin')
+      navigate('/molecular/qc_results');
+    else if (checkUserType() === 'Student')
+      navigate('/molecular/qc_results')
   };
 
   const handleClearSelection = () => {
