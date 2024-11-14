@@ -6,6 +6,9 @@ import NavBar from "../../../components/NavBar";
 import { Table, TableBody, TableCell, TableHead, TableRow, TableHeader } from "../../../components/ui/table";
 import { getAllDataByFileName, getQCRangeByDetails } from "../../../utils/indexedDB/getData";
 import { QCTemplateBatch } from "../../../utils/indexedDB/IDBSchema";
+import { AuthToken } from "../../../context/AuthContext";
+import { BBStudentReport } from "../../../utils/utils";
+import { BloodBankQCLot } from "../../../utils/indexedDB/IDBSchema";
 import {
   ColumnDef,
   useReactTable,
@@ -15,9 +18,19 @@ import {
 } from "@tanstack/react-table";
 
 interface QCItem {
-  fileName: string;
+  reportId: string;
+  qcName: string;
   lotNumber: string;
-  closedDate: string;
+  expDate: string;
+  createdDate: string;
+}
+
+// Used to format dates so that the time isn't shown and it's in mm/dd/yyyy format
+function formatDate(dateString: string) {
+  const index = dateString.indexOf('T');
+  dateString = dateString.substring(0, index);  // Cuts off everything after the "T"
+  const [year, month, day] = dateString.split("-");
+  return `${month}/${day}/${year}`;
 }
 
 const columns: ColumnDef<QCItem>[] = [
@@ -28,21 +41,17 @@ const columns: ColumnDef<QCItem>[] = [
     cell: info => info.getValue(),
   },
   {
-    accessorKey: "qcExpDate",
+    accessorKey: "expDate",
     header: () => <span>Expiration Date</span>,
-    cell: info => info.getValue(),
+    cell: info => formatDate(info.getValue() as string),
   },
   {
-    accessorKey: "closedDate",
-    header: () => <span>Closed Date</span>,
-    cell: info => info.getValue(),
-  },{
-    accessorKey: "openDate",
-    header: () => <span>Open Date</span>,
-    cell: info => info.getValue(),
+    accessorKey: "createdDate",
+    header: () => <span>Created Date</span>,
+    cell: info => formatDate(info.getValue() as string),
   },
   {
-    accessorKey: "fileName",
+    accessorKey: "qcName",
     header: () => <span>Test Name</span>,
     cell: info => info.getValue(),
   },
@@ -55,12 +64,47 @@ const BloodBankQCResult = (props: { name: string, link: string }) => {
 
   const fetchQCData = async () => {
     console.log("Fetching QC data...");
+    const tokenString = localStorage.getItem('token');
+    if (!tokenString) {
+      return null;
+    }
+    const token: AuthToken = JSON.parse(tokenString);
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/ByStudentId/${token.userID}`);
+
+    if (res.ok) {
+      const reports: BBStudentReport[] = await res.json();
+      const qcLotIds = Array.from(new Set(reports.map(report => report.bloodBankQCLotID)));
+
+      const queryParams = new URLSearchParams();
+      qcLotIds.forEach(item => queryParams.append("lotId", item));
+
+      const qcDataRes = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots/ByIdList?${queryParams.toString()}`);
+
+      if (qcDataRes.ok) {
+        const qcData: BloodBankQCLot[] = await qcDataRes.json();
+        const returnData = reports.map(item => ({
+          reportId: item.reportID,
+          qcName: qcData.find(qc => qc.bloodBankQCLotID === item.bloodBankQCLotID)?.qcName ?? "",
+          lotNumber: qcData.find(qc => qc.bloodBankQCLotID === item.bloodBankQCLotID)?.lotNumber ?? "",
+          expDate: qcData.find(qc => qc.bloodBankQCLotID === item.bloodBankQCLotID)?.expirationDate ?? "",
+          createdDate: item.createdDate,
+        }))
+
+        setQcData(returnData);
+      } 
+      // setIsFetchingData(false);
+      return;
+    }
+    // setIsFetchingData(false);
+    return;
+    /*
     const selectedQCs: string[] = JSON.parse(localStorage.getItem('selectedQCItems') || '[]');
     console.log(selectedQCs);
     const allDataPromises = selectedQCs.map(qcName => getAllDataByFileName("qc_store", qcName));
     const results = await Promise.all(allDataPromises);
     setQcData(results.flat());
     console.log("Fetched QC data:", results.flat());
+    */
   };
   
   useEffect(() => {
@@ -72,8 +116,11 @@ const BloodBankQCResult = (props: { name: string, link: string }) => {
   const handleSelectQC = async () => {
     if (selectedQC) {
       console.log("Selected QC:", selectedQC);  
+      localStorage.setItem('selectedQCData', JSON.stringify(qcData));
+      navigate(`/blood_bank/reagent-input-page`);
+      /*
       try {
-        const qcData = await getQCRangeByDetails(selectedQC.fileName, selectedQC.lotNumber, selectedQC.closedDate);
+        const qcData = await getQCRangeByDetails(selectedQC.qcName, selectedQC.lotNumber, selectedQC.expDate);
         if (qcData) {
           console.log("QC Data found:", qcData);
           // Save the qcData to localStorage
@@ -88,6 +135,7 @@ const BloodBankQCResult = (props: { name: string, link: string }) => {
       } catch (error) {
         console.error("Error fetching QC data:", error);
       }
+      */
     } else {
       alert('Please select a QC record to proceed.');
     }

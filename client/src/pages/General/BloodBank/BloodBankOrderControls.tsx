@@ -66,6 +66,7 @@ const BloodBankOrderControls = () => {
       
       if (res.ok){
         const savedQCItems: BloodBankQCLot[] = await res.json();
+        console.log("Saved QC Items:");
         console.log(savedQCItems);
         // If there are QCs that are not found or have expired, return error
         /*
@@ -84,9 +85,15 @@ const BloodBankOrderControls = () => {
         console.log("---");
         const reportsToSave = savedQCItems.map(item => ({
           studentID: userId,
-          bloodBankQCLotID: item.BloodBankQCLotID,
-          createdDate: dayjs().toISOString(),
+          bloodBankQCLotID: item.bloodBankQCLotID,
+          createdDate: dayjs(),
         }));
+        // console.log(dayjs());
+        // console.log(dayjs().toISOString());
+        savedQCItems.forEach(element => {
+          console.log(element);
+          console.log(element.bloodBankQCLotID);
+        });
         console.log(JSON.stringify(reportsToSave));
 
         const createRes = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/Create`, {
@@ -96,7 +103,7 @@ const BloodBankOrderControls = () => {
           },
           body: JSON.stringify(reportsToSave),
         })
-        
+        console.log(createRes);
         if (createRes.ok){
           console.log("Created QC reports successfully");
           // setNotiType(NotiType.OrderCreated);

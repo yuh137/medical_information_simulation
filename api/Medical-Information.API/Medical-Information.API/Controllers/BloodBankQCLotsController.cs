@@ -36,6 +36,17 @@ namespace Medical_Information.API.Controllers
         }
 
         [HttpGet]
+        [Route("ByIdList")]
+        public async Task<IActionResult> GetBBQCLotsByIdList([FromQuery] List<Guid> lotId)
+        {
+            var qclotModels = await bloodBankQCLotRepository.GetBBQCLotsByIdListAsync(lotId);
+
+            var qclotDTOs = mapper.Map<List<BloodBankQCLotDTO>>(qclotModels);
+
+            return Ok(qclotDTOs);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetAllBBQCLots()
         {
             var qcLotsModels = await bloodBankQCLotRepository.GetAllBBQCLotsAsync();

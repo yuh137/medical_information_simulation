@@ -3,6 +3,28 @@ import { jwtDecode } from "jwt-decode";
 import { Component, MonitorCheck } from "lucide-react";
 import { twMerge } from "tailwind-merge"
 // BLOOK BANK LINKS
+export interface BBStudentReport {
+  reportID: string;
+  studentID: string;
+  bloodBankQCLotID: string;
+  createdDate: string;
+  reagentInputs: ReagentInput[];
+}
+
+export interface ReagentInput {
+  reagentInputID: string;
+  reportID: string;
+  reagentName: string;
+  posExpectedRange: string;
+  negExpectedRange: string;
+  immediateSpin: string;
+  thirtySevenDegree: string;
+  aHG: string;
+  checkCell: string;
+  createdDate: string;
+  comment: string;
+}
+
 export const bloodBankQC = [
   { link:"Reagent_Rack", name:"Reagent Rack", bbData:"RR_QC"},
   { link:"Two_Cell", name:"2 Cell Screen", bbData:"TWO_CELL"},

@@ -32,6 +32,11 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             return await dbContext.BloodBankQCLots.Include(item => item.Reagents).Include(item => item.Reports).Where(item => names.Contains(item.QCName.ToLower()) && item.IsActive).ToListAsync();  // && item.IsActive
         }
 
+        public async Task<List<BloodBankQCLot>> GetBBQCLotsByIdListAsync(List<Guid> lotId)
+        {
+            return await dbContext.BloodBankQCLots.Where(item => lotId.Contains(item.BloodBankQCLotID) && item.IsActive).ToListAsync();
+        }
+
         public async Task<BloodBankQCLot?> DeleteBBQCLotAsync(Guid id)
         {
             var exisitingQCLot = await dbContext.BloodBankQCLots.FirstOrDefaultAsync(item => item.BloodBankQCLotID == id);

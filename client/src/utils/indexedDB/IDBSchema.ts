@@ -47,7 +47,7 @@ export interface QCTemplateBatch {
 }
 
 export interface BloodBankQCLot {
-    BloodBankQCLotID?: string;
+    bloodBankQCLotID?: string;
     qcName: string;
     lotNumber: string;
     openDate: string;

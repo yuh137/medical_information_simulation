@@ -89,8 +89,6 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
     // AGF Test: Try the actual database
     getReagents();
     const reags = getReagents();
-    console.log(reags);
-    console.log("---/");
     const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots`, {
       method: 'POST',
       headers: {
