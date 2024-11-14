@@ -68,10 +68,12 @@ const MolecularQualitativeAnalysis = () => {
 
   const handleQcStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQCStatus(event.target.value);
-    if (event.target.value === 'approved') { setQCComment(''); }
+    if (event.target.value === 'approved') { setQCComment('QC Approved'); }
   };
+
   const saveComment = () => {
-    if (qcStatus === 'concern') { } handleModalClose();
+    handleModalClose();
+    localStorage.setItem('reviewComment', qcComment);
   };
 
 
@@ -224,7 +226,7 @@ const MolecularQualitativeAnalysis = () => {
               border: '1px solid #3A6CC6',
               marginTop: '20px'
             }}
-            onClick={() => { navigate('/molecular/qc_analysis_report') }}>Qualitative Analysis Report
+            onClick={() => { navigate(`/molecular/qc_analysis_report/${encodeURIComponent(selectedAnalyteId)}/${encodeURIComponent(startDate)}/${encodeURIComponent(endDate)}`) }}>Qualitative Analysis Report
           </Button>
         </div>
       </div>

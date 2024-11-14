@@ -252,7 +252,7 @@ function AppWithRouter() {
                 element: <MolecularQualitativeAnalysis />,
               },
               {
-                path: 'qc_analysis_report',
+                path: 'qc_analysis_report/:encodedSelectedAnalyteId/:encodedStartDate/:encodedEndDate',
                 element: <MolecularQualitativeAnalysisReport />
               },
             ]
