@@ -89,12 +89,6 @@ const MolecularAnalyteSelection = () => {
           }}
             onClick={handleQualitativeAnalysis}>Qualitative Analysis</Button>
         </div>
-
-<<<<<<< HEAD
-
-
-=======
->>>>>>> main
         <Dialog open={openDateDialog} onClose={() => setOpenDateDialog(false)}>
           <div style={{ backgroundColor: '#3A6CC6', padding: '15px', borderRadius: '8px' }}>
             <DialogTitle style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', margin: 0 }}>Date Range Selection</DialogTitle>
@@ -132,7 +126,6 @@ const MolecularAnalyteSelection = () => {
                 </tbody>
               </table>
             </DialogContent>
-
             <DialogActions style={{ justifyContent: 'center', padding: '10px' }}>
               <Button onClick={handleContinue} variant="contained" color="primary">Continue</Button>
             </DialogActions>
