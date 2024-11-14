@@ -251,7 +251,7 @@ function AppWithRouter() {
                     element: <HemeCoagQCTypeButtonsPage />,
                   },
                   {
-                    path: 'create_custom/:item',
+                    path: 'create_custom/:item/:item2',
                     element: <CustomCreateNewPage name="Custom" />,
                     loader: async ({ params, request }) => {
                       const { item } = params;
