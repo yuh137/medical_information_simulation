@@ -62,11 +62,22 @@ export const BloodBankTwoThreeInputPage = (props: { name: string }) => {
 
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(initialData);
   const [isValid, setIsValid] = useState<boolean>(false);
+  const [isHeaderValid, setHeaderValid] = useState<boolean>(false);
   // const [isDrawerOpen, openDrawer] = useState<boolean>(false);
   const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState(false);  // For feedback
   const validValues = ["W+", "1+", "2+", "3+", "4+", "H+", "0", "TNP"]
 
-  const { register, handleSubmit, setValue } = useForm<BloodBankQC_Two__Three>();
+  const { register, handleSubmit, setValue,watch } = useForm<BloodBankQC_Two__Three>();
+  const lotNumber = watch("lotNumber");
+  const qcExpDate = watch("qcExpDate");
+  const openDate = watch("openDate");
+  const closedDate = watch("closedDate");
+  const reportType = watch("reportType");
+  useEffect(() => {
+    // Disable the button if any required field is empty
+    const isAnyFieldEmpty = !lotNumber || !qcExpDate || !openDate || !closedDate || !reportType;
+    setHeaderValid(!isAnyFieldEmpty);
+  }, [lotNumber, qcExpDate, openDate, closedDate,reportType]);
   const saveQC: SubmitHandler<BloodBankQC_Two__Three> = async (data) => {
     const qcDataToSave: BloodBankQC_Two__Three = {
       fileName: NameFromLink(fileName_Item),
@@ -567,7 +578,7 @@ export const BloodBankTwoThreeInputPage = (props: { name: string }) => {
 
             setFeedbackNotiOpen(true);
           }}
-          disabled={!isValid}>
+          disabled={!isValid||!isHeaderValid}>
           Save QC File
         </ButtonBase>
       </div>

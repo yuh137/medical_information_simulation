@@ -66,12 +66,23 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
 
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(initialData);
   const [isValid, setIsValid] = useState<boolean>(false);
+  const [isHeaderValid, setHeaderValid] = useState<boolean>(false);
   // const [isDrawerOpen, openDrawer] = useState<boolean>(false);
-  const [isValidHeader, setIsValidHeader] = useState(true); // Track header validity
   const validValues = ["W+", "1+", "2+", "3+", "4+", "H+", "0", "TNP"]
 
-  const { setValue, register, handleSubmit } = useForm<BloodBankRBC>();
+  const { setValue, register, handleSubmit,watch } = useForm<BloodBankRBC>();
+  const lotNumber = watch("lotNumber");
+  const qcExpDate = watch("qcExpDate");
+  const openDate = watch("openDate");
+  const closedDate = watch("closedDate");
+  const reportType = watch("reportType");
 
+  useEffect(() => {
+    // Disable the button if any required field is empty
+    const isAnyFieldEmpty = !lotNumber || !qcExpDate || !openDate || !closedDate || !reportType;
+    setHeaderValid(!isAnyFieldEmpty);
+  }, [lotNumber, qcExpDate, openDate, closedDate,reportType]);
+  
   const saveQC: SubmitHandler<BloodBankRBC> = async (data) => {
     const qcDataToSave: BloodBankRBC = {
       fileName: NameFromLink(fileName_Item), // fileName_Item,
@@ -710,7 +721,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
 
             setFeedbackNotiOpen(true);
           }}
-          disabled={!isValid}>
+          disabled={!isValid || !isHeaderValid}>
 
           Save QC File
         </ButtonBase>

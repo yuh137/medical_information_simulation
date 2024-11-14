@@ -60,11 +60,24 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
 
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(initialData);
   const [isValid, setIsValid] = useState<boolean>(false);
+
+  const[isHeaderValid,setHeaderValid] = useState<boolean>(false);
   // const [isDrawerOpen, openDrawer] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const validValues = ["W+", "1+", "2+", "3+", "4+", "H+","0"];
-  
-  const { register, handleSubmit, setValue } = useForm<BloodBankQC>();
+
+  const { register, handleSubmit, setValue, watch} = useForm<BloodBankQC>();
+  const lotNumber = watch("lotNumber");
+  const qcExpDate = watch("qcExpDate");
+  const openDate = watch("openDate");
+  const closedDate = watch("closedDate");
+  const reportType = watch("reportType");
+  useEffect(() => {
+    // Disable the button if any required field is empty
+    const isAnyFieldEmpty = !lotNumber || !qcExpDate || !openDate || !closedDate || !reportType;
+    setHeaderValid(!isAnyFieldEmpty);
+  }, [lotNumber, qcExpDate, openDate, closedDate,reportType]);
+
 
   interface dbReagent {  // Used to add reagents in JSON format
     reagentName: string,
@@ -99,7 +112,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
       })
     console.log(checkServer);
     // Index DB 
-    /*
+    
     const qcDataToSave: BloodBankQC = {
       fileName: fileName_Item,
       lotNumber: data.lotNumber || "",
@@ -120,7 +133,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
     } catch (error) {
       console.error("Failed to save data:", error);
     }
-      */
+      
   };
 
   const inputRefs = useRef<HTMLInputElement[]>([]);
@@ -481,6 +494,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                   <TableCell className="exp">
                     <input
                       type="text"
+                      placeholder="mm/dd/yy"
                       maxLength={10}
                       ref={el => {
                         if (el && inputRefs.current.length < QCElements.length * 3) {
@@ -597,13 +611,12 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
             setFeedbackNotiOpen(true);
           }
           }
-          disabled={!isValid}>
+          disabled={!isValid || !isHeaderValid}>
           Save QC File
         </ButtonBase>
       </div>
-      <Backdrop // OK BACKDROP
+      <Backdrop
         open={isFeedbackNotiOpen}
-
         onClick={() => {
           setFeedbackNotiOpen(false);
         }}
