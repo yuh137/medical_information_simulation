@@ -8,7 +8,6 @@
     "@emotion/styled": "^11.13.0",
     "@iconify/react": "^4.1.1",
     "@mui/icons-material": "^6.1.5",
-    "@mui/material": "^5.16.7",
     "@react-pdf/renderer": "^3.4.4",
     "@table-library/react-table-library": "^4.1.7",
     "@tanstack/react-table": "^8.20.5",
