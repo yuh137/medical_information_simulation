@@ -1,7 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
-import { getAllDataFromStore } from '../../../utils/indexedDB/getData';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte } from '../../../utils/indexedDB/IDBSchema';
 import NavBar from '../../../components/NavBar';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '../../../components/ui/table';
@@ -90,17 +88,13 @@ const MolecularAnalyteSelection = () => {
               fontSize: '18px',
               borderRadius: '20px', }}
             onClick={handleQualitativeAnalysis}>Qualitative Analysis</Button>
-          <Button variant="contained" style={{
-              backgroundColor: '#3A62A7',
-              color: 'white',
-              padding: '15px 40px', 
-              fontSize: '18px',
-              borderRadius: '20px',}}
-            onClick={() => navigate('/molecular/levey-jennings')}>Levey-Jennings</Button>
         </div>
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> main
         <Dialog open={openDateDialog} onClose={() => setOpenDateDialog(false)}>
           <div style={{ backgroundColor: '#3A6CC6', padding: '15px', borderRadius: '8px' }}>
             <DialogTitle style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', margin: 0 }}>Date Range Selection</DialogTitle>

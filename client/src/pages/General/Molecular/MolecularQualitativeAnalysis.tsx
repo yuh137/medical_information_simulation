@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
+<<<<<<< HEAD
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { getQCRangeByDetails } from '../../../utils/indexedDB/getData';
 import { MolecularQCTemplateBatch, QCPanel } from '../../../utils/indexedDB/IDBSchema';
+=======
+import { useParams, useNavigate } from 'react-router-dom';
+import { MolecularQCTemplateBatch } from '../../../utils/indexedDB/IDBSchema';
+>>>>>>> main
 import NavBar from '../../../components/NavBar';
 import { Modal, Radio, RadioGroup, FormControlLabel, TextField } from '@mui/material';
 import { Button } from '@mui/material';
@@ -74,11 +79,19 @@ const MolecularQualitativeAnalysis = () => {
 
 
   const columns: ColumnDef<TableData>[] = [
+<<<<<<< HEAD
     { accessorKey: 'creationDate', header: 'Run Date', cell: (info) => info.getValue(), minSize: 50, maxSize: 50, },
     { accessorKey: 'creationTime', header: 'Run Time', cell: (info) => info.getValue(), minSize: 50, maxSize: 50, },
     { accessorKey: 'tech', header: 'Tech', cell: (info) => info.getValue(), minSize: 20, maxSize: 20, },
     { accessorKey: 'value', header: 'Test Range', cell: (info) => info.getValue(), minSize: 20, maxSize: 20, },
     { accessorKey: 'comment', header: 'Comments', cell: (info) => info.getValue(), minSize: 300, maxSize: 500, },
+=======
+    {accessorKey: 'creationDate', header: 'Run Date', cell: (info) => info.getValue(), minSize: 50, maxSize: 50,},
+    {accessorKey: 'creationTime', header: 'Run Time', cell: (info) => info.getValue(), minSize: 50, maxSize: 50,},
+    {accessorKey: 'tech', header: 'Tech', cell: (info) => info.getValue(), minSize: 20, maxSize: 20,},
+    {accessorKey: 'value', header: 'Test Range', cell: (info) => info.getValue(), minSize: 20, maxSize: 20,},
+    {accessorKey: 'comment', header: 'QC Comments', cell: (info) => info.getValue(), minSize: 300, maxSize: 500,},
+>>>>>>> main
   ];
 
   const table = useReactTable({ data: tableData, columns, getCoreRowModel: getCoreRowModel(), getPaginationRowModel: getPaginationRowModel(), });
@@ -87,16 +100,94 @@ const MolecularQualitativeAnalysis = () => {
     <div>
       <NavBar name="Review Controls: Molecular" />
 
+<<<<<<< HEAD
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', marginLeft: '10px', marginRight: '10px' }}>
         <div style={{ flex: '0 0 180px', marginRight: '20px' }}>
           <div style={{ fontWeight: 'bold', marginTop: '30px' }}>
             <div>QC Panel: {qcData?.fileName}</div>
             <div>Lot #: {qcData?.lotNumber}</div>
             <div>Closed Date: {qcData?.closedDate}</div>
+=======
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', marginLeft: '15px', marginRight: '15px' }}>
+        <div style={{ flex: '0 0 320px', marginRight: '20px' }}>
+          <div style={{ fontWeight: 'bold', marginTop: '10px', fontSize: '18px' }}>
+            <div style={{ marginBottom: '3px' }}>QC Panel: {qcData?.fileName}</div>
+          </div>
+          <div style={{ fontWeight: 'bold', marginBottom: '3px' }}>
+            <div>Lot #: {qcData?.lotNumber}</div>
+          </div>
+          <div style={{ marginBottom: '3px' }}>
+            <div>Expiration Date: </div>
+            <div>Open Date: </div>
+            <div>Closed Date: {qcData?.closedDate}</div>
+          </div>
+          <div style={{ marginTop: '40px', fontWeight: 'bold' }}>
+>>>>>>> main
             <div>Analyte: {selectedAnalyteId}</div>
           </div>
+          <div style={{ marginTop: '1px', fontWeight: 'bold', textDecoration: 'underline' }}>
+            <div>Expected Range:</div>
+          </div>
+        <div>
+      </div>
+
+      </div>
+        <div style={{ flex: '1', margin: '0 20px' }}>
+          <div style={{ marginTop: '30px', marginBottom: '120px', textAlign: 'center' }}>
+            <span style={{ fontWeight: 'bold', textDecoration: 'underline', fontSize: '22px' }}>Qualitative Analysis:</span> <span style={{ fontSize: '22px' }}>{selectedAnalyteId}</span>
+          </div>
+          <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #ccc' }}>
+            <thead>
+              {table.getHeaderGroups().map(headerGroup => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map(header => (
+                    <th
+                      key={header.id}
+                      style={{
+                        padding: '10px',
+                        borderBottom: '1px solid #ccc',
+                        textAlign: 'left',
+                        backgroundColor: '#3A6CC6',
+                        color: 'white',
+                        border: '1px solid #ccc',
+                        width: header.column.columnDef.minSize || 100, 
+                      }}
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row, rowIndex) => (
+                <tr
+                  key={row.id}
+                  style={{
+                    backgroundColor: rowIndex % 2 === 0 ? '#DAE3F3' : '#B0C4DE',
+                    height: '40px',
+                  }}
+                >
+                  {row.getVisibleCells().map(cell => (
+                    <td
+                      key={cell.id}
+                      style={{
+                        padding: '10px',
+                        borderBottom: '1px solid #ccc',
+                        border: '1px solid #ccc',
+                        width: cell.column.columnDef.minSize || 100,
+                      }}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
+<<<<<<< HEAD
         <div style={{ flex: '1', margin: '0 20px' }}>
           <div style={{ marginBottom: '10px', textAlign: 'center' }}>
             <span style={{ fontWeight: 'bold', textDecoration: 'underline' }}>Qualitative Analysis:</span> <span style={{ fontSize: 'inherit' }}>{selectedAnalyteId}</span>
@@ -160,6 +251,67 @@ const MolecularQualitativeAnalysis = () => {
           <Button variant="outlined" style={{ marginTop: '10px', width: '100%' }}>STUDENT NOTES</Button>
           <Button variant="outlined" style={{ marginTop: '80px', width: '100%' }} onClick={handleModalOpen}>Review Comments</Button>
           <Button variant="outlined" style={{ marginTop: '80px', width: '100%' }} onClick={() => { navigate('/molecular/qc_analysis_report') }}>Qualitative Analysis Report</Button>
+=======
+        <div style={{ flex: '0 0 180px', marginLeft: '20px', marginTop: '10px' }}>
+          <div style = {{fontWeight: 'bold'}}>Review Date:</div>
+          <div>Start Date: {startDate}</div>
+          <div>Close Date: {endDate}</div>
+          <Button
+            variant="outlined"
+            style={{
+              width: '200px',
+              backgroundColor: '#DAE3F3',
+              color: 'black',
+              borderRadius: '10px',
+              textAlign: 'center',
+              padding: '10px 0',
+              border: '1px solid #3A6CC6',
+              marginTop: '50px'
+            }}>LEARN
+          </Button>
+          <Button
+            variant="outlined"
+            style={{
+              width: '200px',
+              backgroundColor: '#DAE3F3',
+              color: 'black',
+              borderRadius: '10px',
+              textAlign: 'center',
+              padding: '10px 0',
+              border: '1px solid #3A6CC6',
+              marginTop: '20px'
+            }}>STUDENT NOTES
+          </Button>
+          <Button
+            variant="outlined"
+            style={{
+              width: '200px',
+              backgroundColor: '#DAE3F3',
+              color: 'black',
+              borderRadius: '10px',
+              textAlign: 'center',
+              padding: '10px 0',
+              border: '1px solid #3A6CC6',
+              marginTop: '325px'
+            }}
+            onClick={handleModalOpen}>Review Comments
+          </Button>
+
+          <Button
+            variant="outlined"
+            style={{
+              width: '200px',
+              backgroundColor: '#DAE3F3',
+              color: 'black',
+              borderRadius: '10px',
+              textAlign: 'center',
+              padding: '10px 0',
+              border: '1px solid #3A6CC6',
+              marginTop: '20px'
+            }} 
+            onClick={() => {navigate('/molecular/qc_analysis_report')}}>Qualitative Analysis Report
+          </Button>
+>>>>>>> main
         </div>
       </div>
 
