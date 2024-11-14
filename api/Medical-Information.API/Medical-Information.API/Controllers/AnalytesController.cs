@@ -24,7 +24,6 @@ namespace Medical_Information.API.Controllers
         public async Task<IActionResult> GetAllAnalytes()
         {
             var analyteModel = await analyteRepository.GetAllAnalytesAsync();
-
             var analyteDTO = mapper.Map<List<Analyte>>(analyteModel);
 
             return Ok(analyteDTO);
@@ -35,11 +34,8 @@ namespace Medical_Information.API.Controllers
         public async Task<IActionResult> CreateAnalyte([FromRoute] Guid lotId, [FromBody] AddAnalyteRequestDTO dto)
         {
             var analyteModel = mapper.Map<Analyte>(dto);
-
             await analyteRepository.CreateAnalyteAsync(analyteModel);
-
             var analyteDTO = mapper.Map<AnalyteDTO>(analyteModel);
-
             return CreatedAtAction("Get", new { id = analyteDTO.AnalyteID }, analyteDTO);
         }
 

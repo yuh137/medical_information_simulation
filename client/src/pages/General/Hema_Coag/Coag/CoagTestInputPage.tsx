@@ -15,22 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from "../../../../components/ui/table";
-import {
-  CMP,
-  Cardiac,
-  Thyroid,
-  Liver,
-  Lipid,
-  Iron,
-  Drug,
-  Hormone,
-  Cancer,
-  Pancreatic,
-  Vitamins,
-  Diabetes,
-  FactorLevelQC,
-
-} from "../../../../utils/MOCK_DATA";
 
 import {
   NormalCoag,
@@ -44,8 +28,8 @@ import {
   APCRVScreenNeg,
   VonWittebrandFactor,
   AntiXaQC,
+  FactorLevelQC,
 } from "../../../../utils/MOCK_DATA";
-
 
 import { DefinedRequestError, Department, ErrorCode, qcTypeLinkList, CoagTypeLinkList, renderSubString } from "../../../../utils/utils";
 import { Backdrop, Button, ButtonBase } from "@mui/material";
@@ -97,29 +81,29 @@ export const CoagTestInputPage = () => {
   const loaderData = useLoaderData() as QCTemplateBatch;
   const { checkSession, checkUserType } = useAuth();
 
-  const mockData = item?.includes("norm_coag")
+  const mockData = item?.includes("normalcoag")
   ? NormalCoag
-  : item?.includes("abnorm_coag")
+  : item?.includes("abnormalcoag")
   ? AbnormalCoag
-  : item?.includes("norm_dic")
+  : item?.includes("normaldic")
   ? NormalDIC
-  : item?.includes("abnorm_dic")
+  : item?.includes("abnormaldic")
   ? AbnormalDIC
-  : item?.includes("fdp_qc")
+  : item?.includes("fdpqc")
   ? FibnnDegradationProducts
-  : item?.includes("fact_lvl_qc")
+  : item?.includes("factlvlqc")
   ? FactorLevelQC
-  : item?.includes("lupus_anticoag_pos")
+  : item?.includes("lupusanticoagpos")
   ? LupusAnticoagulantPositive
-  : item?.includes("lupus_anticoag_neg")
+  : item?.includes("lupusanticoagneg")
   ? LupusAnticoagulantNegative
-  : item?.includes("apcr_v_screen_pos")
+  : item?.includes("apcrvscreenpos")
   ? APCRVScreenPos
-  : item?.includes("apcr_v_screen_neg")
+  : item?.includes("apcrvscreenneg")
   ? APCRVScreenNeg
-  : item?.includes("von_will_fact")
+  : item?.includes("vonwillebrandfact")
   ? VonWittebrandFactor
-  : item?.includes("anti_xa_qc")
+  : item?.includes("antixaqc")
   ? AntiXaQC
   : NormalCoag;
 
@@ -208,7 +192,7 @@ export const CoagTestInputPage = () => {
           "openDate": qcDataToSave.openDate ?? dayjs().toISOString(),
           "expirationDate": qcDataToSave.expirationDate,
           "fileDate": qcDataToSave.fileDate ?? dayjs().toISOString(),
-          "department": Department.Coagulation,
+          "department": Department.Hematology,
           "analytes": qcDataToSave.analytes.map(analyte => ({
             "analyteName": analyte.analyteName,
             "analyteAcronym": analyte.analyteAcronym,

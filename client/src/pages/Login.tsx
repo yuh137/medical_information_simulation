@@ -10,7 +10,6 @@ import { Icon } from '@iconify/react';
 
 const Login = () => {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { checkSession, checkUserType } = useAuth();

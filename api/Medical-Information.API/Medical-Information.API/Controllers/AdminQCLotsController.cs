@@ -64,13 +64,41 @@ namespace Medical_Information.API.Controllers
                 return NotFound(new RequestErrorObject
                 {
                     ErrorCode = ErrorCode.NotFound,
-                    Message = "QC Lot Do Not Exist!"
+                    Message = "QC Lot Does Not Exist!"
                 });
             }
 
             var qcLotDTO = mapper.Map<AdminQCLotDTO>(qcLotModel);
 
             return Ok(qcLotDTO);
+        }
+
+        [HttpDelete]
+        [Route("ByName")]
+        public async Task<IActionResult> DeleteQCLotByName([FromRoute] string? name, [FromRoute] string? dep) {
+            //we need to check if QC lot exists, then simply delete DB entry with that name. 
+            //Return error on error, we'll return ok on good or if it dont exist, user dont need to know they deleted nothing
+
+            Console.WriteLine("Test");
+
+            AdminQCLot? qcLotModel;
+
+            if (Enum.TryParse(dep, true, out Department department))
+                qcLotModel = await adminQCLotRepository.GetAdminQCLotByNameAsync(name, department);
+            else
+                qcLotModel = await adminQCLotRepository.GetAdminQCLotByNameAsync(name);
+
+            //dont care if nothing returned, treat as normal
+            if (qcLotModel == null)
+                return Ok();    
+            
+
+            //now delete db entry
+
+
+
+
+            return Ok();
         }
 
         [HttpPost]

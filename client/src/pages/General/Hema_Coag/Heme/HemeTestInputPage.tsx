@@ -364,7 +364,7 @@ export const HemeTestInputPage = () => {
         if (isSavingQCLotSuccessful) {
           navigate("/admin-home");
         }
-      }, 5000);
+      }, 1000);
     }
   }, [isFeedbackNotiOpen])
 

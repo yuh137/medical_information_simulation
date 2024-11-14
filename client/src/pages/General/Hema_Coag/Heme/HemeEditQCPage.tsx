@@ -81,7 +81,27 @@ const HematologyEditQC = () => {
           >
             Edit QC File
           </ButtonBase>
-          <ButtonBase className="sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold">
+          <ButtonBase className="sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold"
+            onClick={async () => {
+              if (selectedItem) {
+                const dep = Department.Hematology.toString();
+                const name = hemeTypeLinkList.find(item => item.link == selectedItem)?.name ?? "";
+                try {
+                  const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByName?dep=${dep}&name=${name}`, {method: "DELETE"});
+
+                  //just omit this part, we only return ok
+                  //if (res.ok) {
+                  //  return res.json();
+                  //}
+                } catch (e) {
+                  console.error("Error fetching QC data", e);
+                }
+              } else {
+                setNotiType(NotiType.NotSelected);
+                setIsFeedbackNotiOpen(true);
+              }
+            }}
+          >
             Delete QC File
           </ButtonBase>
         </div>
