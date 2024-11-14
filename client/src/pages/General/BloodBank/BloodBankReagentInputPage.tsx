@@ -36,10 +36,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
         const bbLotRes = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots/${qcLotId}`);
         if (bbLotRes.ok) {  // Successfully fetched the QC Lot
           const bbLot: BloodBankQCLot = await bbLotRes.json();
-          console.log(bbLot);
-          console.log(bbLot.reagents);
           setQcData(bbLot);
-          // setQcData(JSON.parse(storedQCData));
         }
       }
     } else {
@@ -142,13 +139,14 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
                   Abbreviation={item.abbreviation}
                   AntiSeraLot={item.reagentLotNum}
                   reagentExpDate={item.expirationDate}
+                  PosExpectedRange={item.posExpectedRange}
+                  NegExpectedRange={item.negExpectedRange}
                   ExpImmSpinRange={item.immediateSpin}
                   Exp37Range={item.thirtySevenDegree}
                   ExpAHGRange={item.AHG}
                   ExpCheckCellsRange={item.checkCell}
                   handleInputChange={(val: string) => handleInputChange(index, val)}
                 />
-                <p className="text-sm mt-2">Expected Range: 4+</p>
               </div>
             ))}
           </div>
@@ -166,13 +164,14 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
                   Abbreviation={item.abbreviation}
                   AntiSeraLot={item.reagentLotNum}
                   reagentExpDate={item.expirationDate}
+                  PosExpectedRange={item.posExpectedRange}
+                  NegExpectedRange={item.negExpectedRange}
                   ExpImmSpinRange={item.immediateSpin}
                   Exp37Range={item.thirtySevenDegree}
                   ExpAHGRange={item.AHG}
                   ExpCheckCellsRange={item.checkCell}
                   handleInputChange={(val: string) => handleInputChange(index, val)}
                 />
-                <p className="text-sm mt-2">Expected Range: 0</p>
               </div>
             ))}
           </div>
