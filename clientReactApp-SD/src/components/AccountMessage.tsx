@@ -4,7 +4,7 @@ import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import AppTheme from "../shared-theme/AppTheme.tsx";
-import ColorModeSelect from "../shared-theme/ColorModeSelect.tsx";
+//import ColorModeSelect from "../shared-theme/ColorModeSelect.tsx";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -12,9 +12,13 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid2";
 
 import { useEffect, useState } from "react";
-import { UserProvider,useUser } from "./AccessIndexedDB.tsx"
-import { getAccountData, getDataByKey } from "../util/indexedDB/getData.ts";
+//import { UserProvider,useUser } from "./AccessIndexedDB.tsx"
+import { getAccountData } from "../util/indexedDB/getData.ts";
 import { Admin, Student } from "../util/indexedDB/IDBSchema";
+import { To, useNavigate } from 'react-router-dom';
+
+import { Resend } from 'resend';
+import { Email } from './email';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -85,58 +89,8 @@ const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: "#1A2027",
   }),
 }));
-// Styled container for the grid layout
-const StyledGridContainer = styled(Box)(({ theme }) => ({
-  flexGrow: 1,
-  padding: theme.spacing(2),
-}));
 
-// Styled grid items
-const StyledGridItem = styled(Grid)(({ theme }) => ({
-  padding: theme.spacing(2),
-  textAlign: "center",
-  color: theme.palette.text.primary,
-}));
 
-/* The main BasicGrid component
-const BasicGrid = () => (
-  <StyledGridContainer>
-    <Grid container spacing={2}>
-      <StyledGridItem item xs={8}>
-        <Item>size=8</Item>
-      </StyledGridItem>
-      <StyledGridItem item xs={4}>
-        <Item>size=4</Item>
-      </StyledGridItem>
-      <StyledGridItem item xs={4}>
-        <Item>size=4</Item>
-      </StyledGridItem>
-      <StyledGridItem item xs={8}>
-        <Item>size=8</Item>
-      </StyledGridItem>
-    </Grid>
-  </StyledGridContainer>
-);
-*/
-/*
-async function getData(storeName, id) {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open("MIS_database");
-
-    request.onsuccess = () => {
-      const db = request.result;
-      const transaction = db.transaction(storeName, "readonly");
-      const store = transaction.objectStore(storeName);
-      const dataRequest = id ? store.get(id) : store.getAll();
-
-      dataRequest.onsuccess = () => resolve(dataRequest.result);
-      dataRequest.onerror = (event) => reject(event);
-    };
-
-    request.onerror = (event) => reject(event);
-  });
-}
-*/
 const AccountDataPage = () => {
   const [accountData, setAccountData] = useState<Admin[] | Student[] | null>(
     JSON.parse(localStorage.getItem('accountData') || 'null')
@@ -154,65 +108,101 @@ const AccountDataPage = () => {
     fetchData();
   }, [accountData]);
 }
-type Admin = {
-    id: string;
-    email: string;
-    username: string;
-    password: string;
-    firstname: string;
-    lastname: string;
-    initials: string;
+
+//Grab user info from one of the account tables
+async function fetchFirstName(): Promise<string> {
+  const accountData = await getAccountData();
+  if (accountData && Array.isArray(accountData) && accountData.length > 0) {
+    const user = accountData[0] as Admin | Student;
+    return `${user.firstname}`;
   }
-type Student = {
-    id: string;
-    email: string;
-    username: string;
-    password: string;
-    firstname: string;
-    lastname: string;
-    initials: string;
+  return 'Error';
 }
+async function fetchLastName(): Promise<string> {
+  const accountData = await getAccountData();
+  if (accountData && Array.isArray(accountData) && accountData.length > 0) {
+    const user = accountData[0] as Admin | Student;
+    return `${user.lastname}`;
+  }
+  return 'Error';
+}
+async function fetchUserEmail(): Promise<string> {
+  const accountData = await getAccountData();
+  if (accountData && Array.isArray(accountData) && accountData.length > 0) {
+    const user = accountData[0] as Admin | Student;
+    return `${user.email}`;
+  }
+  return 'Error';
+}
+//Grab name from one of the account tables
+async function fetchUserType(): Promise<string> {
+  const accountData = await getAccountData();
+  if (accountData && Array.isArray(accountData) && accountData.length > 0) {
+    const user = accountData[0] as Admin | Student;
+    return `${user.type}`;
+  }
+  return 'Not registered as student or admin';
+}
+
+//Email stuff
+const resend = new Resend('re_123456789');//Update with Resend API key (need to generate one for the project)
+async function sendEmail(fromEmail, toEmail, text){
+  await resend.emails.send({
+    from: fromEmail,
+    to: toEmail,
+    subject: 'MIS Notification',
+    react: <Email url="https://example.com" />,
+  });
+}
+
 export default function AccountMessage(props: {
   disableCustomTheme?: boolean;
 }) {
-  const [userData, setUserData] = useState<Admin[] | Student[] | null>(null);
-
+  const [userFirstName, setUserFirstName] = useState<string>('User');
+  const [userLastName, setUserLastName] = useState<string>('User');
+  const [userType, setUserType] = useState<string>('Type');
+  const [userEmail, setUserEmail] = useState<string>('User');
+  // Fetch the user's name from IndexedDB on component mount
   useEffect(() => {
-    async function fetchAccountData() {
-      try {
-        const storeName = "students"; // Example: "students" store
-        const id = "5a1f9e80-5b21-11d3-9a0c-0305e82c3301"; // Example user ID
-        const data = await getDataByKey(storeName, id);
-
-        if (data === null) {
-          console.error("No data found for this ID");
-        } else if (typeof data === "string") {
-          console.error("Error:", data);
-        } else {
-          setUserData(data); // Store data in state if it's not null or an error message
-        }/*
-        const data = await getDataByKey("students", "5a1f9e80-5b21-11d3-9a0c-0305e82c3301");//getAccountData();
-        if (data) {
-          setUserData(data);
-        } else {
-          console.error("No data found");
-        }*/
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+    async function fetchName() {
+      const firstname = await fetchFirstName();
+      const lastname = await fetchLastName();
+      const email = await fetchUserEmail();
+      setUserFirstName(firstname);
+      setUserLastName(lastname);
+      setUserEmail(email);
     }
-    fetchAccountData();
+    fetchName();
+    async function fetchType() {
+      const user_type = await fetchUserType();
+      setUserType(user_type);
+    }
+    fetchType();
   }, []);
-  //getData("students", "5a1f9e80-5b21-11d3-9a0c-0305e82c3301");
-  //const userData = getAccountData();
+  //for log out
+  const navigate = useNavigate();
+  const clearObjectStore = (dbName: string, storeName: string) => {
+    const request = indexedDB.open(dbName);
+    request.onsuccess = function (event) {
+      const db = event.target.result;
+      const transaction = db.transaction(storeName, 'readwrite');
+      const store = transaction.objectStore(storeName);
+      store.clear();
+      console.log(`Cleared object store: ${storeName}`);
+    
+    };
+  };
+  const handleNavigation = (path: To) => {
+    navigate(path);
+  };
   
+  //for email
+
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
         {/* Replace card with you*/}
-        {/*<h1>Account Page</h1>*/}
-        {/*<UserProvider>*/}
         <Card>
           <h1>Account Page</h1>
           <div>
@@ -220,30 +210,19 @@ export default function AccountMessage(props: {
               <Grid size={6}>
                 <Item>
                   <div>
-                    {userData && userData[1] ? (
+                    {userFirstName && userLastName && userEmail ? (
                       <>
-                        First Name: <p>{userData[1].firstname}</p>
                         <br />
-                        Last Name: <p>{userData[1].lastname}</p>
-                        <br />
-                        E-mail: <p>{userData[1].email}</p>
-                        <br />
-                        Department, Section: NULL
+                        First Name: {userFirstName}
+                        <br /><br />
+                        Last Name: {userLastName}
+                        <br /><br />
+                        E-mail: {userEmail}
+                        <br /><br />
                       </>
                     ) : (
                       <p>Loading...</p>
                     )}
-                    {/*
-                    <h3>Basic Info</h3>
-                    First Name: <p>userData[1].firstname</p>
-                    <br />
-                    Last Name: {/*user.lastname/}
-                    <br />
-                    E-mail: {/*user.email/}
-                    <br />
-                    Department, Section: NULL
-                    <br />
-                    */}
                   </div>
                 </Item>
               </Grid>
@@ -254,7 +233,15 @@ export default function AccountMessage(props: {
                     <h3>User Settings</h3>
                     Privacy Info? <br />
                     <br />
-                    <Button variant="outlined">SIGN OUT</Button> <br />
+                    <Button variant="outlined"
+                      onClick={() => {
+                      // Clear all relevant object stores
+                      clearObjectStore('MIS_database', 'admins');
+                      clearObjectStore('MIS_database', 'students');
+                      clearObjectStore('MIS_database', 'qc_store');
+                      handleNavigation('/');
+                      }}
+                    >SIGN OUT</Button> <br />
                     <br />
                     Send message to Professor: <br />
                     <StyledFormBox
@@ -287,45 +274,8 @@ export default function AccountMessage(props: {
                 </Item>
               </Grid>
             </Grid>
-            {/*
-            <div>
-            <h3>Basic Info</h3>
-            First Name: <br />
-            Last Name: <br />
-            E-mail: <br />
-            Department, Section: <br />
-            </div>
-            <div>
-            <br />
-            <h3>User Settings</h3>
-            Privacy Info? <br />
-            <br />
-            <Button variant="outlined">SIGN OUT</Button> <br />
-            <br />
-            Send message to Professor: <br />
-            <StyledFormBox component="form" noValidate autoComplete="off">
-            <TextField
-              id="standard-basic"
-              label="professor@email.com"
-              variant="standard"
-              /*multiline
-              rows={1}
-            />
-            </StyledFormBox>
-            <StyledFormBox component="form" noValidate autoComplete="off">
-            <TextField
-              id="standard-basic"
-              label="Enter message here."
-              variant="standard"
-              multiline
-              rows={4}
-            />
-            </StyledFormBox> <br />
-            <Button variant="outlined">SEND</Button> <br />
-            </div>*/}
           </div>
         </Card>
-        {/*</UserProvider>*/}
       </SignInContainer>
     </AppTheme>
   );
