@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from 'react';
-<<<<<<< HEAD
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { getQCRangeByDetails } from '../../../utils/indexedDB/getData';
-import { MolecularQCTemplateBatch, QCPanel } from '../../../utils/indexedDB/IDBSchema';
-=======
-import { useParams, useNavigate } from 'react-router-dom';
-import { MolecularQCTemplateBatch } from '../../../utils/indexedDB/IDBSchema';
->>>>>>> main
+import { Analyte, MolecularQCTemplateBatch, QCPanel } from '../../../utils/indexedDB/IDBSchema';
 import NavBar from '../../../components/NavBar';
 import { Modal, Radio, RadioGroup, FormControlLabel, TextField } from '@mui/material';
 import { Button } from '@mui/material';
-import { getAllDataByFileName } from '../../../utils/indexedDB/getData';
 
 import {
   ColumnDef,
@@ -27,7 +21,8 @@ const MolecularQualitativeAnalysis = () => {
   const selectedAnalyteId = decodeURIComponent(encodedSelectedAnalyteId as string);
   const startDate = decodeURIComponent(encodedStartDate as string);
   const endDate = decodeURIComponent(encodedEndDate as string);
-  const [qcData, setQCData] = useState<MolecularQCTemplateBatch | undefined>(undefined);
+  const [dbData, setDBData] = useState<QCPanel | undefined>(undefined);
+  const [analyte, setAnalyte] = useState<Analyte | undefined>(undefined);
   const [tableData, setTableData] = useState<TableData[]>([]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [qcStatus, setQCStatus] = useState<string>('concern');
@@ -43,11 +38,12 @@ const MolecularQualitativeAnalysis = () => {
     const fetchAnalyteData = async () => {
       try {
         const dbData = JSON.parse(localStorage.getItem("selectedQCData") as string) as QCPanel;
+        const analyte = dbData.analytes.find((element) => element.analyteName === selectedAnalyteId);
         if (dbData) {
-          const qcData = ((await getQCRangeByDetails(dbData.qcName, dbData.lotNumber, '')) as unknown) as MolecularQCTemplateBatch;
+          const qcData = ((await getQCRangeByDetails(dbData.qcName, dbData.lotNumber, dbData.closedDate || "")) as unknown) as MolecularQCTemplateBatch;
           const isoStartDate = isoFormatDate(startDate as string);
           const isoEndDate = isoFormatDate(endDate as string);
-          const inRangeReports = qcData.reports.filter(report => ((new Date(isoStartDate)).getTime() <= (new Date(report.creationDate)).getTime()) && ((new Date(report.creationDate)).getTime() <= (new Date(isoEndDate)).getTime()) && report.analyteInputs.some(input => input.analyteName === selectedAnalyteId));
+          const inRangeReports = qcData?.reports.filter(report => ((new Date(isoStartDate)).getTime() <= (new Date(report.creationDate)).getTime()) && ((new Date(report.creationDate)).getTime() <= (new Date(isoEndDate)).getTime()) && report.analyteInputs.some(input => input.analyteName === selectedAnalyteId)) || [];
           const analyteReports = [];
           for (const report of inRangeReports) {
             const reportAnalyteInputs = report.analyteInputs.filter(input => input.analyteName === selectedAnalyteId);
@@ -56,7 +52,8 @@ const MolecularQualitativeAnalysis = () => {
               analyteReports.push({ creationDate: creationDate.toDateString(), creationTime: creationDate.toTimeString(), tech: report.studentID, value: input.value, comment: input.comment });
             }
           }
-          setQCData(qcData);
+          setDBData(dbData);
+          setAnalyte(analyte);
           setTableData(analyteReports);
         }
       } catch (error) {
@@ -79,19 +76,11 @@ const MolecularQualitativeAnalysis = () => {
 
 
   const columns: ColumnDef<TableData>[] = [
-<<<<<<< HEAD
-    { accessorKey: 'creationDate', header: 'Run Date', cell: (info) => info.getValue(), minSize: 50, maxSize: 50, },
-    { accessorKey: 'creationTime', header: 'Run Time', cell: (info) => info.getValue(), minSize: 50, maxSize: 50, },
-    { accessorKey: 'tech', header: 'Tech', cell: (info) => info.getValue(), minSize: 20, maxSize: 20, },
-    { accessorKey: 'value', header: 'Test Range', cell: (info) => info.getValue(), minSize: 20, maxSize: 20, },
-    { accessorKey: 'comment', header: 'Comments', cell: (info) => info.getValue(), minSize: 300, maxSize: 500, },
-=======
     {accessorKey: 'creationDate', header: 'Run Date', cell: (info) => info.getValue(), minSize: 50, maxSize: 50,},
     {accessorKey: 'creationTime', header: 'Run Time', cell: (info) => info.getValue(), minSize: 50, maxSize: 50,},
     {accessorKey: 'tech', header: 'Tech', cell: (info) => info.getValue(), minSize: 20, maxSize: 20,},
     {accessorKey: 'value', header: 'Test Range', cell: (info) => info.getValue(), minSize: 20, maxSize: 20,},
     {accessorKey: 'comment', header: 'QC Comments', cell: (info) => info.getValue(), minSize: 300, maxSize: 500,},
->>>>>>> main
   ];
 
   const table = useReactTable({ data: tableData, columns, getCoreRowModel: getCoreRowModel(), getPaginationRowModel: getPaginationRowModel(), });
@@ -100,38 +89,29 @@ const MolecularQualitativeAnalysis = () => {
     <div>
       <NavBar name="Review Controls: Molecular" />
 
-<<<<<<< HEAD
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', marginLeft: '10px', marginRight: '10px' }}>
-        <div style={{ flex: '0 0 180px', marginRight: '20px' }}>
-          <div style={{ fontWeight: 'bold', marginTop: '30px' }}>
-            <div>QC Panel: {qcData?.fileName}</div>
-            <div>Lot #: {qcData?.lotNumber}</div>
-            <div>Closed Date: {qcData?.closedDate}</div>
-=======
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', marginLeft: '15px', marginRight: '15px' }}>
         <div style={{ flex: '0 0 320px', marginRight: '20px' }}>
           <div style={{ fontWeight: 'bold', marginTop: '10px', fontSize: '18px' }}>
-            <div style={{ marginBottom: '3px' }}>QC Panel: {qcData?.fileName}</div>
+            <div style={{ marginBottom: '3px' }}>QC Panel: {dbData?.qcName}</div>
           </div>
           <div style={{ fontWeight: 'bold', marginBottom: '3px' }}>
-            <div>Lot #: {qcData?.lotNumber}</div>
+            <div>Lot #: {dbData?.lotNumber}</div>
           </div>
           <div style={{ marginBottom: '3px' }}>
-            <div>Expiration Date: </div>
-            <div>Open Date: </div>
-            <div>Closed Date: {qcData?.closedDate}</div>
+            <div>Expiration Date: {dbData?.expirationDate}</div>
+            <div>Open Date: {dbData?.openDate}</div>
+            <div>Closed Date: {dbData?.closedDate}</div>
           </div>
           <div style={{ marginTop: '40px', fontWeight: 'bold' }}>
->>>>>>> main
             <div>Analyte: {selectedAnalyteId}</div>
           </div>
           <div style={{ marginTop: '1px', fontWeight: 'bold', textDecoration: 'underline' }}>
-            <div>Expected Range:</div>
+            <div>Expected Range: {analyte?.expectedRange}</div>
           </div>
-        <div>
-      </div>
+          <div>
+          </div>
 
-      </div>
+        </div>
         <div style={{ flex: '1', margin: '0 20px' }}>
           <div style={{ marginTop: '30px', marginBottom: '120px', textAlign: 'center' }}>
             <span style={{ fontWeight: 'bold', textDecoration: 'underline', fontSize: '22px' }}>Qualitative Analysis:</span> <span style={{ fontSize: '22px' }}>{selectedAnalyteId}</span>
@@ -187,75 +167,10 @@ const MolecularQualitativeAnalysis = () => {
           </table>
         </div>
 
-<<<<<<< HEAD
-        <div style={{ flex: '1', margin: '0 20px' }}>
-          <div style={{ marginBottom: '10px', textAlign: 'center' }}>
-            <span style={{ fontWeight: 'bold', textDecoration: 'underline' }}>Qualitative Analysis:</span> <span style={{ fontSize: 'inherit' }}>{selectedAnalyteId}</span>
-          </div>
-          <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #ccc' }}>
-            <thead>
-              {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <th
-                      key={header.id}
-                      style={{
-                        padding: '10px',
-                        borderBottom: '1px solid #ccc',
-                        textAlign: 'left',
-                        backgroundColor: '#3A6CC6',
-                        color: 'white',
-                        border: '1px solid #ccc',
-                        width: header.column.columnDef.minSize || 100,
-                      }}
-                    >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map((row, rowIndex) => (
-                <tr
-                  key={row.id}
-                  style={{
-                    backgroundColor: rowIndex % 2 === 0 ? '#DAE3F3' : '#B0C4DE',
-                    height: '40px',
-                  }}
-                >
-                  {row.getVisibleCells().map(cell => (
-                    <td
-                      key={cell.id}
-                      style={{
-                        padding: '10px',
-                        borderBottom: '1px solid #ccc',
-                        border: '1px solid #ccc',
-                        width: cell.column.columnDef.minSize || 100,
-                      }}
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div style={{ flex: '0 0 180px', marginLeft: '20px', marginTop: '30px' }}>
+        <div style={{ flex: '0 0 180px', marginLeft: '20px', marginTop: '10px' }}>
           <div style={{ fontWeight: 'bold' }}>Review Date:</div>
           <div>Start Date: {startDate}</div>
-          <div>Close Date: {endDate}</div>
-          <Button variant="outlined" style={{ marginTop: '30px', width: '100%' }}>LEARN</Button>
-          <Button variant="outlined" style={{ marginTop: '10px', width: '100%' }}>STUDENT NOTES</Button>
-          <Button variant="outlined" style={{ marginTop: '80px', width: '100%' }} onClick={handleModalOpen}>Review Comments</Button>
-          <Button variant="outlined" style={{ marginTop: '80px', width: '100%' }} onClick={() => { navigate('/molecular/qc_analysis_report') }}>Qualitative Analysis Report</Button>
-=======
-        <div style={{ flex: '0 0 180px', marginLeft: '20px', marginTop: '10px' }}>
-          <div style = {{fontWeight: 'bold'}}>Review Date:</div>
-          <div>Start Date: {startDate}</div>
-          <div>Close Date: {endDate}</div>
+          <div>End Date: {endDate}</div>
           <Button
             variant="outlined"
             style={{
@@ -308,10 +223,9 @@ const MolecularQualitativeAnalysis = () => {
               padding: '10px 0',
               border: '1px solid #3A6CC6',
               marginTop: '20px'
-            }} 
-            onClick={() => {navigate('/molecular/qc_analysis_report')}}>Qualitative Analysis Report
+            }}
+            onClick={() => { navigate('/molecular/qc_analysis_report') }}>Qualitative Analysis Report
           </Button>
->>>>>>> main
         </div>
       </div>
 

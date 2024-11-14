@@ -15,7 +15,6 @@ import {
   getCoreRowModel,
   getPaginationRowModel
 } from "@tanstack/react-table";
-import { DEBUG_add_molecular_data_to_idb } from "../../../utils/DNALYTICS_DEBUG_UTIL";
 
 interface QCItem {
   fileName: string;
@@ -44,7 +43,7 @@ const MolecularQCResult = () => {
   const fetchFromDB = async (QCItem: string) => {
     const token = localStorage.getItem("token");
     const authToken: AuthToken = JSON.parse(token as string);
-    const item = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByName?${(new URLSearchParams({ name: QCItem })).toString()}`, {
+    const item = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByName?${(new URLSearchParams({ name: QCItem, dep: '5' })).toString()}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

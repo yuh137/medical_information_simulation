@@ -1,34 +1,34 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte } from '../../../utils/indexedDB/IDBSchema';
+import { QCPanel, Analyte } from '../../../utils/indexedDB/IDBSchema';
 import NavBar from '../../../components/NavBar';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '../../../components/ui/table';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 
 const MolecularAnalyteSelection = () => {
-  const [analytes, setAnalytes] = useState<MolecularQCTemplateBatchAnalyte[]>([]);
+  const [analytes, setAnalytes] = useState<Analyte[]>([]);
   const [selectedAnalyteId, setSelectedAnalyteId] = useState<string>('');
   const [selectedAnalyteIndex, setSelectedAnalyteIndex] = useState<number | null>(null);
   const [openDateDialog, setOpenDateDialog] = useState(false);
   const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState(''); 
+  const [endDate, setEndDate] = useState('');
   const [panelName, setPanelName] = useState<string>('');
   const navigate = useNavigate();
 
   useEffect(() => {
     const storedQCData = localStorage.getItem("selectedQCData");
     if (storedQCData) {
-      const qcData = JSON.parse(storedQCData) as MolecularQCTemplateBatch;
+      const qcData = JSON.parse(storedQCData) as QCPanel;
       console.log(qcData);
 
       setAnalytes(qcData.analytes);
-      setPanelName(qcData.fileName);
+      setPanelName(qcData.qcName);
     } else {
       console.error("No QC data found.");
     }
   }, []);
 
-  const handleRowClick = (analyte: MolecularQCTemplateBatchAnalyte, index: number) => {
+  const handleRowClick = (analyte: Analyte, index: number) => {
     setSelectedAnalyteId(analyte.analyteName);
     setSelectedAnalyteIndex(index);
   };
@@ -43,7 +43,6 @@ const MolecularAnalyteSelection = () => {
 
   const handleContinue = () => {
     if (startDate && endDate) {
-      const selectedAnalyte = analytes.find((analyte) => analyte.analyteName === selectedAnalyteId);
       navigate(`/molecular/qc_analysis/${encodeURIComponent(selectedAnalyteId)}/${encodeURIComponent(startDate)}/${encodeURIComponent(endDate)}`);
       setOpenDateDialog(false);
       setStartDate('');
@@ -55,7 +54,7 @@ const MolecularAnalyteSelection = () => {
 
   return (
     <>
-      <NavBar name = "Review Controls: Molecular"/>
+      <NavBar name="Review Controls: Molecular" />
       <div className="relative">
         <h2 className="text-3xl font-bold mt-6 text-center"> QC: {panelName} </h2>
         <div className="table-container flex flex-col mt-8 sm:max-w-[75svw] sm:max-h-[75svh] sm:mx-auto w-full bg-[#CFD5EA]">
@@ -68,25 +67,26 @@ const MolecularAnalyteSelection = () => {
             <TableBody>
               {analytes.map((analyte, index) => (
                 <TableRow key={index} onClick={() => handleRowClick(analyte, index)}
-                className={`text-center hover:cursor-pointer ${selectedAnalyteIndex === index ? 'bg-[#C3D1E0]' : 'bg-[#E9EBF5]'}`}
-                style={{
-                  color: "#000",
-                  fontSize: "18px",
-                  padding: "10px 20px",
-                }}><TableCell className={`${selectedAnalyteIndex === index ? 'font-bold' : ''}`}>{analyte.analyteName}</TableCell>
+                  className={`text-center hover:cursor-pointer ${selectedAnalyteIndex === index ? 'bg-[#C3D1E0]' : 'bg-[#E9EBF5]'}`}
+                  style={{
+                    color: "#000",
+                    fontSize: "18px",
+                    padding: "10px 20px",
+                  }}><TableCell className={`${selectedAnalyteIndex === index ? 'font-bold' : ''}`}>{analyte.analyteName}</TableCell>
                 </TableRow>
               ))}
-              </TableBody>
+            </TableBody>
           </Table>
         </div>
         {/**absolute bottom-3 right-3 flex space-x-4*/}
-        <div className="flex items-center justify-center space-x-2 py-4"> 
+        <div className="flex items-center justify-center space-x-2 py-4">
           <Button variant="contained" style={{
-              backgroundColor: '#3A62A7',
-              color: 'white',
-              padding: '15px 40px', 
-              fontSize: '18px',
-              borderRadius: '20px', }}
+            backgroundColor: '#3A62A7',
+            color: 'white',
+            padding: '15px 40px',
+            fontSize: '18px',
+            borderRadius: '20px',
+          }}
             onClick={handleQualitativeAnalysis}>Qualitative Analysis</Button>
         </div>
 
@@ -132,7 +132,7 @@ const MolecularAnalyteSelection = () => {
                 </tbody>
               </table>
             </DialogContent>
-    
+
             <DialogActions style={{ justifyContent: 'center', padding: '10px' }}>
               <Button onClick={handleContinue} variant="contained" color="primary">Continue</Button>
             </DialogActions>
