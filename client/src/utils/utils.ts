@@ -241,11 +241,42 @@ export const CustomHemeList = [
   { name: "Platelet Count", acronymName: "PLT" },
   { name: "Mean Platelet Volume", acronymName: "MPV" },
   { name: "Retic %", acronymName: "RET %" },
-  { name: "Sickle Cell Positive", acronymName: "TEST" },
-  { name: "Sickle Cell Negative", acronymName: "TEST" },
-  { name: "Test Validation", acronymName: "TEST" },
-  { name: "Erythrocyte Sedimentation Rate I", acronymName: "TEST" },
-  { name: "Erythrocyte Sedimentation Rate II", acronymName: "TEST" },
+  { name: "Sickle Cell Positive", acronymName: "SC +" },
+  { name: "Sickle Cell Negative", acronymName: "SC -" },
+  { name: "Test Validation", acronymName: "TV" },
+  { name: "Erythrocyte Sedimentation Rate I", acronymName: "ESR-1" },
+  { name: "Erythrocyte Sedimentation Rate II", acronymName: "ESR-2" },
+  //Coagulation 
+  { name: "Prothrombin Time", acronymName: "PT" },
+  { name: "Activated Partial Thromboplastin Time", acronymName: "aPTT" },
+  { name: "Thrombin Time", acronymName: "TT" },
+  { name: "Fibrinogen", acronymName: "Fib" },
+  { name: "D-Dimer", acronymName: "D-D" },
+  { name: "Anti-Thrombin III", acronymName: "AT-III" },
+  { name: "FDP Positive", acronymName: "FDP +" },
+  { name: "FDP Negative", acronymName: "FDP -" },
+  { name: "Test Validation", acronymName: "TV" },
+  { name: "dilute Russel Viper Venom Screen", acronymName: "dRWT - S" },
+  { name: "dilute Russel Viper Venom Confirm", acronymName: "dRWT - C" },
+  { name: "Silica Clotting Time Screen", acronymName: "SCT - S" },
+  { name: "Silica Clotting Time Confirm", acronymName: "SCT - C" },
+  { name: "APCR V Low (-)", acronymName: "VL -" },
+  { name: "APCR V High (+)", acronymName: "VH +" },
+  { name: "Factor V", acronymName: "V" },
+  { name: "Factor VII", acronymName: "VII" },
+  { name: "Factor VIII", acronymName: "VIII" },
+  { name: "Factor IX", acronymName: "IX" },
+  { name: "Factor X", acronymName: "X" },
+  { name: "Factor XI", acronymName: "XI" },
+  { name: "Factor XII", acronymName: "XII" },
+  { name: "Factor XIII", acronymName: "XIII" },
+  { name: "yWF Antigen", acronymName: "yWF Ant" },
+  { name: "yWF Activity", acronymName: "yWF Act" },
+  { name: "Xa Low", acronymName: "Xa L" },
+  { name: "Xa High", acronymName: "Xa H" },
+
+  
+
 ];
 
 export const CustomCoagList = [
@@ -280,7 +311,7 @@ export const CustomCoagList = [
 export const qcHemeLinkList = [
 
   { name: "Custom Tests", link: "heme_custom_tests" },
-  
+ // { name: "Custom Tests Coag", link: "coag_custom_tests"},
 ];
 
 

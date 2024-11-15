@@ -15,9 +15,10 @@ import {
   TableHeader,
   TableRow,
 } from "../../../../components/ui/table";
-import { CustomHemeCoagMock } from "../../../../utils/MOCK_DATA";
+import { CustomMock } from "../../../../utils/MOCK_DATA";
 import { renderSubString } from "../../../../utils/utils";
 import { CustomHemeList } from "../../../../utils/utils";
+import { CustomCoagList } from "../../../../utils/utils";
 import { ButtonBase, Checkbox, Drawer } from "@mui/material";
 import { useTheme } from "../../../../context/ThemeContext";
 import addData from "../../../../utils/indexedDB/addData";
@@ -32,7 +33,7 @@ import {
   Droppable,
 } from "react-beautiful-dnd";
 import NavBar from "../../../../components/NavBar";
-//import { useTheme } from '../../../../context/ThemeContext';
+
 
 interface QCRangeElements {
   analyteName: string;
@@ -58,9 +59,14 @@ interface DraggableItem {
 const CustomCreateNewPage = (props: { name: string }) => {
   const navigate = useNavigate();
   const { item } = useParams();
+
   const [draggableItems, setDraggableItems] = useState<DraggableItem[]>([]);
+  const [draggableItemsCOAG, setDraggableItemsCOAG] = useState<DraggableItem[]>([]);
   const [SelectedQCItems, setSelectedQCItems] = useState<string[]>([]);
+
   const [OrderControlsItems, setOrderControlsItems] = useState<string[]>([]);
+  const [OrderControlsItemsCOAG, setOrderControlsItemsCOAG] = useState<string[]>([]);
+
   const [showTable, setShowTable] = useState(false);
   const [showDrag, setShowDrag] = useState(true);
 
@@ -78,6 +84,7 @@ const CustomCreateNewPage = (props: { name: string }) => {
       const deleteStatus = await deleteData("qc_store", props.name);
       console.log(deleteStatus ? "Delete success" : "Delete failed");
     }
+
   
 
     const savedAnalyte = QCElements.map(
@@ -100,6 +107,8 @@ const CustomCreateNewPage = (props: { name: string }) => {
       })
     );
 
+   
+
     const res = await addData<QCTemplateBatch>("qc_store", {
       fileName: props.name,
       lotNumber: data.lotNumber || "",
@@ -115,13 +124,19 @@ const CustomCreateNewPage = (props: { name: string }) => {
 
   const saveToCustomList = () => {
     const customTests: CustomPanel[] = JSON.parse(localStorage.getItem("customTests") || "[]");
-    const selectedTests = QCElements.filter(item => SelectedQCItems.includes(item.analyteName));
+
+    const selectedTests = QCElements.filter(item =>
+      SelectedQCItems.includes(item.analyteName) 
+    );
+
+
 
     let ongoingPanel = customTests.find(panel => panel.isOngoing);
 
     if (ongoingPanel) {
       ongoingPanel.tests.push(...selectedTests);
     } else {
+     
       ongoingPanel = { name: 'Custom1', tests: selectedTests, isOngoing: true };
       customTests.push(ongoingPanel);
     }
@@ -424,10 +439,12 @@ const CustomCreateNewPage = (props: { name: string }) => {
       ),
     },
   ];
+
     const table = useReactTable({
       data: useMemo(
-        () => QCElements.filter((item) => SelectedQCItems.includes(item.analyteName)),
+        () => QCElements.filter((item2) => SelectedQCItems.includes(item2.analyteName)),
         [QCElements, SelectedQCItems]
+        
       ),
       columns,
       getCoreRowModel: getCoreRowModel(),
@@ -440,13 +457,23 @@ const CustomCreateNewPage = (props: { name: string }) => {
     }, []);
 
     useEffect(() => {
-      switch (item) {
-        case "heme_custom_tests":
-          setOrderControlsItems(CustomHemeList.map((item) => item.name));
-          setDraggableItems(CustomHemeList);
-          setQCElements(CustomHemeCoagMock);
-        }
-      }, [item]);
+
+      const HemeList = CustomHemeList.slice(0, 26);
+      const CoagList = CustomHemeList.slice(26, 54);
+
+
+      if (item === "heme_custom_tests") {
+    
+          setOrderControlsItems(HemeList.map((item) => item.name));
+          setDraggableItems(HemeList);
+          setQCElements(CustomMock);
+    
+          setOrderControlsItemsCOAG(CoagList.map((item) => item.name));
+          setDraggableItemsCOAG(CoagList);
+     
+      }
+      
+    }, [item]);
 
 
   const onDragEnd = (result: DropResult) => {
@@ -458,6 +485,7 @@ const CustomCreateNewPage = (props: { name: string }) => {
     let destItems = Array.from(SelectedQCItems);
 
     if (source.droppableId === "Order_QC") {
+
       const [movedItem] = sourceItems.splice(source.index, 1);
       destItems.splice(destination.index, 0, movedItem);
       setOrderControlsItems(sourceItems);
@@ -486,7 +514,6 @@ const CustomCreateNewPage = (props: { name: string }) => {
     setShowDrag(false);
   };
 
-  
 
   return (
     <>
@@ -497,6 +524,7 @@ const CustomCreateNewPage = (props: { name: string }) => {
             className="flex justify-center gap-32 items-center"
             style={{ minWidth: "100svw", minHeight: "90svh" }}
           >
+
             <Droppable droppableId="Order_QC" type="group">
               {(drop_provided) => (
                 <div
@@ -542,6 +570,7 @@ const CustomCreateNewPage = (props: { name: string }) => {
                 </div>
               )}
             </Droppable>
+
             <Droppable droppableId="Order_QC" type="group">
               {(drop_provided) => (
                 <div
@@ -554,12 +583,12 @@ const CustomCreateNewPage = (props: { name: string }) => {
                       Coagulation
                     </div>
                     <div className="order-qc-items-container flex flex-col gap-4 overflow-scroll">
-                      {OrderControlsItems.length === 0 ? (
+                      {OrderControlsItemsCOAG.length === 0 ? (
                         <div className="text-center">All items selected</div>
                       ) : (
                         <></>
                       )}
-                      {OrderControlsItems.map((item, index) => (
+                      {OrderControlsItemsCOAG.map((item, index) => (
                         <Draggable draggableId={`${item}`} index={index} key={`${item}`}>
                           {(drag_provided) => (
                             <div
@@ -568,11 +597,11 @@ const CustomCreateNewPage = (props: { name: string }) => {
                               {...drag_provided.draggableProps}
                               className="order-qc-item bg-[#47669C] p-4 rounded-md text-white"
                               onClick={() => {
-                                let orderQCs = [...OrderControlsItems];
+                                let orderQCs = [...OrderControlsItemsCOAG];
                                 let selectedQCs = [...SelectedQCItems];
                                 const [deletedQC] = orderQCs.splice(index, 1);
                                 selectedQCs.push(deletedQC);
-                                setOrderControlsItems(orderQCs);
+                                setOrderControlsItemsCOAG(orderQCs);
                                 setSelectedQCItems(selectedQCs);
                               }}
                             >
@@ -604,6 +633,7 @@ const CustomCreateNewPage = (props: { name: string }) => {
                 </div>
               </ButtonBase>
             </div>
+
             <Droppable droppableId="QC_Selected" type="group">
               {(drop_provided) => (
                 <div ref={drop_provided.innerRef} {...drop_provided.droppableProps} className="w-[20%]">
@@ -650,118 +680,112 @@ const CustomCreateNewPage = (props: { name: string }) => {
       )}
       {!showDrag && (
         <div className="final-container relative sm:space-y-4 pb-24">
-          <div className="table-container flex flex-col mt-8 sm:w-[94svw] sm:max-h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA] relative">
-            <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200">
-              <TableHeader>
-                {table.getHeaderGroups().map((group) => (
-                  <TableRow
-                    key={group.id}
-                    className="font-bold text-base bg-[#3A62A7] hover:bg-[#3A62A7] sticky top-0 z-20"
-                  >
-                    {group.headers.map((header) => (
-                      <TableHead
-                        key={header.id}
-                        className="text-white text-center"
-                      >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {!table.getRowModel().rows?.length ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="sm:h-32 !p-2 text-center"
+
+          <div className="basic-container relative sm:space-y-4 pb-24">
+            <div className="input-container flex justify-center">
+              <div className="drawer-container sm:h-full flex items-center py-4 sm:space-x-12">
+
+                <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
+                  <div className="lotnumber-label sm:text-xl font-semibold text-white">
+                    QC Lot Number
+                  </div>
+                  <input
+                    type="text"
+                    className="p-1 rounded-lg border border-solid border-[#548235] text-center"
+                    {...register("lotNumber")}
+                  />
+                </div>
+
+                <div className="expiration-box sm:w-[86%] sm:h-40 bg-[#3A6CC6] rounded-xl">
+                  <div className="expiration-title w-full text-center font-semibold text-lg text-white py-1 bg-[#3A62A7] rounded-t-xl">
+                    Expiration Date
+                  </div>
+                  <div className="divider-line w-full h-[1px] bg-black" />
+                  <div className="expiration-fields flex flex-col items-center py-2 sm:space-y-4">
+
+                    <div className="flex space-x-4">
+                      <div className="expiration-input sm:space-y-2 w-1/2">
+                        <div className="closed-title text-center sm:text-lg text-white">
+                          Closed Date
+                        </div>
+                        <input
+                          type="text"
+                          className="p-1 rounded-lg border border-solid border-[#000] text-center w-full"
+                          {...register("closedDate")}
+                        />
+                      </div>
+                      <div className="expiration-input sm:space-y-2 w-1/2">
+                        <div className="closed-title text-center sm:text-lg text-white">
+                          Open Date
+                        </div>
+                        <input
+                          type="text"
+                          className="p-1 rounded-lg border border-solid border-[#000] text-center w-full"
+                          {...register("openDate")}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="table-container flex flex-col mt-8 sm:w-[94vw] sm:max-h-[75vh] sm:mx-auto w-full bg-[#CFD5EA] relative">
+              <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200">
+                <TableHeader>
+                  {table.getHeaderGroups().map((group) => (
+                    <TableRow
+                      key={group.id}
+                      className="font-bold text-base bg-[#3A62A7] hover:bg-[#3A62A7] sticky top-0 z-20"
                     >
-                      No data
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} className="text-center sm:h-[10%] border-none">
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
+                      {group.headers.map((header) => (
+                        <TableHead key={header.id} className="text-white text-center">
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                        </TableHead>
                       ))}
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-          <div className="buttons-container flex justify-center gap-4">
-            <ButtonBase
-              disabled={!isValid}
-              className="save-button !absolute left-1/2 -translate-x-1/2 sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold"
-              onClick={handleSubmit(saveQC)}
-            >
-              Save QC File
-            </ButtonBase>
-            <ButtonBase
-              className="save-to-custom-button sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold"
-              onClick={saveToCustomList}
-            >
-              Save to Custom
-            </ButtonBase>
+                  ))}
+                </TableHeader>
+                <TableBody>
+                  {!table.getRowModel().rows?.length ? (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className="sm:h-32 !p-2 text-center">
+                        No data
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow key={row.id} className="text-center sm:h-[10%] border-none">
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+
+              <div className="buttons-container flex justify-center gap-4 mt-4">
+                <ButtonBase
+                  disabled={!isValid}
+                  className="save-button !absolute left-1/2 -translate-x-1/2 sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold"
+                  onClick={handleSubmit(saveQC)}
+                >
+                  Save QC File
+                </ButtonBase>
+                <ButtonBase
+                  className="save-to-custom-button sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold"
+                  onClick={saveToCustomList}
+                >
+                  Save to Custom
+                </ButtonBase>
+              </div>
+            </div>
           </div>
         </div>
       )}
-      <Drawer
-        anchor="left"
-        open={isDrawerOpen}
-        onClose={() => openDrawer(false)}
-      >
-        <div className="drawer-container sm:w-[18svw] sm:h-full bg-[#CFD5EA] flex flex-col items-center py-4 sm:space-y-6">
-          <div className="filename-label sm:text-3xl font-semibold">
-            Hematology and Coagulation
-          </div>
-          <div className="lotnumber-input flex flex-col items-center sm:w-[86%] py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2">
-            <div className="lotnumber-label sm:text-xl font-semibold text-white">
-              QC Lot Number
-            </div>
-            <input
-              type="text"
-              className="p-1 rounded-lg border border-solid border-[#548235] text-center"
-              {...register("lotNumber")}
-            />
-          </div>
-          <div className="expiration-box sm:w-[86%] sm:h-64 bg-[#3A6CC6] rounded-xl">
-            <div className="expiration-title w-full text-center font-semibold text-lg text-white py-1 bg-[#3A62A7] rounded-t-xl">
-              Expiration date
-            </div>
-            <div className="divider-line w-full h-[1px] bg-black" />
-            <div className="expiration-fields flex flex-col items-center py-2 sm:space-y-4">
-              <div className="expiration-input sm:space-y-2">
-                <div className="open-title text-center sm:text-lg text-white">
-                  Open Date
-                </div>
-                <input
-                  type="text"
-                  className="p-1 rounded-lg border border-solid border-[#000] text-center"
-                  {...register("openDate")}
-                />
-              </div>
-              <div className="expiration-input sm:space-y-2">
-                <div className="closed-title text-center sm:text-lg text-white">
-                  Closed Date
-                </div>
-                <input
-                  type="text"
-                  className="p-1 rounded-lg border border-solid border-[#000] text-center"
-                  {...register("closedDate")}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </Drawer>
     </>
   );
 };
