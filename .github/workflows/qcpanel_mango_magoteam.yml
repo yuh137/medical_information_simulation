@@ -34,43 +34,10 @@ jobs:
         run: |
           cd client
           npm install
-          npm start
+          npm run build
 
       # Upload artifacts for deployment
       - name: Upload backend artifact
         uses: actions/upload-artifact@v4
         with:
-          name: backend
-          path: ${{ runner.temp }}/backend-publish
-
-      - name: Upload frontend artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend
-          path: client/build
-          
-  deploy:
-    runs-on: windows-latest
-    needs: build
-
-    steps:
-      # Download backend artifact
-      - name: Download backend artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: backend
-
-      # Deploy backend to Azure Web App
-      - name: Deploy backend to Azure
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'MagoTeam-backend' # Replace with your backend app name in Azure
-          package: ${{ runner.temp }}/backend
-
-      # Deploy frontend to Azure (if using Static Web App)
-      - name: Deploy frontend to Azure Static Web App
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          app_location: "client/build"
-          output_location: ""
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          name: b
