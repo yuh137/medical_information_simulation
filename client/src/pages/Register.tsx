@@ -9,6 +9,7 @@ import { Admin } from "../utils/indexedDB/IDBSchema";
 import { getAdminByName, getStudentByName } from "../utils/indexedDB/getData";
 import { Icon } from "@iconify/react";
 
+
 export interface CredentialsInput {
   username: string;
   password: string;
@@ -24,15 +25,26 @@ const Register = () => {
     "Admin" | "Student" | string
   >("");
   const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState(false);
+  const [isFeedbackErrorOpen, setFeedbackErrorOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  // useEffect(() => {
+  //   //If notification is enabled, disable after 3 seconds
+  //   if (isFeedbackNotiOpen) {
+  //     setTimeout(() => {
+  //       setFeedbackNotiOpen(false);
+  //     }, 3500);
+  //   }
+  // }, [isFeedbackNotiOpen])
 
   useEffect(() => {
     //If notification is enabled, disable after 3 seconds
-    if (isFeedbackNotiOpen) {
+    if (isFeedbackErrorOpen) {
       setTimeout(() => {
-        setFeedbackNotiOpen(false);
-      }, 3000);
+        setFeedbackErrorOpen(false);
+      }, 3500);
     }
-  }, [isFeedbackNotiOpen])
+  }, [isFeedbackErrorOpen])
   
   const { register, handleSubmit } = useForm<CredentialsInput>();
 
@@ -99,7 +111,7 @@ const Register = () => {
       }
     } else {
       console.log(new Error("Invalid type"));
-      setFeedbackNotiOpen(true);
+      setFeedbackErrorOpen(true);
     }
   };
 
@@ -163,12 +175,18 @@ const Register = () => {
                 placeholder="Username"
                 {...register("username", { required: true })}
               />
-              <input
-                type="password"
-                className="min-h-10 placeholder:font-semibold placeholder:text-center text-center"
-                placeholder="Password"
-                {...register("password", { required: true })}
-              />
+              <div className="relative w-full">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="w-full min-h-10  placeholder:font-semibold placeholder:text-center text-center"
+                  placeholder="Password"
+                  {...register("password", { required: true })}
+                />
+                <div className="absolute top-1.5 end-11 cursor-pointer">
+                  <Icon icon={showPassword? "iconoir:eye-closed" : "iconoir:eye-solid"} className=" absolute top-0 left-13 sm:h-7 sm:w-7 " onClick={() => {setShowPassword(!showPassword)}}/>
+                </div>
+              </div>
+
               <input
                 type="text"
                 className="min-h-10 placeholder:font-semibold placeholder:text-center text-center"
@@ -221,7 +239,11 @@ const Register = () => {
         <div className="bg-white rounded-xl">
           <div className="sm:p-8 flex flex-col sm:gap-4">
             <div className="text-center text-gray-600 text-xl font-semibold">
-              { isFeedbackNotiOpen ? (
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon icon="clarity:success-standard-line" className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                    <div>Registration Successful</div>
+                  </div>
+              {/* {isFeedbackNotiOpen ? (
                 <>
                   <div className="flex flex-col sm:gap-y-2">
                     <Icon icon="clarity:success-standard-line" className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
@@ -235,7 +257,53 @@ const Register = () => {
                     <div>Error Occurred</div>
                   </div>
                 </>
-              ) }
+              ) } */}
+            </div>
+            <div className="flex justify-center">
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setFeedbackNotiOpen(false);
+                }}
+                className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+              >
+                <Link to="/login">
+                  OK
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Backdrop>
+      <Backdrop
+        open={isFeedbackErrorOpen}
+        
+        onClick={() => {
+          setFeedbackErrorOpen(false);
+        }}
+      >
+        <div className="bg-white rounded-xl">
+          <div className="sm:p-8 flex flex-col sm:gap-4">
+            <div className="text-center text-gray-600 text-xl font-semibold">
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                    <div>Please Select Account Type</div>
+                  </div>
+              {/* {isFeedbackNotiOpen ? (
+                <>
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon icon="clarity:success-standard-line" className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                    <div>Registration Successful</div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                    <div>Error Occurred</div>
+                  </div>
+                </>
+              ) } */}
             </div>
             <div className="flex justify-center">
               <Button
