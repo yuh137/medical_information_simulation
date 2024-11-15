@@ -21,7 +21,7 @@ jobs:
 
       - name: Build and publish backend
         run: |
-          cd api # Replace with your actual backend folder
+          cd Medical-Information.API # Replace with your actual backend folder
           dotnet publish -c Release -o ${{ runner.temp }}/backend-publish
 
       # Frontend Setup
