@@ -53,6 +53,15 @@ function NameFromLink(link: string): string {
   return link;
 }
 
+// To change the date format to what is needed for back-end requests
+function formatDate(dateString: string): string {
+  // Split the input string by "/"
+  const [month, day, year] = dateString.split("/");
+
+  // Goes to YYYY-MM-DD
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+}
+
 export const BloodBankRBCEdit = (props: { name: string }) => {
   const navigate = useNavigate();
   const { item } = useParams();
@@ -83,7 +92,29 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
     setHeaderValid(!isAnyFieldEmpty);
   }, [lotNumber, qcExpDate, openDate, closedDate,reportType]);
   
+  function getReagents(){
+    const rows = table.getRowModel().rows;
+    const reagents: dbReagent[] = [];
+    QCElements.forEach(function (row) {  // Iterate through each row of the React Table
+     const reag: dbReagent = {reagentName: row['reagentName'], abbreviation: row['Abbreviation'], reagentLotNum: row['AntiSeraLot'], expirationDate: formatDate(row['reagentExpDate']), immediateSpin: row['ExpImmSpinRange'], thirtySevenDegree: row['Exp37Range'], checkCell: row['ExpCheckCellsRange'], aHG: row['ExpAHGRange']};
+      reagents.push(reag);
+    })
+    return reagents;
+  }
+
   const saveQC: SubmitHandler<BloodBankRBC> = async (data) => {
+    getReagents();
+    const reags = getReagents();
+    const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'  // application/json
+      },
+      body: JSON.stringify({ qcName: fileName_Item, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), closedDate: formatDate(data.closedDate), expirationDate: formatDate(data.qcExpDate), reagents: reags }),
+      })
+    console.log(checkServer);
+    /*
     const qcDataToSave: BloodBankRBC = {
       fileName: NameFromLink(fileName_Item), // fileName_Item,
       lotNumber: data.lotNumber || "",
@@ -101,6 +132,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
     } catch (error) {
       console.error("Failed to save data:", error);
     }
+      */
   };
 
   const inputRefs = useRef<HTMLInputElement[]>([]);
@@ -166,7 +198,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
     },
     {
       accessorKey: "AntiSeraLot",
-      header: "Anti-Sera Lot #",
+      header: "Reagent Lot #",
       cell: (info) => (
         <div
           dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
@@ -235,6 +267,19 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
       }, 4000);
     }
   }, []);
+
+  interface dbReagent {  // Used to add reagents in JSON format
+    reagentName: string,
+    abbreviation: string,
+    reagentLotNum: string,
+    expirationDate: string,
+    // posExpectedRange: string,
+    // negExpectedRange: string
+    immediateSpin: string,
+    thirtySevenDegree: string,
+    aHG: string,
+    checkCell: string
+  }
 
   useEffect(() => {
     (async () => {

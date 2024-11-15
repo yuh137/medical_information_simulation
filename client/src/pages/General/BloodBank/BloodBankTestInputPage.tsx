@@ -99,7 +99,6 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
   }
 
   const saveQC: SubmitHandler<BloodBankQC> = async (data) => {
-    // AGF Test: Try the actual database
     getReagents();
     const reags = getReagents();
     const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots`, {
@@ -108,11 +107,11 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
         'Content-Type': 'application/json',
         'Accept': 'application/json'  // application/json
       },
-      body: JSON.stringify({ qcName: fileName_Item, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), expirationDate: formatDate(data.qcExpDate), reagents: reags }),
+      body: JSON.stringify({ qcName: fileName_Item, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), closedDate: formatDate(data.closedDate), expirationDate: formatDate(data.qcExpDate), reagents: reags }),
       })
     console.log(checkServer);
     // Index DB 
-    
+    /*
     const qcDataToSave: BloodBankQC = {
       fileName: fileName_Item,
       lotNumber: data.lotNumber || "",
@@ -133,7 +132,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
     } catch (error) {
       console.error("Failed to save data:", error);
     }
-      
+    */
   };
 
   const inputRefs = useRef<HTMLInputElement[]>([]);

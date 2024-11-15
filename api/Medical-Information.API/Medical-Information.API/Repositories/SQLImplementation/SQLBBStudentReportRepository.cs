@@ -23,8 +23,10 @@ namespace Medical_Information.API.Repositories.SQLImplementation
                 bloodBankQCLotIdList.Add(report.BloodBankQCLotID);
             }
             var adminQCLots = await dbContext.BloodBankQCLots.Where(item => bloodBankQCLotIdList.Contains(item.BloodBankQCLotID)).ToListAsync();
-            var student = await dbContext.Students.FirstOrDefaultAsync(item => item.StudentID == reports[0].StudentID);   
-
+            var student = await dbContext.Students.FirstOrDefaultAsync(item => item.StudentID == reports[0].StudentID);
+            Console.WriteLine("Test");
+            Console.WriteLine(student == null);
+            Console.WriteLine(adminQCLots.Any());
             if (!adminQCLots.Any() || student == null)
             {
                 return new List<BBStudentReport>();
