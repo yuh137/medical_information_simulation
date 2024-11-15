@@ -34,7 +34,7 @@ jobs:
         run: |
           cd client
           npm install
-          npm run build
+          npm start
 
       # Upload artifacts for deployment
       - name: Upload backend artifact
