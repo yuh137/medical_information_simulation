@@ -1,4 +1,4 @@
-name: Build and Deploy Fullstack App to Azure Web App - mango-backend
+name: Build and Deploy ASP.Net Core App to Azure Web App - mango-backend
 
 on:
   push:
@@ -14,7 +14,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Backend Build Steps
       - name: Set up .NET Core SDK
         uses: actions/setup-dotnet@v4
         with:
@@ -35,35 +34,11 @@ jobs:
           echo "Listing files in backend-publish folder"
           dir "${{ github.workspace }}/backend-publish"
 
-      # Frontend Build Steps
-      - name: Install dependencies for frontend
-        run: |
-          cd client
-          npm install
-
-      - name: Build the React frontend
-        run: |
-          cd client
-          npm run build
-
-      - name: Copy React build to backend wwwroot
-        run: |
-          cd client
-          cp -r build/* ../api/Medical-Information.API/Medical-Information.API/wwwroot/
-
-      # Upload backend build artifact
-      - name: Upload backend build artifact for deployment
+      - name: Upload build artifact for deployment
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
           path: "${{ github.workspace }}/backend-publish"
-
-      # Upload frontend build artifact (optional)
-      - name: Upload frontend build artifact for deployment
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-app
-          path: "${{ github.workspace }}/api/Medical-Information.API/Medical-Information.API/wwwroot"
 
   deploy:
     runs-on: windows-latest
@@ -75,27 +50,21 @@ jobs:
       id-token: write  # This is required for requesting the JWT
 
     steps:
-      - name: Download artifact from build job (backend)
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: .net-app
           path: "${{ github.workspace }}/backend-publish"  # Ensure proper download path
 
-      - name: Verify contents of downloaded backend artifact
+      - name: Verify contents of downloaded artifact
         run: |
-          echo "Listing files in the downloaded backend artifact folder"
-          dir "${{ github.workspace }}/backend-publish"
+          echo "Listing files in the downloaded artifact folder"
+          dir "${{ github.workspace }}/backend-publish"  # Check that files are in the correct directory
 
-      - name: Download frontend artifact (optional)
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-app
-          path: "${{ github.workspace }}/api/Medical-Information.API/Medical-Information.API/wwwroot"
-
-      - name: Verify contents of downloaded frontend artifact
+      - name: Verify workspace contents
         run: |
-          echo "Listing files in the downloaded frontend artifact folder"
-          dir "${{ github.workspace }}/api/Medical-Information.API/Medical-Information.API/wwwroot"
+          echo "Listing files in the workspace"
+          dir ${{ github.workspace }}
 
       - name: Login to Azure
         uses: azure/login@v2
