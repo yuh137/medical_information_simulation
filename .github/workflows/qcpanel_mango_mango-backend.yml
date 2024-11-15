@@ -22,20 +22,20 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Build with dotnet
-        run: |
-          cd api/Medical-Information.API/Medical-Information.API
-          dotnet build --configuration Release
+        run: dotnet build --configuration Release
 
-      - name: Publish with dotnet
-        run: |
-          cd api/Medical-Information.API/Medical-Information.API
-          dotnet publish -c Release -o $GITHUB_WORKSPACE/backend-publish
+      - name: dotnet publish
+        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+
+      - name: List published files
+        run: ls -la "${{env.DOTNET_ROOT}}/myapp"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: $GITHUB_WORKSPACE/backend-publish
+          path: "${{env.DOTNET_ROOT}}/myapp"
+
 
   deploy:
     runs-on: windows-latest
