@@ -1,3 +1,6 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
 name: Build and deploy ASP.Net Core app to Azure Web App - mango-backend
 
 on:
@@ -19,15 +22,19 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: |
+          cd api/Medical-Information.API/Medical-Information.API
+          dotnet build --configuration Release
 
       - name: Publish with dotnet
-        run: dotnet publish -c Release -o $GITHUB_WORKSPACE/backend-publish
+        run: |
+          cd api/Medical-Information.API/Medical-Information.API
+          dotnet publish -c Release -o $GITHUB_WORKSPACE/backend-publish
 
-      - name: Upload artifact for deployment
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: backend-app
+          name: .net-app
           path: $GITHUB_WORKSPACE/backend-publish
 
   deploy:
@@ -37,25 +44,25 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write
+      id-token: write #This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: backend-app
-
+          name: .net-app
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1F31B4FA64B84DD89BB74652C192D576 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_ACA035FE63A94D17BE868CA94CF02CF0 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6DD3500C4A094140A28F0FD0E9309711 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'mango-backend' # Replace with your Azure Web App name
+          app-name: 'mango-backend'
           slot-name: 'Production'
-          package: backend-publish
+          package: $GITHUB_WORKSPACE/backend-publish
