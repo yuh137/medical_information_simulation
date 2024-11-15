@@ -1,4 +1,4 @@
-name: Build and deploy ASP.Net Core app to Azure Web App - MagoTeam
+name: Build and deploy full-stack app to Azure
 
 on:
   push:
@@ -13,48 +13,64 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Backend Setup
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      - name: Build and publish backend
+        run: |
+          cd backend-folder-name # Replace with your actual backend folder
+          dotnet publish -c Release -o ${{ runner.temp }}/backend-publish
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+      # Frontend Setup
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16' # Match the version in your local environment
 
-      - name: Upload artifact for deployment job
+      - name: Install frontend dependencies and build
+        run: |
+          cd client-folder-name # Replace with your actual client folder
+          npm install
+          npm run build
+
+      # Upload artifacts for deployment
+      - name: Upload backend artifact
         uses: actions/upload-artifact@v4
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          name: backend
+          path: ${{ runner.temp }}/backend-publish
 
+      - name: Upload frontend artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend
+          path: client-folder-name/build # Replace with the actual build folder
+          
   deploy:
     runs-on: windows-latest
     needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write # This is required for requesting the JWT
 
     steps:
-      - name: Download artifact from build job
+      # Download backend artifact
+      - name: Download backend artifact
         uses: actions/download-artifact@v4
         with:
-          name: .net-app
-      
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
+          name: backend
 
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
+      # Deploy backend to Azure Web App
+      - name: Deploy backend to Azure
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'MagoTeam'
-          package: ${{ runner.temp }}/.net-app
+          app-name: 'MagoTeam-backend' # Replace with your backend app name in Azure
+          package: ${{ runner.temp }}/backend
+
+      # Deploy frontend to Azure (if using Static Web App)
+      - name: Deploy frontend to Azure Static Web App
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          app_location: "client-folder-name/build" # Replace with your frontend's build output
+          output_location: "build"
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
