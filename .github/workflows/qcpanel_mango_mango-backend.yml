@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and Deploy ASP.Net Core App to Azure Web App - mango-backend
 
 on:
@@ -57,11 +54,17 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
+          path: "${{ github.workspace }}/backend-publish"  # Ensure proper download path
 
       - name: Verify contents of downloaded artifact
         run: |
           echo "Listing files in the downloaded artifact folder"
-          dir "${{ github.workspace }}/backend-publish"
+          dir "${{ github.workspace }}/backend-publish"  # Check that files are in the correct directory
+
+      - name: Verify workspace contents
+        run: |
+          echo "Listing files in the workspace"
+          dir ${{ github.workspace }}
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -76,4 +79,4 @@ jobs:
         with:
           app-name: 'mango-backend'
           slot-name: 'Production'
-          package: ${{ github.workspace }}/backend-publish
+          package: "${{ github.workspace }}/backend-publish"
