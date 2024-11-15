@@ -29,15 +29,13 @@ jobs:
       - name: Publish with dotnet
         run: |
           cd api/Medical-Information.API/Medical-Information.API
-          dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
-          
-
+          dotnet publish -c Release -o "${{ github.workspace }}/backend-publish"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: "${{env.DOTNET_ROOT}}/myapp"
+          path: "${{ github.workspace }}/backend-publish"
 
   deploy:
     runs-on: windows-latest
@@ -67,4 +65,4 @@ jobs:
         with:
           app-name: 'mango-backend'
           slot-name: 'Production'
-          package: ${{env.DOTNET_ROOT}}/myapp
+          package: ${{ github.workspace }}/backend-publish
