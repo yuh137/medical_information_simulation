@@ -21,7 +21,7 @@ jobs:
 
       - name: Build and publish backend
         run: |
-          cd backend-folder-name # Replace with your actual backend folder
+          cd api # Replace with your actual backend folder
           dotnet publish -c Release -o ${{ runner.temp }}/backend-publish
 
       # Frontend Setup
@@ -32,7 +32,7 @@ jobs:
 
       - name: Install frontend dependencies and build
         run: |
-          cd client-folder-name # Replace with your actual client folder
+          cd client # Replace with your actual client folder
           npm install
           npm run build
 
