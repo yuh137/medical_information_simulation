@@ -113,7 +113,7 @@ const Register = () => {
               <div
                 className={`student-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${
                   registerOptions === "Student"
-                    ? "border-2 !border-[#2f5597]"
+                    ? "bg-blue-700 text-white border-2 !border-[#2f5597]"
                     : ""
                 }`}
                 onClick={() => {
@@ -128,7 +128,7 @@ const Register = () => {
               <div
                 className={`admin-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${
                   registerOptions === "Admin"
-                    ? "border-2 !border-[#2f5597]"
+                    ? "bg-blue-700 text-white border-2 !border-[#2f5597]"
                     : ""
                 }`}
                 onClick={() => {
@@ -157,7 +157,12 @@ const Register = () => {
                 className="min-h-10 placeholder:font-semibold placeholder:text-center text-center"
                 placeholder="Password"
                 {...register("password", { required: true })}
+                
               />
+              <p id="helper-text-explanation" className="text-sm text-gray-500 dark:text-gray-400">
+                Password must 1 upper case, 1 lower case, 1 number, and must be at least 8 letters
+              </p>
+
               <input
                 type="text"
                 className="min-h-10 placeholder:font-semibold placeholder:text-center text-center"
