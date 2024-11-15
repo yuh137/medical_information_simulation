@@ -67,4 +67,4 @@ jobs:
         with:
           app-name: 'mango-backend'
           slot-name: 'Production'
-          package: $GITHUB_WORKSPACE/backend-publish
+          package: ${{env.DOTNET_ROOT}}/myapp
