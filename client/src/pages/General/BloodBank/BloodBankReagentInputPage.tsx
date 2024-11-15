@@ -8,7 +8,9 @@ import { Button, ButtonBase, Modal } from "@mui/material";
 import { useTheme } from "../../../context/ThemeContext";
 import { saveToDB } from '../../../utils/indexedDB/getData';
 import { BBStudentReport } from "../../../utils/utils";
-import { BloodBankQCLot } from "../../../utils/indexedDB/IDBSchema";
+import { BloodBankQCLot, Student } from "../../../utils/indexedDB/IDBSchema";
+import { useAuth } from "../../../context/AuthContext";
+
 
 interface QCItem {  // Used to read from the index DB
   reportId: string;
@@ -18,12 +20,35 @@ interface QCItem {  // Used to read from the index DB
   createdDate: string;
 }
 
+// Used to format dates so that the time isn't shown and it's in mm/dd/yyyy format
+function formatDate(dateString: string) {
+  const index = dateString.indexOf('T');
+  dateString = dateString.substring(0, index);  // Cuts off everything after the "T"
+  const [year, month, day] = dateString.split("-");
+  return `${month}/${day}/${year}`;
+}
+
 const BloodBankReagentInputPage = (props: { name: string }) => {
   const { theme } = useTheme();
   const [qcData, setQcData] = useState<BloodBankQCLot | null>(null);
-  const [analyteValues, setAnalyteValues] = useState<string[]>([]);
+  const [reagentValues, setReagentValues] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [qcComment, setQcComment] = useState<string>("");
+  const { type, userId } = useAuth();
+  type reagentStats = { [key: string]: string};
+  type reagentDictType = { [key: string ]: reagentStats}
+  const [reagentDict, setReagentDict] = useState<reagentDictType>({});
+
+  const getName = async () => {  // Gets the username from ID
+    // TEMP: Check if Student or Faculty
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/Students/${userId}`);
+    if (res.ok ) {
+      const studentUser: Student = await res.json();
+      return studentUser.firstname + " " + studentUser.lastname;
+    } else {  // Student could not be found
+      return "User";
+    }
+  }
 
   const getReportData = async () => {
     const storedQCData = localStorage.getItem('selectedQCData');
@@ -47,40 +72,83 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
     getReportData();
   }, []);
 
-  const handleInputChange = (index: number, value: string) => {
-    const newValues = [...analyteValues];
+  const posHandleInputChange = (index: number, value: string) => {
+    const newValues = [...reagentValues];
     newValues[index] = value;
-    setAnalyteValues(newValues);
+    const sIndex: string = index.toString();
+    const newDict = { ...reagentDict };  // Clone reagent dict
+    if (sIndex in newDict ) {  // This already exists
+      newDict[sIndex]["Pos"] = value;
+    } else {
+      newDict[sIndex] = {"Pos": value};
+    }
+    setReagentDict(newDict)
+    setReagentValues(newValues);
   };
 
-  const reportPDF = (analyteValues?: string[], QCData?: BloodBankQCLot) => {
-    const currentDate = new Date();
-    const tw = createTw({});
+  const negHandleInputChange = (index: number, value: string) => {
+    const newValues = [...reagentValues];
+    newValues[index] = value;
+    const sIndex: string = index.toString();
+    const newDict = { ...reagentDict };  // Clone reagent dict
+    if (sIndex in newDict ) {  // This already exists
+      newDict[sIndex]["Neg"] = value;
+    } else {
+      newDict[sIndex] = {"Neg": value};
+    }
+    setReagentDict(newDict);
+    setReagentValues(newValues);
+  };
 
+  const reportPDF = (username: string, reagentValues?: string[], QCData?: BloodBankQCLot) => {
+    const currentDate = new Date();
+    const tw = createTw({}); 
     return (
       <Document>
         <Page style={tw("py-8 px-16")}>
           <Text style={tw("text-center sm:text-[24px]")}>Quality Controls Report</Text>
           <Text style={tw("mt-8 text-[13px]")}>Date: {currentDate.toLocaleDateString()}</Text>
           <Text style={tw("mb-8 text-[13px]")}>Lot Number: {QCData?.lotNumber || "N/A"}</Text>
-          <Text style={tw("text-[22px] mb-8 text-center")}>{props.name} QC</Text>
+          <Text style={tw("text-[22px] mb-8 text-center")}>{QCData?.qcName} QC</Text>
           <View style={tw("flex-row justify-around")}>
-            <Text style={tw("font-[700] text-[15px]")}>Analytes</Text>
+            <Text style={tw("font-[700] text-[15px]")}>Reagents</Text>
             <Text style={tw("font-[700] text-[15px]")}>Value</Text>
+            <Text style={tw("font-[700] text-[15px]")}>Expected Value</Text>
           </View>
           <View style={tw("w-full h-[1px] bg-black mt-2")} />
-          <View style={tw("flex-row justify-between p-5")}>
+          <View style={tw("flex-row justify-around p-5")}>
             <View>
-              {analyteValues?.map((value, index) => (
-                <Text style={tw("mb-2 text-[13px]")} key={index}>
-                  {QCData?.reagents[index].reagentName}: {value}
+              {Object.entries(reagentDict)?.map(([value], index) => (
+                <Text style={tw("mb-2 text-[13px]")}>
+                  {QCData?.reagents[index].reagentName}{" (+)\n"}
+                  {QCData?.reagents[index].reagentName}{" (=)"}
                 </Text>
+              ))}
+            </View>
+            <View>
+              {Object.entries(reagentDict)?.map(([value], index) => (
+                <View style={tw("flex-row")} key={index}>
+                  <Text style={tw("mb-2 text-[13px]")}>
+                    {reagentDict[value]["Pos"]}{"\n"}
+                    {reagentDict[value]["Neg"]}
+                  </Text>
+                </View>
+              ))}
+            </View>
+            <View>
+              {Object.entries(reagentDict)?.map(([value], index) => (
+                <View style={tw("flex-row")} key={index}>
+                  <Text style={tw("mb-2 text-[13px]")}>
+                    {QCData?.reagents[index].posExpectedRange}{"\n"}
+                    {QCData?.reagents[index].negExpectedRange}
+                  </Text>
+                </View>
               ))}
             </View>
           </View>
           <View style={tw("w-full h-[1px] bg-black mt-2")} />
           <Text style={tw("mt-2")}>QC Comments: {qcComment || "No comments provided"}</Text>
-          <Text style={tw("mt-8 text-[13px]")}>Approved by: [Your Name]</Text>
+          <Text style={tw("mt-8 text-[13px]")}>Approved by: {username}</Text>
           <Text style={tw("mt-2 text-[13px]")}>Date: {currentDate.toLocaleDateString()}</Text>
           <Text style={tw("mt-2 text-[13px]")}>Time: {currentDate.toLocaleTimeString()}</Text>
         </Page>
@@ -89,7 +157,8 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
   };
 
   const openPDF = async () => {
-    const blob = await pdf(reportPDF(analyteValues, qcData || undefined)).toBlob();
+    const username = await getName();
+    const blob = await pdf(reportPDF(username, reagentValues, qcData || undefined)).toBlob();
     const pdfUrl = URL.createObjectURL(blob);
     window.open(pdfUrl, "_blank");
   };
@@ -104,7 +173,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
       ...qcData,
       reagents: qcData.reagents.map((reagent, index) => ({
         ...reagent,
-        value: analyteValues[index],
+        value: reagentValues[index],
       })),
       qcComment,
     };
@@ -112,7 +181,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
     try {
       // await saveToDB("qc_store", qcDataToSave);
       console.log("QC data saved successfully with comments.");
-      setAnalyteValues([]);
+      setReagentValues([]);
     } catch (error) {
       console.error("Error saving QC data:", error);
     }
@@ -145,7 +214,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
                   Exp37Range={item.thirtySevenDegree}
                   ExpAHGRange={item.AHG}
                   ExpCheckCellsRange={item.checkCell}
-                  handleInputChange={(val: string) => handleInputChange(index, val)}
+                  handleInputChange={(val: string) => posHandleInputChange(index, val)}
                 />
               </div>
             ))}
@@ -170,7 +239,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
                   Exp37Range={item.thirtySevenDegree}
                   ExpAHGRange={item.AHG}
                   ExpCheckCellsRange={item.checkCell}
-                  handleInputChange={(val: string) => handleInputChange(index, val)}
+                  handleInputChange={(val: string) => negHandleInputChange(index, val)}
                 />
               </div>
             ))}
@@ -179,135 +248,37 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
 
         {/* Anti-Sera Lot Table */}
         <div className="mt-8">
-  <h3 className="text-lg font-semibold mb-2">Anti-Sera Lot</h3>
+  <h3 className="text-lg font-semibold mb-2">Reagent Lot</h3>
   <table className="w-full border-collapse border">
-    <thead>
-      <tr>
-        <th className="border px-2 py-1 text-center"></th>
-        <th className="border px-2 py-1 text-center">α-A</th>
-        <th className="border px-2 py-1 text-center">α-B</th>
-        <th className="border px-2 py-1 text-center">α-A,B</th>
-        <th className="border px-2 py-1 text-center">α-D</th>
-        <th className="border px-2 py-1 text-center">Ctrl</th>
-      </tr>
-    </thead>
     <tbody>
       <tr>
-        <td className="border px-2 py-1 text-center font-semibold">Anti-Sera Lot #</td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Lot # for α-A" />
+        <td className="border px-4 py-2">Reagent</td>
+        {qcData.reagents.map((item, index) => (
+        <td key={index} className="border px-4 py-2 text-center">
+          {item.reagentName}
         </td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Lot # for α-B" />
-        </td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Lot # for α-A,B" />
-        </td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Lot # for α-D" />
-        </td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Lot # for Ctrl" />
-        </td>
+        ))}
       </tr>
       <tr>
-        <td className="border px-2 py-1 text-center font-semibold">Exp. Date</td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Exp. Date for α-A" />
+        <td className="border px-4 py-2">Reagent Lot #</td>
+        {qcData.reagents.map((item, index) => (
+        <td key={index} className="border px-4 py-2 text-center">
+          {item.reagentLotNum}
         </td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Exp. Date for α-B" />
+        ))}
+      </tr>
+      <tr>
+        <td className="border px-4 py-2">Exp. Date</td>
+        {qcData.reagents.map((item, index) => (
+        <td key={index} className="border px-4 py-2 text-center">
+          {formatDate(item.expirationDate)}
         </td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Exp. Date for α-A,B" />
-        </td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Exp. Date for α-D" />
-        </td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Exp. Date for Ctrl" />
-        </td>
+        ))}
       </tr>
     </tbody>
   </table>
 </div>
 
-
-        {/* Reverse Cell Lot Table */}
-        <div className="mt-8">
-  <h3 className="text-lg font-semibold mb-2">Reverse Cell Lot</h3>
-  <table className="w-full border-collapse border">
-    <thead>
-      <tr>
-        <th className="border px-2 py-1 text-center"></th>
-        <th className="border px-2 py-1 text-center">A1</th>
-        <th className="border px-2 py-1 text-center">B</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td className="border px-2 py-1 text-center font-semibold">Reverse Cell Lot #</td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Lot # for A1" />
-        </td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Lot # for B" />
-        </td>
-      </tr>
-      <tr>
-        <td className="border px-2 py-1 text-center font-semibold">Exp. Date</td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Exp. Date for A1" />
-        </td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Exp. Date for B" />
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-
-        {/* Screen Cell Lot Table */}
-        <div className="mt-8">
-  <h3 className="text-lg font-semibold mb-2">Screen Cell Lot</h3>
-  <table className="w-full border-collapse border">
-    <thead>
-      <tr>
-        <th className="border px-2 py-1 text-center"></th>
-        <th className="border px-2 py-1 text-center">SC1</th>
-        <th className="border px-2 py-1 text-center">SC2</th>
-        <th className="border px-2 py-1 text-center">SC3</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td className="border px-2 py-1 text-center font-semibold">Screen Cell Lot #</td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Lot # for SC1" />
-        </td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Lot # for SC2" />
-        </td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Lot # for SC3" />
-        </td>
-      </tr>
-      <tr>
-        <td className="border px-2 py-1 text-center font-semibold">Exp. Date</td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Exp. Date for SC1" />
-        </td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Exp. Date for SC2" />
-        </td>
-        <td className="border px-2 py-1 text-center">
-          <input type="text" className="w-full border p-1 rounded-md" placeholder="Exp. Date for SC3" />
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
 
 
         {/* Control Buttons */}
