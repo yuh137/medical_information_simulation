@@ -38,17 +38,17 @@ jobs:
       # Frontend Build Steps
       - name: Install dependencies for frontend
         run: |
-          cd frontend
+          cd client
           npm install
 
       - name: Build the React frontend
         run: |
-          cd frontend
+          cd client
           npm run build
 
       - name: Copy React build to backend wwwroot
         run: |
-          cd frontend
+          cd client
           cp -r build/* ../api/Medical-Information.API/Medical-Information.API/wwwroot/
 
       # Upload backend build artifact
