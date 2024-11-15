@@ -190,7 +190,7 @@ function AppWithRouter() {
 
                       if (qcName) {
                         try {
-                          const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByName?dep=${dep}&name=${qcName}`);
+                          const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByName?dep=${dep}&name=${qcName}`, {method: "GET"});
                           if (res.ok) {
                             return res.json();
                           }

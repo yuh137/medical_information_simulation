@@ -364,7 +364,7 @@ export const HemeTestInputPage = () => {
         if (isSavingQCLotSuccessful) {
           navigate("/admin-home");
         }
-      }, 1000);
+      }, 1500);
     }
   }, [isFeedbackNotiOpen])
 
@@ -951,7 +951,7 @@ export const HemeTestInputPage = () => {
                       <div className="flex flex-col sm:gap-y-2">
                         <Icon icon="clarity:success-standard-line" className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
                         <div>Saved QC Successfully</div>
-                        <div className="text-md text-gray-500">Redirecting to Homepage...</div>
+                        <div className="text-md text-gray-500">Redirecting to Homepage</div>
                       </div>
                     </>
                   ) : (

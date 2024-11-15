@@ -7,6 +7,11 @@ using Medical_Information.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
+using System;
+using System.Data;
+using Microsoft.Data.SqlClient;
+using System.Reflection.Metadata;
+
 namespace Medical_Information.API.Controllers
 {
     [Route("api/[controller]")]
@@ -59,6 +64,7 @@ namespace Medical_Information.API.Controllers
                 qcLotModel = await adminQCLotRepository.GetAdminQCLotByNameAsync(name);
             }
 
+            
             if (qcLotModel == null)
             {
                 return NotFound(new RequestErrorObject
@@ -76,29 +82,34 @@ namespace Medical_Information.API.Controllers
         [HttpDelete]
         [Route("ByName")]
         public async Task<IActionResult> DeleteQCLotByName([FromRoute] string? name, [FromRoute] string? dep) {
-            //we need to check if QC lot exists, then simply delete DB entry with that name. 
-            //Return error on error, we'll return ok on good or if it dont exist, user dont need to know they deleted nothing
-
-            Console.WriteLine("Test");
-
             AdminQCLot? qcLotModel;
 
             if (Enum.TryParse(dep, true, out Department department))
+            {
                 qcLotModel = await adminQCLotRepository.GetAdminQCLotByNameAsync(name, department);
+            }
             else
+            {
                 qcLotModel = await adminQCLotRepository.GetAdminQCLotByNameAsync(name);
+            }
 
-            //dont care if nothing returned, treat as normal
+            //goal: get guid and then delete qc
+
             if (qcLotModel == null)
-                return Ok();    
-            
+            {
+                return NotFound("Cannot locate QC Lot");
+            }
 
-            //now delete db entry
+            //qc file exists, now delete it
+            else
+            {
+                var val = await adminQCLotRepository.DeleteQCLotAsync(qcLotModel.AdminQCLotID);
+                if (val == null)
+                    return NotFound("Cannont delete entry");
+            }
 
+            return Ok(null);
 
-
-
-            return Ok();
         }
 
         [HttpPost]
