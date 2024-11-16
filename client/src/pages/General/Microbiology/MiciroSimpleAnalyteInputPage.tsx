@@ -119,27 +119,27 @@ const MicroSimpleAnalyteInputPage = (props: { name: string }) => {
           </View>
           <View style={tw("w-full h-[1px] bg-black mt-2")} />
           <View style={tw("flex-row justify-between p-5")}>
-  <View>
-    {analyteValues?.map((value, index) => (
-      <Text
-        style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)}
-        key={index}
-      >
-        {QCData?.analytes[index].analyteName}
-      </Text>
-    ))}
-  </View>
-  <View>
-    {analyteValues?.map((value, index) => (
-      <Text
-        style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)}
-        key={index}
-      >
-        {isNaN(parseFloat(value)) ? value : `${parseFloat(value)} ${QCData?.analytes[index].unit_of_measure}`}
-      </Text>
-    ))}
-  </View>
-</View>
+          <View>
+            {analyteValues?.map((value, index) => (
+              <Text
+                style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)}
+                key={index}
+              >
+                {QCData?.analytes[index].analyteName}
+              </Text>
+            ))}
+          </View>
+          <View>
+            {analyteValues?.map((value, index) => (
+              <Text
+                style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)}
+                key={index}
+              >
+                {isNaN(parseFloat(value)) ? value : `${parseFloat(value)} ${QCData?.analytes[index].unit_of_measure}`}
+              </Text>
+            ))}
+          </View>
+        </View>
 
           <View style={tw("w-full h-[1px] bg-black mt-2")} />
           <Text style={tw("mt-2")}>QC Comments:</Text>
