@@ -193,7 +193,7 @@ const BloodBankOrderControls = () => {
             <ButtonBase onClick= {handleClearSelection}>
                 <div className="!rounded-lg sm:w-36 sm:h-14 !bg-[#dae3f3] !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[2px] font-semibold text-md leading-[3.5rem]">Clear Selection</div>
             </ButtonBase>
-            <ButtonBase onClick={handleOrderSelectedQC}>
+            <ButtonBase onClick={oldHandleOrderSelectedQC}>
                 <div className="!rounded-lg sm:w-36 sm:h-14 !bg-[#dae3f3] !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[2px] font-semibold text-md leading-[3.5rem]">Order Selected QC</div>
             </ButtonBase>
           </div>
