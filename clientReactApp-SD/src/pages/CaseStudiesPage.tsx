@@ -9,12 +9,12 @@ export default function CaseStudiesPage(){
       <>
 
           <CaseStudies></CaseStudies>
-          <div>
+          {/*<div>
             Case Studies Page
           </div>
           <div>
             There are case studies here
-          </div>
+          </div>*/}
           
       </>
     );

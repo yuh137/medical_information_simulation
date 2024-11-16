@@ -241,7 +241,7 @@ export default function MainContent(props: { disableCustomTheme?: boolean }) {
             <Typography variant="h1" gutterBottom>
               Case Studies
             </Typography>
-            <Typography>Stay in the loop with the latest about our projects</Typography>
+            <Typography>View case studies available to your account</Typography>
           </div>
           <Box
             sx={{
