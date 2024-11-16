@@ -128,6 +128,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       console.log("student local data: ", students);
       console.log("admin local data: ", admins);
   
+      /*
       const studentFound = students.find(
         (studentFound: any) =>
           studentFound.email === email && verifyPassword(password, studentFound.password)//studentFound.password === password,
@@ -136,9 +137,24 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       const adminFound = admins.find(
         (adminFound: any) =>
           adminFound.email === email && verifyPassword(password, adminFound.password)//adminFound.password === password,
-      );
-
-  
+      );*/
+      let studentFound = null;
+      for (const student of students) {
+        if (student.email === email && (await verifyPassword(password, student.password))) {
+          studentFound = student;
+          break; // Stop checking further once a match is found
+        }
+      }
+      
+      let adminFound = null;
+      if(studentFound == null){//only check admin if no match in student
+        for (const admin of admins) {
+          if (admin.email === email && (await verifyPassword(password, admin.password))) {
+            adminFound = admin;
+            break; // Stop checking further once a match is found
+          }
+        }
+      }
       if (studentFound) {
         const loginStart = new Date().toISOString();
         console.log("studentFound: ", studentFound);

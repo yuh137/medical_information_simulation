@@ -110,7 +110,10 @@ export function passwordHasher(password) {
     return hashedPassword;
 }
 
-export function verifyPassword(password, hashedPassword) {
-    const match = bcrypt.compare(password, hashedPassword);
+export async function verifyPassword(password, hashedPassword) {
+  //console.log("hashed password", passwordHasher(password));
+  //console.log("hashed password", hashedPassword);
+    const match = await bcrypt.compare(password, hashedPassword);
+    //console.log("match? ", match)
     return match;
 }
