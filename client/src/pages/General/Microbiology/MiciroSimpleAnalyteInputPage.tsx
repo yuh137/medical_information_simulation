@@ -230,15 +230,13 @@ const MicroSimpleAnalyteInputPage = (props: { name: string }) => {
                 electro={item.electrolyte}
                 min_level={+item.min_level}
                 max_level={+item.max_level}
-                // level={detectLevel(props.name)}
                 measUnit={item.unit_of_measure}
                 handleInputChange={(val: string) => {
-                  // Convert string to number but pass the string to handleInputChange
                   const numericValue = +val;
                   if (item.min_level !== "" && item.max_level !== "") {
-                      handleInputChange(index, val, +item.min_level, +item.max_level);  // Pass `val` as a string
+                      handleInputChange(index, val, +item.min_level, +item.max_level);
                   } else {
-                      handleInputChange(index, val, -1, 9999);  // Pass `val` as a string
+                      handleInputChange(index, val, -1, 9999);
                   }
               }}
               

@@ -167,14 +167,14 @@ export const MicrobiologyTestInputPage = (props: { name: string }) => {
             <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
               <div className="lotnumber-label sm:text-xl font-semibold text-white">Open Date</div>
               <input
-                type="text"
+                type="date"
                 className={`p-1 rounded-lg border border-solid ${errors.openDate ? 'border-red-500' : 'border-[#548235]'} sm:w-[250px] text-center`}
                 {...register("openDate", {
                   required: "Open date is required",
-                  pattern: {
-                    value: /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/,
-                    message: "Invalid date mm/dd/yyyy"
-                  }
+                  // pattern: {
+                  //   value: /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/,
+                  //   message: "Invalid date mm/dd/yyyy"
+                  // }
                 })}
               />
               {errors.openDate && (
@@ -185,14 +185,14 @@ export const MicrobiologyTestInputPage = (props: { name: string }) => {
             <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
               <div className="lotnumber-label sm:text-xl font-semibold text-white">Expiration Date</div>
               <input 
-                type="text" 
+                type="date" 
                 className={`p-1 rounded-lg border border-solid ${errors.closedDate ? 'border-red-500' : 'border-[#548235]'} sm:w-[250px] text-center`}
                 {...register("closedDate", {
                   required: "Expiration date is required",
-                  pattern: {
-                    value: /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/,
-                    message: "Invalid date mm/dd/yyyy"
-                  }
+                  // pattern: {
+                  //   value: /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/,
+                  //   message: "Invalid date mm/dd/yyyy"
+                  // }
                 })}
               />
               {errors.closedDate && (
