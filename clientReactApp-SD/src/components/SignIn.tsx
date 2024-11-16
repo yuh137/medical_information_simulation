@@ -24,6 +24,8 @@ import { deleteData } from "../util/indexedDB/deleteData.ts";
 import addData from "../util/indexedDB/addData.ts";
 import { Admin } from "../util/indexedDB/IDBSchema.ts";
 import { Student } from "../util/indexedDB/IDBSchema.ts";
+//for hashed password verification
+import { verifyPassword } from "./PasswordEncryption.jsx";
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -128,12 +130,12 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   
       const studentFound = students.find(
         (studentFound: any) =>
-          studentFound.email === email && studentFound.password === password,
+          studentFound.email === email && verifyPassword(password, studentFound.password)//studentFound.password === password,
       );
   
       const adminFound = admins.find(
         (adminFound: any) =>
-          adminFound.email === email && adminFound.password === password,
+          adminFound.email === email && verifyPassword(password, adminFound.password)//adminFound.password === password,
       );
 
   
