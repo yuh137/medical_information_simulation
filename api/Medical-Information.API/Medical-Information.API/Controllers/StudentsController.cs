@@ -12,11 +12,16 @@ namespace Medical_Information.API.Controllers
     public class StudentsController : ControllerBase
     {
         private readonly IStudentRepository studentRepository;
+        private readonly IStudentReportRepository studentReportRepository;
+        private readonly IAnalyteInputRepository analyteInputRepository;
         private readonly IMapper mapper;
 
-        public StudentsController(IStudentRepository studentRepository, IMapper mapper)
+        public StudentsController(IStudentRepository studentRepository, IStudentReportRepository studentReportRepository,
+                                  IAnalyteInputRepository analyteInputRepository, IMapper mapper)
         {
             this.studentRepository = studentRepository;
+            this.studentReportRepository = studentReportRepository;
+            this.analyteInputRepository = analyteInputRepository;
             this.mapper = mapper;
         }
 
@@ -42,6 +47,67 @@ namespace Medical_Information.API.Controllers
             }
 
             return Ok(studentModel);
+        }
+
+        [HttpGet]
+        [Route("Reports")]
+        public async Task<IActionResult> GetStudentReports()
+        {
+            var studentReports = await studentReportRepository.GetAllStudentReportsAsync();
+            var studentReportsDTO = mapper.Map<List<StudentReportDTO>>(studentReports);
+            return Ok(studentReportsDTO);
+        }
+
+        [HttpGet]
+        [Route("Reports/{id:Guid}")]
+        public async Task<IActionResult> GetStudentReportsByStudentID([FromRoute] Guid id)
+        {
+            var studentModel = await studentRepository.GetStudentByIDAsync(id);
+
+            if (studentModel == null)
+            {
+                return NotFound("Student not found");
+            }
+
+            var studentReportsDTO = mapper.Map<List<StudentReportDTO>>(studentModel.Reports);
+
+            return Ok(studentReportsDTO);
+        }
+
+        [HttpPost]
+        [Route("Reports/{studentID:Guid}/{qcLotID:Guid}")]
+        public async Task<IActionResult> CreateStudentReport([FromRoute] Guid studentID, [FromRoute] Guid qcLotID, [FromBody] AddStudentReportDTO dto)
+        {
+            Guid newReportID = Guid.NewGuid();
+
+            var studentReportModel = new StudentReport
+            {
+                ReportID = newReportID,
+                StudentID = studentID,
+                AdminQCLotID = qcLotID,
+            };
+
+            ICollection<AnalyteInput> analyteInputs = [];
+
+            foreach (var analyteInputListDto in dto.AnalyteInputs)
+            {
+                AnalyteInput analyteInput = new AnalyteInput
+                {
+                    AnalyteInputID = Guid.NewGuid(),
+                    ReportID = newReportID,
+                    AnalyteName = analyteInputListDto.AnalyteName,
+                    AnalyteValue = analyteInputListDto.AnalyteValue
+                };
+                analyteInputs.Add(analyteInput);
+            }
+
+            studentReportModel.AnalyteInputs = analyteInputs;
+
+            await studentReportRepository.CreateStudentReportAsync(studentReportModel);
+
+            var studentReportDTO = mapper.Map<StudentReportDTO>(studentReportModel);
+
+            return CreatedAtAction("GetStudentReportsByStudentID", new { id = newReportID }, studentReportDTO);
         }
 
         //[HttpPost]
@@ -95,7 +161,7 @@ namespace Medical_Information.API.Controllers
             }
 
             var studentDTO = mapper.Map<StudentDTO>(studentModel);
-            
+
             return Ok(studentDTO);
         }
     }

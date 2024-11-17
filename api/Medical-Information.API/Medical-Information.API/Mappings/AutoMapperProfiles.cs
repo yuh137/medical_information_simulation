@@ -12,18 +12,21 @@ namespace Medical_Information.API.Mappings
             CreateMap<Admin, AdminDTO>().ReverseMap();
             CreateMap<Student, StudentDTO>().ReverseMap();
             CreateMap<AdminQCLot, AdminQCLotDTO>().ReverseMap();
+            CreateMap<UpdateAdminQCLotDTO, AdminQCLot>().ReverseMap();
+            CreateMap<AdminQCLot, AddAdminQCLotRequestDTO>().ReverseMap();
             CreateMap<Analyte, AnalyteDTO>().ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()))
                 .ReverseMap()
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => Enum.Parse<AnalyteType>(src.Type)));
             CreateMap<Analyte, AddAnalyteRequestDTO>().ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()))
                 .ReverseMap()
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => Enum.Parse<AnalyteType>(src.Type)));
-            CreateMap<AdminQCLot, AddAdminQCLotRequestDTO>().ReverseMap();
             CreateMap<AddAnalyteWithListDTO, Analyte>().ForMember(dest => dest.Type, opt => opt.MapFrom(src => Enum.Parse<AnalyteType>(src.Type)))
                 .ReverseMap()
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()));
             CreateMap<StudentReportDTO, StudentReport>().ReverseMap();
-            CreateMap<UpdateAdminQCLotDTO, AdminQCLot>().ReverseMap();
+            CreateMap<AddStudentReportDTO, StudentReport>().ReverseMap();
+            CreateMap<AnalyteInput, AnalyteInputDTO>().ReverseMap();
+            CreateMap<AnalyteInput, AddAnalyteInputWithListDTO>().ReverseMap();
         }
     }
 }

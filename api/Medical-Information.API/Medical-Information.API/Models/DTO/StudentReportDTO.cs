@@ -12,4 +12,10 @@ namespace Medical_Information.API.Models.DTO
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public ICollection<AnalyteInput> AnalyteInputs { get; set; } = [];
     }
+
+    public class AddStudentReportDTO
+    {
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public ICollection<AddAnalyteInputWithListDTO> AnalyteInputs { get; set; } = [];
+    }
 }
