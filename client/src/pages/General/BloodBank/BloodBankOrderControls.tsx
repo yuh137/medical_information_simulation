@@ -80,35 +80,24 @@ const BloodBankOrderControls = () => {
           return;
         }
           */
-        // REPORTS
-        console.log(userId);
-        console.log("---");
-        const reportsToSave = savedQCItems.map(item => ({
-          studentID: userId,
-          bloodBankQCLotID: item.bloodBankQCLotID,
-          createdDate: dayjs(),
-        }));
-        // console.log(dayjs());
-        // console.log(dayjs().toISOString());
-        savedQCItems.forEach(element => {
-          console.log(element);
-          console.log(element.bloodBankQCLotID);
-        });
-        console.log(JSON.stringify(reportsToSave));
-
-        const createRes = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/Create`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(reportsToSave),
-        })
-        console.log(createRes);
-        if (createRes.ok){
-          console.log("Created QC reports successfully");
-          // setNotiType(NotiType.OrderCreated);
-          // setIsFeedbackNotiOpen(true);
-          // setIsOrderLoading(false);
+        for (const item of savedQCItems)  {
+          const dateString: string = dayjs().toISOString();  // dayjs().format("YYYY-MM-DD") + ""
+          try {
+            const createRes = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/Create`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify([{studentId: userId, bloodBankQCLotId: item.bloodBankQCLotID, createdDate: dateString}]),
+            })
+            if (createRes.ok ) {
+              console.log("Created BB Student Report");
+            } else { 
+              console.log("Failed to create BB Student Report");
+            }
+          } catch (error) {
+            console.error("Fetch failed:", error);
+          }
         }
         
       }
