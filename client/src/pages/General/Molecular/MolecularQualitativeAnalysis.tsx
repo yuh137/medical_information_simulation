@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { AuthToken } from "../../../context/AuthContext";
 import { getQCRangeByDetails } from '../../../utils/indexedDB/getData';
-import { Analyte, MolecularQCTemplateBatch, QCPanel } from '../../../utils/indexedDB/IDBSchema';
+import { Analyte, MolecularQCReport, MolecularQCTemplateBatch, QCPanel } from '../../../utils/indexedDB/IDBSchema';
 import NavBar from '../../../components/NavBar';
 import { Modal, Radio, RadioGroup, FormControlLabel, TextField } from '@mui/material';
 import { Button } from '@mui/material';
@@ -15,6 +16,7 @@ import {
 } from '@tanstack/react-table';
 
 interface TableData { creationDate: string; creationTime: string; tech: string; value: string; comment: string; }
+interface ResponseStudent { username: string }
 
 const MolecularQualitativeAnalysis = () => {
   const { encodedSelectedAnalyteId, encodedStartDate, encodedEndDate } = useParams<{ encodedSelectedAnalyteId: string; encodedStartDate: string; encodedEndDate: string }>();
@@ -43,13 +45,42 @@ const MolecularQualitativeAnalysis = () => {
           const qcData = ((await getQCRangeByDetails(dbData.qcName, dbData.lotNumber, dbData.closedDate || "")) as unknown) as MolecularQCTemplateBatch;
           const isoStartDate = isoFormatDate(startDate as string);
           const isoEndDate = isoFormatDate(endDate as string);
-          const inRangeReports = qcData?.reports.filter(report => ((new Date(isoStartDate)).getTime() <= (new Date(report.creationDate)).getTime()) && ((new Date(report.creationDate)).getTime() <= (new Date(isoEndDate)).getTime()) && report.analyteInputs.some(input => input.analyteName === selectedAnalyteId)) || [];
+          const inRangeReports = qcData?.reports.filter(report => ((new Date(isoStartDate)).getTime() <= (new Date(report.createdDate)).getTime()) && ((new Date(report.createdDate)).getTime() <= (new Date(isoEndDate)).getTime()) && report.analyteInputs.some(input => input.analyteName === selectedAnalyteId)) || [];
+          const token = localStorage.getItem("token");
+          const authToken: AuthToken = JSON.parse(token as string);
+          const res = await fetch(`${process.env.REACT_APP_API_URL}/Students/Reports`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${authToken.jwtToken}`,
+            },
+          });
+          if (res.ok) {
+            const reports = (await res.json()) as MolecularQCReport[];
+            const inRangeDBReports = reports.filter(report => ((new Date(isoStartDate)).getTime() <= (new Date(report.createdDate)).getTime()) && ((new Date(report.createdDate)).getTime() <= (new Date(isoEndDate)).getTime()) && report.analyteInputs.some(input => input.analyteName === selectedAnalyteId)) || [];
+            for (let report of reports) {
+              const getUserRes = await fetch(`${process.env.REACT_APP_API_URL}/Students/${report.studentID}`, {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  Accept: "application/json",
+                  Authorization: `Bearer ${authToken.jwtToken}`,
+                },
+              });
+              if (getUserRes.ok) {
+                const user = await getUserRes.json() as ResponseStudent;
+                report.studentName = user.username;
+              }
+            }
+            inRangeReports.push(...inRangeDBReports);
+          }
           const analyteReports = [];
           for (const report of inRangeReports) {
             const reportAnalyteInputs = report.analyteInputs.filter(input => input.analyteName === selectedAnalyteId);
             for (const input of reportAnalyteInputs) {
-              const creationDate = new Date(report.creationDate)
-              analyteReports.push({ creationDate: creationDate.toDateString(), creationTime: creationDate.toTimeString(), tech: report.studentID, value: input.value, comment: input.comment });
+              const creationDate = new Date(report.createdDate)
+              analyteReports.push({ creationDate: creationDate.toDateString(), creationTime: creationDate.toTimeString(), tech: report.studentName || "", value: input.analyteValue, comment: input.comment });
             }
           }
           setDBData(dbData);

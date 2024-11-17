@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { MolecularQCTemplateBatch, MolecularQCTemplateBatchAnalyte, QualitativeMolecularQCTemplateBatchAnalyte, QualitativeViralLoadRangeMolecularQCTemplateBatchAnalyte, AnalyteReportType, MolecularQCReport, Analyte } from '../../../utils/indexedDB/IDBSchema';
+import { MolecularQCTemplateBatch, MolecularQCReport, Analyte } from '../../../utils/indexedDB/IDBSchema';
 import NavBar from '../../../components/NavBar';
 import MolecularAnalyte from '../../../components/MolecularAnalyte';
 import { AuthToken } from "../../../context/AuthContext";
 import { QCPanel } from "../../../utils/indexedDB/IDBSchema";
 import { Button, ButtonBase, Modal } from "@mui/material";
 import { useTheme } from "../../../context/ThemeContext";
+import dayjs, { Dayjs } from "dayjs";
 import { saveToDB, getQCRangeByDetails } from "../../../utils/indexedDB/getData";
-import { min } from 'd3';
 import { pdf, Document, Page, Text, View } from '@react-pdf/renderer';
 import { createTw } from 'react-pdf-tailwind';
 
@@ -22,6 +22,8 @@ const SimpleMolecularAnalyteInputPage = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isValidManual, setIsValidManual] = useState<boolean>(false);
   const [username, setUsername] = useState<string>('');
+  const [studentID, setStudentID] = useState<string>('');
+  const [roles, setRoles] = useState<string>('');
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const analyteNameRefs = useRef<HTMLDivElement[]>([]);
 
@@ -29,7 +31,9 @@ const SimpleMolecularAnalyteInputPage = () => {
     const token = localStorage.getItem("token");
     if (token) {
       const authToken: AuthToken = JSON.parse(token);
+      setStudentID(authToken.userID);
       const role = authToken.roles[0];
+      setRoles(authToken.roles[0]);
       try {
         const res = await fetch(`${process.env.REACT_APP_API_URL}/${role + "s"}/${authToken.userID}`, {
           method: "GET",
@@ -90,23 +94,41 @@ const SimpleMolecularAnalyteInputPage = () => {
       console.error("No QC data available to save.");
       return;
     }
-    const report: MolecularQCReport = { studentID: username, creationDate: new Date(), analyteInputs: qcData.analytes.map((analyte, index) => ({ analyteName: analyte.analyteName, value: analyteValues[index], comment: modalData.find(element => element.invalidIndex === index)?.comment || "" })) };
-    let data = ((await getQCRangeByDetails(qcData.qcName, qcData.lotNumber, '')) as unknown) as MolecularQCTemplateBatch;
-    if (!data) {
-      data = { fileName: qcData.qcName, lotNumber: qcData.lotNumber, closedDate: '', reports: [], openDate: '', analytes: [] };
+    if (!roles.includes("Admin")) {
+      const token = localStorage.getItem("token");
+      const authToken: AuthToken = JSON.parse(token as string);
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/Students/Reports/${authToken.userID}/${qcData?.adminQCLotID}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${authToken.jwtToken}`,
+        },
+        body: JSON.stringify({
+          "createdDate": dayjs().toISOString(),
+          "analyteInputs": qcData.analytes.map((analyte, index) => ({ analyteName: analyte.analyteName, analyteValue: analyteValues[index], comment: modalData.find(element => element.invalidIndex === index)?.comment || undefined }))
+        })
+      });
     }
-    data.reports.push(report);
-    console.log("Data to save:", qcData);
-    try {
-      await saveToDB("qc_store", data);
-      console.log("QC data saved successfully.");
-      setAnalyteValues([]);
-      setInvalidIndexes(null);
-      setModalData([]);
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error("Error saving QC data:", error);
+    else {
+      const report: MolecularQCReport = { studentID: studentID, studentName: username, createdDate: new Date(), analyteInputs: qcData.analytes.map((analyte, index) => ({ analyteName: analyte.analyteName, analyteValue: analyteValues[index], comment: modalData.find(element => element.invalidIndex === index)?.comment || "" })) };
+      let data = ((await getQCRangeByDetails(qcData.qcName, qcData.lotNumber, '')) as unknown) as MolecularQCTemplateBatch;
+      if (!data) {
+        data = { fileName: qcData.qcName, lotNumber: qcData.lotNumber, closedDate: '', reports: [], openDate: '', analytes: [] };
+      }
+      data.reports.push(report);
+      console.log("Data to save:", qcData);
+      try {
+        await saveToDB("qc_store", data);
+        console.log("QC data saved successfully.");
+      } catch (error) {
+        console.error("Error saving QC data:", error);
+      }
     }
+    setAnalyteValues([]);
+    setInvalidIndexes(null);
+    setModalData([]);
+    setIsModalOpen(false);
   };
 
   const handleInputChange = (index: number, value: string, old_analyte: Analyte) => {
@@ -160,16 +182,6 @@ const SimpleMolecularAnalyteInputPage = () => {
       inputRefs.current[index + 1]
     ) {
       inputRefs.current[index + 1]?.focus();
-    }
-  };
-
-  const detectLevel = (str: string): number => {
-    if (str.endsWith("I")) {
-      return 1;
-    } else if (str.endsWith("II")) {
-      return 2;
-    } else {
-      return 0;
     }
   };
 

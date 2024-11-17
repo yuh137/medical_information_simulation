@@ -52,13 +52,13 @@ const MolecularQualitativeAnalysisReport = () => {
           const qcData = ((await getQCRangeByDetails(dbData.qcName, dbData.lotNumber, dbData.closedDate || "")) as unknown) as MolecularQCTemplateBatch;
           const isoStartDate = isoFormatDate(startDate as string);
           const isoEndDate = isoFormatDate(endDate as string);
-          const inRangeReports = qcData?.reports.filter(report => ((new Date(isoStartDate)).getTime() <= (new Date(report.creationDate)).getTime()) && ((new Date(report.creationDate)).getTime() <= (new Date(isoEndDate)).getTime()) && report.analyteInputs.some(input => input.analyteName === selectedAnalyteId)) || [];
+          const inRangeReports = qcData?.reports.filter(report => ((new Date(isoStartDate)).getTime() <= (new Date(report.createdDate)).getTime()) && ((new Date(report.createdDate)).getTime() <= (new Date(isoEndDate)).getTime()) && report.analyteInputs.some(input => input.analyteName === selectedAnalyteId)) || [];
           const analyteReports = [];
           for (const report of inRangeReports) {
             const reportAnalyteInputs = report.analyteInputs.filter(input => input.analyteName === selectedAnalyteId);
             for (const input of reportAnalyteInputs) {
-              const creationDate = new Date(report.creationDate)
-              analyteReports.push({ creationDate: creationDate.toDateString(), creationTime: creationDate.toTimeString(), tech: report.studentID, value: input.value, comment: input.comment });
+              const creationDate = new Date(report.createdDate)
+              analyteReports.push({ creationDate: creationDate.toDateString(), creationTime: creationDate.toTimeString(), tech: report.studentID, value: input.analyteValue, comment: input.comment });
             }
           }
           setDBData(dbData);

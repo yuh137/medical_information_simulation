@@ -17,7 +17,7 @@ namespace Medical_Information.API.Repositories.SQLImplementation
 
         public async Task<List<StudentReport>> GetAllStudentReportsAsync()
         {
-            return await dbContext.StudentReports.ToListAsync();
+            return await dbContext.StudentReports.Include(item => item.AnalyteInputs).ToListAsync();
         }
 
         public async Task<StudentReport?> CreateStudentReportAsync(StudentReport report)

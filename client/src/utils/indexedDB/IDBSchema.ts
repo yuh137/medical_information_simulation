@@ -51,13 +51,14 @@ export interface QCTemplateBatch {
 
 export interface MolecularQCReport {
     studentID: string;
-    creationDate: Date;
+    studentName?: string;
+    createdDate: Date;
     analyteInputs: AnalyteInput[];
 }
 
 export interface AnalyteInput {
     analyteName: string;
-    value: string;
+    analyteValue: string;
     comment: string;
 }
 

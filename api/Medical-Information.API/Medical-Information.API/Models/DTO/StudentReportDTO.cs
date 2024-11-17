@@ -10,7 +10,7 @@ namespace Medical_Information.API.Models.DTO
         public Guid StudentID { get; set; }
         public Guid AdminQCLotID { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
-        public ICollection<AnalyteInput> AnalyteInputs { get; set; } = [];
+        public ICollection<AnalyteInputDTO> AnalyteInputs { get; set; } = [];
     }
 
     public class AddStudentReportDTO
