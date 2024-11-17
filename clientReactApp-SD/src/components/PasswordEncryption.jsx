@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs-react';
 
 // Generate AES Key
 // Client side React and React native
+/*
 export const generateAesKey = () => {
   const aesSalt = forge.random.getBytesSync(32);
   const keyPassPhrase = forge.random.getBytesSync(32);
@@ -13,15 +14,16 @@ export const generateAesKey = () => {
     32 // Key size in bytes (256 bits)
   );
   return aesKey;
-};
+};*/
 
 //Generating RSA Public and Private Keys
 //Server side Node.js
 //const forge = require('node-forge');//Don't need?
-const BITS = 4096;
+/*const BITS = 4096;
 const rsaKeyPair = forge.pki.rsa.generateKeyPair({ bits: BITS}); // use according to your requirement
 const publicKeyPem = forge.pki.publicKeyToPem(rsaKeyPair.publicKey);
 const privateKeyPem = forge.pki.privateKeyToPem(rsaKeyPair.privateKey);
+*/
 /*
 // Encrypt AES Key using RSA public key
 // React and React native
@@ -102,7 +104,7 @@ export const encryptData = (plainText, aesKey) => {
 */
 
 //Hashing for passwords to be secure (once done all passwords are unable to be read as hashing is 1 way)
-export function passwordHasher(password) {
+export async function passwordHasher(password) {
     //const passwordInputRef = useRef();
     //const salt = bcrypt.genSaltSync(10); //used for hashing more securely
     const saltRounds = 10 //specify the number of rounds for hashing (higher the number the more secure but also slower)
