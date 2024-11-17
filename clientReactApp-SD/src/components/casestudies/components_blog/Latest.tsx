@@ -170,8 +170,9 @@ function Author({ authors }: { authors: { name: string; avatar: string }[] }) {
 
 export default function Latest() {
   const [focusedCardIndex, setFocusedCardIndex] = React.useState<number | null>(
-    null,
-  );
+    null,);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const articlesPerPage = 4;
 
   const handleFocus = (index: number) => {
     setFocusedCardIndex(index);
@@ -180,13 +181,24 @@ export default function Latest() {
   const handleBlur = () => {
     setFocusedCardIndex(null);
   };
+  //Pagination Logic
+  const startIndex = (currentPage - 1) * articlesPerPage;
+  const currentArticles = articleInfo.slice(startIndex, startIndex + articlesPerPage);
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+  setCurrentPage(value);
+  };
 
   return (
-    <div>
+    <div style={{padding : '200px'}}>
+      {/* Add padding to the section in order to create space for the latest section*/}
+      <Box sx ={{mt:{ xs: 20, md: 40}}}> {/* Responsive Spacing*/}
       <Typography variant="h2" gutterBottom>
         Latest
       </Typography>
-      <Grid container spacing={8} columns={12} sx={{ my: 4 }}>
+      {/* Add padding to the section in order to create space for the latest section*/}
+
+      <Grid container spacing={8} columns={12} sx={{ my: 8 }}>
         {articleInfo.map((article, index) => (
           <Grid key={index} size={{ xs: 12, sm: 6 }}>
             <Box
@@ -196,6 +208,7 @@ export default function Latest() {
                 justifyContent: 'space-between',
                 gap: 1,
                 height: '100%',
+                padding: '10px',
               }}
             >
               <Typography gutterBottom variant="caption" component="div">
@@ -224,9 +237,11 @@ export default function Latest() {
           </Grid>
         ))}
       </Grid>
-      <Box sx={{ display: 'flex', flexDirection: 'row', pt: 4 }}>
+      {/* Pagination Section for the code*/}
+      <Box sx={{ display: 'flex', flexDirection: 'row', pt: 8 }}>
         <Pagination hidePrevButton hideNextButton count={10} boundaryCount={10} />
       </Box>
+    </Box>
     </div>
   );
 }

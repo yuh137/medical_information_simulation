@@ -52,29 +52,52 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export default function HandleSubmit(props: { disableCustomTheme?: boolean }) {
+/*export default function HandleSubmit(props: { disableCustomTheme?: boolean }) {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       console.log('File selected:', file.name);
     }
   };
+commenting out in for the submission of files to be accepted to the local web browser for now*/
 
-  const handleSubmit = () => {
-    console.log('sent');
-  };
+export default function HandleSubmit(props: { disableCustomTheme?: boolean }) {
+  const[fileData, setFileData] = React.useState<string | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();//Reading tee files as a Base64 string to accept documents
+      reader.onload = () => {
+        if(reader.result){
+          const base64Data = reader.result.toString();
+          setFileData(base64Data);
+          localStorage.setItem('uploadedReport', base64Data);
+          console.log('File saved to localStorage:', file.name);
+      }
+    };
+  reader.readAsDataURL(file); //read the file as a Base64 string
+  }
+};
+
+const handleSubmit = () => {
+  if(fileData){
+    console.log('Submitted file save in localStorage');
+    alert('File successfully submitted and saved locally!');
+    } else {
+      alert('No file selected');
+  }
+
+};
 
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
         <Card>
-          <input
-            type="file"
-            onChange={handleFileChange}
-            style={{ marginBottom: '16px' }}
-          />
-          <Typography>Student Report Submissions</Typography>
+          <Typography variant='h4' align ='center' gutterBottom>
+            Student Report Submissions</Typography>
+          <input type="file" onChange= {handleFileChange} style={{marginBottom: '16px'}}/>
           <Button variant="contained" onClick={handleSubmit}>
             Submit
           </Button>
@@ -83,3 +106,4 @@ export default function HandleSubmit(props: { disableCustomTheme?: boolean }) {
     </AppTheme>
   );
 }
+
