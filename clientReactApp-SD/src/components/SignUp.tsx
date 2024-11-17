@@ -23,6 +23,8 @@ import ColorModeSelect from "../shared-theme/ColorModeSelect.tsx";
 // Import utility functions
 import initIDB from "../util/indexedDB/initIDB";
 import addData from "../util/indexedDB/addData";
+//for hashing passwords
+import { passwordHasher } from "./PasswordEncryption.jsx";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -171,6 +173,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
     setResultMessage(null);
 
     try {
+      const hashedPassword = passwordHasher(password);
       // Send registration data to the API
       // If student checked, sends to student table. If Faculty checked, sends to admin table
       if (studentChecked) {
@@ -179,7 +182,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
           {
             Username: username,
             Email: email,
-            Password: password,
+            Password: hashedPassword,
             Firstname: firstname,
             Lastname: lastname,
             Initials: initials,
@@ -193,7 +196,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
         const response = await axios.post(`http://localhost:5029/api/admins`, {
           Username: username,
           Email: email,
-          Password: password,
+          Password: hashedPassword,
           Firstname: firstname,
           Lastname: lastname,
           Initials: initials,

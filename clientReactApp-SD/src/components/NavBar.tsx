@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import DrawerToggle from './DrawerToggle.tsx';
 import { useLocation, Link } from 'react-router-dom'; // Import Link
 import './componentStyles/navbar.css';
+import AppTheme from '../shared-theme/AppTheme.tsx';
 
 
 const logoTheme = createTheme({
@@ -19,12 +20,14 @@ const logoTheme = createTheme({
 });
 
 
-export default function ButtonAppBar() {
+export default function ButtonAppBar(props: { disableCustomTheme?: boolean }) {
 
   const location = useLocation(); // Get current location
 
   return (
+    
     <AppBar className='Appbar' position="relative" sx={{ backgroundColor: "transparent", boxShadow: 'none', width: '100%' }}>
+      <AppTheme {...props}>
       <Toolbar>
         <ThemeProvider theme={logoTheme}>
         {/*Logo can't be used as button on splash page*/}
@@ -64,6 +67,8 @@ export default function ButtonAppBar() {
         )}
         
       </Toolbar>
+      </AppTheme>
     </AppBar>
+    
   );
 }

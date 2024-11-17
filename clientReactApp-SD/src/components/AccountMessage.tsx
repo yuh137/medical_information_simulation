@@ -18,7 +18,7 @@ import { Admin, Student } from "../util/indexedDB/IDBSchema";
 import { To, useNavigate } from 'react-router-dom';
 
 import { Resend } from 'resend';
-import { Email } from './email';
+//import { Email } from 'email';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -162,6 +162,25 @@ export default function AccountMessage(props: {
   const [userLastName, setUserLastName] = useState<string>('User');
   const [userType, setUserType] = useState<string>('Type');
   const [userEmail, setUserEmail] = useState<string>('User');
+  const [email, setEmail] = useState("");
+  const [body, setBody] = useState("");
+  const [emailError, setEmailError] = useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState("");
+  const validateInputs = () => {
+    let isValid = true;
+
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError(true);
+      setEmailErrorMessage("Please enter a valid email address.");
+      isValid = false;
+    } else {
+      setEmailError(false);
+      setEmailErrorMessage("");
+    }
+
+    return isValid;
+  };
+
   // Fetch the user's name from IndexedDB on component mount
   useEffect(() => {
     async function fetchName() {
@@ -210,9 +229,11 @@ export default function AccountMessage(props: {
               <Grid size={6}>
                 <Item>
                   <div>
+                    <br />
+                    <h3>User Information</h3>
                     {userFirstName && userLastName && userEmail ? (
                       <>
-                        <br />
+                        
                         First Name: {userFirstName}
                         <br /><br />
                         Last Name: {userLastName}
@@ -221,7 +242,7 @@ export default function AccountMessage(props: {
                         <br /><br />
                       </>
                     ) : (
-                      <p>Loading...</p>
+                      <p>Error getting user information</p>
                     )}
                   </div>
                 </Item>
@@ -250,9 +271,15 @@ export default function AccountMessage(props: {
                       autoComplete="off"
                     >
                       <TextField
-                        id="standard-basic"
+                        error={emailError}
+                        helperText={emailErrorMessage}
+                        id="email"
+                        type="email"
+                        name="email"
                         label="professor@email.com"
                         variant="standard"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                       />
                     </StyledFormBox>
                     <StyledFormBox
@@ -261,15 +288,33 @@ export default function AccountMessage(props: {
                       autoComplete="off"
                     >
                       <TextField
-                        id="standard-basic"
+                        //id="standard-basic"
+                        id="body"
+                        type="body"
+                        name="body"
                         label="Enter message here."
                         variant="standard"
                         multiline
                         rows={4}
+                        value={body}
+                        onChange={(e) => setBody(e.target.value)}
                       />
                     </StyledFormBox>{" "}
                     <br />
-                    <Button variant="outlined">SEND</Button> <br />
+                    <Button variant="outlined"
+                      onClick={() => {
+                        //Grab the data entered and build the email 
+                        if(validateInputs()){
+                          sendEmail({userEmail}, {email}, {body});
+                          setEmail("");  // Clear the email field
+                          setBody("");   // Clear the body field
+                        }else{
+                          setEmailError(true);
+                          setEmailErrorMessage("Please enter a valid email address.")
+                        }
+                        
+                      }}
+                    >SEND</Button> <br />
                   </div>
                 </Item>
               </Grid>

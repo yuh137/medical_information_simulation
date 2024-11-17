@@ -11,8 +11,9 @@ import { To, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { ListItemIcon } from '@mui/material';
+import AppTheme from '../shared-theme/AppTheme.tsx';
 
-export default function DrawerToggle() {
+export default function DrawerToggle(props: { disableCustomTheme?: boolean }) {
   const [state, setState] = React.useState({
     right: false,
   });
@@ -159,7 +160,8 @@ export default function DrawerToggle() {
     <div>
       {['right'].map((anchor) => (
         <React.Fragment key={anchor}>
-          <Button onClick={toggleDrawer(anchor, true)}><MenuIcon sx={{color: 'white'}} /></Button>
+          <AppTheme {...props}>
+          <Button onClick={toggleDrawer(anchor, true)}><MenuIcon sx={{color: 'inherit'}} /></Button>
           <Drawer
             anchor={anchor}
             open={state[anchor]}
@@ -167,6 +169,7 @@ export default function DrawerToggle() {
           >
             {list(anchor)}
           </Drawer>
+          </AppTheme>
         </React.Fragment>
       ))}
     </div>
