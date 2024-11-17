@@ -115,6 +115,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<MedicalInformationDbContext>();
+    var authdbContext = scope.ServiceProvider.GetRequiredService<MedicalInformationAuthDbContext>();
+    authdbContext.Database.Migrate();
     dbContext.Database.Migrate();  // This applies any pending migrations at startup
 }
 
