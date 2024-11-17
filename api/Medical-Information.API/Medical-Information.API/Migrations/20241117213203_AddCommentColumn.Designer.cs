@@ -4,6 +4,7 @@ using Medical_Information.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical_Information.API.Migrations
 {
     [DbContext(typeof(MedicalInformationDbContext))]
-    partial class MedicalInformationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241117213203_AddCommentColumn")]
+    partial class AddCommentColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -165,9 +168,6 @@ namespace Medical_Information.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Comment")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("ReportID")
                         .HasColumnType("uniqueidentifier");
 
@@ -246,6 +246,9 @@ namespace Medical_Information.API.Migrations
 
                     b.Property<Guid>("AdminQCLotID")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");

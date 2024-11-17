@@ -96,7 +96,8 @@ namespace Medical_Information.API.Controllers
                     AnalyteInputID = Guid.NewGuid(),
                     ReportID = newReportID,
                     AnalyteName = analyteInputListDto.AnalyteName,
-                    AnalyteValue = analyteInputListDto.AnalyteValue
+                    AnalyteValue = analyteInputListDto.AnalyteValue,
+                    Comment = analyteInputListDto.Comment
                 };
                 analyteInputs.Add(analyteInput);
             }

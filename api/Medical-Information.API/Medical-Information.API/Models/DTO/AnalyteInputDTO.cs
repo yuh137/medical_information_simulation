@@ -9,11 +9,13 @@ namespace Medical_Information.API.Models.DTO
         public Guid ReportID { get; set; }
         public string AnalyteName { get; set; }
         public string AnalyteValue { get; set; }
+        public string? Comment { get; set; }
     }
 
     public class AddAnalyteInputWithListDTO
     {
         public string AnalyteName { get; set; }
         public string AnalyteValue { get; set; }
+        public string? Comment { get; set; }
     }
 }

@@ -12,5 +12,6 @@ namespace Medical_Information.API.Models.Domain
         //public StudentReport Report { get; set; }
         public string AnalyteName { get; set; }
         public string AnalyteValue { get; set; }
+        public string? Comment { get; set; }
     }
 }
