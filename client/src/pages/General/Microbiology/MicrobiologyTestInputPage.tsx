@@ -151,7 +151,7 @@ export const MicrobiologyTestInputPage = (props: { name: string }) => {
               <input 
                 type="text" 
                 className={`p-1 rounded-lg border border-solid ${errors.lotNumber ? 'border-red-500' : 'border-[#548235]'} sm:w-[250px] text-center`}
-                {...register("lotNumber", {
+                {...register("lotNumber", { 
                   required: "Lot number is required",
                   pattern: {
                     value: /^\d+$/,

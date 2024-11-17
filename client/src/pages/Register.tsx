@@ -46,8 +46,8 @@ const Register = () => {
     }
   }, [isFeedbackErrorOpen])
   
-  const { register, handleSubmit } = useForm<CredentialsInput>();
-
+  const { register, handleSubmit, formState: {errors} } = useForm<CredentialsInput>();
+  
   //Register form logic handling
   const onSubmit: SubmitHandler<CredentialsInput> = async (data) => {
     if (registerOptions === "Admin") {
@@ -178,10 +178,19 @@ const Register = () => {
               <div className="relative w-full">
                 <input
                   type={showPassword ? "text" : "password"}
-                  className="w-full min-h-10  placeholder:font-semibold placeholder:text-center text-center"
+                  className={`w-full min-h-10  ${errors.password ? 'border-red-500' : 'border-[#548235]'} placeholder:font-semibold placeholder:text-center text-center`}
                   placeholder="Password"
-                  {...register("password", { required: true })}
+                  {...register("password", { 
+                    required: true,
+                    pattern: {
+                      value: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/,
+                      message: "Password: 8 characters with 1 Uppercase, 1 Lowercase, and 1 Number",
+                    },
+                  })}
                 />
+                {errors.password && (
+                  <span className="text-red-500 sm:text-l font-semibold text-sm">{errors.password.message}</span>
+                )}
                 <div className="absolute top-1.5 end-11 cursor-pointer">
                   <Icon icon={showPassword? "iconoir:eye-closed" : "iconoir:eye-solid"} className=" absolute top-0 left-13 sm:h-7 sm:w-7 " onClick={() => {setShowPassword(!showPassword)}}/>
                 </div>
@@ -289,21 +298,6 @@ const Register = () => {
                     <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
                     <div>Please Select Account Type</div>
                   </div>
-              {/* {isFeedbackNotiOpen ? (
-                <>
-                  <div className="flex flex-col sm:gap-y-2">
-                    <Icon icon="clarity:success-standard-line" className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
-                    <div>Registration Successful</div>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="flex flex-col sm:gap-y-2">
-                    <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
-                    <div>Error Occurred</div>
-                  </div>
-                </>
-              ) } */}
             </div>
             <div className="flex justify-center">
               <Button

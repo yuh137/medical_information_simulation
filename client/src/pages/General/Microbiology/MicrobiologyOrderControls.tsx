@@ -1,6 +1,9 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect} from "react";
 import NavBar from "../../../components/NavBar";
+import { Link } from "react-router-dom";
 import { microbiologyQcTypeList } from "../../../utils/utils"; 
+import { useTheme } from "../../../context/ThemeContext";
+import { Icon } from "@iconify/react";
 
 import {
   DragDropContext,
@@ -8,13 +11,26 @@ import {
   DropResult,
   Droppable,
 } from "react-beautiful-dnd";
-import { ButtonBase } from "@mui/material"
+import { ButtonBase, Backdrop, Button } from "@mui/material"
 
 const MicrobiologyOrderControls = () => {
+  const { theme } = useTheme();
   const [SelectedQCItems, setSelectedQCItems] = useState<string[]>([]);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isFeedbackErrorOpen, setFeedbackErrorOpen] = useState(false);
+  const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState(false);
   const [OrderControlsItems, setOrderControlsItems] = useState<string[]>(
     microbiologyQcTypeList.map(qc => qc.name) // I change this to qctypelinklist from utils from manually defining each draggable
   );
+
+  useEffect(() => {
+    //If notification is enabled, disable after 3 seconds
+    if (isFeedbackErrorOpen) {
+      setTimeout(() => {
+        setFeedbackErrorOpen(false);
+      }, 3500);
+    }
+  }, [isFeedbackErrorOpen])
 
   const onDragEnd = (results: DropResult) => {
     // console.log(results);
@@ -52,13 +68,20 @@ const MicrobiologyOrderControls = () => {
     }
   };
   const handleOrderSelectedQC = () => {
+    if(SelectedQCItems.length > 0){
     localStorage.setItem('selectedQCItems', JSON.stringify(SelectedQCItems));
     console.log("QC Items ordered: ", SelectedQCItems);
+    setFeedbackNotiOpen(true);
+    }else{
+      setFeedbackErrorOpen(true);
+    }
+    
   };
   
   const handleClearSelection = () => {
     setSelectedQCItems([]);
     localStorage.removeItem('selectedQCItems');  // Clear local storage
+    setOrderControlsItems(microbiologyQcTypeList.map(qc => qc.name));
   };
   
   return (
@@ -121,9 +144,14 @@ const MicrobiologyOrderControls = () => {
             <ButtonBase onClick= {handleClearSelection}>
                 <div className="!rounded-lg sm:w-36 sm:h-16 !bg-[#dae3f3] !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[2px] font-semibold leading-[4rem]">Clear Selection</div>
             </ButtonBase>
-            <ButtonBase onClick={handleOrderSelectedQC}>
+            <ButtonBase onClick={handleOrderSelectedQC}> {/*test*/}
                 <div className="!rounded-lg sm:w-36 sm:h-16 !bg-[#dae3f3] !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[2px] font-semibold leading-[4rem]">Order Selected QC</div>
             </ButtonBase>
+            {successMessage && (
+              <div className="success-message text-green-600 text-center mt-20">
+                {successMessage}
+              </div>
+            )}
           </div>
           <Droppable droppableId="QC_Selected" type="group">
             {(drop_provided) => (
@@ -175,6 +203,63 @@ const MicrobiologyOrderControls = () => {
           </Droppable>
         </div>
       </DragDropContext>
+      <Backdrop
+        open={isFeedbackNotiOpen}
+        
+      >
+        <div className="bg-white rounded-xl">
+          <div className="sm:p-8 flex flex-col sm:gap-4">
+            <div className="text-center text-gray-600 text-xl font-semibold">
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon icon="clarity:success-standard-line" className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                    <div>QC Order Successful</div>
+                  </div>
+            </div>
+            <div className="flex justify-center">
+              <Button
+                variant="contained"
+                // onClick={() => {
+                //   setFeedbackNotiOpen(false);
+                // }}
+                className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+              >
+                <Link to="/microbiology/qc_results">
+                  OK
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Backdrop>
+      <Backdrop
+        open={isFeedbackErrorOpen}
+        
+        onClick={() => {
+          setFeedbackErrorOpen(false);
+        }}
+      >
+        <div className="bg-white rounded-xl">
+          <div className="sm:p-8 flex flex-col sm:gap-4">
+            <div className="text-center text-gray-600 text-xl font-semibold">
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                    <div>Please Select Tests to Order</div>
+                  </div>
+            </div>
+            <div className="flex justify-center">
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setFeedbackErrorOpen(false);
+                }}
+                className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+              >
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Backdrop>
     </>
   );
 };

@@ -83,14 +83,14 @@ const NavBar = (props: NavBarPropsTypes) => {
           <Icon icon="bxs:left-arrow" className="text-white self-center group-hover:-rotate-90 transition duration-150"/>
           <div className="user-info-actions absolute sm:w-full sm:h-fit bg-white sm:py-2 sm:px-3 hidden group-hover:flex hover:flex group-focus:flex flex-col top-full left-0 sm:gap-y-2 rounded-lg sm:translate-y-2 before:content-[''] before:absolute before:left-0 before:-top-3 before:w-full sm:before:h-4">
             <div className="flex sm:gap-x-2 text-black items-center justify-center hover:bg-black/30 hover:cursor-pointer transition delay-75 sm:min-h-8 rounded-lg" onClick={() => {
-              navigate("/home");
+              navigate(`/${userRole}-home`);
             }}>
               <div>Home</div>
               <Icon icon="material-symbols:home" />
             </div>
             <div className="flex sm:gap-x-2 text-black items-center justify-center hover:bg-black/30 hover:cursor-pointer transition delay-75 sm:min-h-8 rounded-lg" onClick={() => {
               logout();
-              navigate("/login");
+              navigate("/Login");
             }}>
               <div>Logout</div>
               <Icon icon="mdi:logout" />
@@ -105,7 +105,7 @@ const NavBar = (props: NavBarPropsTypes) => {
         >
           <div className="drawer-container sm:w-[15svw] sm:h-full bg-[#CFD5EA] flex flex-col items-center sm:space-y-6">
             <ul className="sm:w-full">
-              <li className="sidebar-item flex items-center justify-center sm:py-4 sm:gap-x-2 hover:cursor-pointer hover:bg-black/30 transition delay-75" onClick={() => navigate("/home")}>
+              <li className="sidebar-item flex items-center justify-center sm:py-4 sm:gap-x-2 hover:cursor-pointer hover:bg-black/30 transition delay-75" onClick={() => navigate(`/${userRole}-home`)}>
                 <Icon icon="fa6-solid:house" className="sm:text-xl"/>
                 <div className="sm:text-lg sm:translate-y-[2px]">Home</div>
               </li>
