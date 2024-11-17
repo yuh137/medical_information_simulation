@@ -112,6 +112,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<MedicalInformationDbContext>();
+    dbContext.Database.Migrate();  // This applies any pending migrations at startup
+}
 
 // Configure the HTTP request pipeline.
 
