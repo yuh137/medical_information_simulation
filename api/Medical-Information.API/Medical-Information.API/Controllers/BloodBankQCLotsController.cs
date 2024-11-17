@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Medical_Information.API.Enums;
 using Medical_Information.API.Models.Domain;
 using Medical_Information.API.Models.DTO;
+using Medical_Information.API.Models.ErrorHandling;
 using Medical_Information.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +36,27 @@ namespace Medical_Information.API.Controllers
 
             return Ok(qclotDTOs);
         }
+        [HttpGet]
+        [Route("ByName")]
+        public async Task<IActionResult> GetBBQCLotByName([FromQuery] string name)
+        {
+            BloodBankQCLot? qcLotModel;
+
+            qcLotModel = await bloodBankQCLotRepository.GetBBQCLotByNameAsync(name);
+
+            if (qcLotModel == null)
+            {
+                return NotFound(new RequestErrorObject
+                {
+                    ErrorCode = ErrorCode.NotFound,
+                    Message = "QC Lot does not Exist!"
+                });
+            }
+
+            var qcLotDTO = mapper.Map<BloodBankQCLot>(qcLotModel);
+
+            return Ok(qcLotDTO);
+        }
 
         [HttpGet]
         [Route("ByIdList")]
@@ -65,6 +88,26 @@ namespace Medical_Information.API.Controllers
             var qcLotDTO = mapper.Map<BloodBankQCLotDTO>(qcLotModel);
 
             return Ok(qcLotDTO);
+        }
+
+        [HttpPut]
+        [Route("UpdateQCLot/{id:Guid}")]
+        public async Task<IActionResult> UpdateQCLot([FromRoute] Guid id, [FromBody] BloodBankQCLotDTO dto)
+        {
+
+            var qclotModel = mapper.Map<BloodBankQCLot>(dto);
+
+            qclotModel = await bloodBankQCLotRepository.UpdateBBQCLotAsync(id, qclotModel);
+
+            if (qclotModel == null)
+            {
+                return BadRequest(new RequestErrorObject
+                {
+                    ErrorCode = ErrorCode.NotFound,
+                });
+            }
+
+            return Ok(qclotModel);
         }
 
         [HttpPost]

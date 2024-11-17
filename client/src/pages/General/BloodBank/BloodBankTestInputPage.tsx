@@ -27,6 +27,7 @@ import { BloodBankQC } from "../../../utils/indexedDB/IDBSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { getDataByKey } from "../../../utils/indexedDB/getData";
 import { deleteData } from "../../../utils/indexedDB/deleteData";
+import { BloodBankQCLot } from "../../../utils/indexedDB/IDBSchema";
 
 import NavBar from "../../../components/NavBar";
 
@@ -101,42 +102,40 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
   const saveQC: SubmitHandler<BloodBankQC> = async (data) => {
     getReagents();
     const reags = getReagents();
-    const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'  // application/json
-      },
-      body: JSON.stringify({ qcName: fileName_Item, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), closedDate: formatDate(data.closedDate), expirationDate: formatDate(data.qcExpDate), reagents: reags }),
-      })
-    console.log(checkServer);
-    // Index DB 
-    /*
-    const qcDataToSave: BloodBankQC = {
-      fileName: fileName_Item,
-      lotNumber: data.lotNumber || "",
-      qcExpDate: data.qcExpDate || "",
-      openDate: data.openDate || "",
-      closedDate: data.closedDate || "",
-      reportType: data.reportType || "",
-      reagents: QCElements.map(({ reagentName, Abbreviation, AntiSeraLot, reagentExpDate, ExpectedRange }) => ({
-        reagentName, Abbreviation, AntiSeraLot, reagentExpDate, ExpectedRange
-      })),
-    };
-
-    console.log("Attempting to save:", qcDataToSave);
-
+    const qcLotName = "Reagent Rack";
+    // const encodedName = encodeURIComponent(qcLotName);
     try {
-      await saveToDB("qc_store", qcDataToSave);
-      console.log("Data saved successfully.");
-    } catch (error) {
-      console.error("Failed to save data:", error);
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots/ByName?name=${qcLotName}`);
+      console.log(res);
+      if (res.ok) { // It already exists, so update the existing one!
+        const savedQCItem: BloodBankQCLot = await res.json();
+        const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots/UpdateQCLot/${savedQCItem.bloodBankQCLotID}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'  
+          },
+          body: JSON.stringify({ qcName: fileName_Item, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), closedDate: formatDate(data.closedDate), expirationDate: formatDate(data.qcExpDate), reagents: reags }),
+          })
+        console.log(checkServer);
+      } else { // This does not exist, so create one
+        const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'  // application/json
+          },
+          body: JSON.stringify({ qcName: fileName_Item, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), closedDate: formatDate(data.closedDate), expirationDate: formatDate(data.qcExpDate), reagents: reags }),
+          })
+        console.log(checkServer);
+      }
+    } catch (e) {
+      console.log("Request to get QC lot failed: ", e);
     }
-    */
+    
   };
 
   const inputRefs = useRef<HTMLInputElement[]>([]);
-  console.log("THIS IS THE INPUT REFS", inputRefs)
   function moveToNextInputOnEnter(e: React.KeyboardEvent) {
     if (e.key === 'Enter' && inputRefs.current.find(ele => ele === e.target)) {
       const currentFocus = inputRefs.current.find(ele => ele === e.target);
@@ -204,7 +203,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
     },
     {
       accessorKey: "AntiSeraLot",
-      header: "Anti-Sera Lot #",
+      header: "Reagent Lot #",
       cell: (info) => (
         <div
           dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
