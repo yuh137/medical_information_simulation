@@ -24,17 +24,19 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7214;http://localhost:5029",
+      "applicationUrl": "https://localhost:7214",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
+    "Azure Hosted": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false, 
       "launchUrl": "swagger",
+      "applicationUrl": "https://mango-backend-cndwhubmesf4hkc6.centralus-01.azurewebsites.net",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Production"
       }
     }
   }
