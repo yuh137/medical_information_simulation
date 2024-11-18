@@ -61,7 +61,7 @@ export interface BloodBankQCLot {
         negExpectedRange: string;
         immediateSpin: string;
         thirtySevenDegree: string; 
-        AHG: string;
+        ahg: string;
         checkCell: string;
     }[];
 }

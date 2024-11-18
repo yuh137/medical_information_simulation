@@ -116,9 +116,16 @@ const BloodBankQCResult = (props: { name: string, link: string }) => {
   
   const handleSelectQC = async () => {
     if (selectedQC) {
-      console.log("Selected QC:", selectedQC);  
+      console.log("Selected QC:", selectedQC.qcName);  
       localStorage.setItem('selectedQCData', JSON.stringify(qcData));
-      navigate(`/blood_bank/reagent-input-page`);
+      if (selectedQC.qcName == 'Reagent Rack') {
+        navigate(`/blood_bank/reagent-input-page`);
+      } else {
+        // Navigate to RBC
+        // navigate('/blood_bank/rbc-input-page/${selectedQc.q}');
+        // navigate('/blood_bank/qc_results/' + selectedQC.qcName);
+        navigate('/blood_bank/qc_results/' + selectedQC.reportId);
+      }
       /*
       try {
         const qcData = await getQCRangeByDetails(selectedQC.qcName, selectedQC.lotNumber, selectedQC.expDate);

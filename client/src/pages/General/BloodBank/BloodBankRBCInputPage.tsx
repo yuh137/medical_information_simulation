@@ -31,6 +31,7 @@ import { deleteData } from "../../../utils/indexedDB/deleteData";
 import { Button, Backdrop } from "@mui/material";
 import NavBar from "../../../components/NavBar";
 import { BloodBankQCLot } from "../../../utils/indexedDB/IDBSchema";
+import { bloodBankQC } from "../../../utils/utils";
 
 interface QCRangeElements {
   reagentName: string,
@@ -45,12 +46,20 @@ interface QCRangeElements {
 
 // This is used to get what the file name should be from the link
 function NameFromLink(link: string): string {
+  console.log(link);
   for (let item of bloodBankRBC_QC) {
     let link_name: string = item["link"];
     if (link_name === link) {
       const qcName: string = item["name"];
       const result: string = qcName.substring(0, qcName.indexOf(" QC"));
       return result;
+    }
+  }
+  for (let item of bloodBankQC) {
+    let link_name: string = item["link"];
+    if (link_name === link) {
+      const qcName: string = item["name"];
+      return qcName;
     }
   }
   return link;
