@@ -5,13 +5,15 @@ import { renderSubString } from "../utils/utils";
 
 export interface AnalyteProps {
 	analyte: Analyte;
+	focus: boolean;
+	value: string
 	handleInputChange: (value: string) => void;
 }
 
 
 const MolecularAnalyte = forwardRef((props: AnalyteProps, ref) => {
 	const [inputValue, setInputValue] = useState('');
-	const inputRef = useRef<HTMLInputElement>(null);
+	const inputRef = useRef<HTMLInputElement | HTMLSelectElement>(null);
 	const nameRef = useRef<HTMLDivElement>(null);
 
 	useImperativeHandle(ref, () => ({
@@ -38,17 +40,17 @@ const MolecularAnalyte = forwardRef((props: AnalyteProps, ref) => {
             border-2 border-solid border-[#7F9458] rounded-xl relative
         `}
 			>
-				<input
-					type="text"
-					ref={inputRef}
-					value={inputValue}
-					className="text-base sm:w-[4.5rem] sm:h-10 w-16 h-8 absolute rounded-lg text-center top-0 right-0 border border-solid border-[#7F9458]"
-					onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
-						let newInput = inputValue;
-						if (event.key === "Enter") {
-							event.preventDefault();
-							const numericInputVal = (+inputValue).toFixed(2).replace(/^0+(?!\.|$)/, "");
-							if (props.analyte.type === 'QuanitativeAnalyte') {
+				{props.analyte.type === "QuanitativeAnalyte" ?
+					<input
+						type="text"
+						ref={inputRef as React.Ref<HTMLInputElement>}
+						value={inputValue}
+						className="text-base sm:w-[4.5rem] sm:h-10 w-16 h-8 absolute rounded-lg text-center top-0 right-0 border border-solid border-[#7F9458]"
+						autoFocus={props.focus}
+						onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+							let newInput = inputValue;
+							if ((event.key === "Enter") || (event.key === "Tab")) {
+								event.preventDefault();
 								let minLevel = -1;
 								if (props.analyte.minLevel) {
 									minLevel = props.analyte.minLevel;
@@ -69,28 +71,41 @@ const MolecularAnalyte = forwardRef((props: AnalyteProps, ref) => {
 									event.currentTarget.classList.remove("bg-[#FF0000]");
 									event.currentTarget.classList.add("bg-[#00FF00]");
 								}
+								setInputValue(newInput);
+								props.handleInputChange(event.currentTarget.value);
 							}
-							else if (props.analyte.type === 'QualitativeAnalyte') {
-								if (((event.currentTarget.value === 'Present') && (props.analyte.expectedRange === 'Present')) || ((event.currentTarget.value === 'Not Detected') && (props.analyte.expectedRange === 'Not Detected'))) {
+						}}
+						onChange={event => {
+							event.preventDefault();
+							const newValue = event.target.value;
+							setInputValue(newValue);
+						}}
+					/>
+					:
 
-									event.currentTarget.classList.remove("bg-[#FF0000]");
-									event.currentTarget.classList.add("bg-[#00FF00]");
-								}
-								else {
-									event.currentTarget.classList.remove("bg-[#00FF00]");
-									event.currentTarget.classList.add("bg-[#FF0000]");
-								}
+					<select
+						ref={inputRef as React.Ref<HTMLSelectElement>}
+						className="text-base sm:w-[4.5rem] sm:h-10 w-16 h-8 absolute rounded-lg text-center top-0 right-0 border border-solid border-[#7F9458]"
+						value={inputValue}
+						autoFocus={props.focus}
+						onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+							if (((event.target.value === 'Present') && (props.analyte.expectedRange === 'Present')) || ((event.target.value === 'Not Detected') && (props.analyte.expectedRange === 'Not Detected'))) {
+								event.target.classList.remove("bg-[#FF0000]");
+								event.target.classList.add("bg-[#00FF00]");
 							}
-							setInputValue(newInput);
+							else {
+								event.target.classList.remove("bg-[#00FF00]");
+								event.target.classList.add("bg-[#FF0000]");
+							}
+							setInputValue(event.target.value);
 							props.handleInputChange(event.currentTarget.value);
-						}
-					}}
-					onChange={event => {
-						event.preventDefault();
-						const newValue = event.target.value;
-						setInputValue(newValue);
-					}}
-				/>
+						}}
+					>
+						<option value="" disabled>Select Value</option>
+						<option value="Present">Present</option>
+						<option value="Not Detected">Not Detected</option>
+					</select>
+				}
 				<div
 					className="analyte-acronym text-2xl font-semibold"
 					dangerouslySetInnerHTML={{ __html: renderSubString(props.analyte.analyteAcronym) }}

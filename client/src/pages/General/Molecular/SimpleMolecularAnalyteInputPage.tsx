@@ -4,7 +4,8 @@ import NavBar from '../../../components/NavBar';
 import MolecularAnalyte from '../../../components/MolecularAnalyte';
 import { AuthToken } from "../../../context/AuthContext";
 import { QCPanel } from "../../../utils/indexedDB/IDBSchema";
-import { Button, ButtonBase, Modal } from "@mui/material";
+import { Button, ButtonBase, Modal, Backdrop } from "@mui/material";
+import { Icon } from "@iconify/react";
 import { useTheme } from "../../../context/ThemeContext";
 import dayjs, { Dayjs } from "dayjs";
 import { saveToDB, getQCRangeByDetails } from "../../../utils/indexedDB/getData";
@@ -24,7 +25,9 @@ const SimpleMolecularAnalyteInputPage = () => {
   const [username, setUsername] = useState<string>('');
   const [studentID, setStudentID] = useState<string>('');
   const [roles, setRoles] = useState<string>('');
-  const inputRefs = useRef<HTMLInputElement[]>([]);
+  const [qcDataLength, setQCDataLength] = useState<number>(0);
+  const [backdropOpen, setBackdropOpen] = useState(false);
+  const inputRefs = useRef<HTMLInputElement[] | HTMLSelectElement[]>([]);
   const analyteNameRefs = useRef<HTMLDivElement[]>([]);
 
   const getUsername = async () => {
@@ -63,6 +66,9 @@ const SimpleMolecularAnalyteInputPage = () => {
     } else {
       console.error("No QC data found.");
     }
+    const nAnalytes = JSON.parse(storedQCData as string).analytes.length;
+    setQCDataLength(nAnalytes);
+    setAnalyteValues(Array(nAnalytes).fill(""));
   }, []);
 
   const invalidIndexArray: number[] | null = useMemo(() => {
@@ -73,7 +79,7 @@ const SimpleMolecularAnalyteInputPage = () => {
   }, [invalidIndexes]);
 
   const isValid = useMemo(() => {
-    if ((!invalidIndexes || invalidIndexes.size === 0) && analyteValues.length === qcData?.analytes.length) return true;
+    if ((!invalidIndexes || invalidIndexes.size === 0) && analyteValues.every((element) => element)) return true;
     else return false;
   }, [analyteValues, invalidIndexes, qcData]);
 
@@ -125,10 +131,11 @@ const SimpleMolecularAnalyteInputPage = () => {
         console.error("Error saving QC data:", error);
       }
     }
-    setAnalyteValues([]);
+    const input = Array(qcDataLength).fill("");
+    setAnalyteValues(input);
     setInvalidIndexes(null);
     setModalData([]);
-    setIsModalOpen(false);
+    setBackdropOpen(true);
   };
 
   const handleInputChange = (index: number, value: string, old_analyte: Analyte) => {
@@ -273,13 +280,15 @@ const SimpleMolecularAnalyteInputPage = () => {
             >
               <MolecularAnalyte
                 analyte={item}
+                key={item.analyteName}
+                focus={index === 0}
+                value={analyteValues[index]}
                 handleInputChange={(val: string) => {
                   handleInputChange(index, val, item);
                 }}
-
                 ref={(childRef: { inputRef: React.RefObject<HTMLInputElement>; nameRef: React.RefObject<HTMLDivElement> }) => {
                   if (childRef) {
-                    inputRefs.current.push(childRef.inputRef.current as HTMLInputElement);
+                    inputRefs.current.push(childRef.inputRef.current as (HTMLInputElement & HTMLSelectElement));
                     analyteNameRefs.current.push(childRef.nameRef.current as HTMLDivElement);
                   }
                 }}
@@ -347,6 +356,32 @@ const SimpleMolecularAnalyteInputPage = () => {
           </div>
         </div>
       </Modal>
+      <Backdrop
+        open={backdropOpen}
+        onClick={() => { setBackdropOpen(false); }}
+      >
+        <div className="bg-white rounded-xl">
+          <div className="sm:p-8 flex flex-col sm:gap-4">
+            <div className="text-center text-gray-600 text-xl font-semibold">
+              <div className="flex flex-col sm:gap-y-2">
+                <Icon icon="clarity:success-standard-line" className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center" />
+                <div>QC Submission Successful</div>
+              </div>
+            </div>
+            <div className="flex justify-center">
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setBackdropOpen(false);
+                }}
+                className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+              >
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Backdrop>
     </>
   );
 };
