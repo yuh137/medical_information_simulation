@@ -92,6 +92,8 @@ export const TWO_CELL =[
     {
         reagentName:"Screen Cell 1",
         Abbreviation:"SC1",
+        AntiSeraLot:"1",
+        reagentExpDate:"",
         ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
@@ -100,6 +102,8 @@ export const TWO_CELL =[
     {
         reagentName:"Screen Cell 2",
         Abbreviation:"SC2",
+        AntiSeraLot:"2",
+        reagentExpDate:"",
         ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
@@ -110,6 +114,8 @@ export const THREE_CELL =[
     {
         reagentName:"Screen Cell 1",
         Abbreviation:"SC1",
+        AntiSeraLot:"1",
+        reagentExpDate:"",
         ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
@@ -118,6 +124,8 @@ export const THREE_CELL =[
     {
         reagentName:"Screen Cell 2",
         Abbreviation:"SC2",
+        AntiSeraLot:"2",
+        reagentExpDate:"",
         ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",
@@ -125,6 +133,8 @@ export const THREE_CELL =[
     },{
         reagentName:"Screen Cell 3",
         Abbreviation:"SC3",
+        AntiSeraLot:"3",
+        reagentExpDate:"",
         ExpImmSpinRange:"0",
         Exp37Range:"0",
         ExpAHGRange:"0",

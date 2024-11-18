@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../../components/ui/table";
-import { kell, rh,duffy, p1, lutheran, mnss, lewis} from "../../../utils/BB_DATA";
+import { kell, rh,duffy, p1, lutheran, mnss, lewis, TWO_CELL, THREE_CELL} from "../../../utils/BB_DATA";
 import { renderSubString } from "../../../utils/utils";
 import { ButtonBase, Checkbox, Drawer } from "@mui/material";
 import { Icon } from "@iconify/react";
@@ -80,7 +80,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
   const fileName_Item = item || "default_file_name";
   const { checkSession, checkUserType, isAuthenticated, logout } = useAuth();
   const { theme } = useTheme();
-  const initialData = item?.includes("Rh") ? rh :item?.includes("Duffy") ? duffy:item?.includes("P1") ? p1:item?.includes("Lutheran") ? lutheran:item?.includes("MNSs") ? mnss:item?.includes("Lewis") ? lewis: kell;
+  const initialData = item?.includes("Rh") ? rh :item?.includes("Duffy") ? duffy:item?.includes("P1") ? p1:item?.includes("Lutheran") ? lutheran:item?.includes("MNSs") ? mnss:item?.includes("Lewis")?lewis: item?.includes("Two") ? TWO_CELL : item?.includes("Three")? THREE_CELL : kell;
   const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState(false);  // For feedback
   console.log("DataType:", item);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
