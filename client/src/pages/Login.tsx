@@ -131,7 +131,7 @@ const Login = () => {
           <div className="user-type flex sm:gap-x-2 box-border">
             <div
               className={`student-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${loginOptions === "Student"
-                  ? "border-2 !border-[#2f5597]"
+                  ? "bg-blue-700 text-white border-2 !border-[#2f5597]"
                   : ""
                 }`}
               onClick={() => {
@@ -145,7 +145,7 @@ const Login = () => {
             </div>
             <div
               className={`admin-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${loginOptions === "Admin"
-                  ? "border-2 !border-[#2f5597]"
+                  ? "bg-blue-700 text-white border-2 !border-[#2f5597]"
                   : ""
                 }`}
               onClick={() => {
