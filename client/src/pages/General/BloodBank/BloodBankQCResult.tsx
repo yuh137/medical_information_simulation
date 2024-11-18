@@ -69,6 +69,7 @@ const BloodBankQCResult = (props: { name: string, link: string }) => {
       return null;
     }
     const token: AuthToken = JSON.parse(tokenString);
+    // const params: string = 
     const res = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/ByStudentId/${token.userID}`);
 
     if (res.ok) {
@@ -150,7 +151,7 @@ const BloodBankQCResult = (props: { name: string, link: string }) => {
 
   return (
     <>
-      <NavBar name={`${props.name} QC Results`} />
+      <NavBar name={`Blood Bank QC Results`} />
       <div className="relative">
         <div className="table-container flex flex-col mt-8 sm:max-w-[75svw] sm:max-h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA]">
           <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200">

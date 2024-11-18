@@ -30,6 +30,7 @@ import { getDataByKey } from "../../../utils/indexedDB/getData";
 import { deleteData } from "../../../utils/indexedDB/deleteData";
 import { Button, Backdrop } from "@mui/material";
 import NavBar from "../../../components/NavBar";
+import { BloodBankQCLot } from "../../../utils/indexedDB/IDBSchema";
 
 interface QCRangeElements {
   reagentName: string,
@@ -47,7 +48,9 @@ function NameFromLink(link: string): string {
   for (let item of bloodBankRBC_QC) {
     let link_name: string = item["link"];
     if (link_name === link) {
-      return item["name"];
+      const qcName: string = item["name"];
+      const result: string = qcName.substring(0, qcName.indexOf(" QC"));
+      return result;
     }
   }
   return link;
@@ -105,6 +108,39 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
   const saveQC: SubmitHandler<BloodBankRBC> = async (data) => {
     getReagents();
     const reags = getReagents();
+    const qcLotName = NameFromLink(fileName_Item);
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots/ByName?name=${qcLotName}`);
+      console.log(res);
+      if (res.ok) { // It already exists, so update the existing one!
+        const savedQCItem: BloodBankQCLot = await res.json();
+        const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots/UpdateQCLot/${savedQCItem.bloodBankQCLotID}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'  
+          },
+          body: JSON.stringify({ qcName: qcLotName, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), closedDate: formatDate(data.closedDate), expirationDate: formatDate(data.qcExpDate), reagents: reags }),
+          })
+        console.log(checkServer);
+      } else { // This does not exist, so create one
+        const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'  // application/json
+          },
+          body: JSON.stringify({ qcName: qcLotName, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), closedDate: formatDate(data.closedDate), expirationDate: formatDate(data.qcExpDate), reagents: reags }),  
+        })
+        console.log(checkServer);
+      }
+    } catch (e) {
+      console.log("Request to get QC lot failed: ", e);
+    }
+    
+    /*
+    getReagents();
+    const reags = getReagents();
     const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots`, {
       method: 'POST',
       headers: {
@@ -114,25 +150,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
       body: JSON.stringify({ qcName: fileName_Item, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), closedDate: formatDate(data.closedDate), expirationDate: formatDate(data.qcExpDate), reagents: reags }),
       })
     console.log(checkServer);
-    /*
-    const qcDataToSave: BloodBankRBC = {
-      fileName: NameFromLink(fileName_Item), // fileName_Item,
-      lotNumber: data.lotNumber || "",
-      qcExpDate: data.qcExpDate || "",
-      openDate: data.openDate || "",
-      closedDate: data.closedDate || "",
-      reportType: data.reportType || "",
-      reagents: QCElements.map(({ reagentName, Abbreviation, AntiSeraLot, reagentExpDate, ExpImmSpinRange, Exp37Range, ExpAHGRange, ExpCheckCellsRange }) => ({ reagentName, Abbreviation, AntiSeraLot, reagentExpDate, ExpImmSpinRange, Exp37Range, ExpAHGRange, ExpCheckCellsRange })),
-    };
-    //reagentName:string,
-    console.log("Attempting to save:", qcDataToSave);
-    try {
-      await saveToDB("qc_store", qcDataToSave);
-      console.log("Data saved successfully.");
-    } catch (error) {
-      console.error("Failed to save data:", error);
-    }
-      */
+    */
   };
 
   const inputRefs = useRef<HTMLInputElement[]>([]);

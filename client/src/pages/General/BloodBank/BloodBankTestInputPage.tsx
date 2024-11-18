@@ -103,7 +103,6 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
     getReagents();
     const reags = getReagents();
     const qcLotName = "Reagent Rack";
-    // const encodedName = encodeURIComponent(qcLotName);
     try {
       const res = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots/ByName?name=${qcLotName}`);
       console.log(res);
