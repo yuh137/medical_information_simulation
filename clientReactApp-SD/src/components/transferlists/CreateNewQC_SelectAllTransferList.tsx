@@ -25,7 +25,7 @@ function union(a: readonly number[], b: readonly number[]) {
 }
 
 export default function CreateNewQC_SelectAllTransferList() {
-  const [panelNames, setPanelNames] = React.useState<string[]>([]);
+  const [panelNames, setPanelNames] = React.useState<any[]>([]);
   const [checked, setChecked] = React.useState<readonly number[]>([]);
   const [left, setLeft] = React.useState<readonly number[]>([]);
   const [right, setRight] = React.useState<readonly number[]>([]);
@@ -41,12 +41,12 @@ export default function CreateNewQC_SelectAllTransferList() {
       console.log("QC Lots", dataQCAnalytes);
 
       // Gets the names of the QCLots in the database
-      const fetchedPanelNames = dataQCAnalytes.map(
-        (lot: any) => lot.analyteName,
-        // (lot: any) => lot.analyteAcronym,
-      );
-      setPanelNames(fetchedPanelNames);
-      setLeft(fetchedPanelNames.map((_: string, index: number) => index));
+      // const fetchedPanelNames = dataQCAnalytes.map(
+      //   (lot: any) => lot.analyteName,
+      //   // (lot: any) => lot.analyteAcronym,
+      // );
+      setPanelNames(dataQCAnalytes);
+      setLeft(dataQCAnalytes.map((_: any, index: number) => index));
     };
     fetchBackendData();
   }, []);
@@ -102,12 +102,12 @@ export default function CreateNewQC_SelectAllTransferList() {
   };
 
   const handleCreateQC = () => {
-    const selectedPanelNames = right.map((index) => panelNames[index]); // Maps indices to panel names
+    const selectedAnalytes = right.map((index) => panelNames[index]); // Maps indices to panel names
     localStorage.setItem(
       "selectedCreateQCAnalytes",
-      JSON.stringify(selectedPanelNames),
+      JSON.stringify(selectedAnalytes),
     );
-    window.location.href = "/submitQCOrder";
+    window.location.href = "/submitCreateQC";
   };
 
   const customList = (title: React.ReactNode, items: readonly number[]) => (
@@ -166,7 +166,10 @@ export default function CreateNewQC_SelectAllTransferList() {
                   }}
                 />
               </ListItemIcon>
-              <ListItemText id={labelId} primary={panelNames[value]} />
+              <ListItemText
+                id={labelId}
+                primary={panelNames[value]?.analyteName}
+              />
             </ListItemButton>
           );
         })}

@@ -21,12 +21,11 @@ import AccountPage from "./pages/AccountPage.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
 import QCEditPage from "./pages/QCEditPage.tsx";
 import QCAnalytesGrid from "./components/table/QCAnalytesGrid.tsx";
+import SubmitCreateQCEntry from "./pages/submitCreateQCEntry.tsx";
 
 function App() {
   // Scroll to top when the component mounts
   // initialize client-Side DB with data from azure database
-
-  
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -60,8 +59,6 @@ function App() {
 
   //Splash Page is login!
 
-  
-
   return (
     <Router>
       <div className="nav-bar">
@@ -74,6 +71,7 @@ function App() {
         <Route path="/casestudies" element={<CaseStudiesPage />} />
         <Route path="/gradebook" element={<GradeBookPage />} />
         <Route path="/submitQCOrder" element={<SubmitQCOrderEntry />} />
+        <Route path="/submitCreateQC" element={<SubmitCreateQCEntry />} />
         <Route path="/patientreports" element={<PatientReportsPage />} />
         <Route path="/orderentries" element={<QC_OrderEntriesPage />} />
         <Route path="/qc" element={<QC_Page />} />
