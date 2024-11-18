@@ -168,7 +168,7 @@ const BloodBankQCResult = (props: { name: string, link: string }) => {
                   {group.headers.map(header => (
                     <TableHead
                       key={header.id}
-                      className="text-white text-center"
+                      className="text-white text-center uppercase tracking-wide"
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
@@ -192,7 +192,9 @@ const BloodBankQCResult = (props: { name: string, link: string }) => {
               ))}
               {qcData.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={3} style={{ textAlign: 'center' }}>
+                  <TableCell colSpan={3}
+                  className="text-center text-lg font-medium py-4"
+                  >
                     No data available
                   </TableCell>
                 </TableRow>
@@ -206,15 +208,17 @@ const BloodBankQCResult = (props: { name: string, link: string }) => {
               variant="outlined"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
+              className="!border !border-gray-400 !rounded-lg px-4 py-2"
             >
-              <Icon icon="mdi:arrow-left-thin" />
+              <Icon icon="mdi:arrow-left-thin" className="text-lg" />
             </Button>
             <Button
               variant="outlined"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
+              className="!border !border-gray-400 !rounded-lg px-4 py-2"
             >
-              <Icon icon="mdi:arrow-right-thin" />
+              <Icon icon="mdi:arrow-right-thin" className="text-lg" />
             </Button>
           </div>
         </div>

@@ -178,3 +178,21 @@ html {
     opacity: 0;
   }
 }
+
+.scrollbar-custom {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #b2b7c0 #dae3f3; /* Scrollbar handle and track colors */
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+  width: 8px; /* Scrollbar width */
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: #787a7e; /* Scrollbar handle color */
+  border-radius: 10px; /* Rounded edges for scrollbar handle */
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background-color: #dae3f3; /* Scrollbar track color */
+}
