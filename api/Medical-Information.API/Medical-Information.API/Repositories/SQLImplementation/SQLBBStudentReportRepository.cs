@@ -24,25 +24,44 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             }
             var adminQCLots = await dbContext.BloodBankQCLots.Where(item => bloodBankQCLotIdList.Contains(item.BloodBankQCLotID)).ToListAsync();
             var student = await dbContext.Students.FirstOrDefaultAsync(item => item.StudentID == reports[0].StudentID);
-            Console.WriteLine("Test");
-            Console.WriteLine(student == null);
-            Console.WriteLine(adminQCLots.Any());
-            if (!adminQCLots.Any() || student == null)
+            
+            if (!adminQCLots.Any())
             {
                 return new List<BBStudentReport>();
             }
 
-            foreach (var report in reports)
+            if (student == null)  // This is faculty 
             {
-                student.BBReports.Add(report);
-                foreach (var qclot in adminQCLots)
+                var faculty = dbContext.Admins.FirstOrDefaultAsync(item => item.AdminID == reports[0].StudentID);
+                Console.WriteLine("Made it!");
+                foreach (var report in reports)
                 {
-                    if (report.BloodBankQCLotID == qclot.BloodBankQCLotID)
+                    // student.BBReports.Add(report);  // Not applicable
+                    foreach (var qclot in adminQCLots)
                     {
-                        qclot.Reports.Add(report);
+                        if (report.BloodBankQCLotID == qclot.BloodBankQCLotID)
+                        {
+                            qclot.Reports.Add(report);
+                        }
                     }
+                    await dbContext.BBStudentReports.AddAsync(report);
                 }
-                await dbContext.BBStudentReports.AddAsync(report);
+            }
+            else
+            {
+
+                foreach (var report in reports)
+                {
+                    student.BBReports.Add(report);
+                    foreach (var qclot in adminQCLots)
+                    {
+                        if (report.BloodBankQCLotID == qclot.BloodBankQCLotID)
+                        {
+                            qclot.Reports.Add(report);
+                        }
+                    }
+                    await dbContext.BBStudentReports.AddAsync(report);
+                }
             }
             await dbContext.SaveChangesAsync();
             return reports;

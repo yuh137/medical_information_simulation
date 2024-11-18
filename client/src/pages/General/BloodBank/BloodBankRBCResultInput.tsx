@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BloodBankRBC } from '../../../utils/indexedDB/IDBSchema';
-import Reagent from '../../../components/Reagent';
+import ReagentLine from '../../../components/ReagentLine';
 import NavBar from '../../../components/NavBar';
 import { pdf, Document, Page, Text, View } from '@react-pdf/renderer';
 import { createTw } from 'react-pdf-tailwind';
@@ -10,7 +10,14 @@ import { saveToDB } from '../../../utils/indexedDB/getData';
 import { BBStudentReport } from "../../../utils/utils";
 import { BloodBankQCLot, Student } from "../../../utils/indexedDB/IDBSchema";
 import { useAuth } from "../../../context/AuthContext";
-
+import { useLoaderData, Link, useNavigate, useParams } from "react-router-dom";
+import {
+    ColumnDef,
+    useReactTable,
+    flexRender,
+    getCoreRowModel,
+    getPaginationRowModel
+  } from "@tanstack/react-table";
 
 interface QCItem {  // Used to read from the index DB
   reportId: string;
@@ -28,10 +35,16 @@ function formatDate(dateString: string) {
   return `${month}/${day}/${year}`;
 }
 
-const BloodBankReagentInputPage = (props: { name: string }) => {
+
+const BloodBankRBCResultInput = (props: { name: string }) => {
   const { theme } = useTheme();
+  const { item } = useParams();
+  const loaderData = useLoaderData() as string;
   const [qcData, setQcData] = useState<BloodBankQCLot | null>(null);
-  const [reagentValues, setReagentValues] = useState<string[]>([]);
+  const [imsValues, setImsValues] = useState<string[]>([]);
+  const [thirtyValues, setThirtyValues] = useState<string[]>([]);
+  const [ahgValues, setAhgValues] = useState<string[]>([]);
+  const [ccValues, setCcValues] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [qcComment, setQcComment] = useState<string>("");
   const { type, userId } = useAuth();
@@ -53,8 +66,10 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
   const getReportData = async () => {
     const storedQCData = localStorage.getItem('selectedQCData');
     if (storedQCData) {
+      let reportId: string = loaderData;
       let reportData: QCItem = JSON.parse(storedQCData)[0];  // Fetch the report
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/${reportData.reportId}`);
+      console.log(reportData);
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/${reportId}`);
       if (res.ok) {  // Successfully fetched the report
         const report: BBStudentReport = await res.json();
         const qcLotId = report.bloodBankQCLotID;
@@ -72,37 +87,27 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
     getReportData();
   }, []);
 
-  const posHandleInputChange = (index: number, value: string) => {
-    const newValues = [...reagentValues];
-    newValues[index] = value;
+  const doHandleInputChange = (index: number, ims: string, thirty: string, ahg: string, cc: string) => {
+    const enter_values = [ims, thirty, ahg, cc];
     const sIndex: string = index.toString();
     const newDict = { ...reagentDict };  // Clone reagent dict
-    if (sIndex in newDict ) {  // This already exists
-      newDict[sIndex]["Pos"] = value;
+    if (sIndex in newDict ) {
+        newDict[sIndex]["IMS"] = ims;
+        newDict[sIndex]["Thirty"] = thirty;
+        newDict[sIndex]["AHG"] = ahg;
+        newDict[sIndex]["CC"] = cc;
     } else {
-      newDict[sIndex] = {"Pos": value};
+        newDict[sIndex] = {"IMS": ims, "Thirty": thirty, "AHG": ahg, "CC": cc};
     }
     setReagentDict(newDict)
-    setReagentValues(newValues);
   };
 
-  const negHandleInputChange = (index: number, value: string) => {
-    const newValues = [...reagentValues];
-    newValues[index] = value;
-    const sIndex: string = index.toString();
-    const newDict = { ...reagentDict };  // Clone reagent dict
-    if (sIndex in newDict ) {  // This already exists
-      newDict[sIndex]["Neg"] = value;
-    } else {
-      newDict[sIndex] = {"Neg": value};
-    }
-    setReagentDict(newDict);
-    setReagentValues(newValues);
-  };
-
-  const reportPDF = (username: string, reagentValues?: string[], QCData?: BloodBankQCLot) => {
+  const reportPDF = (username: string, QCData?: BloodBankQCLot) => {
     const currentDate = new Date();
-    const tw = createTw({});
+    const tw = createTw({}); 
+    console.log(reagentDict);
+    console.log(QCData?.reagents["0"]);
+    console.log("^^^");
     return (
       <Document>
         <Page style={tw("py-8 px-16")}>
@@ -110,38 +115,45 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
           <Text style={tw("mt-8 text-[13px]")}>Date: {currentDate.toLocaleDateString()}</Text>
           <Text style={tw("mb-8 text-[13px]")}>Lot Number: {QCData?.lotNumber || "N/A"}</Text>
           <Text style={tw("text-[22px] mb-8 text-center")}>{QCData?.qcName} QC</Text>
-          <View style={tw("flex-row justify-between")}>
-            <Text style={tw("font-[700] text-[15px] w-1/3 text-center")}>Reagents</Text>
-            <Text style={tw("font-[700] text-[15px] w-1/3 text-center")}>Value</Text>
-            <Text style={tw("font-[700] text-[15px] w-1/3 text-center")}>Expected Value</Text>
+          <View style={tw("flex-row justify-around")}>
+            <Text style={tw("font-[700] text-[15px]")}>Reagents</Text>
+            <Text style={tw("font-[700] text-[15px]")}>Value</Text>
+            <Text style={tw("font-[700] text-[15px]")}>Expected Value</Text>
           </View>
           <View style={tw("w-full h-[1px] bg-black mt-2")} />
-          <View style={tw("flex-row justify-between p-5")}>
-            {/* Reagents Column */}
-            <View style={tw("w-1/3")}>
+          <View style={tw("flex-row justify-around p-5")}>
+            <View>
               {Object.entries(reagentDict)?.map(([value], index) => (
-                <Text key={index} style={tw("mb-2 text-[13px] text-center")}>
-                  {QCData?.reagents[index].reagentName}{" (+)\n"}
-                  {QCData?.reagents[index].reagentName}{" (=)"}
+                <Text style={tw("mb-2 text-[13px]")}>
+                  {QCData?.reagents[index].reagentName}{" (IMS)\n"}
+                  {QCData?.reagents[index].reagentName}{" (37*)\n"}
+                  {QCData?.reagents[index].reagentName}{" (AHG)\n"}
+                  {QCData?.reagents[index].reagentName}{" (CC)"}
                 </Text>
               ))}
             </View>
-            {/* Values Column */}
-            <View style={tw("w-1/3")}>
+            <View>
               {Object.entries(reagentDict)?.map(([value], index) => (
-                <Text key={index} style={tw("mb-2 text-[13px] text-center")}>
-                  {reagentDict[value]["Pos"]}{"\n"}
-                  {reagentDict[value]["Neg"]}
-                </Text>
+                <View style={tw("flex-row")} key={index}>
+                  <Text style={tw("mb-2 text-[13px]")}>
+                    {reagentDict[value]["IMS"]}{"\n"}
+                    {reagentDict[value]["Thirty"]}{"\n"}
+                    {reagentDict[value]["AHG"]}{"\n"}
+                    {reagentDict[value]["CC"]}
+                  </Text>
+                </View>
               ))}
             </View>
-            {/* Expected Values Column */}
-            <View style={tw("w-1/3")}>
+            <View>
               {Object.entries(reagentDict)?.map(([value], index) => (
-                <Text key={index} style={tw("mb-2 text-[13px] text-center whitespace-nowrap")}>
-                  {QCData?.reagents[index].posExpectedRange}{"\n"}
-                  {QCData?.reagents[index].negExpectedRange}
-                </Text>
+                <View style={tw("flex-row")} key={index}>
+                  <Text style={tw("mb-2 text-[13px]")}>
+                    {QCData?.reagents[index].immediateSpin}{"\n"}
+                    {QCData?.reagents[index].thirtySevenDegree}{"\n"}
+                    {QCData?.reagents[index].ahg}{"\n"}
+                    {QCData?.reagents[index].checkCell}
+                  </Text>
+                </View>
               ))}
             </View>
           </View>
@@ -154,10 +166,10 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
       </Document>
     );
   };
-  
+
   const openPDF = async () => {
     const username = await getName();
-    const blob = await pdf(reportPDF(username, reagentValues, qcData || undefined)).toBlob();
+    const blob = await pdf(reportPDF(username, qcData || undefined)).toBlob();
     const pdfUrl = URL.createObjectURL(blob);
     window.open(pdfUrl, "_blank");
   };
@@ -168,6 +180,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
       return;
     }
 
+    /*
     const qcDataToSave = {
       ...qcData,
       reagents: qcData.reagents.map((reagent, index) => ({
@@ -176,11 +189,12 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
       })),
       qcComment,
     };
+    */
 
     try {
       // await saveToDB("qc_store", qcDataToSave);
       console.log("QC data saved successfully with comments.");
-      setReagentValues([]);
+      // setReagentValues([]);
     } catch (error) {
       console.error("Error saving QC data:", error);
     }
@@ -192,16 +206,23 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
 
   return (
     <>
-      <NavBar name={`${props.name} QC Results`} />
+      <NavBar name={`Blood Bank QC Results`} />
       <div className="flex flex-col space-y-6 pb-8 justify-center px-8" style={{ minWidth: "100svw", minHeight: "100svh" }}>
         
         {/* Positive Control Reactions */}
         <div>
-          <h3 className="text-lg font-semibold mb-2">Positive Control Reactions</h3>
-          <div className="flex flex-row space-x-4 items-center">
+          <h3 className="text-lg font-semibold mb-2">Reagents</h3>
+          <div className="flex flex-col gap-4 items-left">
+          <div className="Reagent-container flex flex-row gap-12 items-center h-4 flex-shrink-0 bg-[#B4C7E7] border-2 border-[#7F9458] p-4">
+            <div className="Reagent-name flex-1 bg-gray text-center font-bold">Reagent Name</div>
+            <div className="Reagent-name flex-1 bg-gray text-center font-bold">Immediate Spin</div>
+            <div className="Reagent-name flex-1 bg-gray text-center font-bold">37°</div>
+            <div className="Reagent-name flex-1 bg-gray text-center font-bold">AHG</div>
+            <div className="Reagent-name flex-1 bg-gray text-center font-bold">Check Cells</div>
+          </div>
             {qcData.reagents.map((item, index) => (
               <div key={`${item.reagentName}-${index}`} className="text-center">
-                <Reagent
+                <ReagentLine
                   controlType="positive"
                   reagentName={item.reagentName}
                   Abbreviation={item.abbreviation}
@@ -213,38 +234,13 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
                   Exp37Range={item.thirtySevenDegree}
                   ExpAHGRange={item.ahg}
                   ExpCheckCellsRange={item.checkCell}
-                  handleInputChange={(val: string) => posHandleInputChange(index, val)}
+                  handleInputChange={(ims: string, thirty: string, ahg: string, cc: string) => doHandleInputChange(index, ims, thirty, ahg, cc)}
+                  // handleInputChange={(val: string) => posHandleInputChange(index, val)}
                 />
               </div>
             ))}
           </div>
         </div>
-
-        {/* Negative Control Reactions */}
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Negative Control Reactions</h3>
-          <div className="flex flex-row space-x-4 items-center">
-            {qcData.reagents.map((item, index) => (
-              <div key={`${item.reagentName}-${index}`} className="text-center">
-                <Reagent
-                  controlType="negative"
-                  reagentName={item.reagentName}
-                  Abbreviation={item.abbreviation}
-                  AntiSeraLot={item.reagentLotNum}
-                  reagentExpDate={item.expirationDate}
-                  PosExpectedRange={item.posExpectedRange}
-                  NegExpectedRange={item.negExpectedRange}
-                  ExpImmSpinRange={item.immediateSpin}
-                  Exp37Range={item.thirtySevenDegree}
-                  ExpAHGRange={item.ahg}
-                  ExpCheckCellsRange={item.checkCell}
-                  handleInputChange={(val: string) => negHandleInputChange(index, val)}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Anti-Sera Lot Table */}
         <div className="mt-8">
   <h3 className="text-lg font-semibold mb-2">Reagent Lot</h3>
@@ -315,4 +311,4 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
   );
 };
 
-export default BloodBankReagentInputPage;
+export default BloodBankRBCResultInput;
