@@ -4,6 +4,7 @@ import { bloodBankQC, bloodBankRBC_QC } from "../../../utils/utils";
 import { BloodBankQCLot } from "../../../utils/indexedDB/IDBSchema";
 import dayjs from "dayjs";
 import { AuthToken, useAuth } from "../../../context/AuthContext";
+import { BloodBankRBC } from '../../../utils/indexedDB/IDBSchema';
 
 import {
   DragDropContext,
@@ -12,6 +13,14 @@ import {
   Droppable,
 } from "react-beautiful-dnd";
 import { ButtonBase } from "@mui/material";
+
+// This is used to get what the file name should be from the link
+function formatFilename(qcName: string): string {
+  if (qcName.includes(" QC")) {
+    return qcName.substring(0, qcName.indexOf(" QC"));
+  }
+  return qcName;
+}
 
 const BloodBankOrderControls = () => {
   const { userId } = useAuth();
@@ -58,7 +67,7 @@ const BloodBankOrderControls = () => {
   
   const handleOrderSelectedQC = async () => {
     const queryParams = new URLSearchParams();
-    SelectedQCItems.forEach(item => queryParams.append("names", item));
+    SelectedQCItems.forEach(item => queryParams.append("names", formatFilename(item)));
     console.log("QC Items ordered: ", SelectedQCItems);
     // setIsOrderLoading(true);
     try {
@@ -66,8 +75,7 @@ const BloodBankOrderControls = () => {
       
       if (res.ok){
         const savedQCItems: BloodBankQCLot[] = await res.json();
-        console.log("Saved QC Items:");
-        console.log(savedQCItems);
+        
         // If there are QCs that are not found or have expired, return error
         /*
         if (savedQCItems.length !== SelectedQCItems.length) {
@@ -80,35 +88,28 @@ const BloodBankOrderControls = () => {
           return;
         }
           */
-        // REPORTS
-        console.log(userId);
-        console.log("---");
-        const reportsToSave = savedQCItems.map(item => ({
-          studentID: userId,
-          bloodBankQCLotID: item.bloodBankQCLotID,
-          createdDate: dayjs(),
-        }));
-        // console.log(dayjs());
-        // console.log(dayjs().toISOString());
-        savedQCItems.forEach(element => {
-          console.log(element);
-          console.log(element.bloodBankQCLotID);
-        });
-        console.log(JSON.stringify(reportsToSave));
-
-        const createRes = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/Create`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(reportsToSave),
-        })
-        console.log(createRes);
-        if (createRes.ok){
-          console.log("Created QC reports successfully");
-          // setNotiType(NotiType.OrderCreated);
-          // setIsFeedbackNotiOpen(true);
-          // setIsOrderLoading(false);
+        if (savedQCItems.length == 0) {
+          console.log("Could not find Blood Bank QC ", queryParams.toString());
+          return;
+        }
+        for (const item of savedQCItems)  {
+          const dateString: string = dayjs().toISOString();  // dayjs().format("YYYY-MM-DD") + ""
+          try {
+            const createRes = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/Create`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify([{studentId: userId, bloodBankQCLotId: item.bloodBankQCLotID, createdDate: dateString}]),
+            })
+            if (createRes.ok ) {
+              console.log("Created BB Student Report");
+            } else { 
+              console.log("Failed to create BB Student Report");
+            }
+          } catch (error) {
+            console.error("Fetch failed:", error);
+          }
         }
         
       }

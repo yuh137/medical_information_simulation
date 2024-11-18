@@ -72,12 +72,6 @@ const Reagent = forwardRef((props: ReagentProps, ref) => {
             setInputValue(newValue);
             props.handleInputChange(newValue);
           }
-          /*
-          if (/^\d*\.?\d*$/.test(newValue)) {
-            setInputValue(newValue);
-            props.handleInputChange(newValue);
-          }
-          */
         }}
       />
       <div

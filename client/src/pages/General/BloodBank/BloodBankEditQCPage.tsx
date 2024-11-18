@@ -1,10 +1,24 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../../../components/NavBar";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useTheme } from "../../../context/ThemeContext";
-import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { bloodBankQC } from "../../../utils/utils";
 import { ButtonBase } from "@mui/material";
+
+
+// This is used to get what the file name should be from the link
+function NameFromLink(link: string): string {
+  for (let item of bloodBankQC) {
+    let link_name: string = item["link"];
+    if (link_name === link) {
+      const qcName: string = item["name"];
+      const result: string = qcName.substring(0, qcName.indexOf(" QC"));
+      return result;
+    }
+  }
+  return link;
+}
 
 const BloodBankEditQC = () => {
   const { theme } = useTheme();
@@ -43,7 +57,7 @@ const BloodBankEditQC = () => {
           ))}
         </div>
         <div className="button-container flex justify-center sm:-translate-y-12 sm:space-x-36 sm:pb-6">
-          <Link to={selectedItem? selectedItem === "Reagent_Rack"?'/blood_bank/edit_qc/Reagent_Rack':`/blood_bank/edit_qc/${selectedItem}` : "#"}>
+          <Link to={selectedItem? selectedItem === "Reagent_Rack"?'/blood_bank/edit_qc/Reagent_Rack':`/blood_bank/rbc_qc/${selectedItem}` : "#"}>
               <ButtonBase className="sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold" 
               disabled={!selectedItem}>
                 Edit QC File

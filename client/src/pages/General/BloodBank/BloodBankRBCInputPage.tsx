@@ -30,6 +30,8 @@ import { getDataByKey } from "../../../utils/indexedDB/getData";
 import { deleteData } from "../../../utils/indexedDB/deleteData";
 import { Button, Backdrop } from "@mui/material";
 import NavBar from "../../../components/NavBar";
+import { BloodBankQCLot } from "../../../utils/indexedDB/IDBSchema";
+import { bloodBankQC } from "../../../utils/utils";
 
 interface QCRangeElements {
   reagentName: string,
@@ -44,13 +46,32 @@ interface QCRangeElements {
 
 // This is used to get what the file name should be from the link
 function NameFromLink(link: string): string {
+  console.log(link);
   for (let item of bloodBankRBC_QC) {
     let link_name: string = item["link"];
     if (link_name === link) {
-      return item["name"];
+      const qcName: string = item["name"];
+      const result: string = qcName.substring(0, qcName.indexOf(" QC"));
+      return result;
+    }
+  }
+  for (let item of bloodBankQC) {
+    let link_name: string = item["link"];
+    if (link_name === link) {
+      const qcName: string = item["name"];
+      return qcName;
     }
   }
   return link;
+}
+
+// To change the date format to what is needed for back-end requests
+function formatDate(dateString: string): string {
+  // Split the input string by "/"
+  const [month, day, year] = dateString.split("/");
+
+  // Goes to YYYY-MM-DD
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
 }
 
 export const BloodBankRBCEdit = (props: { name: string }) => {
@@ -83,24 +104,62 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
     setHeaderValid(!isAnyFieldEmpty);
   }, [lotNumber, qcExpDate, openDate, closedDate,reportType]);
   
+  function getReagents(){
+    const rows = table.getRowModel().rows;
+    const reagents: dbReagent[] = [];
+    QCElements.forEach(function (row) {  // Iterate through each row of the React Table
+     const reag: dbReagent = {reagentName: row['reagentName'], abbreviation: row['Abbreviation'], reagentLotNum: row['AntiSeraLot'], expirationDate: formatDate(row['reagentExpDate']), immediateSpin: row['ExpImmSpinRange'], thirtySevenDegree: row['Exp37Range'], checkCell: row['ExpCheckCellsRange'], aHG: row['ExpAHGRange']};
+      reagents.push(reag);
+    })
+    return reagents;
+  }
+
   const saveQC: SubmitHandler<BloodBankRBC> = async (data) => {
-    const qcDataToSave: BloodBankRBC = {
-      fileName: NameFromLink(fileName_Item), // fileName_Item,
-      lotNumber: data.lotNumber || "",
-      qcExpDate: data.qcExpDate || "",
-      openDate: data.openDate || "",
-      closedDate: data.closedDate || "",
-      reportType: data.reportType || "",
-      reagents: QCElements.map(({ reagentName, Abbreviation, AntiSeraLot, reagentExpDate, ExpImmSpinRange, Exp37Range, ExpAHGRange, ExpCheckCellsRange }) => ({ reagentName, Abbreviation, AntiSeraLot, reagentExpDate, ExpImmSpinRange, Exp37Range, ExpAHGRange, ExpCheckCellsRange })),
-    };
-    //reagentName:string,
-    console.log("Attempting to save:", qcDataToSave);
+    getReagents();
+    const reags = getReagents();
+    const qcLotName = NameFromLink(fileName_Item);
     try {
-      await saveToDB("qc_store", qcDataToSave);
-      console.log("Data saved successfully.");
-    } catch (error) {
-      console.error("Failed to save data:", error);
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots/ByName?name=${qcLotName}`);
+      console.log(res);
+      if (res.ok) { // It already exists, so update the existing one!
+        const savedQCItem: BloodBankQCLot = await res.json();
+        const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots/UpdateQCLot/${savedQCItem.bloodBankQCLotID}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'  
+          },
+          body: JSON.stringify({ qcName: qcLotName, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), closedDate: formatDate(data.closedDate), expirationDate: formatDate(data.qcExpDate), reagents: reags }),
+          })
+        console.log(checkServer);
+      } else { // This does not exist, so create one
+        const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'  // application/json
+          },
+          body: JSON.stringify({ qcName: qcLotName, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), closedDate: formatDate(data.closedDate), expirationDate: formatDate(data.qcExpDate), reagents: reags }),  
+        })
+        console.log(checkServer);
+      }
+    } catch (e) {
+      console.log("Request to get QC lot failed: ", e);
     }
+    
+    /*
+    getReagents();
+    const reags = getReagents();
+    const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'  // application/json
+      },
+      body: JSON.stringify({ qcName: fileName_Item, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), closedDate: formatDate(data.closedDate), expirationDate: formatDate(data.qcExpDate), reagents: reags }),
+      })
+    console.log(checkServer);
+    */
   };
 
   const inputRefs = useRef<HTMLInputElement[]>([]);
@@ -166,7 +225,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
     },
     {
       accessorKey: "AntiSeraLot",
-      header: "Anti-Sera Lot #",
+      header: "Reagent Lot #",
       cell: (info) => (
         <div
           dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
@@ -235,6 +294,19 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
       }, 4000);
     }
   }, []);
+
+  interface dbReagent {  // Used to add reagents in JSON format
+    reagentName: string,
+    abbreviation: string,
+    reagentLotNum: string,
+    expirationDate: string,
+    // posExpectedRange: string,
+    // negExpectedRange: string
+    immediateSpin: string,
+    thirtySevenDegree: string,
+    aHG: string,
+    checkCell: string
+  }
 
   useEffect(() => {
     (async () => {

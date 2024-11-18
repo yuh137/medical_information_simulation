@@ -59,6 +59,50 @@ namespace Medical_Information.API.Repositories.SQLImplementation
         {
             return await dbContext.BloodBankQCLots.Include(item => item.Reagents).FirstOrDefaultAsync(item => item.BloodBankQCLotID == id);
         // return await dbContext.BloodBankQCLots.Include(item => item.Analytes).Include(item => item.Reports).FirstOrDefaultAsync(item => item.AdminQCLotID == id);
-    }
+        }
+        public async Task<BloodBankQCLot?> GetBBQCLotByNameAsync(string name)
+        {
+            return await dbContext.BloodBankQCLots.Include(item => item.Reagents).FirstOrDefaultAsync(item => item.QCName == name);
+        }
+
+        public async Task<BloodBankQCLot?> UpdateBBQCLotAsync(Guid lotId, BloodBankQCLot qcLot)
+        {
+            var existingQCLot = await dbContext.BloodBankQCLots.Include(e => e.Reagents).Include(item => item.Reports).FirstOrDefaultAsync(item => item.BloodBankQCLotID == lotId);
+
+            if (existingQCLot == null)
+            {
+                return null;
+            }
+
+            existingQCLot.LotNumber = qcLot.LotNumber;
+            existingQCLot.ExpirationDate = qcLot.ExpirationDate;
+            existingQCLot.OpenDate = qcLot.OpenDate;
+            existingQCLot.ClosedDate = qcLot.ClosedDate;
+            existingQCLot.FileDate = qcLot.FileDate;
+            existingQCLot.IsActive = qcLot.IsActive;
+
+            foreach (var reagent in qcLot.Reagents)
+            {
+                var existingReagent = existingQCLot.Reagents.SingleOrDefault(item => item.ReagentName == reagent.ReagentName);
+
+                if (existingReagent != null)
+                {
+                    existingReagent.ReagentName = reagent.ReagentName;
+                    existingReagent.Abbreviation = reagent.Abbreviation;
+                    existingReagent.ReagentLotNum = reagent.ReagentLotNum;
+                    existingReagent.ExpirationDate = reagent.ExpirationDate;
+                    existingReagent.PosExpectedRange = reagent.PosExpectedRange;
+                    existingReagent.NegExpectedRange = reagent.NegExpectedRange;
+                    existingReagent.AHG = reagent.AHG;
+                    existingReagent.CheckCell = reagent.CheckCell;
+                    existingReagent.ImmediateSpin = reagent.ImmediateSpin;
+                    existingReagent.ThirtySevenDegree = reagent.ThirtySevenDegree;
+                }
+            }
+
+            await dbContext.SaveChangesAsync();
+
+            return existingQCLot;
+        }
     }
 }
