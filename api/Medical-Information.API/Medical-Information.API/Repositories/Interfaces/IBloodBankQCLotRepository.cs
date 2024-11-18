@@ -11,5 +11,7 @@ namespace Medical_Information.API.Repositories.Interfaces
         Task<BloodBankQCLot> CreateBBQCLotAsync(BloodBankQCLot qclot);
         Task<BloodBankQCLot?> DeleteBBQCLotAsync(Guid id);
         Task<List<BloodBankQCLot>> GetBBQCLotsByIdListAsync(List<Guid> lotId);
+        Task<BloodBankQCLot?> GetBBQCLotByNameAsync(string name);
+        Task<BloodBankQCLot?> UpdateBBQCLotAsync(Guid lotId, BloodBankQCLot qcLot);
     }
 }
