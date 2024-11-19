@@ -230,9 +230,13 @@ export default function CreateQCPanelGrid(props: {
       // Store the data locally if needed
       localStorage.setItem("panelData", JSON.stringify(panel));
       localStorage.setItem("analyteData", JSON.stringify(analytes));
+      alert("QC Panel Successfully Created!");
+      window.location.href = "/qc";
     } catch (error) {
       console.error("Error saving panel data:", error);
-      alert("An error occurred while saving the QC Panel data.");
+      alert(
+        "An error occurred while saving the QC Panel data. Lot Number may already be in use or not at lease 8 digits.",
+      );
     }
   };
 

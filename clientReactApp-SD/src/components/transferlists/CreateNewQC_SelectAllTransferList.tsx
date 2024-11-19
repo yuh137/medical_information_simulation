@@ -32,30 +32,24 @@ export default function CreateNewQC_SelectAllTransferList() {
   React.useEffect(() => {
     // Fetch data from the API when the component mounts
     const fetchBackendData = async () => {
-      // panelNamesFromBackend = [];
       const responseQCAnalytes = await axios.get(
         "http://localhost:5029/api/Analytes",
       );
       const dataQCAnalytes = responseQCAnalytes.data;
       const dataQCLotsLength = dataQCAnalytes.length;
       console.log("QC Lots", dataQCAnalytes);
-
-      // Gets the names of the QCLots in the database
-      // const fetchedPanelNames = dataQCAnalytes.map(
-      //   (lot: any) => lot.analyteName,
-      //   // (lot: any) => lot.analyteAcronym,
-      // );
-      setPanelNames(dataQCAnalytes);
-      setLeft(dataQCAnalytes.map((_: any, index: number) => index));
+      // get unique analyte names
+      const uniqueAnalytes = dataQCAnalytes.filter(
+        (analyte: any, index: number, self: any[]) =>
+          index ===
+          self.findIndex((t) => t.analyteName === analyte.analyteName),
+      );
+      console.log("QC Lots (unique)", uniqueAnalytes);
+      setPanelNames(uniqueAnalytes);
+      setLeft(uniqueAnalytes.map((_: any, index: number) => index));
     };
     fetchBackendData();
   }, []);
-
-  // const [checked, setChecked] = React.useState<readonly number[]>([]);
-  // const [left, setLeft] = React.useState<readonly number[]>(
-  //   panelNamesFromBackend.map((_, index) => index),
-  // );
-  // const [right, setRight] = React.useState<readonly number[]>([]);
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
