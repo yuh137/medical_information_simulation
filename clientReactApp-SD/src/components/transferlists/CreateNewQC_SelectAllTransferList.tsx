@@ -33,7 +33,7 @@ export default function CreateNewQC_SelectAllTransferList() {
     // Fetch data from the API when the component mounts
     const fetchBackendData = async () => {
       const responseQCAnalytes = await axios.get(
-        "http://localhost:5029/api/Analytes",
+        "http://localhost:5029/api/Analytes/01111111-1111-1111-1111-111111111111",
       );
       const dataQCAnalytes = responseQCAnalytes.data;
       const dataQCLotsLength = dataQCAnalytes.length;
@@ -179,7 +179,7 @@ export default function CreateNewQC_SelectAllTransferList() {
         spacing={2}
         sx={{ justifyContent: "center", alignItems: "center" }}
       >
-        <Grid item>{customList("Quality Control Panels", left)}</Grid>
+        <Grid item>{customList("Available Analytes", left)}</Grid>
         <Grid item>
           <Grid container direction="column" sx={{ alignItems: "center" }}>
             <Button
@@ -204,7 +204,7 @@ export default function CreateNewQC_SelectAllTransferList() {
             </Button>
           </Grid>
         </Grid>
-        <Grid item>{customList("Selected Quality Controls", right)}</Grid>
+        <Grid item>{customList("Selected Analytes", right)}</Grid>
       </Grid>
       <Grid container direction="column" sx={{ alignItems: "center" }}>
         <QCOrderButtons
