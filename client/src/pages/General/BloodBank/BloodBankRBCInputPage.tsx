@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useLoaderData, Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { saveToDB } from "../../../utils/indexedDB/getData";
 import { bloodBankRBC_QC } from "../../../utils/utils";
+import { qcData } from "../../../utils/BB_QC";
 import {
   ColumnDef,
   RowData,
@@ -44,6 +45,10 @@ interface QCRangeElements {
   ExpCheckCellsRange: string
 }
 
+interface QCDataDict {
+  [key: string]: QCRangeElements[];
+}
+
 // This is used to get what the file name should be from the link
 function NameFromLink(link: string): string {
   console.log(link);
@@ -77,6 +82,7 @@ function formatDate(dateString: string): string {
 export const BloodBankRBCEdit = (props: { name: string }) => {
   const navigate = useNavigate();
   const { item } = useParams();
+  const loaderData = useLoaderData() as string;
   const fileName_Item = item || "default_file_name";
   const { checkSession, checkUserType, isAuthenticated, logout } = useAuth();
   const { theme } = useTheme();
@@ -176,20 +182,18 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
   }
   const validateInput = () => {
     const minInputArray = inputRefs.current;
-
     minInputArray.forEach((item, index) => {
       const inputValue = item.value.trim();
+      console.log(inputValue);
       // Check if the input value is blank
       if (inputValue === '') {
         item.classList.remove('bg-yellow-500');
         item.classList.add('bg-red-500'); // Add red background if blank
-
       }
       else if (
         (index % 6 >= 2 &&
-        !validValues.includes(inputValue))||         // Invalid for other values
-        (item.name==="ExpectedCheckCells" && inputValue==="0") // Invalid for other values
-
+        !validValues.includes(inputValue))         // Invalid for other values
+        // || (item.name==="ExpectedCheckCells" && inputValue!=="0") // Invalid for other values
       ) {
         item.classList.remove('bg-red-500'); 
         item.classList.add('bg-yellow-500'); // Add yellow background for invalid input
@@ -310,9 +314,18 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
 
   useEffect(() => {
     (async () => {
-      const res = await getDataByKey<BloodBankRBC>("qc_store", props.name);
+      console.log(item);
+      if (item != null) {
+        const adjName: string = item.replace(" ", "").replace("_","");
+        const dataDict: QCDataDict = qcData; // Type-check the structure
+        if (adjName in dataDict) {
+          const reagents: QCRangeElements[] = dataDict[adjName as keyof typeof dataDict];
+          setQCElements(reagents);
+        }
+      } 
+      // const res = await getDataByKey<BloodBankRBC>("qc_store", props.name);
 
-      if (res && typeof res !== "string") setQCElements(res.reagents)
+      // if (res && typeof res !== "string") setQCElements(res.reagents)
     })()
   }, [])
 
