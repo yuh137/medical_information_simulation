@@ -694,7 +694,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                     <input
                       type="text"
                       maxLength={3} // Limit input to 4 characters
-                      placeholder="1+ to 4+"
+                      placeholder="1+"
                       ref={el => {
                         if (el && inputRefs.current.length < QCElements.length * 6) {
                           inputRefs.current[index * 6 + 2] = el;
@@ -737,7 +737,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                     <input
                       type="text"
                       maxLength={3} // Limit input to 4 characters
-                      placeholder="1+ to 4+"
+                      placeholder="1+"
                       ref={el => {
                         if (el && inputRefs.current.length < QCElements.length * 6) {
                           inputRefs.current[index * 6 + 3] = el;
@@ -779,7 +779,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                     <input
                       type="text"
                       maxLength={3} // Limit input to 4 characters
-                      placeholder="1+ to 4+"
+                      placeholder="1+"
                       ref={el => {
                         if (el && inputRefs.current.length < QCElements.length * 6) {
                           inputRefs.current[index * 6 + 4] = el;
@@ -822,7 +822,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                       type="text"
                       name = "ExpectedCheckCells"
                       maxLength={3} // Limit input to 8 characters
-                      placeholder="1+ to 4+"
+                      placeholder="1+"
                       ref={el => {
                         if (el && inputRefs.current.length < QCElements.length * 6) {
                           inputRefs.current[index * 6 + 5] = el;
