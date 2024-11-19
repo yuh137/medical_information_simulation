@@ -79,6 +79,32 @@ function formatDate(dateString: string): string {
   return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
 }
 
+
+function validateDate(dateString: string): boolean {
+  const monthDays = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    
+  const [month, day, year] = dateString.split("/");
+  if (month == null || day == null || year == null) {
+    return false;
+  }
+  if (month.length != 2 || day.length != 2 || year.length != 4) {
+      return false;
+  }
+  let monthD: number = +month;
+  if (monthD < 1 || monthD > 12) {
+      return false;
+  }
+  let dayD: number = +day;
+  if (dayD < 1 || dayD > monthDays[monthD - 1]) {
+      return false;
+  }
+  let yearD: number = +year;
+  if (yearD < 2000 || yearD > 2040) {
+      return false;
+  }
+  return true;
+}
+
+
 export const BloodBankRBCEdit = (props: { name: string }) => {
   const navigate = useNavigate();
   const { item } = useParams();
@@ -191,13 +217,20 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
         item.classList.remove('bg-yellow-500');
         item.classList.add('bg-red-500'); // Add red background if blank
       }
-      else if (
-        (index % 6 >= 2 &&
-        !validValues.includes(inputValue))         // Invalid for other values
-        // || (item.name==="ExpectedCheckCells" && inputValue!=="0") // Invalid for other values
-      ) {
+      else if (index % 6 == 1 && !validateDate(inputValue)) {
         item.classList.remove('bg-red-500'); 
-        item.classList.add('bg-yellow-500'); // Add yellow background for invalid input
+        item.classList.add('bg-yellow-500'); // Add yellow background for invalid date
+      }
+      // else if (
+      //  (index % 6 >= 2 &&
+      //  !validValues.includes(inputValue))         // Invalid for other values
+      //  // || (item.name==="ExpectedCheckCells" && inputValue!=="0") // Invalid for other values
+      // ) {
+      //   item.classList.remove('bg-red-500'); 
+      //  item.classList.add('bg-yellow-500'); // Add yellow background for invalid input
+      else if (index % 6 >= 2 && inputValue.length == 1 && inputValue !== "0") {
+        item.classList.remove('bg-red-500'); 
+        item.classList.add('bg-yellow-500'); // Add yellow background for invalid date
       } else {
         // Remove background if input is valid
         item.classList.remove('bg-red-500');
@@ -625,8 +658,8 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                   <TableCell className="expImmSpin">
                     <input
                       type="text"
-                      maxLength={4} // Limit input to 4 characters
-                      placeholder="0,W+,H+,1-4+"
+                      maxLength={8} // Limit input to 4 characters
+                      placeholder="1+ to 4+"
                       ref={el => {
                         if (el && inputRefs.current.length < QCElements.length * 6) {
                           inputRefs.current[index * 6 + 2] = el;
@@ -637,7 +670,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                       onChange={(e) => {
 
                         e.preventDefault();
-                        const input = e.target.value.slice(0, 4); // Ensure max 4 characters
+                        const input = e.target.value.slice(0, 8); // Ensure max 4 characters
                         setQCElements(prevState => {
                           const newState = prevState.map(item => {
                             if (item.reagentName === row.reagentName) {
@@ -668,8 +701,8 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                   <TableCell className="Exp37Range">
                     <input
                       type="text"
-                      maxLength={4} // Limit input to 4 characters
-                      placeholder="0,W+,H+,1-4+"
+                      maxLength={8} // Limit input to 4 characters
+                      placeholder="1+ to 4+"
                       ref={el => {
                         if (el && inputRefs.current.length < QCElements.length * 6) {
                           inputRefs.current[index * 6 + 3] = el;
@@ -679,7 +712,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                       value={row.Exp37Range || ''}
                       onChange={(e) => {
                         e.preventDefault();
-                        const input = e.target.value.slice(0, 4); // Ensure max 4 characters
+                        const input = e.target.value.slice(0, 8); // Ensure max 8 characters
                         setQCElements(prevState => {
                           const newState = prevState.map(item => {
                             if (item.reagentName === row.reagentName) {
@@ -710,8 +743,8 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                   <TableCell className="ExpAHG">
                     <input
                       type="text"
-                      maxLength={4} // Limit input to 4 characters
-                      placeholder="0,W+,H+,1-4+"
+                      maxLength={8} // Limit input to 4 characters
+                      placeholder="1+ to 4+"
                       ref={el => {
                         if (el && inputRefs.current.length < QCElements.length * 6) {
                           inputRefs.current[index * 6 + 4] = el;
@@ -721,7 +754,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                       value={row.ExpAHGRange || ''}
                       onChange={(e) => {
                         e.preventDefault();
-                        const input = e.target.value.slice(0, 4); // Ensure max 4 characters
+                        const input = e.target.value.slice(0, 8); // Ensure max 8 characters
                         setQCElements(prevState => {
                           const newState = prevState.map(item => {
                             if (item.reagentName === row.reagentName) {
@@ -753,8 +786,8 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                     <input
                       type="text"
                       name = "ExpectedCheckCells"
-                      maxLength={4} // Limit input to 4 characters
-                      placeholder="0,W+,H+,1-4+"
+                      maxLength={8} // Limit input to 8 characters
+                      placeholder="1+ to 4+"
                       ref={el => {
                         if (el && inputRefs.current.length < QCElements.length * 6) {
                           inputRefs.current[index * 6 + 5] = el;
@@ -764,7 +797,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                       value={row.ExpCheckCellsRange || ''}
                       onChange={(e) => {
                         e.preventDefault();
-                        const input = e.target.value.slice(0, 4); // Ensure max 4 characters
+                        const input = e.target.value.slice(0, 8); // Ensure max 8 characters
                         setQCElements(prevState => {
                           const newState = prevState.map(item => {
                             if (item.reagentName === row.reagentName) {

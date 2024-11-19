@@ -39,6 +39,58 @@ interface QCRangeElements {
   ExpectedRange: string;
 }
 
+// Compares two dates to see if the second one comes after
+function dateAfter(dateString1: string, dateString2: string): boolean {
+  if (!validateDate(dateString1) || !validateDate(dateString2)) {
+    return false;
+  }
+  const [month, day, year] = dateString1.split("/");
+  let monthD1 = +month;
+  let dayD1 = +day;
+  let yearD1 = +year;
+  const [month2, day2, year2] = dateString2.split("/");
+  let monthD2 = +month2;
+  let dayD2 = +day2;
+  let yearD2 = +year2;
+  if (yearD2 > yearD1) {
+    return true;
+  }
+  if (yearD2 < yearD1) {
+    return false;
+  }
+  if (monthD2 > monthD1) {
+    return true;
+  }
+  if (monthD1 < monthD2) {
+    return false;
+  }
+  return dayD2 >= dayD1;
+}
+
+function validateDate(dateString: string): boolean {
+  const monthDays = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    
+  const [month, day, year] = dateString.split("/");
+  if (month == null || day == null || year == null) {
+    return false;
+  }
+  if (month.length != 2 || day.length != 2 || year.length != 4) {
+      return false;
+  }
+  let monthD: number = +month;
+  if (monthD < 1 || monthD > 12) {
+      return false;
+  }
+  let dayD: number = +day;
+  if (dayD < 1 || dayD > monthDays[monthD - 1]) {
+      return false;
+  }
+  let yearD: number = +year;
+  if (yearD < 2000 || yearD > 2040) {
+      return false;
+  }
+  return true;
+}
+
 // To change the date format to what is needed for back-end requests
 function formatDate(dateString: string): string {
   // Split the input string by "/"
@@ -157,16 +209,24 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
       if (inputValue === '') {
         item.classList.remove('bg-yellow-500');
         item.classList.add('bg-red-500'); // Add red background if blank
-      }
-      else if (
-        // If it's the 3rd column (index 2), check for "0" or invalid input
-        index % 3 === 2 && (  // Invalid specifically for 3rd column
-        !validValues.includes(inputValue) || (rowName==="Control" && inputValue!== "0")
-        )      // Invalid for other values
-      ) {
+      } else if (index % 3 == 2 && inputValue.length == 1 && inputValue !== "0") {
         item.classList.remove('bg-red-500');
         item.classList.add('bg-yellow-500'); // Add yellow background for invalid input
-      } else {
+      } else if (index % 3 == 1 && !validateDate(inputValue)) {
+        item.classList.remove('bg-red-500');
+        item.classList.add('bg-yellow-500'); // Add yellow background for invalid input
+      }
+      // else if (
+        // If it's the 3rd column (index 2), check for "0" or invalid input
+      //  index % 3 === 2 && (  // Invalid specifically for 3rd column
+      //  !validValues.includes(inputValue) || (rowName==="Control" && inputValue!== "0")
+      //  )      // Invalid for other values
+      // )
+      // {
+      //  item.classList.remove('bg-red-500');
+      //  item.classList.add('bg-yellow-500'); // Add yellow background for invalid input
+      // } 
+      else {
         // Remove background if input is valid
         item.classList.remove('bg-red-500');
         item.classList.remove('bg-yellow-500');
@@ -545,9 +605,9 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
 
                   <TableCell className="ExpectedRange">
                     <input
-                      maxLength={3}  // Ensure no more than 3 characters
+                      maxLength={8}  // Ensure no more than 3 characters
                       type="text"
-                      placeholder="1-4+"
+                      placeholder="1+ to 4+"
                       
                       ref={(el) => {
                         if (el && inputRefs.current.length < QCElements.length * 3) {
@@ -560,8 +620,8 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                       onChange={(e) => {
                         e.preventDefault();
                         const input = e.target.value;
-                        // Allow any 3-character input
-                        if (input.length <= 3) {
+                        // Allow any 8-character input
+                        if (input.length <= 8) {
                           setQCElements(prevState => {
                             const newState = prevState.map(item => {
                               if (item.reagentName === row.reagentName) {
@@ -580,8 +640,8 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                               if (item.reagentName === row.reagentName) {
                                 let expRangeValue = item.ExpectedRange.trim();
                                 // Ensure the value is at most 3 characters long
-                                if (expRangeValue.length > 3) {
-                                  expRangeValue = expRangeValue.substring(0, 3);  // Trim to 3 characters
+                                if (expRangeValue.length > 8) {
+                                  expRangeValue = expRangeValue.substring(0, 8);  // Trim to 3 characters
                                 }
                                 return { ...item, ExpectedRange: expRangeValue };
                               }

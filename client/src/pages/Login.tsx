@@ -152,7 +152,7 @@ const Login = () => {
       <Backdrop open={isSuccessNotiOpen}>
         <div className="bg-white rounded-xl p-8">
           <div className="text-center text-gray-600 text-xl font-semibold">
-            <Icon icon="material-symbols:check-circle-outline" className="text-green-500 w-20 h-20 mb-4" />
+            <Icon icon="material-symbols:check-circle-outline" className="text-green-500 w-20 h-20 mb-4 mx-auto" />
             <div>Login Successful! Redirecting...</div>
           </div>
         </div>
