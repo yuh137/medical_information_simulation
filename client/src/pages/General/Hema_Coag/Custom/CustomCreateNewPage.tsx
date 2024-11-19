@@ -709,7 +709,7 @@ const CustomCreateNewPage = (props: { name: string }) => {
                           Closed Date
                         </div>
                         <input
-                          type="text"
+                          type="date"
                           className="p-1 rounded-lg border border-solid border-[#000] text-center w-full"
                           {...register("closedDate")}
                         />
@@ -719,7 +719,7 @@ const CustomCreateNewPage = (props: { name: string }) => {
                           Open Date
                         </div>
                         <input
-                          type="text"
+                          type="date"
                           className="p-1 rounded-lg border border-solid border-[#000] text-center w-full"
                           {...register("openDate")}
                         />
