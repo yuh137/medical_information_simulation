@@ -43,7 +43,7 @@ const CoagulationEditQC = () => {
       <NavBar name={`Edit Coag QC`} />
       <div className="basic-container relative">
         <div
-          className={`edit-qc-options flex flex-wrap sm:justify-center sm:p-24 sm:h-[150svh] sm:w-[100svw] sm:gap-x-4 mx-auto`}
+          className={`edit-qc-options flex flex-wrap sm:justify-center sm:p-24 sm:h-[50svh] sm:w-[100svw] sm:gap-x-4 mx-auto`}
         >
           {CoagTypeLinkList.map((item) => (
             <ButtonBase
