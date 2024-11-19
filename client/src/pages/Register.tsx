@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, Backdrop } from "@mui/material";
 import { useTheme } from "../context/ThemeContext";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -15,6 +15,7 @@ export interface CredentialsInput {
 }
 
 const Register = () => {
+  const navigate = useNavigate();
   const { theme } = useTheme();
   const [registerOptions, setRegisterOptions] = useState<
     "Admin" | "Student" | string
@@ -22,13 +23,14 @@ const Register = () => {
   const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [isRegisterSuccessful, setIsRegisterSuccessful] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    //If notification is enabled, disable after 3 seconds
+    //If notification is enabled, disable after 15 seconds
     if (isFeedbackNotiOpen) {
       setTimeout(() => {
         setFeedbackNotiOpen(false);
-      }, 3000);
+      }, 15000);
     }
   }, [isFeedbackNotiOpen])
   
@@ -55,12 +57,27 @@ const Register = () => {
           setIsRegisterSuccessful(true);
           console.log(res.text());
         } else {
+          //check for errors and send the message to the html and console
+          const bodyJson = await res.json();
           console.error("Failed to register");
+          if (bodyJson.errors) {
+            let errorMsg = ""
+            for (const field in bodyJson.errors) {
+              if (bodyJson.errors.hasOwnProperty(field)) {
+                errorMsg = errorMsg + `\nERROR: ` + bodyJson.errors[field];
+                console.error(`Validation error for ${field}:`, bodyJson.errors[field]);
+              }
+            }
+            setErrorMessage(errorMsg);
+          }
         }
         setIsRegistering(false);
         setFeedbackNotiOpen(true);
       } catch (e) {
         console.error("Failed to register", e);
+        //send an error message
+        setFeedbackNotiOpen(true);
+        setErrorMessage(`Error 400\n Username may be taken`)
         setIsRegistering(false);
       }
     } else if (registerOptions === "Student") {
@@ -76,16 +93,36 @@ const Register = () => {
         })
 
         if (res.ok) {
+          setIsRegisterSuccessful(true);
           setFeedbackNotiOpen(true);
           console.log(res.text());
         } else {
+          //check for errors and send the message to the html and console
+          const bodyJson = await res.json();
           console.error("Failed to register");
+          if (bodyJson.errors) {
+            let errorMsg = ""
+            for (const field in bodyJson.errors) {
+              if (bodyJson.errors.hasOwnProperty(field)) {
+                errorMsg = errorMsg + `\nERROR: ` + bodyJson.errors[field];
+                console.error(`Validation error for ${field}:`, bodyJson.errors[field]);
+              }
+            }
+            setErrorMessage(errorMsg);
+          }
         }
+        setIsRegistering(false);
+        setFeedbackNotiOpen(true);
       } catch (e) {
         console.error("Failed to register", e);
+        //send an error message to the html
+        setFeedbackNotiOpen(true);
+        setErrorMessage(`Error 400\n Username may be taken`)
+        setIsRegistering(false);
       }
     } else {
       console.log(new Error("Invalid type"));
+      setErrorMessage("\nPlease select a user type")
       setFeedbackNotiOpen(true);
     }
   };
@@ -113,7 +150,7 @@ const Register = () => {
               <div
                 className={`student-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${
                   registerOptions === "Student"
-                    ? "border-2 !border-[#2f5597]"
+                    ? "bg-blue-700 text-white border-2 !border-[#2f5597]"
                     : ""
                 }`}
                 onClick={() => {
@@ -128,7 +165,7 @@ const Register = () => {
               <div
                 className={`admin-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${
                   registerOptions === "Admin"
-                    ? "border-2 !border-[#2f5597]"
+                    ? "bg-blue-700 text-white border-2 !border-[#2f5597]"
                     : ""
                 }`}
                 onClick={() => {
@@ -158,6 +195,10 @@ const Register = () => {
                 placeholder="Password"
                 {...register("password", { required: true })}
               />
+              <p id="helper-text-explanation" className="text-sm text-gray-500 dark:text-gray-400">
+                Password must 1 upper case, 1 lower case, 1 number, and must be at least 8 letters
+              </p>
+
               <input
                 type="text"
                 className="min-h-10 placeholder:font-semibold placeholder:text-center text-center"
@@ -221,7 +262,8 @@ const Register = () => {
                 <>
                   <div className="flex flex-col sm:gap-y-2">
                     <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
-                    <div>Error Occurred</div>
+                      <div>Error Occurred</div>
+                      <div style={{ whiteSpace: "pre-line"}}>{errorMessage || "Please Try Again"}</div>
                   </div>
                 </>
               ) }
@@ -231,6 +273,9 @@ const Register = () => {
                 variant="contained"
                 onClick={() => {
                   setFeedbackNotiOpen(false);
+                  if (isRegisterSuccessful) {
+                    navigate('/login');
+                  }
                 }}
                 className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
               >
