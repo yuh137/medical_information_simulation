@@ -3,9 +3,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-import AppTheme from '../../shared-theme/AppTheme';
+import AppTheme from '../../shared-theme/AppTheme.tsx';
 import ColorModeSelect from '../../shared-theme/ColorModeSelect';
-
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 
@@ -94,11 +93,10 @@ export default function ReportSubTable(props: { disableCustomTheme?: boolean }) 
         <CssBaseline enableColorScheme />
         <DataTableContainer direction="column" justifyContent="space-between">
             <Card variant="outlined">
-                <Paper sx={{ height: 400, width: '100%' }}>
+                <Paper sx={{ height: 400, width: 1000 }}>
                 <DataGrid
                     rows={rows}
                     columns={columns}
-                    initialState={{ pagination: { paginationModel } }}
                     pageSizeOptions={[5, 10]}
                     checkboxSelection
                     sx={{ border: 0 }}
