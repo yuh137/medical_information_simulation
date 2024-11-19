@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLoaderData, Link, useNavigate, useParams } from "react-router-dom";
 import { BloodBankRBC } from '../../../utils/indexedDB/IDBSchema';
 import Reagent from '../../../components/Reagent';
 import NavBar from '../../../components/NavBar';
@@ -30,6 +31,8 @@ function formatDate(dateString: string) {
 
 const BloodBankReagentInputPage = (props: { name: string }) => {
   const { theme } = useTheme();
+  const { item } = useParams();
+  const loaderData = useLoaderData() as string;
   const [qcData, setQcData] = useState<BloodBankQCLot | null>(null);
   const [reagentValues, setReagentValues] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -52,12 +55,16 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
 
   const getReportData = async () => {
     const storedQCData = localStorage.getItem('selectedQCData');
+    let reportId: string = loaderData;
+    console.log(reportId);
     if (storedQCData) {
-      let reportData: QCItem = JSON.parse(storedQCData)[0];  // Fetch the report
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/${reportData.reportId}`);
+      // let reportData: QCItem = JSON.parse(storedQCData)[0];  // Fetch the report
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/${reportId}`);
       if (res.ok) {  // Successfully fetched the report
         const report: BBStudentReport = await res.json();
         const qcLotId = report.bloodBankQCLotID;
+        console.log(report.reportID);
+        console.log(qcLotId);
         const bbLotRes = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots/${qcLotId}`);
         if (bbLotRes.ok) {  // Successfully fetched the QC Lot
           const bbLot: BloodBankQCLot = await bbLotRes.json();
