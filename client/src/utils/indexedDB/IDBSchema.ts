@@ -78,7 +78,8 @@ export interface BloodBankQC {
         Abbreviation: string;
         AntiSeraLot: string;
         reagentExpDate: string;
-        ExpectedRange: string;
+        posExpectedRange: string;
+        negExpectedRange: string;
 
     }[];
 }
