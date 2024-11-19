@@ -67,8 +67,8 @@ const BloodBankRBCResultInput = (props: { name: string }) => {
     const storedQCData = localStorage.getItem('selectedQCData');
     if (storedQCData) {
       let reportId: string = loaderData;
-      let reportData: QCItem = JSON.parse(storedQCData)[0];  // Fetch the report
-      console.log(reportData);
+      // let reportData: QCItem = JSON.parse(storedQCData)[0];  // Fetch the report
+      // console.log(reportData);
       const res = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/${reportId}`);
       if (res.ok) {  // Successfully fetched the report
         const report: BBStudentReport = await res.json();
@@ -76,6 +76,7 @@ const BloodBankRBCResultInput = (props: { name: string }) => {
         const bbLotRes = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots/${qcLotId}`);
         if (bbLotRes.ok) {  // Successfully fetched the QC Lot
           const bbLot: BloodBankQCLot = await bbLotRes.json();
+          console.log(bbLot);
           setQcData(bbLot);
         }
       }

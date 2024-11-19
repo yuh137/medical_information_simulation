@@ -22,6 +22,7 @@ namespace Medical_Information.API.Mappings
             CreateMap<AddReagentWithListDTO, Reagent>().ReverseMap();
             CreateMap<BBStudentReport, BBStudentReportDTO>().ReverseMap();
             CreateMap<AddBBStudentReportDTO, BBStudentReport>().ReverseMap();
+            CreateMap<ReagentInput, ReagentInputDTO>().ReverseMap();
         }
     }
 }

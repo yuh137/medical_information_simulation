@@ -1,10 +1,12 @@
+
+
 import React, { useState } from "react";
 import NavBar from "../../../components/NavBar";
 import { bloodBankQC, bloodBankRBC_QC } from "../../../utils/utils";
 import { BloodBankQCLot } from "../../../utils/indexedDB/IDBSchema";
 import dayjs from "dayjs";
 import { AuthToken, useAuth } from "../../../context/AuthContext";
-import { BloodBankRBC } from '../../../utils/indexedDB/IDBSchema';
+import { BloodBankRBC } from "../../../utils/indexedDB/IDBSchema";
 
 import {
   DragDropContext,
@@ -69,31 +71,18 @@ const BloodBankOrderControls = () => {
     const queryParams = new URLSearchParams();
     SelectedQCItems.forEach(item => queryParams.append("names", formatFilename(item)));
     console.log("QC Items ordered: ", SelectedQCItems);
-    // setIsOrderLoading(true);
     try {
       const res = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots/ByNameList?${queryParams.toString()}`);
       
       if (res.ok){
         const savedQCItems: BloodBankQCLot[] = await res.json();
         
-        // If there are QCs that are not found or have expired, return error
-        /*
-        if (savedQCItems.length !== SelectedQCItems.length) {
-          const notFoundItems = SelectedQCItems.filter(item => !savedQCItems.some(qc => qc.qcName.toLowerCase() === item.toLowerCase()));
-          console.log("Not found items: ", notFoundItems);
-          setNotFoundQCItems(notFoundItems);
-          setNotiType(NotiType.QCNotFoundOrExpired);
-          setIsFeedbackNotiOpen(true);
-          setIsOrderLoading(false);
-          return;
-        }
-          */
         if (savedQCItems.length == 0) {
           console.log("Could not find Blood Bank QC ", queryParams.toString());
           return;
         }
         for (const item of savedQCItems)  {
-          const dateString: string = dayjs().toISOString();  // dayjs().format("YYYY-MM-DD") + ""
+          const dateString: string = dayjs().toISOString();
           try {
             const createRes = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/Create`, {
               method: "POST",
@@ -101,7 +90,7 @@ const BloodBankOrderControls = () => {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify([{studentId: userId, bloodBankQCLotId: item.bloodBankQCLotID, createdDate: dateString}]),
-            })
+            });
             if (createRes.ok ) {
               console.log("Created BB Student Report");
             } else { 
@@ -111,19 +100,10 @@ const BloodBankOrderControls = () => {
             console.error("Fetch failed:", error);
           }
         }
-        
       }
     } catch (e) {
       console.error("Error ordering QC: ", e);
-      // setNotiType(NotiType.SomethingWrong);
-      // setIsFeedbackNotiOpen(true);
-      // setIsOrderLoading(false);
     }
-  }
-  const oldHandleOrderSelectedQC = () => {
-    // AGF 
-    localStorage.setItem('selectedQCItems', JSON.stringify(SelectedQCItems));
-    console.log("QC Items ordered: ", SelectedQCItems);
   };
   
   const handleClearSelection = () => { 
@@ -131,7 +111,7 @@ const BloodBankOrderControls = () => {
     let selectedQCs = [...SelectedQCItems];
     setSelectedQCItems([]); 
     localStorage.removeItem('selectedQCItems');
-    for (let i = 0; i < selectedQCs.length; i++){  // Push every selected QC to orderQCs
+    for (let i = 0; i < selectedQCs.length; i++){  
       orderQCs.push(selectedQCs[i]);
     }
     setOrderControlsItems(orderQCs);
@@ -145,12 +125,13 @@ const BloodBankOrderControls = () => {
           className="flex justify-center gap-8 items-start mt-3"
           style={{ minWidth: "100svw", minHeight: "90svh" }}
         >
+          {/* Order QC Section with Custom Scrollbar */}
           <Droppable droppableId="Order_QC" type="group">
             {(drop_provided) => (
               <div
                 ref={drop_provided.innerRef}
                 {...drop_provided.droppableProps}
-                className="w-[25%] h-[75vh] overflow-y-auto" // Larger width and height
+                className="w-[25%] h-[75vh] overflow-y-auto scrollbar-custom"
               >
                 <div className="order-qc-container h-full rounded-lg bg-[#dae3f3] p-4 flex flex-col gap-4">
                   <div className="order-qc-title text-2xl text-center font-semibold">Order QC</div>
@@ -168,16 +149,6 @@ const BloodBankOrderControls = () => {
                               {...drag_provided.dragHandleProps}
                               {...drag_provided.draggableProps}
                               className="order-qc-item bg-[#47669C] p-3 rounded-lg text-white text-lg text-center"
-                              onClick={() => {
-                                  let orderQCs = [...OrderControlsItems];
-                                  let selectedQCs = [...SelectedQCItems];
-
-                                  const [deletedQC] = orderQCs.splice(index, 1);
-                                  selectedQCs.push(deletedQC);
-
-                                  setOrderControlsItems(orderQCs);
-                                  setSelectedQCItems(selectedQCs);
-                              }}
                             >
                               {item}
                             </div>
@@ -190,20 +161,23 @@ const BloodBankOrderControls = () => {
               </div>
             )}
           </Droppable>
+
           <div className="control-buttons flex flex-col gap-4">
-            <ButtonBase onClick= {handleClearSelection}>
+            <ButtonBase onClick={handleClearSelection}>
                 <div className="!rounded-lg sm:w-36 sm:h-14 !bg-[#dae3f3] !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[2px] font-semibold text-md leading-[3.5rem]">Clear Selection</div>
             </ButtonBase>
             <ButtonBase onClick={handleOrderSelectedQC}>
                 <div className="!rounded-lg sm:w-36 sm:h-14 !bg-[#dae3f3] !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[2px] font-semibold text-md leading-[3.5rem]">Order Selected QC</div>
             </ButtonBase>
           </div>
+
+          {/* Selected QC Section with Custom Scrollbar */}
           <Droppable droppableId="QC_Selected" type="group">
             {(drop_provided) => (
               <div
                 ref={drop_provided.innerRef}
                 {...drop_provided.droppableProps}
-                className="w-[25%] h-[75vh] overflow-y-auto" // Larger width and height
+                className="w-[25%] h-[75vh] overflow-y-auto scrollbar-custom"
               >
                 <div className="selected-qc-container h-full rounded-lg bg-[#dae3f3] p-4 flex flex-col gap-4">
                     <div className="selected-qc-title text-2xl text-center font-semibold">Selected QC</div>
@@ -221,16 +195,6 @@ const BloodBankOrderControls = () => {
                                 {...drag_provided.dragHandleProps}
                                 {...drag_provided.draggableProps}
                                 className="selected-qc-item bg-[#47669C] p-3 rounded-lg text-white text-lg text-center"
-                                onClick={() => {
-                                    let orderQCs = [...OrderControlsItems];
-                                    let selectedQCs = [...SelectedQCItems];
-
-                                    const [deletedQC] = selectedQCs.splice(index, 1);
-                                    orderQCs.push(deletedQC);
-
-                                    setOrderControlsItems(orderQCs);
-                                    setSelectedQCItems(selectedQCs);
-                                }}
                                 >
                                 {item}
                                 </div>
@@ -245,10 +209,8 @@ const BloodBankOrderControls = () => {
           </Droppable>
         </div>
       </DragDropContext>
-      
     </>
   );
 };
 
 export default BloodBankOrderControls;
-
