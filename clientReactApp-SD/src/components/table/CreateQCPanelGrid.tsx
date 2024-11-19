@@ -14,7 +14,7 @@ import AppTheme from "../../shared-theme/AppTheme.tsx";
 import Typography from "@mui/material/Typography";
 import MuiCard from "@mui/material/Card";
 import TextField from "@mui/material/TextField";
-import { Button } from "@mui/material";
+import { Button, Select, MenuItem } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import axios from "axios";
@@ -29,6 +29,7 @@ interface Analyte {
   mean: number;
   stdDevi: number;
   adminQCLotID: string;
+  expInRange: boolean;
 }
 
 interface Panel {
@@ -217,6 +218,7 @@ export default function CreateQCPanelGrid(props: {
           maxLevel: analyte.maxLevel,
           mean: analyte.mean,
           stdDevi: analyte.stdDevi,
+          expInRange: analyte.expInRange,
         })),
       };
 
@@ -335,58 +337,164 @@ export default function CreateQCPanelGrid(props: {
                   <TableCell>{analyte.analyteAcronym}</TableCell>
                   <TableCell>
                     <FormControl fullWidth>
-                      <FormLabel>Edit Mean Value</FormLabel>
-                      <EditableTextField
-                        variant="outlined"
-                        name="mean"
-                        type="number"
-                        value={analyte.mean}
+                      <FormLabel>Expected in Range</FormLabel>
+                      {/* <Select */}
+                      {/*   value={analyte.expInRange ? "true" : "false"} */}
+                      {/*   onChange={(e) => */}
+                      {/*     handleAnalyteInputChange( */}
+                      {/*       analyte.analyteID, */}
+                      {/*       "expInRange", */}
+                      {/*       e.target.value === "true" ? true : false, */}
+                      {/*     ) */}
+                      {/*   } */}
+                      {/* > */}
+                      {/*   <MenuItem value={"true"}>True</MenuItem> */}
+                      {/*   <MenuItem value={"false"}>False</MenuItem> */}
+                      {/* </Select> */}
+                      <Select
+                        value={analyte.expInRange ? "true" : "false"}
                         onChange={(e) =>
                           handleAnalyteInputChange(
                             analyte.analyteID,
-                            "mean",
-                            e.target.value,
+                            "expInRange",
+                            e.target.value === "true",
                           )
                         }
-                        size="small"
-                      />
+                        style={{
+                          border: "2px solid #4caf50",
+                          borderRadius: "4px",
+                        }}
+                      >
+                        <MenuItem value={"true"}>True</MenuItem>
+                        <MenuItem value={"false"}>False</MenuItem>
+                      </Select>
                     </FormControl>
                   </TableCell>
+                  {/* <TableCell> */}
+                  {/*   <FormControl fullWidth> */}
+                  {/*     <FormLabel>Edit Mean Value</FormLabel> */}
+                  {/*     <EditableTextField */}
+                  {/*       variant="outlined" */}
+                  {/*       name="mean" */}
+                  {/*       type="number" */}
+                  {/*       value={analyte.mean} */}
+                  {/*       onChange={(e) => */}
+                  {/*         handleAnalyteInputChange( */}
+                  {/*           analyte.analyteID, */}
+                  {/*           "mean", */}
+                  {/*           e.target.value, */}
+                  {/*         ) */}
+                  {/*       } */}
+                  {/*       size="small" */}
+                  {/*     /> */}
+                  {/*   </FormControl> */}
+                  {/* </TableCell> */}
+                  {/* <TableCell> */}
+                  {/*   <FormControl fullWidth> */}
+                  {/*     <FormLabel>Edit Mean Value</FormLabel> */}
+                  {/*     <EditableTextField */}
+                  {/*       variant="outlined" */}
+                  {/*       name="mean" */}
+                  {/*       type="number" */}
+                  {/*       value={analyte.mean} */}
+                  {/*       onChange={(e) => */}
+                  {/*         handleAnalyteInputChange( */}
+                  {/*           analyte.analyteID, */}
+                  {/*           "mean", */}
+                  {/*           e.target.value, */}
+                  {/*         ) */}
+                  {/*       } */}
+                  {/*       size="small" */}
+                  {/*     /> */}
+                  {/*   </FormControl> */}
+                  {/* </TableCell> */}
+                  {/* <TableCell> */}
+                  {/*   <FormControl fullWidth> */}
+                  {/*     <FormLabel>Edit Min Level</FormLabel> */}
+                  {/*     <EditableTextField */}
+                  {/*       variant="outlined" */}
+                  {/*       name="minLevel" */}
+                  {/*       type="number" */}
+                  {/*       value={analyte.minLevel} */}
+                  {/*       onChange={(e) => */}
+                  {/*         handleAnalyteInputChange( */}
+                  {/*           analyte.analyteID, */}
+                  {/*           "minLevel", */}
+                  {/*           e.target.value, */}
+                  {/*         ) */}
+                  {/*       } */}
+                  {/*       size="small" */}
+                  {/*     /> */}
+                  {/*   </FormControl> */}
+                  {/* </TableCell> */}
+                  {/* <TableCell> */}
+                  {/*   <FormControl fullWidth> */}
+                  {/*     <FormLabel>Edit Max Level</FormLabel> */}
+                  {/*     <EditableTextField */}
+                  {/*       variant="outlined" */}
+                  {/*       name="maxLevel" */}
+                  {/*       type="number" */}
+                  {/*       value={analyte.maxLevel} */}
+                  {/*       onChange={(e) => */}
+                  {/*         handleAnalyteInputChange( */}
+                  {/*           analyte.analyteID, */}
+                  {/*           "maxLevel", */}
+                  {/*           e.target.value, */}
+                  {/*         ) */}
+                  {/*       } */}
+                  {/*       size="small" */}
+                  {/*     /> */}
+                  {/*   </FormControl> */}
+                  {/* </TableCell> */}
                   <TableCell>
                     <FormControl fullWidth>
-                      <FormLabel>Edit Min Level</FormLabel>
-                      <EditableTextField
+                      <FormLabel>Min Level</FormLabel>
+                      <TextField
                         variant="outlined"
                         name="minLevel"
                         type="number"
                         value={analyte.minLevel}
-                        onChange={(e) =>
-                          handleAnalyteInputChange(
-                            analyte.analyteID,
-                            "minLevel",
-                            e.target.value,
-                          )
-                        }
                         size="small"
+                        InputProps={{ readOnly: true }}
                       />
                     </FormControl>
                   </TableCell>
                   <TableCell>
                     <FormControl fullWidth>
-                      <FormLabel>Edit Max Level</FormLabel>
-                      <EditableTextField
+                      <FormLabel>Max Level</FormLabel>
+                      <TextField
                         variant="outlined"
                         name="maxLevel"
                         type="number"
                         value={analyte.maxLevel}
-                        onChange={(e) =>
-                          handleAnalyteInputChange(
-                            analyte.analyteID,
-                            "maxLevel",
-                            e.target.value,
-                          )
-                        }
                         size="small"
+                        InputProps={{ readOnly: true }}
+                      />
+                    </FormControl>
+                  </TableCell>
+                  <TableCell>
+                    <FormControl fullWidth>
+                      <FormLabel>Mean</FormLabel>
+                      <TextField
+                        variant="outlined"
+                        name="Mean"
+                        type="number"
+                        value={analyte.mean}
+                        size="small"
+                        InputProps={{ readOnly: true }}
+                      />
+                    </FormControl>
+                  </TableCell>
+                  <TableCell>
+                    <FormControl fullWidth>
+                      <FormLabel>Std Deviation</FormLabel>
+                      <TextField
+                        variant="outlined"
+                        name="stdDevi"
+                        type="number"
+                        value={analyte.stdDevi}
+                        size="small"
+                        InputProps={{ readOnly: true }}
                       />
                     </FormControl>
                   </TableCell>

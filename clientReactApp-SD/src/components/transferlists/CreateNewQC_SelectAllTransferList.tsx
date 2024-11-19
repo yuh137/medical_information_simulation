@@ -37,7 +37,8 @@ export default function CreateNewQC_SelectAllTransferList() {
       );
       const dataQCAnalytes = responseQCAnalytes.data;
       const dataQCLotsLength = dataQCAnalytes.length;
-      console.log("QC Lots", dataQCAnalytes);
+      console.log("QC Analytes", dataQCAnalytes);
+      // console.log("QC InExpRange", dataQCAnalytes[0].InExpRange);
       // get unique analyte names
       const uniqueAnalytes = dataQCAnalytes.filter(
         (analyte: any, index: number, self: any[]) =>
