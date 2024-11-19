@@ -33,6 +33,7 @@ import { Button, Backdrop } from "@mui/material";
 import NavBar from "../../../components/NavBar";
 import { BloodBankQCLot } from "../../../utils/indexedDB/IDBSchema";
 import { bloodBankQC } from "../../../utils/utils";
+import { ExpandIcon } from "lucide-react";
 
 interface QCRangeElements {
   reagentName: string,
@@ -80,6 +81,41 @@ function formatDate(dateString: string): string {
 }
 
 
+// Compares two dates to see if the second one comes after
+function dateAfter(dateString1: string, dateString2: string): boolean {
+  if (!validateDate(dateString1) || !validateDate(dateString2)) {
+    return false;
+  }
+  const [month, day, year] = dateString1.split("/");
+  let monthD1 = +month;
+  let dayD1 = +day;
+  let yearD1 = +year;
+  const [month2, day2, year2] = dateString2.split("/");
+  let monthD2 = +month2;
+  let dayD2 = +day2;
+  let yearD2 = +year2;
+  if (yearD2 > yearD1) {
+    return true;
+  }
+  if (yearD2 < yearD1) {
+    return false;
+  }
+  if (monthD2 > monthD1) {
+    return true;
+  }
+  if (monthD1 < monthD2) {
+    return false;
+  }
+  return dayD2 >= dayD1;
+}
+
+// Changes from default date format to //
+function unformatDate(dateString: string): string {
+  const subDate = dateString.substring(0, dateString.indexOf("T"));
+  const [year, month, day] = subDate.split("-");
+  return `${month.padStart(2, '0')}/${day.padStart(2, '0')}/${year}`;
+}
+
 function validateDate(dateString: string): boolean {
   const monthDays = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    
   const [month, day, year] = dateString.split("/");
@@ -121,7 +157,8 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
   const [isValid, setIsValid] = useState<boolean>(false);
   const [isHeaderValid, setHeaderValid] = useState<boolean>(false);
   // const [isDrawerOpen, openDrawer] = useState<boolean>(false);
-  const validValues = ["W+", "1+", "2+", "3+", "4+", "H+", "0", "TNP"]
+  const validValues = ["W+", "1+", "2+", "3+", "4+", "H+", "0", "TNP"];
+  const partialValues = ["W", "1", "2", "3", "4", "H", "T", "TN"];
 
   const { setValue, register, handleSubmit,watch } = useForm<BloodBankRBC>();
   const lotNumber = watch("lotNumber");
@@ -134,7 +171,8 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
     // Disable the button if any required field is empty
     inputRefs.current = [];
     const isAnyFieldEmpty = !lotNumber || !qcExpDate || !openDate || !closedDate || !reportType;
-    setHeaderValid(!isAnyFieldEmpty);
+    let todayDate = unformatDate(new Date().toISOString());
+    setHeaderValid(!isAnyFieldEmpty && dateAfter(todayDate, qcExpDate) && dateAfter(openDate, closedDate));
   }, [lotNumber, qcExpDate, openDate, closedDate,reportType]);
   
   function getReagents(){
@@ -214,23 +252,20 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
       const inputValue = item.value.trim();
       // Check if the input value is blank
       if (inputValue === '') {
-        item.classList.remove('bg-yellow-500');
-        item.classList.add('bg-red-500'); // Add red background if blank
+        item.classList.remove('bg-red-500');
+        item.classList.add('bg-yellow-500'); // Add red background if blank
       }
       else if (index % 6 == 1 && !validateDate(inputValue)) {
         item.classList.remove('bg-red-500'); 
         item.classList.add('bg-yellow-500'); // Add yellow background for invalid date
       }
-      // else if (
-      //  (index % 6 >= 2 &&
-      //  !validValues.includes(inputValue))         // Invalid for other values
-      //  // || (item.name==="ExpectedCheckCells" && inputValue!=="0") // Invalid for other values
-      // ) {
-      //   item.classList.remove('bg-red-500'); 
-      //  item.classList.add('bg-yellow-500'); // Add yellow background for invalid input
-      else if (index % 6 >= 2 && inputValue.length == 1 && inputValue !== "0") {
+      else if (index % 6 >= 2 && partialValues.includes(inputValue)) {
         item.classList.remove('bg-red-500'); 
-        item.classList.add('bg-yellow-500'); // Add yellow background for invalid date
+        item.classList.add('bg-yellow-500'); // Add yellow background for incomplete value
+      }
+      else if (index % 6 >= 2 && !validValues.includes(inputValue)) {
+        item.classList.remove('bg-yellow-500'); 
+        item.classList.add('bg-red-500'); // Add red background for invalid value
       } else {
         // Remove background if input is valid
         item.classList.remove('bg-red-500');
@@ -658,7 +693,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                   <TableCell className="expImmSpin">
                     <input
                       type="text"
-                      maxLength={8} // Limit input to 4 characters
+                      maxLength={3} // Limit input to 4 characters
                       placeholder="1+ to 4+"
                       ref={el => {
                         if (el && inputRefs.current.length < QCElements.length * 6) {
@@ -701,7 +736,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                   <TableCell className="Exp37Range">
                     <input
                       type="text"
-                      maxLength={8} // Limit input to 4 characters
+                      maxLength={3} // Limit input to 4 characters
                       placeholder="1+ to 4+"
                       ref={el => {
                         if (el && inputRefs.current.length < QCElements.length * 6) {
@@ -743,7 +778,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                   <TableCell className="ExpAHG">
                     <input
                       type="text"
-                      maxLength={8} // Limit input to 4 characters
+                      maxLength={3} // Limit input to 4 characters
                       placeholder="1+ to 4+"
                       ref={el => {
                         if (el && inputRefs.current.length < QCElements.length * 6) {
@@ -786,7 +821,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
                     <input
                       type="text"
                       name = "ExpectedCheckCells"
-                      maxLength={8} // Limit input to 8 characters
+                      maxLength={3} // Limit input to 8 characters
                       placeholder="1+ to 4+"
                       ref={el => {
                         if (el && inputRefs.current.length < QCElements.length * 6) {
