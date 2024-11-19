@@ -73,6 +73,7 @@ builder.Services.AddScoped<IBloodBankQCLotRepository, SQLBloodBankQCLotRepositor
 builder.Services.AddScoped<IReagentRepository, SQLReagentRepository>();
 builder.Services.AddScoped<IBBStudentReportRepository, SQLBBStudentReportRepository>();
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
+builder.Services.AddScoped<IReagentInputRepository, SQLReagentInputRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 

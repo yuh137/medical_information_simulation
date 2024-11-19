@@ -167,7 +167,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
       console.error("No QC data available to save.");
       return;
     }
-
+    console.log(qcData);
     const qcDataToSave = {
       ...qcData,
       reagents: qcData.reagents.map((reagent, index) => ({
