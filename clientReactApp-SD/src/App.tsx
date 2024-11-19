@@ -21,7 +21,7 @@ import AccountPage from "./pages/AccountPage.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
 import QCEditPage from "./pages/QCEditPage.tsx";
 import QCAnalytesGrid from "./components/table/QCAnalytesGrid.tsx";
-import SubmitCreateQCEntry from "./pages/submitCreateQCEntry.tsx";
+import SubmitCreateQCEntry from "./pages/SubmitCreateQCEntry.tsx";
 
 function App() {
   // Scroll to top when the component mounts

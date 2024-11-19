@@ -64,6 +64,7 @@ export default function QC_Page(props: { disableCustomTheme?: boolean }) {
 
   const handleQCChange = (qcType: string) => {
     setSelectedQC(qcType);
+    setQCBuild(null); // Reset QCBuildOption when changing selectedQC
   };
 
   const handleQCBuilder = (QCBuildOption: string) => {
