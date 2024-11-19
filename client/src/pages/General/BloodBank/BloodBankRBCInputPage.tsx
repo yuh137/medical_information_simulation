@@ -106,6 +106,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
 
   useEffect(() => {
     // Disable the button if any required field is empty
+    inputRefs.current = [];
     const isAnyFieldEmpty = !lotNumber || !qcExpDate || !openDate || !closedDate || !reportType;
     setHeaderValid(!isAnyFieldEmpty);
   }, [lotNumber, qcExpDate, openDate, closedDate,reportType]);
@@ -113,6 +114,7 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
   function getReagents(){
     const rows = table.getRowModel().rows;
     const reagents: dbReagent[] = [];
+    console.log(QCElements);
     QCElements.forEach(function (row) {  // Iterate through each row of the React Table
      const reag: dbReagent = {reagentName: row['reagentName'], abbreviation: row['Abbreviation'], reagentLotNum: row['AntiSeraLot'], expirationDate: formatDate(row['reagentExpDate']), immediateSpin: row['ExpImmSpinRange'], thirtySevenDegree: row['Exp37Range'], checkCell: row['ExpCheckCellsRange'], aHG: row['ExpAHGRange']};
       reagents.push(reag);
@@ -184,7 +186,6 @@ export const BloodBankRBCEdit = (props: { name: string }) => {
     const minInputArray = inputRefs.current;
     minInputArray.forEach((item, index) => {
       const inputValue = item.value.trim();
-      console.log(inputValue);
       // Check if the input value is blank
       if (inputValue === '') {
         item.classList.remove('bg-yellow-500');
