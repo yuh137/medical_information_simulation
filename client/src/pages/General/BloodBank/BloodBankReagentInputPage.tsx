@@ -102,7 +102,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
 
   const reportPDF = (username: string, reagentValues?: string[], QCData?: BloodBankQCLot) => {
     const currentDate = new Date();
-    const tw = createTw({}); 
+    const tw = createTw({});
     return (
       <Document>
         <Page style={tw("py-8 px-16")}>
@@ -110,39 +110,38 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
           <Text style={tw("mt-8 text-[13px]")}>Date: {currentDate.toLocaleDateString()}</Text>
           <Text style={tw("mb-8 text-[13px]")}>Lot Number: {QCData?.lotNumber || "N/A"}</Text>
           <Text style={tw("text-[22px] mb-8 text-center")}>{QCData?.qcName} QC</Text>
-          <View style={tw("flex-row justify-around")}>
-            <Text style={tw("font-[700] text-[15px]")}>Reagents</Text>
-            <Text style={tw("font-[700] text-[15px]")}>Value</Text>
-            <Text style={tw("font-[700] text-[15px]")}>Expected Value</Text>
+          <View style={tw("flex-row justify-between")}>
+            <Text style={tw("font-[700] text-[15px] w-1/3 text-center")}>Reagents</Text>
+            <Text style={tw("font-[700] text-[15px] w-1/3 text-center")}>Value</Text>
+            <Text style={tw("font-[700] text-[15px] w-1/3 text-center")}>Expected Value</Text>
           </View>
           <View style={tw("w-full h-[1px] bg-black mt-2")} />
-          <View style={tw("flex-row justify-around p-5")}>
-            <View>
+          <View style={tw("flex-row justify-between p-5")}>
+            {/* Reagents Column */}
+            <View style={tw("w-1/3")}>
               {Object.entries(reagentDict)?.map(([value], index) => (
-                <Text style={tw("mb-2 text-[13px]")}>
+                <Text key={index} style={tw("mb-2 text-[13px] text-center")}>
                   {QCData?.reagents[index].reagentName}{" (+)\n"}
                   {QCData?.reagents[index].reagentName}{" (=)"}
                 </Text>
               ))}
             </View>
-            <View>
+            {/* Values Column */}
+            <View style={tw("w-1/3")}>
               {Object.entries(reagentDict)?.map(([value], index) => (
-                <View style={tw("flex-row")} key={index}>
-                  <Text style={tw("mb-2 text-[13px]")}>
-                    {reagentDict[value]["Pos"]}{"\n"}
-                    {reagentDict[value]["Neg"]}
-                  </Text>
-                </View>
+                <Text key={index} style={tw("mb-2 text-[13px] text-center")}>
+                  {reagentDict[value]["Pos"]}{"\n"}
+                  {reagentDict[value]["Neg"]}
+                </Text>
               ))}
             </View>
-            <View>
+            {/* Expected Values Column */}
+            <View style={tw("w-1/3")}>
               {Object.entries(reagentDict)?.map(([value], index) => (
-                <View style={tw("flex-row")} key={index}>
-                  <Text style={tw("mb-2 text-[13px]")}>
-                    {QCData?.reagents[index].posExpectedRange}{"\n"}
-                    {QCData?.reagents[index].negExpectedRange}
-                  </Text>
-                </View>
+                <Text key={index} style={tw("mb-2 text-[13px] text-center whitespace-nowrap")}>
+                  {QCData?.reagents[index].posExpectedRange}{"\n"}
+                  {QCData?.reagents[index].negExpectedRange}
+                </Text>
               ))}
             </View>
           </View>
@@ -155,7 +154,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
       </Document>
     );
   };
-
+  
   const openPDF = async () => {
     const username = await getName();
     const blob = await pdf(reportPDF(username, reagentValues, qcData || undefined)).toBlob();
