@@ -31,7 +31,6 @@ const BloodBankOrderControls = () => {
   const { theme } = useTheme();
   const [SelectedQCItems, setSelectedQCItems] = useState<string[]>([]);
   const [isErrorNotiOpen, setErrorNotiOpen] = useState(false);
-  const [isSuccessNotiOpen, setSuccessNotiOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState("TBD")
 
   // Combine items from both lists and initialize OrderControlsItems
@@ -298,40 +297,6 @@ const BloodBankOrderControls = () => {
           </Droppable>
         </div>
       </DragDropContext>
-      {/* Success Notification */}
-      <Backdrop // OK BACKDROP
-        open={isSuccessNotiOpen}
-        
-        onClick={() => {
-          setSuccessNotiOpen(false);
-        }}
-      >
-        <div className="bg-white rounded-xl">
-          <div className="sm:p-8 flex flex-col sm:gap-4">
-            <div className="text-center text-gray-600 text-xl font-semibold">
-              { 
-                <>
-                  <div className="flex flex-col sm:gap-y-2">
-                    <Icon icon="clarity:success-standard-line" className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
-                    <div>Registration Successful</div>
-                  </div>
-                </>
-              }
-            </div>
-            <div className="flex justify-center">
-              <Button
-                variant="contained"
-                onClick={() => {
-                  setSuccessNotiOpen(false);
-                }}
-                className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
-              >
-                OK
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Backdrop>
       <Backdrop  // ERROR BACKDROP
         open={isErrorNotiOpen}
         
