@@ -216,12 +216,11 @@ const SimpleMolecularAnalyteInputPage = () => {
           <View style={tw("flex-col")}>
             {modalData.map((item, index) => (
               <View key={index} style={tw("m-2")}>
-                <View style={tw("flex-row items-center")} key={index}>
+                <View style={tw("flex-row items-center border border-gray-300 p-3")} key={index}>
                   <View style={tw("self-center w-[4px] h-[4px] bg-black rounded-full")} />
                   <Text style={tw("text-[13px] w-[50%] px-6 text-justify mt-2")}>{QCData?.analytes[item.invalidIndex].analyteName}:</Text>
                   <Text style={tw("text-[11px] w-[50%] px-6 text-justify mt-2")}>{item.comment}</Text>
                 </View>
-                <View style={tw("border-b border-gray-300 mt-3 mb-3")} /> {/*Add a thin grey line between each row */}
               </View>
             ))}
           </View>
