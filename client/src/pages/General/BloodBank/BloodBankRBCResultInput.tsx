@@ -111,12 +111,14 @@ const BloodBankRBCResultInput = (props: { name: string }) => {
     setReagentDict(newDict)
   };
 
+  // text-red-500
   const reportPDF = (username: string, QCData: BloodBankQCLot) => {
     const currentDate = new Date();
     const tw = createTw({}); 
     console.log(reagentDict);
     console.log(QCData?.reagents["0"]);
     console.log("^^^");
+    
     return (
       <Document>
         <Page style={tw("py-8 px-16")}>
@@ -125,16 +127,16 @@ const BloodBankRBCResultInput = (props: { name: string }) => {
           <Text style={tw("mb-8 text-[13px]")}>Lot Number: {QCData?.lotNumber || "N/A"}</Text>
           <Text style={tw("text-[22px] mb-8 text-center")}>{QCData?.qcName} QC</Text>
           <View style={tw("flex-row justify-around")}>
-            <Text style={tw("font-[700] text-[15px]")}>Reagents</Text>
-            <Text style={tw("font-[700] text-[15px]")}>Value</Text>
-            <Text style={tw("font-[700] text-[15px]")}>Expected Value</Text>
+            <Text style={tw("font-[700] text-[15px] w-1/3 text-center")}>Reagents</Text>
+            <Text style={tw("font-[700] text-[15px] w-1/3 text-center")}>Value</Text>
+            <Text style={tw("font-[700] text-[15px] w-1/3 text-center")}>Expected Value</Text>
           </View>
           <View style={tw("w-full h-[1px] bg-black mt-2")} />
-          <View style={tw("flex-row justify-around p-5")}>
-            <View>
+          <View style={tw("flex-row justify-between p-5")}>
+            <View style={tw("w-1/3")}>
               {Object.entries(reagentDict)?.map(([value], index) => (
-                <Text style={tw("mb-2 text-[13px]")}>
-                  <Text style={tw(isIncorrect(reagentDict[value]["IMS"], QCData?.reagents[index].immediateSpin) ? "text-red-500" : "")}>
+                <Text style={tw("mb-2 text-[13px] text-center")}>
+                  <Text style={tw(isIncorrect(reagentDict[value]["IMS"], QCData?.reagents[index].immediateSpin) ? "" : "")}>
                     {QCData?.reagents[index].reagentName}{" (IS)\n"}
                   </Text>
                   <Text style={tw(isIncorrect(reagentDict[value]["Thirty"], QCData?.reagents[index].thirtySevenDegree) ? "" : "")}>
@@ -149,9 +151,9 @@ const BloodBankRBCResultInput = (props: { name: string }) => {
                 </Text>
               ))}
             </View>
-            <View>
+            <View style={tw("w-1/3")}>
               {Object.entries(reagentDict)?.map(([value], index) => (
-                <View style={tw("flex-row")} key={index}>
+                <View style={tw("text-center")} key={index}>
                   <Text style={tw("mb-2 text-[13px]")}>
                     {reagentDict[value]["IMS"]}{"\n"}
                     {reagentDict[value]["Thirty"]}{"\n"}
@@ -161,9 +163,9 @@ const BloodBankRBCResultInput = (props: { name: string }) => {
                 </View>
               ))}
             </View>
-            <View>
+            <View style={tw("w-1/3")}>
               {Object.entries(reagentDict)?.map(([value], index) => (
-                <View style={tw("flex-row")} key={index}>
+                <View style={tw("text-center")} key={index}>
                   <Text style={tw("mb-2 text-[13px]")}>
                     {QCData?.reagents[index].immediateSpin}{"\n"}
                     {QCData?.reagents[index].thirtySevenDegree}{"\n"}

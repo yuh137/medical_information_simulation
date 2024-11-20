@@ -20,14 +20,7 @@ const partialValues = ["W", "1", "2", "3", "4", "H", ""];
 
 // Returns whether the student input aligns with what staff entered
 function alignsWith(input: string, expected: string) {
-  if (!validValues.includes(input)) {  // Not a valid final value
-    return false;
-  }
-  if (expected === "0") {  // If it should be negative
-    return input === "0";
-  } else {
-    return input !== "0";
-  }
+  return input === expected || expected.includes(input);
 }
 
 const ReagentLine = forwardRef((props: ReagentProps, ref) => {
@@ -51,7 +44,7 @@ const ReagentLine = forwardRef((props: ReagentProps, ref) => {
   }));
 
   const isValidInput = (inputValue: string) => {
-    return inputValue !== "0" && validValues.includes(inputValue);
+    return validValues.includes(inputValue);
   };
 
   const isPartial = (inputValue: string) => {
@@ -59,10 +52,18 @@ const ReagentLine = forwardRef((props: ReagentProps, ref) => {
   }
 // flex flex-col border border-gray-300 p-2
 // "Reagent-container bg-[#B4C7E7] border-2 border-[#7F9458] rounded-xl p-4">
-  const imsBackgroundColor = isValidInput(imsValue) ? "bg-green-100" : isPartial(imsValue) ? "bg-gray-200" : "bg-red-100";
-  const thirtyBackgroundColor = isValidInput(imsValue) ? "bg-green-100" : isValidInput(thirtyValue) ? "bg-green-100" : isPartial(thirtyValue) ? "bg-gray-200" : "bg-red-100";
-  const ahgBackgroundColor = (isValidInput(imsValue) || isValidInput(thirtyValue)) ? "bg-green-100" : isValidInput(ahgValue) ? "bg-green-100" : isPartial(ahgValue) ? "bg-gray-200" : "bg-red-100";
-  const ccBackgroundColor = (isValidInput(imsValue) || isValidInput(thirtyValue) || isValidInput(ahgValue)) ? "bg-green-100" : isValidInput(ccValue) ? "bg-green-100" : isPartial(ccValue) ? "bg-gray-200" : "bg-red-100";
+  
+  const imsValid = alignsWith(imsValue, props.ExpImmSpinRange) && isValidInput(imsValue);
+  const thirtyValid = (imsValid && imsValue !== "0") || alignsWith(thirtyValue, props.Exp37Range) && isValidInput(thirtyValue);
+  const ahgValid = ((thirtyValid && thirtyValue !== "0") ||  (imsValid && imsValue !== "0")) || alignsWith(ahgValue, props.ExpAHGRange) && isValidInput(ahgValue);
+  const ccValid = ((ahgValid && ahgValue !== "0") || (thirtyValid && thirtyValue !== "0") ||  (imsValid && imsValue !== "0")) || alignsWith(ccValue, props.ExpCheckCellsRange) && isValidInput(ccValue);
+  const imsBackgroundColor = imsValid ? "bg-green-100" : isValidInput(imsValue) ? "bg-red-100" : imsValue === "" ? "bg-gray-200" : isPartial(imsValue) ? "bg-yellow-200" : "bg-gray-200";
+  const thirtyBackgroundColor = thirtyValid ? "bg-green-100" : isValidInput(thirtyValue) ? "bg-red-100" : thirtyValue === "" ? "bg-gray-200" : isPartial(thirtyValue) ? "bg-yellow-200" : "bg-gray-200";
+  const ahgBackgroundColor = ahgValid ? "bg-green-100" : isValidInput(ahgValue) ? "bg-red-100" : ahgValue === "" ? "bg-gray-200" : isPartial(ahgValue) ? "bg-yellow-200" : "bg-gray-200";
+  const ccBackgroundColor = ccValid ? "bg-green-100" : isValidInput(ccValue) ? "bg-red-100" : ccValue === "" ? "bg-gray-200" : isPartial(ccValue) ? "bg-yellow-200" : "bg-gray-200";
+  // const thirtyBackgroundColor = isValidInput(imsValue) ? "bg-green-100" : isValidInput(thirtyValue) ? "bg-green-100" : isPartial(thirtyValue) ? "bg-gray-200" : "bg-red-100";
+  // const ahgBackgroundColor = (isValidInput(imsValue) || isValidInput(thirtyValue)) ? "bg-green-100" : isValidInput(ahgValue) ? "bg-green-100" : isPartial(ahgValue) ? "bg-gray-200" : "bg-red-100";
+  // const ccBackgroundColor = (isValidInput(imsValue) || isValidInput(thirtyValue) || isValidInput(ahgValue)) ? "bg-green-100" : isValidInput(ccValue) ? "bg-green-100" : isPartial(ccValue) ? "bg-gray-200" : "bg-red-100";
 
   return (
     <div className="Reagent-container flex flex-row gap-12 flex-shrink-0 bg-[#B4C7E7] border-2 border-[#7F9458] rounded-xl p-4">
