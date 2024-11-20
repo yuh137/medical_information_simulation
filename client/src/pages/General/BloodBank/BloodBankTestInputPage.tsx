@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../../components/ui/table";
-import { CMP, RR_QC, TWO_CELL, THREE_CELL } from "../../../utils/BB_DATA";
+import { reagentRackQcData } from "../../../utils/BB_QC";
 import { renderSubString } from "../../../utils/utils";
 import { ButtonBase, Checkbox, Drawer, Backdrop, Button } from "@mui/material";
 import { Icon } from "@iconify/react";
@@ -36,7 +36,61 @@ interface QCRangeElements {
   Abbreviation: string;
   AntiSeraLot: string;
   reagentExpDate: string;
-  ExpectedRange: string;
+  posExpectedRange: string;
+  negExpectedRange: string;
+
+}
+
+// Compares two dates to see if the second one comes after
+function dateAfter(dateString1: string, dateString2: string): boolean {
+  if (!validateDate(dateString1) || !validateDate(dateString2)) {
+    return false;
+  }
+  const [month, day, year] = dateString1.split("/");
+  let monthD1 = +month;
+  let dayD1 = +day;
+  let yearD1 = +year;
+  const [month2, day2, year2] = dateString2.split("/");
+  let monthD2 = +month2;
+  let dayD2 = +day2;
+  let yearD2 = +year2;
+  if (yearD2 > yearD1) {
+    return true;
+  }
+  if (yearD2 < yearD1) {
+    return false;
+  }
+  if (monthD2 > monthD1) {
+    return true;
+  }
+  if (monthD1 < monthD2) {
+    return false;
+  }
+  return dayD2 >= dayD1;
+}
+
+function validateDate(dateString: string): boolean {
+  const monthDays = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  const [month, day, year] = dateString.split("/");
+  if (month == null || day == null || year == null) {
+    return false;
+  }
+  if (month.length != 2 || day.length != 2 || year.length != 4) {
+    return false;
+  }
+  let monthD: number = +month;
+  if (monthD < 1 || monthD > 12) {
+    return false;
+  }
+  let dayD: number = +day;
+  if (dayD < 1 || dayD > monthDays[monthD - 1]) {
+    return false;
+  }
+  let yearD: number = +year;
+  if (yearD < 2000 || yearD > 2040) {
+    return false;
+  }
+  return true;
 }
 
 // To change the date format to what is needed for back-end requests
@@ -56,18 +110,18 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
   const { theme } = useTheme();
   const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState(false);  // For feedback
 
-  const initialData = RR_QC;// item?.includes("Reagent") ? RR_QC: item?.includes("Two")? TWO_CELL:THREE_CELL
+  const initialData = reagentRackQcData;// item?.includes("Reagent") ? RR_QC: item?.includes("Two")? TWO_CELL:THREE_CELL
   console.log("DataType:", item);
 
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(initialData);
   const [isValid, setIsValid] = useState<boolean>(false);
 
-  const[isHeaderValid,setHeaderValid] = useState<boolean>(false);
+  const [isHeaderValid, setHeaderValid] = useState<boolean>(false);
   // const [isDrawerOpen, openDrawer] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const validValues = ["W+", "1+", "2+", "3+", "4+", "H+","0"];
+  const validValues = ["W+", "1+", "2+", "3+", "4+", "H+", "0"];
 
-  const { register, handleSubmit, setValue, watch} = useForm<BloodBankQC>();
+  const { register, handleSubmit, setValue, watch } = useForm<BloodBankQC>();
   const lotNumber = watch("lotNumber");
   const qcExpDate = watch("qcExpDate");
   const openDate = watch("openDate");
@@ -77,7 +131,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
     // Disable the button if any required field is empty
     const isAnyFieldEmpty = !lotNumber || !qcExpDate || !openDate || !closedDate || !reportType;
     setHeaderValid(!isAnyFieldEmpty);
-  }, [lotNumber, qcExpDate, openDate, closedDate,reportType]);
+  }, [lotNumber, qcExpDate, openDate, closedDate, reportType]);
 
 
   interface dbReagent {  // Used to add reagents in JSON format
@@ -89,11 +143,11 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
     negExpectedRange: string
   }
 
-  function getReagents(){
+  function getReagents() {
     const rows = table.getRowModel().rows;
     const reagents: dbReagent[] = [];
     QCElements.forEach(function (row) {  // Iterate through each row of the React Table
-     const reag: dbReagent = {reagentName: row['reagentName'], abbreviation: row['Abbreviation'], reagentLotNum: row['AntiSeraLot'], expirationDate: formatDate(row['reagentExpDate']), posExpectedRange: row['ExpectedRange'], negExpectedRange: '0'};
+      const reag: dbReagent = { reagentName: row['reagentName'], abbreviation: row['Abbreviation'], reagentLotNum: row['AntiSeraLot'], expirationDate: formatDate(row['reagentExpDate']), posExpectedRange: row['posExpectedRange'], negExpectedRange: row['negExpectedRange'] };
       reagents.push(reag);
     })
     return reagents;
@@ -112,10 +166,10 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'  
+            'Accept': 'application/json'
           },
           body: JSON.stringify({ qcName: fileName_Item, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), closedDate: formatDate(data.closedDate), expirationDate: formatDate(data.qcExpDate), reagents: reags }),
-          })
+        })
         console.log(checkServer);
       } else { // This does not exist, so create one
         const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots`, {
@@ -125,16 +179,16 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
             'Accept': 'application/json'  // application/json
           },
           body: JSON.stringify({ qcName: fileName_Item, lotNumber: data.lotNumber, openDate: formatDate(data.openDate), closedDate: formatDate(data.closedDate), expirationDate: formatDate(data.qcExpDate), reagents: reags }),
-          })
+        })
         console.log(checkServer);
       }
     } catch (e) {
       console.log("Request to get QC lot failed: ", e);
     }
-    
+
   };
 
-  const inputRefs = useRef<HTMLInputElement[]>([]);
+  const inputRefs = useRef<(HTMLInputElement | HTMLSelectElement)[]>([]);
   function moveToNextInputOnEnter(e: React.KeyboardEvent) {
     if (e.key === 'Enter' && inputRefs.current.find(ele => ele === e.target)) {
       const currentFocus = inputRefs.current.find(ele => ele === e.target);
@@ -145,34 +199,42 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
       else return;
     }
   }
-  
+
   const validateInput = () => {
     const minInputArray = inputRefs.current;
-  
+
     minInputArray.forEach((item, index) => {
       const inputValue = item.value.trim();
       const rowName = item.name
-      console.log("Row Name:",rowName);
+      console.log("Row Name:", rowName);
       // Check if the input value is blank
       if (inputValue === '') {
         item.classList.remove('bg-yellow-500');
         item.classList.add('bg-red-500'); // Add red background if blank
-      }
-      else if (
-        // If it's the 3rd column (index 2), check for "0" or invalid input
-        index % 3 === 2 && (  // Invalid specifically for 3rd column
-        !validValues.includes(inputValue) || (rowName==="Control" && inputValue!== "0")
-        )      // Invalid for other values
-      ) {
+      } else if (index % 4 == 2 && inputValue.length == 1 && inputValue !== "0") {
         item.classList.remove('bg-red-500');
         item.classList.add('bg-yellow-500'); // Add yellow background for invalid input
-      } else {
+      } else if (index % 4 == 1 && !validateDate(inputValue)) {
+        item.classList.remove('bg-red-500');
+        item.classList.add('bg-yellow-500'); // Add yellow background for invalid input
+      }
+      // else if (
+      // If it's the 3rd column (index 2), check for "0" or invalid input
+      //  index % 3 === 2 && (  // Invalid specifically for 3rd column
+      //  !validValues.includes(inputValue) || (rowName==="Control" && inputValue!== "0")
+      //  )      // Invalid for other values
+      // )
+      // {
+      //  item.classList.remove('bg-red-500');
+      //  item.classList.add('bg-yellow-500'); // Add yellow background for invalid input
+      // } 
+      else {
         // Remove background if input is valid
         item.classList.remove('bg-red-500');
         item.classList.remove('bg-yellow-500');
       }
     });
-  
+
     // Set isValid based on whether any invalid (red or yellow) inputs exist
     setIsValid(!inputRefs.current.some(
       item => item.classList.contains('bg-red-500') || item.classList.contains('bg-yellow-500')
@@ -219,8 +281,17 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
       ),
     },
     {
-      accessorKey: "ExpectedRange",
-      header: "Expected Range",
+      accessorKey: "posExpectedRange",
+      header: "Expected Range (+)",
+      cell: (info) => (
+        <div
+          dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
+        />
+      ),
+    },
+    {
+      accessorKey: "negExpectedRange",
+      header: "Expected Range (=)",
       cell: (info) => (
         <div
           dangerouslySetInnerHTML={{ __html: renderSubString(info.getValue()) }}
@@ -423,7 +494,7 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
               onBlur={(e) => {
                 validateInput();
               }}
-              onChange={(e)=>{
+              onChange={(e) => {
                 validateInput();
               }}
             >
@@ -453,8 +524,8 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                     <input
                       type="text"
                       ref={(el) => {
-                        if (el && inputRefs.current.length < QCElements.length * 3) {
-                          inputRefs.current[index * 3] = el;
+                        if (el && inputRefs.current.length < QCElements.length * 4) {
+                          inputRefs.current[index * 4] = el;
                         }
                       }}
                       className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
@@ -494,8 +565,8 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                       placeholder="mm/dd/yy"
                       maxLength={10}
                       ref={el => {
-                        if (el && inputRefs.current.length < QCElements.length * 3) {
-                          inputRefs.current[index * 3 + 1] = el;
+                        if (el && inputRefs.current.length < QCElements.length * 4) {
+                          inputRefs.current[index * 4 + 1] = el;
                         }
                       }}
                       className="sm:w-21.5 p-1 border border-solid border-[#548235] rounded-lg text-center"
@@ -543,55 +614,89 @@ export const BloodBankTestInputPage = (props: { name: string }) => {
                     />
                   </TableCell>
 
-                  <TableCell className="ExpectedRange">
-                    <input
-                      maxLength={3}  // Ensure no more than 3 characters
-                      type="text"
-                      placeholder="1-4+"
-                      
+                  <TableCell className="posExpectedRange">
+                    <select
                       ref={(el) => {
-                        if (el && inputRefs.current.length < QCElements.length * 3) {
-                          inputRefs.current[index * 3 + 2] = el;
+                        if (el && inputRefs.current.length < QCElements.length * 4) {
+                          inputRefs.current[index * 4 + 2] = el as HTMLSelectElement;
                         }
                       }}
-                      className="sm:w-20 p-1 border border-solid border-[#548235] rounded-lg text-center"
-                      value={row.ExpectedRange || ''}
-                      name = {row.reagentName}
+                      className="sm:w-22 p-1 border border-solid border-[#548235] rounded-lg text-center"
+                      value={row.posExpectedRange || ''}
+                      name={row.reagentName}
                       onChange={(e) => {
                         e.preventDefault();
-                        const input = e.target.value;
-                        // Allow any 3-character input
-                        if (input.length <= 3) {
-                          setQCElements(prevState => {
-                            const newState = prevState.map(item => {
-                              if (item.reagentName === row.reagentName) {
-                                return { ...item, ExpectedRange: input };
-                              }
-                              return item;
-                            });
-                            return newState;
+                        const selectedValue = e.target.value;
+
+                        setQCElements((prevState) => {
+                          return prevState.map((item) => {
+                            if (item.reagentName === row.reagentName) {
+                              return { ...item, posExpectedRange: selectedValue };
+                            }
+                            return item;
                           });
-                        }
+                        });
                       }}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
-                          setQCElements(prevState => {
-                            const newState = prevState.map(item => {
+                          setQCElements((prevState) => {
+                            return prevState.map((item) => {
                               if (item.reagentName === row.reagentName) {
-                                let expRangeValue = item.ExpectedRange.trim();
-                                // Ensure the value is at most 3 characters long
-                                if (expRangeValue.length > 3) {
-                                  expRangeValue = expRangeValue.substring(0, 3);  // Trim to 3 characters
-                                }
-                                return { ...item, ExpectedRange: expRangeValue };
+                                const trimmedValue = item.posExpectedRange.trim();
+                                return { ...item, posExpectedRange: trimmedValue };
                               }
                               return item;
                             });
-                            return newState;
                           });
                         }
                       }}
-                    />
+                    >
+                      <option value="">Select</option>
+                      <option value="1+ to 4+">1+ to 4+</option>
+                      <option value="0">0</option>
+                    </select>
+                  </TableCell>
+                  <TableCell className="negExpectedRange">
+                    <select
+                      ref={(el) => {
+                        if (el && inputRefs.current.length < QCElements.length * 4) {
+                          inputRefs.current[index * 4 + 3] = el as HTMLSelectElement;
+                        }
+                      }}
+                      className="sm:w-22 p-1 border border-solid border-[#548235] rounded-lg text-center"
+                      value={row.negExpectedRange || ''}
+                      name={row.reagentName}
+                      onChange={(e) => {
+                        e.preventDefault();
+                        const selectedValue = e.target.value;
+
+                        setQCElements((prevState) => {
+                          return prevState.map((item) => {
+                            if (item.reagentName === row.reagentName) {
+                              return { ...item, negExpectedRange: selectedValue };
+                            }
+                            return item;
+                          });
+                        });
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          setQCElements((prevState) => {
+                            return prevState.map((item) => {
+                              if (item.reagentName === row.reagentName) {
+                                const trimmedValue = item.negExpectedRange.trim();
+                                return { ...item, negExpectedRange: trimmedValue };
+                              }
+                              return item;
+                            });
+                          });
+                        }
+                      }}
+                    >
+                      <option value="">Select</option>
+                      <option value="1+ to 4+">1+ to 4+</option>
+                      <option value="0">0</option>
+                    </select>
                   </TableCell>
 
 

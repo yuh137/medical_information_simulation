@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLoaderData, Link, useNavigate, useParams } from "react-router-dom";
 import { BloodBankRBC } from '../../../utils/indexedDB/IDBSchema';
 import Reagent from '../../../components/Reagent';
 import NavBar from '../../../components/NavBar';
@@ -28,8 +29,15 @@ function formatDate(dateString: string) {
   return `${month}/${day}/${year}`;
 }
 
+// Given the user input and expected value, returns if this was incorrect
+function isIncorrect(val1: string, val2: string) {
+  return val1 === "0" ? val2 !== "0" : val2 === "0"; 
+}
+
 const BloodBankReagentInputPage = (props: { name: string }) => {
   const { theme } = useTheme();
+  const { item } = useParams();
+  const loaderData = useLoaderData() as string;
   const [qcData, setQcData] = useState<BloodBankQCLot | null>(null);
   const [reagentValues, setReagentValues] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -52,12 +60,16 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
 
   const getReportData = async () => {
     const storedQCData = localStorage.getItem('selectedQCData');
+    let reportId: string = loaderData;
+    console.log(reportId);
     if (storedQCData) {
-      let reportData: QCItem = JSON.parse(storedQCData)[0];  // Fetch the report
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/${reportData.reportId}`);
+      // let reportData: QCItem = JSON.parse(storedQCData)[0];  // Fetch the report
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/${reportId}`);
       if (res.ok) {  // Successfully fetched the report
         const report: BBStudentReport = await res.json();
         const qcLotId = report.bloodBankQCLotID;
+        console.log(report.reportID);
+        console.log(qcLotId);
         const bbLotRes = await fetch(`${process.env.REACT_APP_API_URL}/BloodBankQCLots/${qcLotId}`);
         if (bbLotRes.ok) {  // Successfully fetched the QC Lot
           const bbLot: BloodBankQCLot = await bbLotRes.json();
@@ -100,7 +112,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
     setReagentValues(newValues);
   };
 
-  const reportPDF = (username: string, reagentValues?: string[], QCData?: BloodBankQCLot) => {
+  const reportPDF = (username: string, reagentValues: string[], QCData: BloodBankQCLot) => {
     const currentDate = new Date();
     const tw = createTw({});
     return (
@@ -121,8 +133,12 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
             <View style={tw("w-1/3")}>
               {Object.entries(reagentDict)?.map(([value], index) => (
                 <Text key={index} style={tw("mb-2 text-[13px] text-center")}>
-                  {QCData?.reagents[index].reagentName}{" (+)\n"}
-                  {QCData?.reagents[index].reagentName}{" (=)"}
+                  <Text style={tw(isIncorrect(reagentDict[value]["Pos"], QCData?.reagents[index].posExpectedRange) ? "text-red-500" : "")}>
+                    {QCData?.reagents[index].reagentName}{" (+)\n"}
+                  </Text>
+                  <Text style={tw(isIncorrect(reagentDict[value]["Neg"], QCData?.reagents[index].negExpectedRange) ? "text-red-500" : "")}>
+                    {QCData?.reagents[index].reagentName}{" (=)"}
+                  </Text>
                 </Text>
               ))}
             </View>
@@ -130,8 +146,12 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
             <View style={tw("w-1/3")}>
               {Object.entries(reagentDict)?.map(([value], index) => (
                 <Text key={index} style={tw("mb-2 text-[13px] text-center")}>
-                  {reagentDict[value]["Pos"]}{"\n"}
-                  {reagentDict[value]["Neg"]}
+                  <Text style={tw(isIncorrect(reagentDict[value]["Pos"], QCData?.reagents[index].posExpectedRange) ? "text-red-500" : "")}>
+                    {reagentDict[value]["Pos"]}{"\n"}
+                  </Text>
+                  <Text style={tw(isIncorrect(reagentDict[value]["Neg"], QCData?.reagents[index].negExpectedRange) ? "text-red-500" : "")}>
+                    {reagentDict[value]["Neg"]}
+                  </Text>
                 </Text>
               ))}
             </View>
@@ -139,8 +159,12 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
             <View style={tw("w-1/3")}>
               {Object.entries(reagentDict)?.map(([value], index) => (
                 <Text key={index} style={tw("mb-2 text-[13px] text-center whitespace-nowrap")}>
-                  {QCData?.reagents[index].posExpectedRange}{"\n"}
-                  {QCData?.reagents[index].negExpectedRange}
+                  <Text style={tw(isIncorrect(reagentDict[value]["Pos"], QCData?.reagents[index].posExpectedRange) ? "text-red-500" : "")}>
+                    {QCData?.reagents[index].posExpectedRange}{"\n"}
+                  </Text>
+                  <Text style={tw(isIncorrect(reagentDict[value]["Neg"], QCData?.reagents[index].negExpectedRange) ? "text-red-500" : "")}>
+                    {QCData?.reagents[index].negExpectedRange}
+                  </Text>
                 </Text>
               ))}
             </View>
@@ -157,9 +181,11 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
   
   const openPDF = async () => {
     const username = await getName();
-    const blob = await pdf(reportPDF(username, reagentValues, qcData || undefined)).toBlob();
-    const pdfUrl = URL.createObjectURL(blob);
-    window.open(pdfUrl, "_blank");
+    if (qcData) {
+      const blob = await pdf(reportPDF(username, reagentValues, qcData)).toBlob();
+      const pdfUrl = URL.createObjectURL(blob);
+      window.open(pdfUrl, "_blank");
+    }
   };
 
   const handleAcceptQC = async () => {

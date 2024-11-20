@@ -6,6 +6,9 @@ import { BloodBankQCLot } from "../../../utils/indexedDB/IDBSchema";
 import dayjs from "dayjs";
 import { AuthToken, useAuth } from "../../../context/AuthContext";
 import { BloodBankRBC } from '../../../utils/indexedDB/IDBSchema';
+import { Button, Backdrop, CircularProgress } from "@mui/material";
+import { Icon } from "@iconify/react";
+import { useTheme } from "../../../context/ThemeContext";
 
 import {
   DragDropContext,
@@ -24,9 +27,13 @@ function formatFilename(qcName: string): string {
 }
 
 const BloodBankOrderControls = () => {
-  const { userId } = useAuth();
+  const { userId, checkUserType } = useAuth();
+  const { theme } = useTheme();
   const [SelectedQCItems, setSelectedQCItems] = useState<string[]>([]);
-  
+  const [isErrorNotiOpen, setErrorNotiOpen] = useState(false);
+  const [isSuccessNotiOpen, setSuccessNotiOpen] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("TBD")
+
   // Combine items from both lists and initialize OrderControlsItems
   const [OrderControlsItems, setOrderControlsItems] = useState<string[]>(
     [...bloodBankQC, ...bloodBankRBC_QC].map(qc => qc.name)
@@ -70,6 +77,16 @@ const BloodBankOrderControls = () => {
   };
   
   const handleOrderSelectedQC = async () => {
+    if (checkUserType() !== "Student") {  // Faculty can't currently use this
+      setErrorMsg("This feature is currently Student-only");
+      setErrorNotiOpen(true);
+      return
+    }
+    if (SelectedQCItems.length == 0 ) {
+      setErrorMsg("No QCs have been selected")
+      setErrorNotiOpen(true);
+      return
+    }
     const queryParams = new URLSearchParams();
     SelectedQCItems.forEach(item => queryParams.append("names", formatFilename(item)));
     console.log("QC Items ordered: ", SelectedQCItems);
@@ -94,6 +111,8 @@ const BloodBankOrderControls = () => {
           */
         if (savedQCItems.length == 0) {
           console.log("Could not find Blood Bank QC ", queryParams.toString());
+          setErrorMsg("This QC Lot has not yet been created")
+          setErrorNotiOpen(true);
           return;
         }
         for (const item of savedQCItems)  {
@@ -107,11 +126,16 @@ const BloodBankOrderControls = () => {
               body: JSON.stringify([{studentId: userId, bloodBankQCLotId: item.bloodBankQCLotID, createdDate: dateString}]),
             })
             if (createRes.ok ) {
+              setSuccessNotiOpen(true);
               console.log("Created BB Student Report");
             } else { 
+              setErrorMsg("Failed to create report");
+              setErrorNotiOpen(true);
               console.log("Failed to create BB Student Report");
             }
           } catch (error) {
+            setErrorMsg("An unexpected error occurred")
+            setErrorNotiOpen(true);
             console.error("Fetch failed:", error);
           }
         }
@@ -274,7 +298,73 @@ const BloodBankOrderControls = () => {
           </Droppable>
         </div>
       </DragDropContext>
-      
+      {/* Success Notification */}
+      <Backdrop // OK BACKDROP
+        open={isSuccessNotiOpen}
+        
+        onClick={() => {
+          setSuccessNotiOpen(false);
+        }}
+      >
+        <div className="bg-white rounded-xl">
+          <div className="sm:p-8 flex flex-col sm:gap-4">
+            <div className="text-center text-gray-600 text-xl font-semibold">
+              { 
+                <>
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon icon="clarity:success-standard-line" className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                    <div>Registration Successful</div>
+                  </div>
+                </>
+              }
+            </div>
+            <div className="flex justify-center">
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setSuccessNotiOpen(false);
+                }}
+                className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+              >
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Backdrop>
+      <Backdrop  // ERROR BACKDROP
+        open={isErrorNotiOpen}
+        
+        onClick={() => {
+          setErrorNotiOpen(false);
+        }}
+      >
+        <div className="bg-white rounded-xl">
+          <div className="sm:p-8 flex flex-col sm:gap-4">
+            <div className="text-center text-gray-600 text-xl font-semibold">
+              { 
+                <>
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                    <div>{errorMsg}</div>
+                  </div>
+                </>
+              }
+            </div>
+            <div className="flex justify-center">
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setErrorNotiOpen(false);
+                }}
+                className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+              >
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Backdrop>
     </>
   );
 };

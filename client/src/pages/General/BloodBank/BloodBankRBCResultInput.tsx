@@ -35,6 +35,11 @@ function formatDate(dateString: string) {
   return `${month}/${day}/${year}`;
 }
 
+// Given the user input and expected value, returns if this was incorrect
+function isIncorrect(val1: string, val2: string) {
+  return val1 !== val2 && !val2.includes(val1);
+}
+
 
 const BloodBankRBCResultInput = (props: { name: string }) => {
   const { theme } = useTheme();
@@ -103,7 +108,7 @@ const BloodBankRBCResultInput = (props: { name: string }) => {
     setReagentDict(newDict)
   };
 
-  const reportPDF = (username: string, QCData?: BloodBankQCLot) => {
+  const reportPDF = (username: string, QCData: BloodBankQCLot) => {
     const currentDate = new Date();
     const tw = createTw({}); 
     console.log(reagentDict);
@@ -126,10 +131,18 @@ const BloodBankRBCResultInput = (props: { name: string }) => {
             <View>
               {Object.entries(reagentDict)?.map(([value], index) => (
                 <Text style={tw("mb-2 text-[13px]")}>
-                  {QCData?.reagents[index].reagentName}{" (IMS)\n"}
-                  {QCData?.reagents[index].reagentName}{" (37*)\n"}
-                  {QCData?.reagents[index].reagentName}{" (AHG)\n"}
-                  {QCData?.reagents[index].reagentName}{" (CC)"}
+                  <Text style={tw(isIncorrect(reagentDict[value]["IMS"], QCData?.reagents[index].immediateSpin) ? "text-red-500" : "")}>
+                    {QCData?.reagents[index].reagentName}{" (IS)\n"}
+                  </Text>
+                  <Text style={tw(isIncorrect(reagentDict[value]["Thirty"], QCData?.reagents[index].thirtySevenDegree) ? "" : "")}>
+                    {QCData?.reagents[index].reagentName}{" (37*)\n"}
+                  </Text>
+                  <Text style={tw(isIncorrect(reagentDict[value]["AHG"], QCData?.reagents[index].immediateSpin) ? "" : "")}>
+                    {QCData?.reagents[index].reagentName}{" (AHG)\n"}
+                  </Text>
+                  <Text style={tw(isIncorrect(reagentDict[value]["CC"], QCData?.reagents[index].checkCell) ? "" : "")}>
+                    {QCData?.reagents[index].reagentName}{" (CC)"}
+                  </Text>
                 </Text>
               ))}
             </View>
@@ -170,9 +183,11 @@ const BloodBankRBCResultInput = (props: { name: string }) => {
 
   const openPDF = async () => {
     const username = await getName();
-    const blob = await pdf(reportPDF(username, qcData || undefined)).toBlob();
-    const pdfUrl = URL.createObjectURL(blob);
-    window.open(pdfUrl, "_blank");
+    if (qcData) {
+      const blob = await pdf(reportPDF(username, qcData)).toBlob();
+      const pdfUrl = URL.createObjectURL(blob);
+      window.open(pdfUrl, "_blank");
+    }
   };
 
   const handleAcceptQC = async () => {
