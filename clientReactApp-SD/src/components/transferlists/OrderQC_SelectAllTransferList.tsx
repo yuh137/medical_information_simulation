@@ -12,9 +12,6 @@ import Divider from "@mui/material/Divider";
 import QCOrderButtons from "./Buttons/QCOrderButtons";
 import axios from "axios";
 
-
-
-
 function not(a: readonly number[], b: readonly number[]) {
   return a.filter((value) => !b.includes(value));
 }
@@ -111,7 +108,7 @@ export default function OrderQC_SelectAllTransferList() {
   };
 
   const customList = (title: React.ReactNode, items: readonly number[]) => (
-    <Card sx={{ width: 300, height: 350 }}>
+    <Card sx={{ width: 400, height: 500 }}>
       {" "}
       {/* Increased the width and height */}
       <CardHeader

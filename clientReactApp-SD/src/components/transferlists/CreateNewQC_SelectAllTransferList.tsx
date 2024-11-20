@@ -33,7 +33,7 @@ export default function CreateNewQC_SelectAllTransferList() {
     // Fetch data from the API when the component mounts
     const fetchBackendData = async () => {
       const responseQCAnalytes = await axios.get(
-        "http://localhost:5029/api/Analytes",
+        "http://localhost:5029/api/Analytes/01111111-1111-1111-1111-111111111111",
       );
       const dataQCAnalytes = responseQCAnalytes.data;
       const dataQCLotsLength = dataQCAnalytes.length;
@@ -106,7 +106,7 @@ export default function CreateNewQC_SelectAllTransferList() {
   };
 
   const customList = (title: React.ReactNode, items: readonly number[]) => (
-    <Card sx={{ width: 300, height: 350 }}>
+    <Card sx={{ width: 400, height: 500 }}>
       {" "}
       {/* Increased the width and height */}
       <CardHeader
