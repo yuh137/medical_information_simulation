@@ -126,7 +126,8 @@ const BloodBankOrderControls = () => {
               body: JSON.stringify([{studentId: userId, bloodBankQCLotId: item.bloodBankQCLotID, createdDate: dateString}]),
             })
             if (createRes.ok ) {
-              setSuccessNotiOpen(true);
+              // setSuccessNotiOpen(true);
+              setNotification("Selected QC items have been ordered successfully!");
               console.log("Created BB Student Report");
             } else { 
               setErrorMsg("Failed to create report");
@@ -139,7 +140,6 @@ const BloodBankOrderControls = () => {
             console.error("Fetch failed:", error);
           }
         }
-        setNotification("Selected QC items have been ordered successfully!");
       }
     } catch (e) {
       console.error("Error ordering QC: ", e);
