@@ -14,6 +14,7 @@ import CreateNewQC_SelectAllTransferList from "../components/transferlists/Creat
 import SubmittedQCTable from "../components/table/SubmittedQCTable";
 import QCChoices from "../components/QCChoices";
 import QC_Edit_Table from "../components/table/QC_Edit_Table";
+import ReviewQCTable from "../components/table/ReviewQCTable";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -79,7 +80,7 @@ export default function QC_Page(props: { disableCustomTheme?: boolean }) {
         <CheckboxLabels onQCChange={handleQCChange} />
         <QCSelectAction />
         {selectedQC === "orderQC" && <OrderQC_SelectAllTransferList />}
-        {selectedQC === "reviewQC" && <SubmittedQCTable />}
+        {selectedQC === "reviewQC" && <ReviewQCTable />}
         {selectedQC === "buildQC" && (
           <QCChoices onQCBuildChange={handleQCBuilder} />
         )}

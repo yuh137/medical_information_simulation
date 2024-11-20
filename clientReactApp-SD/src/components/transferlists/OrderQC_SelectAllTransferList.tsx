@@ -26,6 +26,7 @@ function union(a: readonly number[], b: readonly number[]) {
 
 export default function OrderQC_SelectAllTransferList() {
   const [panelNames, setPanelNames] = React.useState<string[]>([]);
+  const [adminQCLotID, setAdminQCLotID] = React.useState<string[]>([]);
   const [checked, setChecked] = React.useState<readonly number[]>([]);
   const [left, setLeft] = React.useState<readonly number[]>([]);
   const [right, setRight] = React.useState<readonly number[]>([]);
@@ -36,13 +37,21 @@ export default function OrderQC_SelectAllTransferList() {
       const responseQCLots = await axios.get(
         "http://localhost:5029/api/AdminQCLots",
       );
+      const responseAnalytes = await axios.get(
+        "http://localhost:5029/api/Analytes",
+      );
       const dataQCLots = responseQCLots.data;
+      const dataAnalytes = responseAnalytes.data;
       const dataQCLotsLength = dataQCLots.length;
       console.log("QC Lots", dataQCLots);
+      console.log("Analytes", dataAnalytes)
 
       // Gets the names of the QCLots in the database
       const fetchedPanelNames = dataQCLots.map((lot: any) => lot.qcName);
       setPanelNames(fetchedPanelNames);
+      const fetchedAdminQCLotIDs = dataQCLots.map((lot: any) => lot.AdminQCLotID);
+      setAdminQCLotID(fetchedAdminQCLotIDs)
+
       setLeft(fetchedPanelNames.map((_: string, index: number) => index));
     };
     fetchBackendData();

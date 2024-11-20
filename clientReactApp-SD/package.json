@@ -37,6 +37,7 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-router-dom": "^6.27.0",
+    "recharts": "^2.13.3",
     "resend": "^4.0.1-alpha.0",
     "uuid": "^11.0.3"
   },

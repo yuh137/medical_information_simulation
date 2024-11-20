@@ -108,14 +108,6 @@ export default function PanelsToOrderTable(props: { disableCustomTheme?: boolean
       const allAnalytes = responseAnalytes.data;
       console.log("Fetched Analytes Data:", allAnalytes);
   
-      // Log AdminQCLotID comparison for each analyte
-      allAnalytes.forEach((analyte) => {
-        console.log(
-          `Checking Analyte AdminQCLotID "${analyte.AdminQCLotID}" against Selected Lot IDs:`,
-          selectedLotIds.includes(analyte.AdminQCLotID)
-        );
-      });
-  
       // Filter analytes by matching AdminQCLotID
       const filteredAnalytes = allAnalytes.filter((analyte: any) =>
         selectedLotIds.includes(analyte.AdminQCLotID)

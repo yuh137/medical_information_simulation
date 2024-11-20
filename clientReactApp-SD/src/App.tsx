@@ -23,6 +23,7 @@ import QCEditPage from "./pages/QCEditPage.tsx";
 import QCAnalytesGrid from "./components/table/QCAnalytesGrid.tsx";
 import SubmitCreateQCEntry from "./pages/SubmitCreateQCEntry.tsx";
 import EditReportPage from "./pages/EditReportPage.tsx";
+import ReviewSubmission from "./pages/ReviewSubmission.tsx";
 
 function App() {
   useEffect(() => {
@@ -48,6 +49,7 @@ function App() {
         <Route path="/qc" element={<QC_Page />} />
         <Route path="/editreportpage" element={<EditReportPage />} />
         <Route path="/qcedit/:adminQCLotID" element={<QCAnalytesGrid />} />
+        <Route path="/reviewSubmission/:selectedReportId" element={<ReviewSubmission />} />
         <Route path="/quizzes" element={<QuizzesPage />} />
         <Route path="/referencefiles" element={<ReferecnceFilesPage />} />
         <Route path="/viewqcresults" element={<ViewQCResultsPage />} />
