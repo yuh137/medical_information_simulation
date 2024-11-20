@@ -173,24 +173,6 @@ export default function CreateQCPanelGrid(props: {
     );
   };
 
-  function getFormattedDate() {
-    const today = new Date();
-
-    // Format the components
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are zero-based, pad with 0
-    const day = String(today.getDate()).padStart(2, "0");
-    const hours = String(today.getHours()).padStart(2, "0");
-    const minutes = String(today.getMinutes()).padStart(2, "0");
-    const seconds = String(today.getSeconds()).padStart(2, "0");
-    const milliseconds = String(today.getMilliseconds()).padStart(3, "0");
-    const microseconds = "1234567"; // Placeholder for microsecond precision
-
-    // Construct the formatted date
-    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}${microseconds}`;
-
-    return formattedDate;
-  }
 
   // Handle Save Button
   const handleSave = async () => {
