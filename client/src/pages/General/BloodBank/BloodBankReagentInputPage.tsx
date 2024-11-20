@@ -225,9 +225,23 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
     };
 
     try {
-      // await saveToDB("qc_store", qcDataToSave);
       console.log("QC data saved successfully with comments.");
       setReagentValues([]);
+      // const res = await fetch(`${process.env.REACT_APP_API_URL}/Students/${userId}`);
+      let reportId: string = loaderData;
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/${reportId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      if (res.status === 404) {
+        console.log("Report has already been deleted");
+      } else if (res.ok ) {
+        console.log("Successful deletion");
+      } else {
+        console.log("Could not delete student report");
+      }
     } catch (error) {
       console.error("Error saving QC data:", error);
     }

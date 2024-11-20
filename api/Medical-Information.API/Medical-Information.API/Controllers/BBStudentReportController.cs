@@ -72,5 +72,21 @@ namespace Medical_Information.API.Controllers
 
             return Ok(studentReportDTO);
         }
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> DeleteBBStudentReport([FromRoute] Guid id)
+        {
+            var reportModel = await studentReportRepository.DeleteBBStudentReportAsync(id);
+
+            if (reportModel == null)
+            {
+                return NotFound("BB Student Report not found");
+            }
+
+            var BBStudentReportDTO = mapper.Map<BBStudentReportDTO>(reportModel);
+
+            return Ok(BBStudentReportDTO);
+        }
     }
 }
