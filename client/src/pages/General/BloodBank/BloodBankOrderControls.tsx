@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import NavBar from "../../../components/NavBar";
 import { bloodBankQC, bloodBankRBC_QC } from "../../../utils/utils";
@@ -37,6 +38,9 @@ const BloodBankOrderControls = () => {
   const [OrderControlsItems, setOrderControlsItems] = useState<string[]>(
     [...bloodBankQC, ...bloodBankRBC_QC].map(qc => qc.name)
   );
+  const [notification, setNotification] = useState<string | null>(null);
+
+
 
   const onDragEnd = (results: DropResult) => {
     const { source, destination, type } = results;
@@ -135,15 +139,21 @@ const BloodBankOrderControls = () => {
             console.error("Fetch failed:", error);
           }
         }
-        
+        setNotification("Selected QC items have been ordered successfully!");
       }
     } catch (e) {
       console.error("Error ordering QC: ", e);
+      setNotification("An error occurred while ordering QC items.");
+    } finally {
+      // Automatically hide the message after 3 seconds (CHANGE 3)
+      setTimeout(() => setNotification(null), 3000);
+    }
+  };
       // setNotiType(NotiType.SomethingWrong);
       // setIsFeedbackNotiOpen(true);
       // setIsOrderLoading(false);
-    }
-  }
+    
+      
 
   const handleClearSelection = () => { 
     let orderQCs = [...OrderControlsItems];
@@ -158,6 +168,29 @@ const BloodBankOrderControls = () => {
   
   return (
     <>
+            {/* Display Notification */}
+            {notification && (
+        <div
+          style={{
+            position: "fixed",
+            top: "10%",
+            left: "50%",
+            transform: "translateX(-50%)",
+            backgroundColor: "#4caf50",
+            color: "white",
+            padding: "10px",
+            borderRadius: "5px",
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+            zIndex: 1000,
+          }}
+        >
+          {notification}
+        </div>
+      )}
+
+        
+  
+            
       <DragDropContext onDragEnd={onDragEnd}>
         <NavBar name="Blood Bank Order Controls" />
         <div
@@ -170,6 +203,7 @@ const BloodBankOrderControls = () => {
                 ref={drop_provided.innerRef}
                 {...drop_provided.droppableProps}
                 className="w-[25%] h-[75vh] overflow-y-auto" // Larger width and height
+                
               >
                 <div className="order-qc-container h-full rounded-lg bg-[#dae3f3] p-4 flex flex-col gap-4">
                   <div className="order-qc-title text-2xl text-center font-semibold">Order QC</div>
