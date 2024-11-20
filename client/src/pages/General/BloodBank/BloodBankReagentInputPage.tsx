@@ -11,7 +11,7 @@ import { saveToDB } from '../../../utils/indexedDB/getData';
 import { BBStudentReport } from "../../../utils/utils";
 import { BloodBankQCLot, Student } from "../../../utils/indexedDB/IDBSchema";
 import { useAuth } from "../../../context/AuthContext";
-
+// RESULTS IN PROGRESS FOR REAGENT RACK
 
 interface QCItem {  // Used to read from the index DB
   reportId: string;
@@ -187,13 +187,29 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
       window.open(pdfUrl, "_blank");
     }
   };
-
+  
   const handleAcceptQC = async () => {
     if (!qcData) {
       console.error("No QC data available to save.");
       return;
     }
-    console.log(qcData);
+    if (Object.keys(reagentDict).length != Object.keys(qcData.reagents).length) {
+      console.log("Incomplete data");
+      return;
+    }
+    if (qcComment === "") {  // If we don't have a comment
+      for (const [key, value] of Object.entries(reagentDict)) {
+        const reag = qcData.reagents[+key];
+        console.log(reag);
+        console.log(value["Neg"]);
+        if (isIncorrect(value["Pos"], reag.posExpectedRange) || isIncorrect(value["Neg"], reag.negExpectedRange)) {
+          alert("You must enter a comment to accept QC");
+          console.log("Must have a comment");
+          return;
+        }
+      }
+    }
+
     const qcDataToSave = {
       ...qcData,
       reagents: qcData.reagents.map((reagent, index) => ({
