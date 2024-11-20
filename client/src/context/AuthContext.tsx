@@ -39,7 +39,6 @@ export const AuthProvider = (props: AuthProviderProps) => {
 
     async function login(token: string, initials: string, username: string, userType: UserType) {
 
-      
 
       setIsAuthenticated(true);
       setUserType(userType);

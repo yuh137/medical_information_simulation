@@ -28,6 +28,36 @@ import ChemistryLeveyJennings from "./pages/General/Chemistry/ChemistryLeveyJenn
 import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInputPage";
 import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
 import { getAllDataFromStore } from "./utils/indexedDB/getData";
+// import UAQCbuilder from "./pages/General/Chemistry/UrinalysisBodyFluidQCBuilderPage";
+// import UrinalysisDisplay from "./pages/General/Chemistry/urinalysi";
+
+//UA
+import UABFLeveyAnalyteInputPage from "./pages/General/Urinalysis/UABFLeveyAnalyteInputPage";
+import UrinalysisCustomQCBuild from "./pages/General/Urinalysis/UrinalysisCustomQCBuild";
+import UrinalysisCustomTests from "./pages/General/Urinalysis/UrinalysisCustomTests";
+import UrinalysisEditQC from "./pages/General/Urinalysis/UrinalysisEditQCPage";
+import UrinalysisLeveyJennings from "./pages/General/Urinalysis/UrinalysisLeveyJennings";
+import UABFOrderControls from "./pages/General/Urinalysis/UABFOrderControls";
+import UrinalysisQCBuilder from "./pages/General/Urinalysis/UrinalysisQCBuilderPage";
+import UrinalysisQCResult from "./pages/General/Urinalysis/UABFQCResult";
+import UrinalysisQCTypeSelection from "./pages/General/Urinalysis/UrinalysisQCTypeSelection";
+import UrinalysisQCTypeButtonsPage from "./pages/General/Urinalysis/UrinalysisQCTypeSelection";
+import {UrinalysisTestInputPage} from "./pages/General/Urinalysis/UrinalysisTestInputPage";
+import {UrinalysisQualitativeInput} from "./pages/General/Urinalysis/UrinalysisQualitativeInput";
+import UrinalysisPageSwitcher from "./pages/General/Urinalysis/UrinalysisPageSwitcher";
+
+//BF
+import {BFQualitativeInput} from "./pages/General/Urinalysis/BFQualitativeInput";
+import BFQCTypeButtonsPage from "./pages/General/Urinalysis/BFQCTypeSelection";
+import BFCustomQCBuild from "./pages/General/Urinalysis/BFCustomQCBuild";
+import BFCustomTests from "./pages/General/Urinalysis/BFCustomTests";
+import { BFTestInputPage } from "./pages/General/Urinalysis/BFTestInputPage";
+import BFEditQC from "./pages/General/Urinalysis/BFEditQCPage";
+import BFQCBuilder from "./pages/General/Urinalysis/BFQCBuilderPage";
+import BFAnalyteInputPage from "./pages/General/Urinalysis/BFAnalyteInputPage";
+import QualitativeAnalyte from './components/QualitativeAnalyte';
+import QualitativeAnalyteInputPage from './pages/General/Urinalysis/UABFQualitativeAnalyteInputPage';
+
 
 function App() {
   initIDB();
@@ -81,10 +111,13 @@ function AppWithRouter() {
           { 
             path: 'chemistry', 
             children: [
+              
+
               {
                 path: 'qc_results',
                 element: <ChemistryQCResult link="chemistry" name="Chemistry" />,
               },
+             
               {
                 path: 'simple-analyte-input-page',
                 element: <SimpleAnalyteInputPage name="Chemistry" />,  
@@ -158,13 +191,90 @@ function AppWithRouter() {
             ]
           },
 
-          // URINALYSIS PATHS
-          {
-            path: 'urinalysis',
+          { 
+            path: 'UA_fluids', 
             children: [
+              {
+                path: 'qc_results',
+                element: <UrinalysisQCResult link="UA_fluids" name="UA/Body Fluids" />,
+              },
+              {
+                path: 'qualitative-analyte-input-page',
+                element: <QualitativeAnalyteInputPage name="UA/Body Fluids" />,  
+              },
+              {
+                path: 'simple-analyte-input-page',
+                element: <UrinalysisTestInputPage name="UA/Body Fluids" />,  
+              },
+              {
+                path: "qc_results/:link",
+                element: <UABFLeveyAnalyteInputPage name="" />,
+                loader: async ({ params }) => {
+                  const { link } = params;
+                  console.log("loader function: ", link);
+                  return null;
+                }
+              },
+              { 
+                path: 'order_controls', 
+                element: <UABFOrderControls /> 
+              },
+            
+              {
+                path: "qc_builder",
+                element: <UrinalysisQCBuilder />,
+              },
+              {
+                path: 'levey-jennings/:fileName/:lotNumber/:analyteName',
+                element: <UrinalysisLeveyJennings />,
+              },
+              {
+                path: "BFEdit_qc",
+                element: <BFEditQC />,
+              },
+              {
+                  path: "BFEdit_qc/:item",
+                  element: <BFQualitativeInput name="CMP Level I" />,
+                },
+                {
+                  path: "BFEdit_qc/levyjennings/:item",
+                  element: <BFTestInputPage name="CMP Level I" />,
+                },
 
+              {
+                path: "edit_qc",
+                element: <UrinalysisEditQC />,
+              },
+              {
+                path: "edit_qc/:item",
+                element: <UrinalysisQualitativeInput name="CMP Level I" />,
+              },
+              {
+                path: "edit_qc/levyjennings/:item",
+                element: <UrinalysisTestInputPage name="CMP Level I" />,
+              },
+              
+              {
+                path: "build_qc/:item",
+                element: <UrinalysisCustomQCBuild name="UA/Body Fluids" />,
+              },
+              {
+                path: "custom_tests",
+                element: <UrinalysisCustomTests />,
+              },
+              {
+                path: "qc_types",
+                element: <UrinalysisQCTypeButtonsPage />,
+              },
+              {
+                path: "page_switcher",
+                element: <UrinalysisPageSwitcher />, // Add the route for UrinalysisPageSwitcher
+              }
             ]
           },
+
+
+
 
           // BLOOD BANK PATHS
           {

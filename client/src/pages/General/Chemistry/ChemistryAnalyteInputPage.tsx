@@ -95,11 +95,11 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
     )
   }
 
- /*const openPDF = async () => {
-    const blob = await pdf(reportPDF(analyteValues, QCData)).toBlob();
-    const pdfUrl = URL.createObjectURL(blob);
-    window.open(pdfUrl, "_blank");
-  }*/
+//  const openPDF = async () => {
+//     const blob = await pdf(reportPDF(analyteValues, QCData)).toBlob();
+//     const pdfUrl = URL.createObjectURL(blob);
+//     window.open(pdfUrl, "_blank");
+//   }
 
   // const [isValid, setIsValid] = useState<boolean>(false);
   const [isInputFull, setIsInputFull] = useState<boolean>(false);

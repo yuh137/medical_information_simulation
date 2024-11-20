@@ -1,0 +1,20 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/app-medsim-eastus-dev-001/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsMedicalInformationAuthC_69BA358E35",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/sqlserver-medsim-eastus-dev-001/databases/sqldb-medsim-eastus-dev-001",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:MedicalInformationAuthConnectionString",
+      "dynamicId": null
+    },
+    "mssql2": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/app-medsim-eastus-dev-001/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsMedicalInformationConne_D67FABD342",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/sqlserver-medsim-eastus-dev-001/databases/sqldb-medsim-eastus-dev-001",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:MedicalInformationConnectionString",
+      "dynamicId": null
+    }
+  }
+}

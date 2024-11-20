@@ -113,6 +113,8 @@ namespace Medical_Information.API.Controllers.Auth
                                 {
                                     JwtToken = token,
                                     UserID = savedUser.AdminID,
+                                    username = savedUser.Username,
+                                    initials = savedUser.Initials,
                                     Roles = roles.ToList(),
                                 };
 
@@ -142,6 +144,8 @@ namespace Medical_Information.API.Controllers.Auth
                                 {
                                     JwtToken = token,
                                     UserID = savedUser.StudentID,
+                                    username = savedUser.Username,
+                                    initials = savedUser.Initials,
                                     Roles = roles.ToList(),
                                 };
 

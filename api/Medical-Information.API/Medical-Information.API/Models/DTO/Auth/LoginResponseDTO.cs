@@ -4,6 +4,8 @@
     {
         public string JwtToken { get; set; }
         public Guid UserID { get; set; }
+        public string username { get; set; }
+        public string initials { get; set; }
         public List<string> Roles { get; set; }
     }
 }

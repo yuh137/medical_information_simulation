@@ -66,6 +66,30 @@ namespace Medical_Information.API.Migrations
                     b.ToTable("Admins");
                 });
 
+            modelBuilder.Entity("Medical_Information.API.Models.Domain.AdminAnalyteReport", b =>
+                {
+                    b.Property<Guid>("ReportID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AdminID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AdminQCLotID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ReportID");
+
+                    b.HasIndex("AdminID");
+
+                    b.HasIndex("AdminQCLotID");
+
+                    b.ToTable("AdminAnalyteReports");
+                });
+
             modelBuilder.Entity("Medical_Information.API.Models.Domain.AdminQCLot", b =>
                 {
                     b.Property<Guid>("AdminQCLotID")
@@ -84,9 +108,15 @@ namespace Medical_Information.API.Migrations
                     b.Property<DateTime?>("FileDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsQualitative")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LotNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("OpenDate")
                         .HasColumnType("datetime2");
@@ -97,6 +127,9 @@ namespace Medical_Information.API.Migrations
 
                     b.HasKey("AdminQCLotID");
 
+                    b.HasIndex("LotNumber")
+                        .IsUnique();
+
                     b.ToTable("AdminQCLots");
 
                     b.HasData(
@@ -105,8 +138,10 @@ namespace Medical_Information.API.Migrations
                             AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
                             Department = 0,
                             ExpirationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FileDate = new DateTime(2024, 11, 16, 16, 43, 51, 761, DateTimeKind.Local).AddTicks(7597),
+                            IsActive = false,
                             LotNumber = "888888888888",
-                            OpenDate = new DateTime(2024, 9, 11, 1, 25, 38, 718, DateTimeKind.Local).AddTicks(8349),
+                            OpenDate = new DateTime(2024, 11, 16, 16, 43, 51, 761, DateTimeKind.Local).AddTicks(7616),
                             QCName = "CMP Level I"
                         });
                 });
@@ -128,6 +163,9 @@ namespace Medical_Information.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ExpectedRange")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<float>("MaxLevel")
                         .HasColumnType("real");
 
@@ -136,6 +174,9 @@ namespace Medical_Information.API.Migrations
 
                     b.Property<float>("MinLevel")
                         .HasColumnType("real");
+
+                    b.Property<string>("SelectedExpectedRange")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<float>("StdDevi")
                         .HasColumnType("real");
@@ -157,9 +198,11 @@ namespace Medical_Information.API.Migrations
                             AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
                             AnalyteAcronym = "Na",
                             AnalyteName = "Sodium",
+                            ExpectedRange = "[\"Neg\",\"Trace\",\"Small\",\"Moderate\",\"Large\"]",
                             MaxLevel = 0f,
                             Mean = 0f,
                             MinLevel = 0f,
+                            SelectedExpectedRange = "[\"Small\",\"Moderate\",\"Large\"]",
                             StdDevi = 0f,
                             UnitOfMeasure = "mEq/L"
                         },
@@ -327,6 +370,9 @@ namespace Medical_Information.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("AdminAnalyteReportReportID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("AnalyteName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -334,14 +380,52 @@ namespace Medical_Information.API.Migrations
                     b.Property<float>("AnalyteValue")
                         .HasColumnType("real");
 
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("ReportID")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("AnalyteInputID");
 
+                    b.HasIndex("AdminAnalyteReportReportID");
+
                     b.HasIndex("ReportID");
 
                     b.ToTable("AnalyteInputs");
+                });
+
+            modelBuilder.Entity("Medical_Information.API.Models.Domain.Images", b =>
+                {
+                    b.Property<Guid>("ImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FileDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileExtension")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("FileSizeInBytes")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ImageId");
+
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("Medical_Information.API.Models.Domain.Student", b =>
@@ -414,6 +498,21 @@ namespace Medical_Information.API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Medical_Information.API.Models.Domain.AdminAnalyteReport", b =>
+                {
+                    b.HasOne("Medical_Information.API.Models.Domain.Admin", null)
+                        .WithMany("Reports")
+                        .HasForeignKey("AdminID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Medical_Information.API.Models.Domain.AdminQCLot", null)
+                        .WithMany("AdminReports")
+                        .HasForeignKey("AdminQCLotID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Medical_Information.API.Models.Domain.Analyte", b =>
                 {
                     b.HasOne("Medical_Information.API.Models.Domain.AdminQCLot", null)
@@ -425,6 +524,10 @@ namespace Medical_Information.API.Migrations
 
             modelBuilder.Entity("Medical_Information.API.Models.Domain.AnalyteInput", b =>
                 {
+                    b.HasOne("Medical_Information.API.Models.Domain.AdminAnalyteReport", null)
+                        .WithMany("AnalyteInputs")
+                        .HasForeignKey("AdminAnalyteReportReportID");
+
                     b.HasOne("Medical_Information.API.Models.Domain.StudentReport", null)
                         .WithMany("AnalyteInputs")
                         .HasForeignKey("ReportID")
@@ -447,8 +550,20 @@ namespace Medical_Information.API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Medical_Information.API.Models.Domain.Admin", b =>
+                {
+                    b.Navigation("Reports");
+                });
+
+            modelBuilder.Entity("Medical_Information.API.Models.Domain.AdminAnalyteReport", b =>
+                {
+                    b.Navigation("AnalyteInputs");
+                });
+
             modelBuilder.Entity("Medical_Information.API.Models.Domain.AdminQCLot", b =>
                 {
+                    b.Navigation("AdminReports");
+
                     b.Navigation("Analytes");
 
                     b.Navigation("Reports");

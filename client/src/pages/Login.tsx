@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button, Backdrop } from "@mui/material";
+import { Button, Backdrop, CircularProgress } from "@mui/material";
 import { useTheme } from "../context/ThemeContext";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { CredentialsInput } from './Register';
 import { AuthToken, UserType, useAuth } from '../context/AuthContext';
 import { getAdminByName, getStudentByName } from '../utils/indexedDB/getData';
+import { Icon } from "@iconify/react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,14 +14,25 @@ const Login = () => {
   const { login, checkSession, checkUserType } = useAuth();
   const [loginOptions, setLoginOptions] = useState<"Admin" | "Student" | string>("");
   const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState(false);
-  const { register, handleSubmit } = useForm<CredentialsInput>();
+  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [isErrorNotiOpen, setErrorNotiOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // Store the specific error message
+  const { register, handleSubmit, formState: { errors } } = useForm<CredentialsInput>();
   const onSubmit: SubmitHandler<CredentialsInput> = async (data) => {
+    // Check if an account type is selected
+    if (!loginOptions) {
+      setErrorNotiOpen(true);
+      setErrorMessage("Please choose an account type (Admin or Student).");
+      return;
+    }
     if (loginOptions === "Admin") {
       // const check = await getAdminByName(data.username);
       const sessionCheck = await checkSession();
       if (sessionCheck) {
         navigate("/admin-home");
       }
+
+      setIsLoading(true); // Start loading
 
       const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/Auth/LoginByUsername`, {
         method: 'POST',
@@ -36,15 +48,45 @@ const Login = () => {
 
       try {
         if (checkServer.status === 200) {
-          const token: AuthToken = await checkServer.json();
+          // Parse the JSON response
+          const responseData = await checkServer.json();
+
+          // Extract and structure AuthToken
+          const token: AuthToken = {
+            jwtToken: responseData.jwtToken,
+            userID: responseData.userID,
+            roles: responseData.roles,
+          };
+
+          const username = responseData.username;
+          const initials = responseData.initials;
 
           localStorage.setItem('token', JSON.stringify(token));
+          login(JSON.stringify(token), initials, username, UserType.Admin);
           console.log(localStorage.getItem('token'));
+          setIsLoading(false); // Stop loading
           navigate('/admin-home');
           // if ()
         }
-      } catch(e) {
-        console.log("Error in login ", e);
+        else {
+          const errorText = await checkServer.text();
+          console.error("Failed to login:", errorText);
+          setIsLoading(false); // Stop loading
+          setErrorMessage(`Login failed: ${errorText}`);
+          setErrorNotiOpen(true); // Show error notification
+        }
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          console.log("Error in login", e);
+          setIsLoading(false); // Stop loading
+          setErrorNotiOpen(true); // Show error notification
+          setErrorMessage(`Error fetching user data: ${e.message}`);
+        } else {
+          console.error("An unknown error occurred", e);
+          setIsLoading(false); // Stop loading
+          setErrorNotiOpen(true); // Show error notification
+          setErrorMessage("An unknown error occurred.");
+        }
       }
 
       // if (check && check.password === data.password) {
@@ -55,12 +97,13 @@ const Login = () => {
       // }
       // console.log(username, type);
     } else if (loginOptions === "Student") {
-      // const check = await getStudentByName(data.username);
+      //const check = await getStudentByName(data.username);
       try {
         const sessionCheck = await checkSession();
         if (sessionCheck) {
           navigate('/student-home');
         }
+        setIsLoading(true); // Start loading
 
         const checkServer = await fetch(`${process.env.REACT_APP_API_URL}/Auth/LoginByUsername`, {
           method: 'POST',
@@ -74,14 +117,33 @@ const Login = () => {
         console.log(checkServer);
 
         if (checkServer.status === 200) {
-          const token: AuthToken = await checkServer.json();
+          // Parse the JSON response
+          const responseData = await checkServer.json();
+
+          // Extract and structure AuthToken
+          const token: AuthToken = {
+            jwtToken: responseData.jwtToken,
+            userID: responseData.userID,
+            roles: responseData.roles,
+          };
+
+          const username = responseData.username;
+          const initials = responseData.initials;
 
           localStorage.setItem('token', JSON.stringify(token));
+          login(JSON.stringify(token), initials, username, UserType.Student);
           console.log(localStorage.getItem('token'));
+          setIsLoading(false); // Stop loading
           navigate('/student-home');
-          // if ()
+        }else {
+          setIsLoading(false); // Stop loading
+          const errorText = await checkServer.text();
+          console.error("Failed to Login:", errorText);
+          setErrorMessage(`Login failed: ${errorText}`);
+          setErrorNotiOpen(true); // Show error notification
         }
       } catch (e) {
+        setIsLoading(false); // Stop loading
         console.log("Error logging in: ", e);
       }
 
@@ -93,6 +155,7 @@ const Login = () => {
       //   console.log(new Error("Invalid credentials"));
       // }
     } else {
+      setIsLoading(false); // Stop loading
       console.log(new Error("Invalid type"));
     }
   }
@@ -120,7 +183,7 @@ const Login = () => {
     if (isFeedbackNotiOpen) {
       setTimeout(() => {
         setFeedbackNotiOpen(false);
-      }, 3000);
+      }, 30000);
     }
   }, [isFeedbackNotiOpen])
 
@@ -146,7 +209,7 @@ const Login = () => {
             <div
               className={`student-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${
                 loginOptions === "Student"
-                  ? "border-2 !border-[#2f5597]"
+                  ? "border-4 !border-[#2f5597]"
                   : ""
               }`}
               onClick={() => {
@@ -161,7 +224,7 @@ const Login = () => {
             <div
               className={`admin-img-container flex flex-col sm:gap-y-2 sm:w-1/2 border border-solid border-black sm:px-2 sm:py-4 rounded-md hover:cursor-pointer hover:bg-slate-500/30 transition-all duration-75 ${
                 loginOptions === "Admin"
-                  ? "border-2 !border-[#2f5597]"
+                  ? "border-4 !border-[#2f5597]"
                   : ""
               }`}
               onClick={() => {
@@ -186,12 +249,14 @@ const Login = () => {
               placeholder="Username"
               {...register("username", { required: true })}
             />
+            {errors.username && <div className="text-red-500">Username is required</div>}
             <input
               type="password"
               className="min-h-10 placeholder:font-semibold placeholder:text-center text-center"
               placeholder="Password"
               {...register("password", { required: true })}
             />
+            {errors.password && <div className="text-red-500">Password is required</div>}
             <Button
               variant="outlined"
               onClick={handleSubmit(onSubmit)}
@@ -209,6 +274,35 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <Backdrop open={isLoading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <Backdrop open={isErrorNotiOpen} onClick={() => {
+        setErrorNotiOpen(false);
+      }}>
+        <div className="bg-white rounded-xl">
+          <div className="sm:p-8 flex flex-col sm:gap-4">
+            <div className="text-center text-gray-600 text-xl font-semibold">
+              {isErrorNotiOpen && (
+                <div className="flex flex-col sm:gap-y-2">
+                  <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center" />
+                  <div>{errorMessage}</div> {/* Display the specific error message */}
+                </div>
+              )}
+            </div>
+            <div className="flex justify-center">
+              <Button
+                variant="contained"
+                onClick={() => setErrorNotiOpen(false)}
+                className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+              >
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Backdrop>
+
     </>
   )
 }

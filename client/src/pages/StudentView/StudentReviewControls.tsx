@@ -1,3 +1,19 @@
+import React, { useEffect, useState, useMemo } from 'react';
+import NavBar from "../../components/NavBar";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../../components/ui/table";
+import { Button, Modal, Box, Typography } from "@mui/material";
+import { Icon } from "@iconify/react";
+import { useNavigate } from "react-router-dom";
+import { QCTemplateBatch } from "../../utils/indexedDB/IDBSchema";
+import { getAllDataFromStore } from "../../utils/indexedDB/getData";
+
 import {
   ColumnDef,
   flexRender,
@@ -5,162 +21,219 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import React, { memo, useState, useEffect, useMemo } from "react";
-import NavBar from "../../components/NavBar";
-import {
-Table,
-TableBody,
-TableCell,
-TableHead,
-TableHeader,
-TableRow,
-} from "../../components/ui/table";
-import { Button } from "@mui/material";
-import { Icon } from "@iconify/react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { generateRandomId } from "../../utils/utils";
-import { qcTypeLinkList } from "../../utils/utils";
 
+const modalStyle = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '80vw', // Make the modal wider
+  height: '80vh', // Set a max height
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+  overflowY: 'auto', // Make the modal scrollable
+};
 
+const selectedRowStyle = {
+  background: '#0070C0', 
+  color: '#fff', 
+};
+
+const defaultRowStyle = {
+  background: '#E9EBF5', 
+  color: '#000', 
+};
+
+const tableHeaderStyle = {
+  background: '#3A62A7', 
+  color: '#fff', 
+  textAlign: 'center' as const, 
+};
 
 interface QCItem {
-dep: string;
-test: string;
-id: string;
+  fileName: string;
+  lotNumber: string;
+  closedDate: string;
+  analytes: { analyteName: string }[];  
 }
-
-const columns: ColumnDef<QCItem, string>[] = [
-{
-  accessorKey: "id",
-  header: "ID",
-  cell: (info) => <div>{info.row.getValue("id")}</div>,
-},
-{
-  accessorKey: "dep",
-  header: "Department",
-  cell: (info) => <div>{info.row.getValue("dep")}</div>,
-},
-{
-  accessorKey: "test",
-  header: "Test",
-  cell: (info) => <div>{info.row.getValue("test")}</div>,
-},
-];
 
 const Student_QC_Review = () => {
-const navigate = useNavigate();
-const [selectedRow, setSelectedRow] = useState<string | null>();
-const [selectedRowData, setSelectedRowData] = useState<{ [key: string]: any }>();
-const location = useLocation();
-const searchParams = new URLSearchParams(location.search);
-const [selectedQCs, setSelectedQCs] = useState<string[]>([]);
+  const navigate = useNavigate();
+  const [selectedRow, setSelectedRow] = useState<string | null>(null);
+  const [selectedAnalyte, setSelectedAnalyte] = useState<string | null>(null);
+  const [selectedRowData, setSelectedRowData] = useState<QCItem | undefined>(undefined);
+  const [qcItems, setQcItems] = useState<QCItem[]>([]);
+  const [open, setOpen] = useState(false);
 
-
+     // Fetch all QC items from SQL database using API
 useEffect(() => {
-  const storedQCs = localStorage.getItem('selectedQCItems');
-  if (storedQCs) {
-      setSelectedQCs(JSON.parse(storedQCs));
-  }
+  const fetchQCData = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json() as QCTemplateBatch[];
+
+        // Map over the data and ensure type consistency
+        const mappedItems = data.map((item: any) => ({
+          fileName: item.qcName,
+          lotNumber: String(item.lotNumber),
+          openDate: String(item.openDate),
+          closedDate: String(item.closedDate),
+          analytes: item.analytes.map((analyte: any) => ({
+            analyteName: analyte.analyteName,
+            analyteAcronym: analyte.analyteAcronym,
+            unit_of_measure: analyte.unitOfMeasure,
+            min_level: analyte.minLevel,
+            max_level: analyte.maxLevel,
+            mean: analyte.mean,
+            std_devi: analyte.stdDevi,
+            electrolyte: analyte.electrolyte || false,
+            value: analyte.value,
+          })),
+        }));
+         // Update state
+         setQcItems(mappedItems);
+        //store data in local storage after its received
+        localStorage.setItem('reviewQCData', JSON.stringify(mappedItems));
+
+
+      } else {
+        console.error("Failed to fetch data:", await response.text());
+      }
+    } catch (error) {
+      console.error("Error fetching QC data:", error);
+    }
+  };
+
+  fetchQCData();
 }, []);
 
-const qc_items = useMemo(() => (
-  qcTypeLinkList.filter(qc => selectedQCs.includes(qc.name)).map(qc => ({
-      id: generateRandomId(),
-      dep: "Student",
-      test: qc.name
-  }))
-), [selectedQCs]);
+  function handleLeveyJenningsClick() {
+    if (selectedRowData && selectedAnalyte) {
+      navigate(`/UA_Fluids/levey-jennings/${selectedRowData.fileName}/${selectedRowData.lotNumber}/${selectedAnalyte}`);
+    }
+  }
+  
+  function handleRowClick(rowId: string, rowData: QCItem) {
+    setSelectedRow(rowId === selectedRow ? null : rowId);
+    setSelectedRowData(rowId === selectedRow ? undefined : rowData);
+  }
 
+  function handleAnalyteClick(analyteName: string) {
+    setSelectedAnalyte(analyteName === selectedAnalyte ? null : analyteName);
+  }
 
-function handleRowClick(key: string) {
-  setSelectedRow(key === selectedRow ? null : key);
-}
+  const handleRemoveSelected = () => {
+    if (selectedRow) {
+      setQcItems((prevItems) =>
+        prevItems.filter((item) => item.fileName !== selectedRow)
+      );
+      setSelectedRow(null);
+      setSelectedRowData(undefined);
+    }
+  };
 
-const table = useReactTable({
-  data: qc_items,
-  columns,
-  getCoreRowModel: getCoreRowModel(),
-  getPaginationRowModel: getPaginationRowModel(),
-});
+  const columns: ColumnDef<QCItem, string>[] = useMemo(
+    () => [
+      {
+        accessorKey: "fileName",
+        header: "File Name",
+      },
+      {
+        accessorKey: "lotNumber",
+        header: "Lot Number",
+      },
+      {
+        accessorKey: "closedDate",
+        header: "Closed Date",
+      },
+    ],
+    []
+  );
 
-//   console.log(table.getRowModel());
-// useEffect(() => {
-//   console.log(selectedRowData);
-// }, [selectedRowData]);
+  const table = useReactTable({
+    data: qcItems,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+  });
 
-return (
-  <>
-    <NavBar name={`Student selected QC Review`} />
-    <div className="relative">
-      <div className="table-container flex flex-col mt-8 sm:max-w-[75svw] sm:max-h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA]">
-        <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200">
-          <TableHeader>
-            {table.getHeaderGroups().map((group) => (
-              <TableRow
-                key={group.id}
-                className="font-bold text-3xl bg-[#3A62A7] hover:bg-[#3A62A7] sticky top-0"
-              >
-                {group.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    className="text-white text-center"
-                  >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {!table.getRowModel().rows?.length ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
+  return (
+    <>
+      <NavBar name={` QC Results`} />
+      <div className="relative">
+        <div className="table-container flex flex-col mt-8 sm:max-w-[75svw] sm:max-h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA]">
+          <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200">
+            <TableHeader>
+              {table.getHeaderGroups().map((group) => (
+                <TableRow
+                  key={group.id}
+                  className="font-bold text-3xl"
+                  style={tableHeaderStyle}  // Apply the blue header style
                 >
-                  No data
-                </TableCell>
-              </TableRow>
-            ) : (
-              <></>
-            )}
-            {table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                onClick={() => {
-                  let selected: { [key: string]: any } = {};
-                  row.getVisibleCells().forEach(cell => selected[cell.column.id] = cell.getValue());
-                  
-                  // console.log(selected);
-                  setSelectedRowData(selected);
-
-                  handleRowClick(row.id);
-                }}
-                className="text-center sm:h-[10%] hover:cursor-pointer"
-                style={{
-                  background: row.id === selectedRow ? "#0070C0" : "#E9EBF5",
-                  color: row.id === selectedRow ? "#fff" : "#000",
-                }}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} >
-                    {flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext()
-                    )}
-                    {/* {cell.getValue()} */}
+                  {group.headers.map((header) => (
+                    <TableHead
+                      key={header.id}
+                      style={tableHeaderStyle}
+                    >
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {!table.getRowModel().rows?.length ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No data
                   </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-center space-x-2 py-4">
-        <div className="space-x-2">
+                </TableRow>
+              ) : (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    onClick={() => {
+                      const selected: QCItem = {
+                        fileName: String(row.getValue("fileName")),  // Explicit cast to string
+                        lotNumber: String(row.getValue("lotNumber")),
+                        closedDate: String(row.getValue("closedDate")),
+                        analytes: row.original.analytes
+                      };
+                      handleRowClick(row.id, selected);
+                    }}
+                    className="text-center sm:h-[10%] hover:cursor-pointer"
+                    style={row.id === selectedRow ? selectedRowStyle : defaultRowStyle}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="flex items-center justify-center space-x-2 py-4">
           <Button
             variant="outlined"
             onClick={() => table.previousPage()}
@@ -176,19 +249,91 @@ return (
             <Icon icon="mdi:arrow-right-thin" />
           </Button>
         </div>
+        <div className="flex items-center justify-center space-x-4 py-4">
+          <Button
+            className="sm:!w-36 sm:h-12 sm:!text-lg !bg-[#DAE3F3] !border !border-solid !border-blue-500 font-medium !text-black"
+            onClick={() => setOpen(true)}
+            disabled={!selectedRowData}
+          >
+            Review Selected
+          </Button>
+          {/*
+          <Button
+            className="sm:!w-36 sm:h-12 sm:!text-lg !bg-[#DAE3F3] !border !border-solid !border-blue-500 font-medium !text-black"
+            onClick={handleRemoveSelected}
+            disabled={!selectedRow}
+          >
+            Remove Selected
+          </Button>
+          */}
+        </div>
+
+        {/* Modal for QC Review */}
+        <Modal open={open} onClose={() => setOpen(false)}>
+          <Box sx={modalStyle}>
+            <Typography variant="h5" align="center" gutterBottom>
+              QC Review - Analytes
+            </Typography>
+            {selectedRowData && (
+              <div>
+                <Typography variant="body1" align="center">
+                  <strong>File Name:</strong> {selectedRowData.fileName} &nbsp; | &nbsp;
+                  <strong>Lot Number:</strong> {selectedRowData.lotNumber} &nbsp; | &nbsp;
+                  <strong>Closed Date:</strong> {selectedRowData.closedDate}
+                </Typography>
+
+                {/* Table to display analyte names */}
+                <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200 mt-4">
+                  <TableHeader>
+                    <TableRow style={tableHeaderStyle}>
+                      <TableHead className="text-center">Analyte Name</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {selectedRowData.analytes.map((analyte, index) => (
+                      <TableRow
+                        key={index}
+                        onClick={() => handleAnalyteClick(analyte.analyteName)}
+                        style={analyte.analyteName === selectedAnalyte ? selectedRowStyle : defaultRowStyle}
+                      >
+                        <TableCell className="text-center">
+                          {analyte.analyteName}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+
+                {/* Levey Jennings and Qualitative Analysis Buttons */}
+                <div className="flex justify-center mt-6">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleLeveyJenningsClick}
+                    disabled={!selectedAnalyte}
+                    className="mr-4"
+                  >
+                    Levey Jennings
+                  </Button>
+                  {/*
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      console.log("Qualitative Analysis clicked"); // Placeholder for future functionality
+                    }}
+                  >
+                    Qualitative Analysis
+                  </Button>
+                  */}
+                </div>
+              </div>
+            )}
+          </Box>
+        </Modal>
       </div>
-      <Button
-        className="sm:!absolute sm:w-36 sm:h-12 sm:!text-lg !bg-[#DAE3F3] right-3 -bottom-3 !border !border-solid !border-blue-500 font-medium !text-black"
-        onClick={() => {
-          const qcTypeLink = qcTypeLinkList.find(item => item.name === selectedRowData?.test)?.link;
-          navigate(`/student/qc_results/${qcTypeLink}`);
-        }}
-      >
-        Select QC
-      </Button>
-    </div>
-  </>
-);
+    </>
+  );
 };
 
 export default Student_QC_Review;

@@ -10,6 +10,8 @@
         public float Mean { get; set; }
         public float StdDevi { get; set; }
         public bool Electrolyte { get; set; }
+        public string[]? ExpectedRange { get; set; }
+        public string[]? SelectedExpectedRange { get; set; }
         public Guid AdminQCLotID { get; set; }
     }
 }

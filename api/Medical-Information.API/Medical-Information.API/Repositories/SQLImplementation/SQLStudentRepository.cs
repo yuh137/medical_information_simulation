@@ -37,17 +37,17 @@ namespace Medical_Information.API.Repositories.SQLImplementation
 
         public async Task<List<Student>> GetAllStudentsAsync()
         {
-            return await dbContext.Students.ToListAsync();
+            return await dbContext.Students.Include(item => item.Reports).Include(item => item.Admins).ToListAsync();
         }
 
         public async Task<Student?> GetStudentByIDAsync(Guid id)
         {
-            return await dbContext.Students.FirstOrDefaultAsync(item => item.StudentID == id);
+            return await dbContext.Students.Include(item => item.Reports).Include(item => item.Admins).FirstOrDefaultAsync(item => item.StudentID == id);
         }
 
         public async Task<Student?> GetStudentByNameAsync(string name)
         {
-            return await dbContext.Students.FirstOrDefaultAsync(item => item.Username == name);
+            return await dbContext.Students.Include(item => item.Reports).Include(item => item.Admins).FirstOrDefaultAsync(item => item.Username == name);
         }
     }
 }

@@ -39,39 +39,44 @@ const Analyte = forwardRef((props: AnalyteProps, ref) => {
           ref={inputRef}
           value={inputValue}
           className="text-base sm:w-[4.5rem] sm:h-10 w-16 h-8 absolute rounded-lg text-center top-0 right-0 border border-solid border-[#7F9458]"
-          onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
-            if (event.key === "Enter") {
-              event.preventDefault();
-              const newInput = (+inputValue).toFixed(2).replace(/^0+(?!\.|$)/, "");
-
-              // console.log(+event.currentTarget.value);
-              if (
-                isNaN(+event.currentTarget.value) ||
-                +event.currentTarget.value < +props.min_level ||
-                +event.currentTarget.value > +props.max_level
-              ) {
-                event.currentTarget.classList.remove("bg-[#00FF00]");
-                event.currentTarget.classList.add("bg-[#FF0000]");
-              } else {
-                event.currentTarget.classList.remove("bg-[#FF0000]");
-                event.currentTarget.classList.add("bg-[#00FF00]");
-              }
-
-              setInputValue(newInput);
-              props.handleInputChange(event.currentTarget.value);
-            }
-          }}
-          // onChange={(event) => props.handleInputChange(event.target.value)}
-          onChange={event => {
+          onChange={(event) => {
             event.preventDefault();
             const newValue = event.target.value;
 
+            // Check if the input is a valid number format
             const isValid = /^\d*\.?\d*$/.test(newValue);
             if (isValid) {
               setInputValue(newValue);
+
+              // Parse the input as a number and check if it’s within range
+              const numericValue = parseFloat(newValue);
+              if (
+                !isNaN(numericValue) &&
+                numericValue >= +props.min_level &&
+                numericValue <= +props.max_level
+              ) {
+                event.target.classList.remove("bg-[#FF0000]"); // Valid input
+                event.target.classList.add("bg-[#00FF00]");    // Set green background
+              } else {
+                event.target.classList.remove("bg-[#00FF00]"); // Invalid input
+                event.target.classList.add("bg-[#FF0000]");    // Set red background
+              }
+
+              // Optionally call the parent function here if needed on every change
+              props.handleInputChange(newValue);
+            }
+          }}
+          onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              const newInput = (+inputValue).toFixed(2).replace(/^0+(?!\.|$)/, ""); // Format input
+
+              setInputValue(newInput); // Update state with formatted input
+              props.handleInputChange(newInput); // Call parent function with final value
             }
           }}
         />
+
         <div
           className="analyte-acronym text-2xl font-semibold"
           dangerouslySetInnerHTML={{ __html: renderSubString(props.acronym) }}

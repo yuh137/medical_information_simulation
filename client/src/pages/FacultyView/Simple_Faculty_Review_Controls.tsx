@@ -67,32 +67,59 @@ const Simple_Faculty_QC_Review = () => {
   const [qcItems, setQcItems] = useState<QCItem[]>([]);
   const [open, setOpen] = useState(false);
 
-  // Fetch all QC items from IndexedDB
-  useEffect(() => {
-    const fetchQCData = async () => {
-      try {
-        const data = (await getAllDataFromStore('qc_store')) as unknown as QCTemplateBatch[];
+  // Fetch all QC items from SQL database using API
+useEffect(() => {
+  const fetchQCData = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json() as QCTemplateBatch[];
 
         // Map over the data and ensure type consistency
-        setQcItems(
-          data.map((item) => ({
-            fileName: String(item.fileName),  // Ensure these are strings
-            lotNumber: String(item.lotNumber),
-            closedDate: String(item.closedDate),
-            analytes: item.analytes.map(analyte => ({ analyteName: analyte.analyteName }))
-          }))
-        );
-      } catch (error) {
-        console.error("Error fetching QC data:", error);
-      }
-    };
+        const mappedItems = data.map((item: any) => ({
+          fileName: item.qcName,
+          lotNumber: String(item.lotNumber),
+          openDate: String(item.openDate),
+          closedDate: String(item.closedDate),
+          analytes: item.analytes.map((analyte: any) => ({
+            analyteName: analyte.analyteName,
+            analyteAcronym: analyte.analyteAcronym,
+            unit_of_measure: analyte.unitOfMeasure,
+            min_level: analyte.minLevel,
+            max_level: analyte.maxLevel,
+            mean: analyte.mean,
+            std_devi: analyte.stdDevi,
+            electrolyte: analyte.electrolyte || false,
+            value: analyte.value,
+          })),
+        }));
+         // Update state
+         setQcItems(mappedItems);
+        //store data in local storage after its received
+        localStorage.setItem('reviewQCData', JSON.stringify(mappedItems));
 
-    fetchQCData();
-  }, []);
+
+      } else {
+        console.error("Failed to fetch data:", await response.text());
+      }
+    } catch (error) {
+      console.error("Error fetching QC data:", error);
+    }
+  };
+
+  fetchQCData();
+}, []);
+
 
   function handleLeveyJenningsClick() {
     if (selectedRowData && selectedAnalyte) {
-      navigate(`/chemistry/levey-jennings/${selectedRowData.fileName}/${selectedRowData.lotNumber}/${selectedAnalyte}`);
+      navigate(`/UA_Fluids/levey-jennings/${selectedRowData.fileName}/${selectedRowData.lotNumber}/${selectedAnalyte}`);
     }
   }
   
@@ -142,7 +169,7 @@ const Simple_Faculty_QC_Review = () => {
 
   return (
     <>
-      <NavBar name={`Chemistry QC Results`} />
+      <NavBar name={` QC Results`} />
       <div className="relative">
         <div className="table-container flex flex-col mt-8 sm:max-w-[75svw] sm:max-h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA]">
           <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200">
@@ -231,6 +258,7 @@ const Simple_Faculty_QC_Review = () => {
           >
             Review Selected
           </Button>
+          {/*
           <Button
             className="sm:!w-36 sm:h-12 sm:!text-lg !bg-[#DAE3F3] !border !border-solid !border-blue-500 font-medium !text-black"
             onClick={handleRemoveSelected}
@@ -238,6 +266,7 @@ const Simple_Faculty_QC_Review = () => {
           >
             Remove Selected
           </Button>
+          */}
         </div>
 
         {/* Modal for QC Review */}
@@ -287,6 +316,7 @@ const Simple_Faculty_QC_Review = () => {
                   >
                     Levey Jennings
                   </Button>
+                  {/*}
                   <Button
                     variant="contained"
                     color="primary"
@@ -296,6 +326,7 @@ const Simple_Faculty_QC_Review = () => {
                   >
                     Qualitative Analysis
                   </Button>
+                        */ }
                 </div>
               </div>
             )}

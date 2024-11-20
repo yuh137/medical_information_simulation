@@ -17,20 +17,28 @@ namespace Medical_Information.API.Data
         public DbSet<Student> Students { get; set; }
         public DbSet<StudentReport> StudentReports { get; set; }
         public DbSet<AnalyteInput> AnalyteInputs { get; set; }
+        public DbSet<Images> Images { get; set; }
+        public DbSet<AdminAnalyteReport> AdminAnalyteReports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<AdminQCLot>().HasMany(p => p.Analytes).WithOne().HasForeignKey(e => e.AdminQCLotID);
+            modelBuilder.Entity<AdminQCLot>().HasMany(p => p.Analytes).WithOne().HasForeignKey(e => e.AdminQCLotID).OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<AdminQCLot>().HasMany(p => p.Reports).WithOne().HasForeignKey(e => e.AdminQCLotID);
+            modelBuilder.Entity<AdminQCLot>().HasMany(p => p.Reports).WithOne().HasForeignKey(e => e.AdminQCLotID).OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AdminQCLot>().HasMany(p => p.AdminReports).WithOne().HasForeignKey(e => e.AdminQCLotID).OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AdminQCLot>().HasIndex(e => e.LotNumber).IsUnique();
 
             //modelBuilder.Entity<Analyte>().HasOne(e => e.AdminQCLot).WithMany(e => e.Analytes).HasForeignKey(e => e.AdminQCLotID);
 
-            modelBuilder.Entity<Student>().HasMany(p => p.Reports).WithOne().HasForeignKey(e => e.StudentID);
+            modelBuilder.Entity<Student>().HasMany(p => p.Reports).WithOne().HasForeignKey(e => e.StudentID).OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<StudentReport>().HasMany(p => p.AnalyteInputs).WithOne().HasForeignKey(e => e.ReportID);
+            modelBuilder.Entity<StudentReport>().HasMany(p => p.AnalyteInputs).WithOne().HasForeignKey(e => e.ReportID).OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Admin>().HasMany(p => p.Reports).WithOne().HasForeignKey(e => e.AdminID).OnDelete(DeleteBehavior.Cascade);
 
             //Seed data for Analytes
             var mockQCLot = new AdminQCLot()
@@ -56,6 +64,8 @@ namespace Medical_Information.API.Data
                     Mean = 0,
                     StdDevi = 0,
                     AdminQCLotID = mockQCLot.AdminQCLotID,
+                    ExpectedRange = new string[] { "Neg", "Trace", "Small", "Moderate", "Large" },
+                    SelectedExpectedRange = new string[] { "Small", "Moderate", "Large" },
                     //AdminQCLot = mockQCLot,
                 },
                 new Analyte
@@ -229,13 +239,9 @@ namespace Medical_Information.API.Data
                 },
             };
 
-            //mockQCLot.Analytes = new List<Analyte>(analytes);
-
             modelBuilder.Entity<AdminQCLot>().HasData(mockQCLot);
 
             modelBuilder.Entity<Analyte>().HasData(analytes);
-
-            //ICollection<Analyte> analytesInQCLot = new List<Analyte>(analytes);
         }
     }
 }

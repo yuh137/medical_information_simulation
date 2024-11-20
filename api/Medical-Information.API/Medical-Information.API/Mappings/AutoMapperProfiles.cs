@@ -16,6 +16,9 @@ namespace Medical_Information.API.Mappings
             CreateMap<AdminQCLot, AddAdminQCLotRequestDTO>().ReverseMap();
             CreateMap<AddAnalyteWithListDTO, Analyte>().ReverseMap();
             CreateMap<StudentReportDTO, StudentReport>().ReverseMap();
+            CreateMap<UpdateAdminQCLotDTO, AdminQCLot>().ReverseMap();
+            CreateMap<StudentReport, AddStudentReportDTO>().ReverseMap();
+            CreateMap<AnalyteInput, AnalyteInputDTO>().ReverseMap();
         }
     }
 }

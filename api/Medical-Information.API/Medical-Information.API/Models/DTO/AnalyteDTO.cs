@@ -12,6 +12,8 @@ namespace Medical_Information.API.Models.DTO
         public float MaxLevel { get; set; }
         public float Mean { get; set; }
         public float StdDevi { get; set; }
+        public string[]? ExpectedRange { get; set; }
+        public string[]? SelectedExpectedRange { get; set; }
         public Guid AdminQCLotID { get; set; }
     }
 
@@ -24,6 +26,8 @@ namespace Medical_Information.API.Models.DTO
         public float MaxLevel { get; set; }
         public float Mean { get; set; }
         public float StdDevi { get; set; }
+        public string[]? ExpectedRange { get; set; }
+        public string[]? SelectedExpectedRange { get; set; }
     }
 
     public class AddAnalyteAloneDTO
@@ -35,6 +39,8 @@ namespace Medical_Information.API.Models.DTO
         public float MaxLevel { get; set; }
         public float Mean { get; set; }
         public float StdDevi { get; set; }
+        public string[]? ExpectedRange { get; set; }
+        public string[]? SelectedExpectedRange { get; set; }
         public Guid AdminQCLotID { get; set; }
     }
 }

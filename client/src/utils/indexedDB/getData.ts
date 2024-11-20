@@ -215,27 +215,43 @@ export function getStudentByName(name: string): Promise<Student | null> {
 export function getAllDataByFileName(storeName: string, fileName: string): Promise<QCTemplateBatch[]> {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open("MIS_database");
+
         request.onsuccess = () => {
             const db = request.result;
+            console.log("Database opened successfully.");
+
             const transaction = db.transaction(storeName, "readonly");
             const store = transaction.objectStore(storeName);
+
+            if (!store.indexNames.contains("by_fileName")) {
+                console.error(`Index "by_fileName" does not exist in store "${storeName}".`);
+                reject(new Error(`Index "by_fileName" is missing.`));
+                return;
+            }
+
             const index = store.index("by_fileName");
+            console.log("Querying index 'by_fileName' for:", fileName);
+
             const getAllRequest = index.getAll(fileName);
 
             getAllRequest.onsuccess = () => {
+                console.log("Query successful. Result:", getAllRequest.result);
                 resolve(getAllRequest.result);
             };
 
             getAllRequest.onerror = () => {
+                console.error("Error during getAll request:", getAllRequest.error);
                 reject(getAllRequest.error);
             };
         };
 
         request.onerror = () => {
+            console.error("Error opening database:", request.error);
             reject(request.error);
         };
     });
 }
+
 export const getQCRangeByDetails = (
     fileName: string,
     lotNumber: string,

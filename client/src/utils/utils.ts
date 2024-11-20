@@ -39,6 +39,13 @@ export const qcTypeLinkList = [
   {name: "Cancer Level II", link: "Cancer_2", mockData: 'Cancer'},
 
 ];
+export const BFqcTypeLinkList = [
+  {name:"BF Level I", link:'BFAnalytes_1', mockData : 'BFAnalytes'},
+  {name:"BF Level II", link: "BFAnalytes_2",  mockData : 'BFAnalytes'},
+  {name:"BF Level III", link: "BFAnalytes_3", mockData : 'BFAnalytes'},
+  {name:"Fluid Crystals", link: "BFAnalytes_4", mockData : 'BFAnalytes'},
+
+];
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
