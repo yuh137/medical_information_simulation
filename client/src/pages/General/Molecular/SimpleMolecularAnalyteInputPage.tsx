@@ -198,19 +198,19 @@ const SimpleMolecularAnalyteInputPage = () => {
             <Text style={tw("font-[700] text-[15px]")}>Value</Text>
             <Text style={tw("font-[700] text-[15px]")}>Expected Value</Text>
           </View>
-          <View style={tw("w-full h-[1px] bg-black mt-2")} />
-          <View style={tw("flex-row justify-between p-5")}>
-            <View>
+          <View style={tw("w-full h-[1px] bg-black mt-2")}/>
+          <View style={tw("flex-row justify-between flex-wrap")}>
+            <View style={tw("w-[33%]")}>
               {analyteValues?.map((value, index) => (
                 <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{QCData?.analytes[index].analyteName}</Text>
               ))}
             </View>
-            <View>
+            <View style={tw("w-[33%]")}>
               {analyteValues?.map((value, index) => (
                 <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{value}</Text>
               ))}
             </View>
-            <View>
+            <View style={tw("w-[33%]")}>
               {analyteValues?.map((value, index) => (
                 <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{QCData?.analytes[index].expectedRange}</Text>
               ))}
