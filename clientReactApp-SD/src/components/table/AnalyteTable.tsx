@@ -16,17 +16,19 @@ import AppTheme from '../../shared-theme/AppTheme.tsx';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 
-
-interface QCData {
-  adminQCLotID: string;
-  lotNumber: string;
-  openDate: string;
-  closedDate: string;
-  department: string;
-  expirationDate: string;
-  fileDate: string;
-  qcName: string;
+interface AnalyteData {
+  analyteID: string;
+  analyteName: string;
+  description: string;
+  createdDate: string;
+  modifiedDate: string;
   isActive: boolean;
+  adminQCLotID: string; // Add the AdminQCLotID field
+}
+
+interface AnalytesEditTableProps {
+  disableCustomTheme?: boolean;
+  adminQCLotID: string; // Accept AdminQCLotID as a prop
 }
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
@@ -57,24 +59,29 @@ function formatValue(value: any) {
   return value === null || value === undefined || value === '' ? 'NULL' : value;
 }
 
-function LotTable() {
-  const [details, setDetails] = React.useState<QCData[]>([]);
+function AnalyteTable({ adminQCLotID }: { adminQCLotID: string }) {
+  const [details, setDetails] = React.useState<AnalyteData[]>([]);
   const [loading, setLoading] = React.useState(true);
   const navigate = useNavigate();
 
-  const handleEditClick = (adminQCLotID: string) => {
-    console.log('Editing lot with ID:', adminQCLotID);
-    navigate(`/qcedit/${adminQCLotID}`);
+  const handleEditClick = (analyteID: string) => {
+    console.log('Editing analyte with ID:', analyteID);
+    navigate(`/analyteedit/${analyteID}`);
   };
 
-  // Fetch data from the API when the component mounts
   React.useEffect(() => {
     const fetchBackendData = async () => {
       try {
-        const responseQCLots = await axios.get("http://localhost:5029/api/AdminQCLots");
-        const dataQCLots = responseQCLots.data;
-        console.log("QC Lots", dataQCLots);
-        setDetails(dataQCLots);
+        const responseAnalytes = await axios.get("http://localhost:5029/api/Analytes");
+        const dataAnalytes = responseAnalytes.data;
+        console.log("Analytes", dataAnalytes);
+
+        // Filter data by AdminQCLotID
+        const filteredData = dataAnalytes.filter(
+          (analyte: AnalyteData) => analyte.adminQCLotID === adminQCLotID
+        );
+
+        setDetails(filteredData);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -82,43 +89,45 @@ function LotTable() {
       }
     };
     fetchBackendData();
-  }, []);
+  }, [adminQCLotID]);
 
   if (loading) {
     return <CircularProgress />;
   }
 
+  if (details.length === 0) {
+    return <Typography>No analytes found for the specified AdminQCLotID.</Typography>;
+  }
+
   return (
     <>
-      <Typography variant="h6" sx={{ marginBottom: 2 , padding: 0, border: 0,}}>
-        Quality Control Panels Available to Edit
+      <Typography variant="h6" sx={{ marginBottom: 2 }}>
+        Analytes Available to Edit
       </Typography>
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="QC table">
+        <Table sx={{ minWidth: 650 }} aria-label="Analytes table">
           <TableHead>
             <TableRow>
-              <TableCell>Panel Name</TableCell>
-              <TableCell>Department</TableCell>
-              <TableCell>Open</TableCell>
-              <TableCell>Closed</TableCell>
-              <TableCell>Expires</TableCell>
-              <TableCell>Active Panel?</TableCell>
+              <TableCell>Analyte Name</TableCell>
+              <TableCell>Description</TableCell>
+              <TableCell>Created</TableCell>
+              <TableCell>Modified</TableCell>
+              <TableCell>Active?</TableCell>
               <TableCell>Edit</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {details.map((row) => (
-              <TableRow key={row.adminQCLotID}>
-                <TableCell>{formatValue(row.qcName)}</TableCell>
-                <TableCell>{formatValue(row.department)}</TableCell>
-                <TableCell>{formatValue(row.openDate)}</TableCell>
-                <TableCell>{formatValue(row.closedDate)}</TableCell>
-                <TableCell>{formatValue(row.expirationDate)}</TableCell>
+              <TableRow key={row.analyteID}>
+                <TableCell>{formatValue(row.analyteName)}</TableCell>
+                <TableCell>{formatValue(row.description)}</TableCell>
+                <TableCell>{formatValue(row.createdDate)}</TableCell>
+                <TableCell>{formatValue(row.modifiedDate)}</TableCell>
                 <TableCell>{row.isActive ? 'Yes' : 'No'}</TableCell>
                 <TableCell>
                   <Button
                     variant="contained"
-                    onClick={() => handleEditClick(row.adminQCLotID)}
+                    onClick={() => handleEditClick(row.analyteID)}
                   >
                     Edit
                   </Button>
@@ -132,12 +141,15 @@ function LotTable() {
   );
 }
 
-export default function QC_Edit_Table(props: { disableCustomTheme?: boolean }) {
+export default function Analytes_Edit_Table({
+  disableCustomTheme,
+  adminQCLotID,
+}: AnalytesEditTableProps) {
   return (
-    <AppTheme {...props}>
+    <AppTheme disableCustomTheme={disableCustomTheme}>
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column">
-        <LotTable />
+        <AnalyteTable adminQCLotID={adminQCLotID} />
       </SignInContainer>
     </AppTheme>
   );

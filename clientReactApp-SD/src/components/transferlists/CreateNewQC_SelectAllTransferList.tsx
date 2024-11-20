@@ -179,7 +179,7 @@ export default function CreateNewQC_SelectAllTransferList() {
         spacing={2}
         sx={{ justifyContent: "center", alignItems: "center" }}
       >
-        <Grid item>{customList("Quality Control Panels", left)}</Grid>
+        <Grid item>{customList("Analytes", left)}</Grid>
         <Grid item>
           <Grid container direction="column" sx={{ alignItems: "center" }}>
             <Button
@@ -204,7 +204,7 @@ export default function CreateNewQC_SelectAllTransferList() {
             </Button>
           </Grid>
         </Grid>
-        <Grid item>{customList("Selected Quality Controls", right)}</Grid>
+        <Grid item>{customList("Analytes Included in Panel", right)}</Grid>
       </Grid>
       <Grid container direction="column" sx={{ alignItems: "center" }}>
         <QCOrderButtons

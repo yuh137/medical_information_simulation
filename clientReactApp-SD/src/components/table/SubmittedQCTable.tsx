@@ -1,69 +1,58 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import { v4 as uuidv4 } from 'uuid';
 import { getAccountData } from '../../util/indexedDB/getData';
 import { Admin, Student } from '../../util/indexedDB/IDBSchema';
 
-
-
+// Submission table columns
 const submissionColumns: GridColDef[] = [
   { field: 'id', headerName: 'QC Report ID', width: 150 },
   { field: 'submittedAt', headerName: 'Submitted At', width: 300 },
   {
-    field: 'view',
-    headerName: 'Details',
+    field: 'viewReport',
+    headerName: 'View Report',
     width: 150,
     renderCell: (params) => (
-      <Button variant="contained" onClick={() => params.row.onView(params.row.id)}>
-        View Details
+      <Button
+        variant="contained"
+        onClick={() => params.row.onViewReport(params.row.id)}
+      >
+        View
       </Button>
     ),
   },
 ];
 
-const detailColumns: GridColDef[] = [
-  { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'description', headerName: 'Description', width: 200 },
-  {
-    field: 'input',
-    headerName: 'Input Analyte Values',
-    width: 200,
-    renderCell: (params) => (
-      <Button variant="contained" onClick={() => { handleInputAnalyte(params.row.id); console.log("hello"); }}>
-        Input Analyte Values
-      </Button>
-    ),
-  },
-  {
-    field: 'review',
-    headerName: 'Review',
-    width: 200,
-    renderCell: (params) => (
-      <Button variant="contained" onClick={() => { handleInputAnalyte(params.row.id); console.log("hello"); }}>
-        Review QC Panel
-      </Button>
-    ),
-  },
-  
-];
-
-//CHANGE FROM LOCAL STORAGE TO THE DATABASE WHEN READY
+// Fetch submitted items and assign persistent UUIDs
 const getSubmittedItemsFromLocalStorage = () => {
   const storedSubmissions = localStorage.getItem('SubmittedQCs');
   if (storedSubmissions) {
     try {
-      return JSON.parse(storedSubmissions).map((submission: any, index: number) => ({
-        id: index + 1, // Use index as unique ID for each submission batch
-        submittedAt: new Date(submission.submittedAt).toLocaleString(),
-        onView: (id: number) => {}, // Placeholder for view handler
-      }));
+      const submissions = JSON.parse(storedSubmissions);
+
+      // Fetch existing IDs or generate and persist them
+      const persistedIds = JSON.parse(localStorage.getItem('SubmissionIDs') || '{}');
+      const updatedIds = { ...persistedIds };
+
+      const mappedSubmissions = submissions.map((submission: any) => {
+        const key = submission.submittedAt; // Use submittedAt as a unique key
+        if (!updatedIds[key]) {
+          updatedIds[key] = uuidv4();
+        }
+        return {
+          id: updatedIds[key],
+          submittedAt: new Date(submission.submittedAt).toLocaleString(),
+          panels: submission.items || [], // Attach panels to the submission
+        };
+      });
+
+      // Save the updated IDs back to localStorage
+      localStorage.setItem('SubmissionIDs', JSON.stringify(updatedIds));
+
+      return mappedSubmissions;
     } catch (error) {
       console.error('Error parsing SubmittedQCs:', error);
       return [];
@@ -72,41 +61,31 @@ const getSubmittedItemsFromLocalStorage = () => {
   return [];
 };
 
-const handleInputAnalyte = (id: number) => {
-  // Placeholder for the logic to handle input analyte values
-  console.log(`Input analyte values for row with ID: ${id}`);
-};
-
-//Grab user sname from table created at sign in.
+// Fetch user's name from IndexedDB
 async function fetchUserName(): Promise<string> {
   const accountData = await getAccountData();
   if (accountData && Array.isArray(accountData) && accountData.length > 0) {
     const user = accountData[0] as Admin | Student;
     return `${user.firstname} ${user.lastname}`;
   }
-  return 'doos';
+  return 'User';
 }
 
 export default function SubmittedQCTable() {
   const [userName, setUserName] = useState<string>('User');
-  const [submissions, setSubmissions] = React.useState(getSubmittedItemsFromLocalStorage());
-  const [openDialog, setOpenDialog] = React.useState(false);
-  const [details, setDetails] = React.useState([]);
+  const [submissions, setSubmissions] = useState(getSubmittedItemsFromLocalStorage());
 
-    // Fetch the user's name from IndexedDB on component mount
-    useEffect(() => {
-      async function fetchName() {
-        const name = await fetchUserName();
-        setUserName(name);
-      }
-      fetchName();
-    }, []);
-  
+  useEffect(() => {
+    async function fetchName() {
+      const name = await fetchUserName();
+      setUserName(name);
+    }
+    fetchName();
+  }, []);
 
-  const handleViewDetails = (id: number) => {
-    const storedSubmissions = JSON.parse(localStorage.getItem('SubmittedQCs') || '[]');
-    setDetails(storedSubmissions[id - 1]?.items || []);
-    setOpenDialog(true);
+  const handleViewReport = (id: string) => {
+    // Open the edit report page in a new tab with the ID in the URL
+    window.open(`/editreportpage?id=${id}`, '_blank');
   };
 
   return (
@@ -115,38 +94,15 @@ export default function SubmittedQCTable() {
         Quality Controls ordered by {userName}
       </Typography>
       <DataGrid
-        rows={submissions.map((submission: any) => ({
+        rows={submissions.map((submission) => ({
           ...submission,
-          onView: handleViewDetails,
+          onViewReport: handleViewReport,
         }))}
         columns={submissionColumns}
         autoHeight
         pageSize={5}
         rowsPerPageOptions={[5]}
       />
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        fullWidth
-        maxWidth="lg"
-        PaperProps={{ style: { minHeight: '80vh' } }}
-      >
-        <DialogTitle>QC Submission Details</DialogTitle>
-        <DialogContent>
-          <DataGrid
-            rows={details.map((item, index) => ({ ...item, id: index + 1 }))}
-            columns={detailColumns}
-            autoHeight
-            pageSize={5}
-            rowsPerPageOptions={[5]}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDialog(false)} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Paper>
   );
 }
