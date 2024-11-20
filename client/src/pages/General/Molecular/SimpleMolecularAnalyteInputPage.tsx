@@ -193,36 +193,35 @@ const SimpleMolecularAnalyteInputPage = () => {
           <Text style={tw("mb-2 text-[13px]")}>Lot Number: {QCData?.lotNumber || "error"}</Text>
           <Text style={tw("mb-8 text-[13px]")}>QC Duration: {QCData?.openDate || "undetermined"} - {QCData?.closedDate || "undetermined"}</Text>
           <Text style={tw("text-[22px] mb-8 text-center")}>Molecular QC</Text>
-          <View style={tw("flex-row justify-around")}>
-            <Text style={tw("font-[700] text-[15px]")}>Analytes</Text>
-            <Text style={tw("font-[700] text-[15px]")}>Value</Text>
-            <Text style={tw("font-[700] text-[15px]")}>Expected Value</Text>
+          <View style={tw("flex-row justify-between")}>
+            <Text style={tw("w-[33%] text-center text-[15px]")}>Analytes</Text>
+            <Text style={tw("w-[33%] text-center text-[15px]")}>Value</Text>
+            <Text style={tw("w-[33%] text-center text-[15px]")}>Expected Value</Text>
           </View>
-          <View style={tw("w-full h-[1px] bg-black mt-2")}/>
-          <View style={tw("flex-row justify-between flex-wrap")}>
-            <View style={tw("w-[33%]")}>
-              {analyteValues?.map((value, index) => (
-                <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{QCData?.analytes[index].analyteName}</Text>
-              ))}
-            </View>
-            <View style={tw("w-[33%]")}>
-              {analyteValues?.map((value, index) => (
-                <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{value}</Text>
-              ))}
-            </View>
-            <View style={tw("w-[33%]")}>
-              {analyteValues?.map((value, index) => (
-                <Text style={tw(`mb-2 text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)} key={index}>{QCData?.analytes[index].expectedRange}</Text>
-              ))}
-            </View>
+          <View style={tw("w-full h-[1px] bg-black mt-2")} />
+          <View style={tw("flex-col")}>
+            {analyteValues?.map((value, index) => (
+              <View key={index} style={tw("m-2") }> {/*Print the analyte on one row with 33% width for each field*/}
+                <View style={tw("flex-row justify-between")}>
+                  <Text style={tw(`w-[33%] text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)}>{QCData?.analytes[index].analyteName}</Text>
+                  <Text style={tw(`w-[33%] text-center text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)}>{value}</Text>
+                  <Text style={tw(`w-[33%] text-center text-[13px] ${invalidIndexes?.has(index) ? "text-red-500" : ""}`)}>{QCData?.analytes[index].expectedRange}</Text>
+                </View>
+                <View style={tw("border-b border-gray-300 mt-3 mb-3")} /> {/*Add a thin grey line between each row */}
+              </View>
+            ))}
           </View>
           <View style={tw("w-full h-[1px] bg-black mt-2")} />
           <Text style={tw("mt-2")}>QC Comments:</Text>
-          <View>
+          <View style={tw("flex-col")}>
             {modalData.map((item, index) => (
-              <View style={tw("flex-row items-center")} key={index}>
-                <View style={tw("self-center w-[4px] h-[4px] bg-black rounded-full")} />
-                <Text style={tw("text-[13px] w-full px-6 text-justify text-wrap mt-2")}>{QCData?.analytes[item.invalidIndex].analyteName}: {item.comment}</Text>
+              <View key={index} style={tw("m-2")}>
+                <View style={tw("flex-row items-center")} key={index}>
+                  <View style={tw("self-center w-[4px] h-[4px] bg-black rounded-full")} />
+                  <Text style={tw("text-[13px] w-[50%] px-6 text-justify mt-2")}>{QCData?.analytes[item.invalidIndex].analyteName}:</Text>
+                  <Text style={tw("text-[11px] w-[50%] px-6 text-justify mt-2")}>{item.comment}</Text>
+                </View>
+                <View style={tw("border-b border-gray-300 mt-3 mb-3")} /> {/*Add a thin grey line between each row */}
               </View>
             ))}
           </View>
