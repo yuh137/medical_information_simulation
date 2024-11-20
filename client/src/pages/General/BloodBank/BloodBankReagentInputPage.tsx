@@ -203,8 +203,6 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
     if (qcComment === "") {  // If we don't have a comment
       for (const [key, value] of Object.entries(reagentDict)) {
         const reag = qcData.reagents[+key];
-        console.log(reag);
-        console.log(value["Neg"]);
         if (isIncorrect(value["Pos"], reag.posExpectedRange) || isIncorrect(value["Neg"], reag.negExpectedRange)) {
           // alert("You must enter a comment to accept QC");
           setErrorMsg("You must have a comment to accept results with errors");

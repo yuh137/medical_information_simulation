@@ -4,13 +4,14 @@ import ReagentLine from '../../../components/ReagentLine';
 import NavBar from '../../../components/NavBar';
 import { pdf, Document, Page, Text, View } from '@react-pdf/renderer';
 import { createTw } from 'react-pdf-tailwind';
-import { Button, ButtonBase, Modal } from "@mui/material";
+import { Button, ButtonBase, Modal, Backdrop } from "@mui/material";
 import { useTheme } from "../../../context/ThemeContext";
 import { saveToDB } from '../../../utils/indexedDB/getData';
 import { BBStudentReport } from "../../../utils/utils";
 import { BloodBankQCLot, Student } from "../../../utils/indexedDB/IDBSchema";
 import { useAuth } from "../../../context/AuthContext";
 import { useLoaderData, Link, useNavigate, useParams } from "react-router-dom";
+import { Icon } from "@iconify/react";
 import {
     ColumnDef,
     useReactTable,
@@ -56,6 +57,8 @@ const BloodBankRBCResultInput = (props: { name: string }) => {
   type reagentStats = { [key: string]: string};
   type reagentDictType = { [key: string ]: reagentStats}
   const [reagentDict, setReagentDict] = useState<reagentDictType>({});
+  const [isErrorNotiOpen, setErrorNotiOpen] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("TBD")
 
   const getName = async () => {  // Gets the username from ID
     // TEMP: Check if Student or Faculty
@@ -195,7 +198,23 @@ const BloodBankRBCResultInput = (props: { name: string }) => {
       console.error("No QC data available to save.");
       return;
     }
-
+    if (Object.keys(reagentDict).length != Object.keys(qcData.reagents).length) {
+      setErrorMsg("Data is incomplete");
+      setErrorNotiOpen(true);
+      console.log("Incomplete data");
+      return;
+    }
+    if (qcComment === "") {  // If we don't have a comment
+      for (const [key, value] of Object.entries(reagentDict)) {
+        const reag = qcData.reagents[+key];
+        if (isIncorrect(value["IMS"], reag.immediateSpin) || isIncorrect(value["AHG"], reag.ahg) || isIncorrect(value["Thirty"], reag.thirtySevenDegree) || isIncorrect(value["CC"], reag.checkCell)) {
+          setErrorMsg("You must have a comment to accept results with errors");
+          setErrorNotiOpen(true);
+          console.log("Must have a comment");
+          return;
+        }
+      }
+    }
     /*
     const qcDataToSave = {
       ...qcData,
@@ -208,9 +227,23 @@ const BloodBankRBCResultInput = (props: { name: string }) => {
     */
 
     try {
-      // await saveToDB("qc_store", qcDataToSave);
       console.log("QC data saved successfully with comments.");
       // setReagentValues([]);
+      // const res = await fetch(`${process.env.REACT_APP_API_URL}/Students/${userId}`);
+      let reportId: string = loaderData;
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/${reportId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      if (res.status === 404) {
+        console.log("Report has already been deleted");
+      } else if (res.ok ) {
+        console.log("Successful deletion");
+      } else {
+        console.log("Could not delete student report");
+      }
     } catch (error) {
       console.error("Error saving QC data:", error);
     }
@@ -323,6 +356,39 @@ const BloodBankRBCResultInput = (props: { name: string }) => {
           </ButtonBase>
         </div>
       </Modal>
+      <Backdrop  // ERROR BACKDROP
+        open={isErrorNotiOpen}
+        
+        onClick={() => {
+          setErrorNotiOpen(false);
+        }}
+      >
+        <div className="bg-white rounded-xl">
+          <div className="sm:p-8 flex flex-col sm:gap-4">
+            <div className="text-center text-gray-600 text-xl font-semibold">
+              { 
+                <>
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                    <div>{errorMsg}</div>
+                  </div>
+                </>
+              }
+            </div>
+            <div className="flex justify-center">
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setErrorNotiOpen(false);
+                }}
+                className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+              >
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Backdrop>
     </>
   );
 };
