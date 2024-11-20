@@ -157,6 +157,7 @@ export default function PanelsToOrderTable(props: { disableCustomTheme?: boolean
 
     // Reset the form
     setItems(getItemsFromLocalStorage());
+    window.open(`/reviewCurrentSubmssions/`, '_blank');
     location.reload();
   };
 
