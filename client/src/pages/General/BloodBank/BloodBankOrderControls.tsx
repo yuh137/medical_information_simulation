@@ -1,5 +1,4 @@
 
-////////////////
 import React, { useState } from "react";
 import NavBar from "../../../components/NavBar";
 import { bloodBankQC, bloodBankRBC_QC } from "../../../utils/utils";
@@ -130,6 +129,7 @@ const BloodBankOrderControls = () => {
       // setIsFeedbackNotiOpen(true);
       // setIsOrderLoading(false);
     
+      
 
   const handleClearSelection = () => { 
     let orderQCs = [...OrderControlsItems];
@@ -164,7 +164,9 @@ const BloodBankOrderControls = () => {
         </div>
       )}
 
-
+        
+  
+            
       <DragDropContext onDragEnd={onDragEnd}>
         <NavBar name="Blood Bank Order Controls" />
         <div
@@ -177,6 +179,7 @@ const BloodBankOrderControls = () => {
                 ref={drop_provided.innerRef}
                 {...drop_provided.droppableProps}
                 className="w-[25%] h-[75vh] overflow-y-auto" // Larger width and height
+                
               >
                 <div className="order-qc-container h-full rounded-lg bg-[#dae3f3] p-4 flex flex-col gap-4">
                   <div className="order-qc-title text-2xl text-center font-semibold">Order QC</div>
