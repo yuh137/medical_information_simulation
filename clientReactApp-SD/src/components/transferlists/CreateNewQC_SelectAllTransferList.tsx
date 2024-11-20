@@ -33,7 +33,7 @@ export default function CreateNewQC_SelectAllTransferList() {
     // Fetch data from the API when the component mounts
     const fetchBackendData = async () => {
       const responseQCAnalytes = await axios.get(
-        "http://localhost:5029/api/Analytes/01111111-1111-1111-1111-111111111111",
+        "http://localhost:5029/api/Analytes",
       );
       const dataQCAnalytes = responseQCAnalytes.data;
       const dataQCLotsLength = dataQCAnalytes.length;
@@ -179,11 +179,7 @@ export default function CreateNewQC_SelectAllTransferList() {
         spacing={2}
         sx={{ justifyContent: "center", alignItems: "center" }}
       >
-<<<<<<< HEAD
         <Grid item>{customList("Analytes", left)}</Grid>
-=======
-        <Grid item>{customList("Available Analytes", left)}</Grid>
->>>>>>> dd2ca6193c445169d3a00c5b26365ecdf4ae6a87
         <Grid item>
           <Grid container direction="column" sx={{ alignItems: "center" }}>
             <Button
@@ -208,11 +204,7 @@ export default function CreateNewQC_SelectAllTransferList() {
             </Button>
           </Grid>
         </Grid>
-<<<<<<< HEAD
         <Grid item>{customList("Analytes Included in Panel", right)}</Grid>
-=======
-        <Grid item>{customList("Selected Analytes", right)}</Grid>
->>>>>>> dd2ca6193c445169d3a00c5b26365ecdf4ae6a87
       </Grid>
       <Grid container direction="column" sx={{ alignItems: "center" }}>
         <QCOrderButtons
