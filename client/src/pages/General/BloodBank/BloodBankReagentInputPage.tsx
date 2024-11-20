@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
+import { useLoaderData, Link, useNavigate, useParams } from "react-router-dom";
 import { BloodBankRBC } from '../../../utils/indexedDB/IDBSchema';
 import Reagent from '../../../components/Reagent';
 import NavBar from '../../../components/NavBar';
 import { pdf, Document, Page, Text, View } from '@react-pdf/renderer';
 import { createTw } from 'react-pdf-tailwind';
-import { Button, ButtonBase, Modal } from "@mui/material";
+import { Button, ButtonBase, Modal, Backdrop } from "@mui/material";
 import { useTheme } from "../../../context/ThemeContext";
 import { saveToDB } from '../../../utils/indexedDB/getData';
 import { BBStudentReport } from "../../../utils/utils";
 import { BloodBankQCLot, Student } from "../../../utils/indexedDB/IDBSchema";
 import { useAuth } from "../../../context/AuthContext";
+import { Icon } from "@iconify/react";
 
+// RESULTS IN PROGRESS FOR REAGENT RACK
 
 interface QCItem {  // Used to read from the index DB
   reportId: string;
@@ -28,8 +31,15 @@ function formatDate(dateString: string) {
   return `${month}/${day}/${year}`;
 }
 
+// Given the user input and expected value, returns if this was incorrect
+function isIncorrect(val1: string, val2: string) {
+  return val1 === "0" ? val2 !== "0" : val2 === "0"; 
+}
+
 const BloodBankReagentInputPage = (props: { name: string }) => {
   const { theme } = useTheme();
+  const { item } = useParams();
+  const loaderData = useLoaderData() as string;
   const [qcData, setQcData] = useState<BloodBankQCLot | null>(null);
   const [reagentValues, setReagentValues] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -38,6 +48,8 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
   type reagentStats = { [key: string]: string};
   type reagentDictType = { [key: string ]: reagentStats}
   const [reagentDict, setReagentDict] = useState<reagentDictType>({});
+  const [isErrorNotiOpen, setErrorNotiOpen] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("TBD")
 
   const getName = async () => {  // Gets the username from ID
     // TEMP: Check if Student or Faculty
@@ -52,9 +64,10 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
 
   const getReportData = async () => {
     const storedQCData = localStorage.getItem('selectedQCData');
+    let reportId: string = loaderData;
     if (storedQCData) {
-      let reportData: QCItem = JSON.parse(storedQCData)[0];  // Fetch the report
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/${reportData.reportId}`);
+      // let reportData: QCItem = JSON.parse(storedQCData)[0];  // Fetch the report
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/${reportId}`);
       if (res.ok) {  // Successfully fetched the report
         const report: BBStudentReport = await res.json();
         const qcLotId = report.bloodBankQCLotID;
@@ -100,7 +113,7 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
     setReagentValues(newValues);
   };
 
-  const reportPDF = (username: string, reagentValues?: string[], QCData?: BloodBankQCLot) => {
+  const reportPDF = (username: string, reagentValues: string[], QCData: BloodBankQCLot) => {
     const currentDate = new Date();
     const tw = createTw({});
     return (
@@ -121,8 +134,12 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
             <View style={tw("w-1/3")}>
               {Object.entries(reagentDict)?.map(([value], index) => (
                 <Text key={index} style={tw("mb-2 text-[13px] text-center")}>
-                  {QCData?.reagents[index].reagentName}{" (+)\n"}
-                  {QCData?.reagents[index].reagentName}{" (=)"}
+                  <Text style={tw(isIncorrect(reagentDict[value]["Pos"], QCData?.reagents[index].posExpectedRange) ? "text-red-500" : "")}>
+                    {QCData?.reagents[index].reagentName}{" (+)\n"}
+                  </Text>
+                  <Text style={tw(isIncorrect(reagentDict[value]["Neg"], QCData?.reagents[index].negExpectedRange) ? "text-red-500" : "")}>
+                    {QCData?.reagents[index].reagentName}{" (=)"}
+                  </Text>
                 </Text>
               ))}
             </View>
@@ -130,8 +147,12 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
             <View style={tw("w-1/3")}>
               {Object.entries(reagentDict)?.map(([value], index) => (
                 <Text key={index} style={tw("mb-2 text-[13px] text-center")}>
-                  {reagentDict[value]["Pos"]}{"\n"}
-                  {reagentDict[value]["Neg"]}
+                  <Text style={tw(isIncorrect(reagentDict[value]["Pos"], QCData?.reagents[index].posExpectedRange) ? "text-red-500" : "")}>
+                    {reagentDict[value]["Pos"]}{"\n"}
+                  </Text>
+                  <Text style={tw(isIncorrect(reagentDict[value]["Neg"], QCData?.reagents[index].negExpectedRange) ? "text-red-500" : "")}>
+                    {reagentDict[value]["Neg"]}
+                  </Text>
                 </Text>
               ))}
             </View>
@@ -139,8 +160,12 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
             <View style={tw("w-1/3")}>
               {Object.entries(reagentDict)?.map(([value], index) => (
                 <Text key={index} style={tw("mb-2 text-[13px] text-center whitespace-nowrap")}>
-                  {QCData?.reagents[index].posExpectedRange}{"\n"}
-                  {QCData?.reagents[index].negExpectedRange}
+                  <Text style={tw(isIncorrect(reagentDict[value]["Pos"], QCData?.reagents[index].posExpectedRange) ? "text-red-500" : "")}>
+                    {QCData?.reagents[index].posExpectedRange}{"\n"}
+                  </Text>
+                  <Text style={tw(isIncorrect(reagentDict[value]["Neg"], QCData?.reagents[index].negExpectedRange) ? "text-red-500" : "")}>
+                    {QCData?.reagents[index].negExpectedRange}
+                  </Text>
                 </Text>
               ))}
             </View>
@@ -157,17 +182,37 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
   
   const openPDF = async () => {
     const username = await getName();
-    const blob = await pdf(reportPDF(username, reagentValues, qcData || undefined)).toBlob();
-    const pdfUrl = URL.createObjectURL(blob);
-    window.open(pdfUrl, "_blank");
+    if (qcData) {
+      const blob = await pdf(reportPDF(username, reagentValues, qcData)).toBlob();
+      const pdfUrl = URL.createObjectURL(blob);
+      window.open(pdfUrl, "_blank");
+    }
   };
-
+  
   const handleAcceptQC = async () => {
     if (!qcData) {
       console.error("No QC data available to save.");
       return;
     }
-    console.log(qcData);
+    if (Object.keys(reagentDict).length != Object.keys(qcData.reagents).length) {
+      setErrorMsg("Data is incomplete");
+      setErrorNotiOpen(true);
+      console.log("Incomplete data");
+      return;
+    }
+    if (qcComment === "") {  // If we don't have a comment
+      for (const [key, value] of Object.entries(reagentDict)) {
+        const reag = qcData.reagents[+key];
+        if (isIncorrect(value["Pos"], reag.posExpectedRange) || isIncorrect(value["Neg"], reag.negExpectedRange)) {
+          // alert("You must enter a comment to accept QC");
+          setErrorMsg("You must have a comment to accept results with errors");
+          setErrorNotiOpen(true);
+          console.log("Must have a comment");
+          return;
+        }
+      }
+    }
+
     const qcDataToSave = {
       ...qcData,
       reagents: qcData.reagents.map((reagent, index) => ({
@@ -178,9 +223,23 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
     };
 
     try {
-      // await saveToDB("qc_store", qcDataToSave);
       console.log("QC data saved successfully with comments.");
       setReagentValues([]);
+      // const res = await fetch(`${process.env.REACT_APP_API_URL}/Students/${userId}`);
+      let reportId: string = loaderData;
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/BBStudentReport/${reportId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      if (res.status === 404) {
+        console.log("Report has already been deleted");
+      } else if (res.ok ) {
+        console.log("Successful deletion");
+      } else {
+        console.log("Could not delete student report");
+      }
     } catch (error) {
       console.error("Error saving QC data:", error);
     }
@@ -311,6 +370,39 @@ const BloodBankReagentInputPage = (props: { name: string }) => {
           </ButtonBase>
         </div>
       </Modal>
+      <Backdrop  // ERROR BACKDROP
+        open={isErrorNotiOpen}
+        
+        onClick={() => {
+          setErrorNotiOpen(false);
+        }}
+      >
+        <div className="bg-white rounded-xl">
+          <div className="sm:p-8 flex flex-col sm:gap-4">
+            <div className="text-center text-gray-600 text-xl font-semibold">
+              { 
+                <>
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                    <div>{errorMsg}</div>
+                  </div>
+                </>
+              }
+            </div>
+            <div className="flex justify-center">
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setErrorNotiOpen(false);
+                }}
+                className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+              >
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Backdrop>
     </>
   );
 };

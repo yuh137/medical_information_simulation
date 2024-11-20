@@ -81,7 +81,7 @@ const Reagent = forwardRef((props: ReagentProps, ref) => {
       />
       <div className="Reagent-name text-base truncate">{props.reagentName}</div>
       <div className="Reagent-range text-xs">
-        Range: {props.controlType === "positive" ? "1-4" : "0"}
+        Range: {props.controlType === "positive" ? props.PosExpectedRange : props.NegExpectedRange}
       </div>
     </div>
   );

@@ -75,7 +75,6 @@ const BloodBankQCResult = (props: { name: string, link: string }) => {
     if (res.ok) {
       const reports: BBStudentReport[] = await res.json();
       const qcLotIds = Array.from(new Set(reports.map(report => report.bloodBankQCLotID)));
-
       const queryParams = new URLSearchParams();
       qcLotIds.forEach(item => queryParams.append("lotId", item));
 
@@ -90,7 +89,6 @@ const BloodBankQCResult = (props: { name: string, link: string }) => {
           expDate: qcData.find(qc => qc.bloodBankQCLotID === item.bloodBankQCLotID)?.expirationDate ?? "",
           createdDate: item.createdDate,
         }))
-
         setQcData(returnData);
       } 
       // setIsFetchingData(false);
@@ -119,11 +117,8 @@ const BloodBankQCResult = (props: { name: string, link: string }) => {
       console.log("Selected QC:", selectedQC.qcName);  
       localStorage.setItem('selectedQCData', JSON.stringify(qcData));
       if (selectedQC.qcName == 'Reagent Rack') {
-        navigate(`/blood_bank/reagent-input-page`);
+        navigate(`/blood_bank/reagent-input-page/` + selectedQC.reportId);
       } else {
-        // Navigate to RBC
-        // navigate('/blood_bank/rbc-input-page/${selectedQc.q}');
-        // navigate('/blood_bank/qc_results/' + selectedQC.qcName);
         navigate('/blood_bank/qc_results/' + selectedQC.reportId);
       }
       /*

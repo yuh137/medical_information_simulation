@@ -181,7 +181,7 @@ html {
 
 .scrollbar-custom {
   scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #b2b7c0 #dae3f3; /* Scrollbar handle and track colors */
+  scrollbar-color: #caec24 #dae3f3; /* Scrollbar handle and track colors */
 }
 
 .scrollbar-custom::-webkit-scrollbar {
@@ -189,7 +189,7 @@ html {
 }
 
 .scrollbar-custom::-webkit-scrollbar-thumb {
-  background-color: #787a7e; /* Scrollbar handle color */
+  background-color: #a4ea0c; /* Scrollbar handle color */
   border-radius: 10px; /* Rounded edges for scrollbar handle */
 }
 

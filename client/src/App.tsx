@@ -201,6 +201,15 @@ function AppWithRouter() {
                 element: <BloodBankReagentInputPage name="BloodBank" />,  
               },
               {
+                path: "reagent-input-page/:link",
+                element: <BloodBankReagentInputPage name="" />,
+                loader: async ({ params }) => {
+                  const { link } = params;
+                  console.log("loader function: ", link);
+                  return link;
+                }
+              },
+              {
                 path: 'rbc-input-page',
                 element: <BloodBankRBCResultInput name="BloodBank" />,  
               },

@@ -4,70 +4,88 @@ export const reagentRackQcData = [
         Abbreviation:"\u03B1-A",
         AntiSeraLot:"1",
         reagentExpDate:"",
-        ExpectedRange:"1+"
+        posExpectedRange:"1+",
+        negExpectedRange:"0"
+
     },
     {
         reagentName:"Anti-B",
         Abbreviation:"\u03B1-B",
         AntiSeraLot:"2",
         reagentExpDate:"",
-        ExpectedRange:"1+"
+        posExpectedRange:"1+",
+        negExpectedRange:"0"
+
     },
     {
         reagentName:"Anti-A,B",
         Abbreviation:"\u03B1-A,B",
         AntiSeraLot:"3",
         reagentExpDate:"",
-        ExpectedRange:"1+"
+        posExpectedRange:"1+",
+        negExpectedRange:"0"
+
     },
     {
         reagentName:"Anti-D",
         Abbreviation:"\u03B1-D",
         AntiSeraLot:"4",
         reagentExpDate:"",
-        ExpectedRange:"1+"
+        posExpectedRange:"1+",
+        negExpectedRange:"0"
+
     },
     {
         reagentName:"Control",
         Abbreviation:"Ctrl",
         AntiSeraLot:"5",
         reagentExpDate:"",
-        ExpectedRange:"0"
+        posExpectedRange:"1+",
+        negExpectedRange:"0"
+
     },
     {
         reagentName:"A1 Cells",
         Abbreviation: "A<sub>1</sub>",
         AntiSeraLot:"6",
         reagentExpDate:"",
-        ExpectedRange:"1+"
+        posExpectedRange:"1+",
+        negExpectedRange:"0"
     },
     {
         reagentName:"B Cells",
         Abbreviation:"B",
         AntiSeraLot:"7",
         reagentExpDate:"",
-        ExpectedRange:"1+"
+        posExpectedRange:"1+",
+        negExpectedRange:"0"
     },
     {
         reagentName:"Screen Cell 1",
         Abbreviation:"SC1",
         AntiSeraLot:"8",
         reagentExpDate:"",
-        ExpectedRange:"1+"
+        posExpectedRange:"1+",
+        negExpectedRange:"0"
+
     },
     {
         reagentName:"Screen Cell 2",
         Abbreviation:"SC2",
         AntiSeraLot:"9",
         reagentExpDate:"",
-        ExpectedRange:"1+"
+        posExpectedRange:"1+",
+        negExpectedRange:"0"
+
     },
     {
         reagentName:"Screen Cell 3",
         Abbreviation:"SC3",
         AntiSeraLot:"10",
         reagentExpDate:"",
-        ExpectedRange:"1+"
+        posExpectedRange:"1+",
+        negExpectedRange:"0"
+
     }
 ]
 
