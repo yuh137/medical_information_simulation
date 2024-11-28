@@ -1,4 +1,4 @@
-@Medical_Information.API_HostAddress = http://localhost:5029
+@Medical_Information.API_HostAddress = https://mango-backend-cndwhubmesf4hkc6.centralus-01.azurewebsites.net
 
 GET {{Medical_Information.API_HostAddress}}/weatherforecast/
 Accept: application/json

@@ -14,8 +14,8 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -48,23 +48,25 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// Configure database contexts
 builder.Services.AddDbContext<MedicalInformationDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("MedicalInformationConnectionString")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MedicalInformationConnectionString")));
 
 builder.Services.AddDbContext<MedicalInformationAuthDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("MedicalInformationAuthConnectionString")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MedicalInformationAuthConnectionString")));
 
+// Configure CORS policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: "All Origins",
-                      policy =>
-                      {
-                          policy.WithOrigins("*");
-                          policy.WithHeaders("*");
-                          policy.WithMethods("*");
-                      });
+    options.AddPolicy(name: "All Origins", policy =>
+    {
+        policy.WithOrigins("*")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
 
+// Add repository services
 builder.Services.AddScoped<IAdminRepository, SQLAdminRepository>();
 builder.Services.AddScoped<IStudentRepository, SQLStudentRepository>();
 builder.Services.AddScoped<IAdminQCLotRepository, SQLAdminQCLotRepository>();
@@ -75,8 +77,10 @@ builder.Services.AddScoped<IBBStudentReportRepository, SQLBBStudentReportReposit
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddScoped<IReagentInputRepository, SQLReagentInputRepository>();
 
+// Configure AutoMapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
+// Configure Identity for authentication and authorization
 builder.Services.AddIdentityCore<IdentityUser>()
     .AddRoles<IdentityRole>()
     .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("MedicalInformationSimulation")
@@ -93,6 +97,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredUniqueChars = 1;
 });
 
+// Configure JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     options.TokenValidationParameters = new TokenValidationParameters
@@ -108,21 +113,29 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<MedicalInformationDbContext>();
+    var authdbContext = scope.ServiceProvider.GetRequiredService<MedicalInformationAuthDbContext>();
+    authdbContext.Database.Migrate();
+    dbContext.Database.Migrate();  // This applies any pending migrations at startup
+}
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 app.UseHttpsRedirection();
 
+// Apply CORS policy
 app.UseCors("All Origins");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Map controllers
 app.MapControllers();
 
 app.Run();
