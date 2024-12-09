@@ -44,19 +44,19 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             return reports;
         }
 
-        public Task<AdminAnalyteReport?> GetAdminReportByIdAsync(Guid id)
+        public async Task<AdminAnalyteReport?> GetAdminReportByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await dbContext.AdminAnalyteReports.FirstOrDefaultAsync(item => item.ReportID == id);
         }
 
-        public Task<List<AdminAnalyteReport>> GetAdminReportsByAdminIdAsync(Guid adminId)
+        public async Task<List<AdminAnalyteReport>> GetAdminReportsByAdminIdAsync(Guid adminId)
         {
-            throw new NotImplementedException();
+            return await dbContext.AdminAnalyteReports.Where(item => item.AdminID == adminId).ToListAsync();
         }
 
-        public Task<List<AdminAnalyteReport>> GetAllAdminReportsAsync()
+        public async Task<List<AdminAnalyteReport>> GetAllAdminReportsAsync()
         {
-            throw new NotImplementedException();
+            return await dbContext.AdminAnalyteReports.Include(item => item.AnalyteInputs).ToListAsync();
         }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Grpc.Net.Client;
 using Medical_Information.API.CustomActionFilter;
 using Medical_Information.API.Models.Domain;
 using Medical_Information.API.Models.DTO;
 using Medical_Information.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PaymentGrpcService;
 
 namespace Medical_Information.API.Controllers
 {
@@ -15,11 +17,33 @@ namespace Medical_Information.API.Controllers
     {
         private readonly IAdminRepository adminRepository;
         private readonly IMapper mapper;
+        private readonly Payment.PaymentClient _paymentClient;
 
         public AdminsController(IAdminRepository adminRepository, IMapper mapper)
         {
             this.adminRepository = adminRepository;
             this.mapper = mapper;
+
+            var channel = GrpcChannel.ForAddress("https://localhost:7089");
+            _paymentClient = new Payment.PaymentClient(channel);
+        }
+
+        [HttpGet]
+        [Route("grpc-test/{id:Guid}")]
+        public async Task<IActionResult> TestGrpc([FromRoute] Guid id)
+        {
+            var paymentResponse = await _paymentClient.ProcessPaymentAsync(new PaymentRequest
+            {
+                UserId = id.ToString(),
+                Name = "Concac"
+            });
+
+            if (!paymentResponse.Success)
+            {
+                return BadRequest(paymentResponse.Message);
+            }
+
+            return Ok(paymentResponse.Message);
         }
 
         [HttpGet]

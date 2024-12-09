@@ -14,7 +14,7 @@ import {
   getPaginationRowModel,
   CellContext
 } from "@tanstack/react-table";
-import { StudentReport } from "../../../utils/utils";
+import { AdminAnalyteReport, StudentReport } from "../../../utils/utils";
 import { AuthToken } from "../../../context/AuthContext";
 import { Skeleton } from "antd";
 import dayjs from "dayjs";
@@ -70,32 +70,63 @@ const ChemistryQCResult = () => {
       return null;
     }
     const token: AuthToken = JSON.parse(tokenString);
-    const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/ByStudentId/${token.userID}`);
 
-    if (res.ok) {
-      const reports: StudentReport[] = await res.json();
-      const qcLotIds = Array.from(new Set(reports.map(report => report.adminQCLotID)));
+    if (token.roles.includes("Admin")) {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminAnalyteReport/ByAdminId/${token.userID}`);
 
-      const queryParams = new URLSearchParams();
-      qcLotIds.forEach(item => queryParams.append("lotId", item));
+      if (res.ok) {
+        const reports: AdminAnalyteReport[] = await res.json();
+        const qcLotIds = Array.from(new Set(reports.map(report => report.adminQCLotID))); 
 
-      const qcDataRes = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByIdList?${queryParams.toString()}`);
+        const queryParams = new URLSearchParams();
+        qcLotIds.forEach(item => queryParams.append("lotId", item));
 
-      if (qcDataRes.ok) {
-        const qcData: AdminQCLot[] = await qcDataRes.json();
-        const returnData = reports.map(item => ({
-          reportId: item.reportID,
-          qcName: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.qcName ?? "",
-          lotNumber: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.lotNumber ?? "",
-          expDate: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.expirationDate ?? "",
-          createdDate: item.createdDate,
-        }))
+        const qcDataRes = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByIdList?${queryParams.toString()}`);
 
-        setQcData(returnData);
-      } 
-      setIsFetchingData(false);
-      return;
+        if (qcDataRes.ok) {
+          const qcData: AdminQCLot[] = await qcDataRes.json();
+          const returnData = reports.map(item => ({
+            reportId: item.reportID,
+            qcName: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.qcName ?? "",
+            lotNumber: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.lotNumber ?? "",
+            expDate: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.expirationDate ?? "",
+            createdDate: item.createdDate,
+          }))
+
+          setQcData(returnData);
+        } 
+        setIsFetchingData(false);
+        return;
+      }
+    } else if (token.roles.includes("Student")) {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/ByStudentId/${token.userID}`);
+
+      if (res.ok) {
+        const reports: StudentReport[] = await res.json();
+        const qcLotIds = Array.from(new Set(reports.map(report => report.adminQCLotID)));
+
+        const queryParams = new URLSearchParams();
+        qcLotIds.forEach(item => queryParams.append("lotId", item));
+
+        const qcDataRes = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByIdList?${queryParams.toString()}`);
+
+        if (qcDataRes.ok) {
+          const qcData: AdminQCLot[] = await qcDataRes.json();
+          const returnData = reports.map(item => ({
+            reportId: item.reportID,
+            qcName: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.qcName ?? "",
+            lotNumber: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.lotNumber ?? "",
+            expDate: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.expirationDate ?? "",
+            createdDate: item.createdDate,
+          }))
+
+          setQcData(returnData);
+        } 
+        setIsFetchingData(false);
+        return;
+      }
     }
+    
     setIsFetchingData(false);
     return;
   }
@@ -109,18 +140,6 @@ const ChemistryQCResult = () => {
     if (selectedQC) {
       console.log("Selected QC:", selectedQC);  
       try {
-        // const qcData = await getQCRangeByDetails(selectedQC.qcName, selectedQC.lotNumber, selectedQC.expDate);
-        // if (qcData) {
-        //   console.log("QC Data found:", qcData);
-        //   // Save the qcData to localStorage
-        //   localStorage.setItem('selectedQCData', JSON.stringify(qcData));
-  
-        //   // Navigate to the AnalyteInputPage
-        //   navigate(`/chemistry/simple-analyte-input-page`);
-        // } else {
-        //   console.warn('No matching QC data found in the database.');
-        //   alert('No matching QC data found in the database.');
-        // }
         navigate(`/chemistry/qc_results/${selectedQC.reportId}`)
       } catch (error) {
         console.error("Error fetching QC data:", error);

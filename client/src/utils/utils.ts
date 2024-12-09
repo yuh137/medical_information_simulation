@@ -221,6 +221,14 @@ export interface StudentReport {
   analyteInputs: AnalyteInput[];
 }
 
+export interface AdminAnalyteReport {
+  reportID: string;
+  adminID: string;
+  adminQCLotID: string;
+  createdDate: string;
+  analyteInputs: AnalyteInput[];
+}
+
 export interface AnalyteInput {
   analyteInputID: string;
   reportID: string;

@@ -5,6 +5,7 @@ using Medical_Information.API.Repositories.Interfaces.Auth;
 using Medical_Information.API.Repositories.LocalImplementation;
 using Medical_Information.API.Repositories.SQLImplementation;
 using Medical_Information.API.Repositories.SQLImplementation.Auth;
+using Medical_Information.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -75,6 +76,7 @@ builder.Services.AddScoped<IAdminQCLotRepository, SQLAdminQCLotRepository>();
 builder.Services.AddScoped<IAnalyteRepository, SQLAnalyteRepository>();
 builder.Services.AddScoped<IImageRepository, LocalImageRepository>();
 builder.Services.AddScoped<IStudentReportRepository, SQLStudentReportRepository>();
+builder.Services.AddScoped<IAdminAnalyteReportRepository, SQLAdminAnalyteReportRepository>();
 
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 
@@ -109,6 +111,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     });
+
+//PDFGeneratorService.TestGenerate();
 
 var app = builder.Build();
 

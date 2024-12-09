@@ -117,7 +117,6 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
   const [invalidIndexes, setInvalidIndexes] = useState<Set<number> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalData, setModalData] = useState<{ invalidIndex: number, comment: string }[]>([]);
-  const { fileName, lotNumber, closedDate } = useParams<{ fileName: string, lotNumber: string, closedDate: string }>();
   const [QCData, setQCData] = useState<AdminQCLot | null>(null);
   const [isFetchingData, setIsFetchingData] = useState<boolean>(false);
 
@@ -363,7 +362,7 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       >
-        <div className={`modal-conatiner absolute top-1/1 left-1/2 sm:w-[50svw] sm:h-[80svh] bg-[${theme.secondaryColor}] border-2 border-solid border-[#6781AF] rounded-xl sm:-translate-x-1/2 sm:translate-y-12 flex flex-col items-center sm:py-6 relative overflow-scroll sm:space-y-4`}>
+        <div className={`modal-container left-1/2 sm:w-[50svw] sm:h-[80svh] bg-[${theme.secondaryColor}] border-2 border-solid border-[#6781AF] rounded-xl sm:-translate-x-1/2 sm:translate-y-12 flex flex-col items-center sm:py-6 relative overflow-scroll sm:space-y-4`}>
           <div className="modal-title sm:text-2xl font-semibold">QC Comment</div>
           <div className="invalid-items sm:w-[80%]">
             {!invalidIndexArray || invalidIndexArray.length === 0 && <div className="absolute top-1/2 -translate-x-1/2 left-1/2 -translate-y-1/2">No invalid items</div>}
