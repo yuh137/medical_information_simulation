@@ -434,9 +434,13 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
   });
 
   useEffect(() => {
-    if (!checkSession() || checkUserType() === "Student") {
-      navigate("/unauthorized");
+    async function checkUserSession() {
+      const check = await checkSession();
+      if (!check || await checkUserType() === "Student")
+        navigate("/unauthorized");
     }
+
+    checkUserSession();
   }, []);
 
   useEffect(() => {

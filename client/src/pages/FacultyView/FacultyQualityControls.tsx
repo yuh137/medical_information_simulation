@@ -13,10 +13,15 @@ const FacultyQualityControls = () => {
   const navigate = useNavigate();
   const { checkSession, checkUserType } = useAuth();
 
-  const [selectedDropdown, setSelectedDropdown] = useState<string>("");
+  // const [selectedDropdown, setSelectedDropdown] = useState<string>("");
 
   useEffect(() => {
-    if (!checkSession() || checkUserType() === 'Student') navigate("/unauthorized");
+    async function checkUserSession() {
+      const check = await checkSession();
+      if (!check || await checkUserType() === 'Student') navigate("/unauthorized");
+    }
+    
+    checkUserSession();
   }, [])
 
   return (

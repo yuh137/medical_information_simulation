@@ -13,7 +13,7 @@ interface AuthContextType {
   login: (token: string, userId: string, userType: UserType) => void;
   logout: () => void;
   checkSession: () => Promise<boolean>;
-  checkUserType: () => UserType | null;
+  checkUserType: () => Promise<UserType | null>;
 }
 
 interface AuthProviderProps {
@@ -64,8 +64,9 @@ export const AuthProvider = (props: AuthProviderProps) => {
       return false;
     };
 
-    function checkUserType(): UserType | null {
-      if (!checkSession()) return null;
+    async function checkUserType(): Promise<UserType | null> {
+      const check = await checkSession();
+      if (!check) return null;
 
       const tokenString = localStorage.getItem("token");
       if (tokenString) {

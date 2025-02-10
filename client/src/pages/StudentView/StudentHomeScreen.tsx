@@ -15,7 +15,13 @@ const StudentHomeScreen = () => {
   const dropdownOptions = testTypeLinkList.map(({ link, name }) => ({ name, link: link + '/qc_results' }));
 
   useEffect(() => {
-    if (!checkSession()) navigate('/unauthorized');
+    async function checkUserSession() {
+      const check = await checkSession();
+      if (!check)
+        navigate("/unauthorized");
+    }
+
+    checkUserSession();
   }, []);
 
   return (

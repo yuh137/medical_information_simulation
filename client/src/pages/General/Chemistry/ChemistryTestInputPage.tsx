@@ -381,9 +381,12 @@ export const ChemistryTestInputPage = () => {
   }, []);
 
   useEffect(() => {
-    if (!checkSession() || checkUserType() === "Student") {
+    async function checkUserSession() {
+      // const check = await checkSession();
+      // if (!check || await checkUserType() === "Student") navigate("/unauthorized");
     }
-    // navigate("/unauthorized");
+
+    checkUserSession();
   }, []);
 
   useEffect(() => {

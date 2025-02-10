@@ -21,8 +21,13 @@ const ChemistryEditQC = () => {
   const [notiType, setNotiType] = useState<NotiType>(NotiType.NotSelected);
 
   useEffect(() => {
-    if (!checkSession() || checkUserType() === "Student")
-      navigate("/unauthorized");
+    async function checkUserSession() {
+      const check = await checkSession();
+      if (!check || await checkUserType() === "Student")
+        navigate("/unauthorized");
+    }
+
+    checkUserSession();
   }, []);
 
   useEffect(() => {
