@@ -28,7 +28,7 @@ namespace Medical_Information.API.Data
 
             modelBuilder.Entity<AdminQCLot>().HasMany(p => p.Reports).WithOne().HasForeignKey(e => e.AdminQCLotID).OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<AdminQCLot>().HasMany(p => p.AdminReports).WithOne().HasForeignKey(e => e.AdminQCLotID).OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.Entity<AdminQCLot>().HasMany(p => p.AdminReports).WithOne().HasForeignKey(e => e.AdminQCLotID).OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<AdminQCLot>().HasIndex(e => e.LotNumber).IsUnique();
 

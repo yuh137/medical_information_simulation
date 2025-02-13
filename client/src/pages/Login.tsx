@@ -89,9 +89,10 @@ const Login = () => {
     const session = await checkSession();
 
     if (session) {
-      if (checkUserType() === UserType.Student) {
+      const userType = await checkUserType();
+      if (userType === UserType.Student) {
         navigate('/student-home');
-      } else if (checkUserType() === UserType.Admin) {
+      } else if (userType === UserType.Admin) {
         navigate('/admin-home');
       }
     } else {
@@ -151,7 +152,7 @@ const Login = () => {
               }}
             >
               <img src="/admin-icon.png" alt="" />
-              <div className="self-center font-semibold text-xl">Admin</div>
+              <div className="self-center font-semibold text-xl">Faculty</div>
             </div>
           </div>
           <form

@@ -10,6 +10,6 @@ namespace Medical_Information.API.Models.DTO
         public string Email { get; set; }
         public string Initials { get; set; }
         public ICollection<Student> Students { get; set; } = [];
-        public ICollection<AdminAnalyteReport> Reports { get; set; } = [];
+        public ICollection<StudentReport> Reports { get; set; } = [];
     }
 }

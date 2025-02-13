@@ -117,6 +117,7 @@ export const LiverLevelList = [
   { name: "Bilirubin", acronymName: "BIL" },
   { name: "Total Protein", acronymName: "TP" }
 ];
+
 export const ThyroidLevelList = [
   { name: "Thyroid-Stimulating hormone", acronymName: "TSH" },
   { name: "TIiodothyronine, Total", acronymName: "T3" },
@@ -126,6 +127,7 @@ export const ThyroidLevelList = [
   { name: "Anti-Thyroid Peroxidase", acronymName: "TPOAb" },
   { name: "Anti-Thyroglobulin", acronymName: "TgAB" }
 ];
+
 export const CardiacLevelList = [
   { name: "Troponin-I", acronymName: "cTnl" },
   { name: "Creatine Kinase", acronymName: "CK" },
@@ -133,6 +135,7 @@ export const CardiacLevelList = [
   { name: "Myoglobin", acronymName: "MYO" },
   { name: "High-sensitivity C-reactive Protein", acronymName: "hsCRP" }
 ];
+
 export const CMPLevelList = [
   { name: "Sodium", acronymName: "Na" },
   { name: "Potassium", acronymName: "K" },
@@ -148,6 +151,19 @@ export const CMPLevelList = [
   { name: "Alkaline Phosphatase", acronymName: "ALP" },
   { name: "Bilirubin", acronymName: "BIL" },
   { name: "Total Protein", acronymName: "TP" }
+];
+export const RenalLevelList = [
+  { name: "Sodium", acronymName: "Na" },
+  { name: "Potassium", acronymName: "K" },
+  { name: "Chloride", acronymName: "Cl" },
+  { name: "Carbon Dioxide", acronymName: "CO_2" },
+  { name: "Blood Urea Nitrogen", acronymName: "BUN" },
+  { name: "Creatinine", acronymName: "CREA" },
+  { name: "Calcium", acronymName: "CA" },
+  { name: "Glucose", acronymName: "GLU" },
+  { name: "Phosphorus", acronymName: "PHOS" },
+  { name: "Magnesium", acronymName: "Mg" },
+  { name: "Anion Gap", acronymName: "AG" },
 ];
 
 export const PancreaticLevelList = [
@@ -215,15 +231,8 @@ export interface Student {
 
 export interface StudentReport {
   reportID: string;
-  studentID: string;
-  adminQCLotID: string;
-  createdDate: string;
-  analyteInputs: AnalyteInput[];
-}
-
-export interface AdminAnalyteReport {
-  reportID: string;
-  adminID: string;
+  studentID?: string;
+  adminID?: string;
   adminQCLotID: string;
   createdDate: string;
   analyteInputs: AnalyteInput[];

@@ -9,7 +9,7 @@ import {
 } from "../../../components/ui/table";
 import NavBar from "../../../components/NavBar";
 import { useParams } from "react-router-dom";
-import { panelTypeLinkList, renderSubString } from "../../../utils/utils";
+import { CancerLevelList, CardiacLevelList, DiabetesLevelList, DrugLevelList, HormoneLevelList, IronLevelList, LipidLevelList, LiverLevelList, PancreaticLevelList, panelTypeLinkList, RenalLevelList, renderSubString, ThyroidLevelList, VitaminsLevelList } from "../../../utils/utils";
 import { Icon } from "@iconify/react";
 import { CMPLevelList } from "../../../utils/utils";
 
@@ -90,8 +90,61 @@ const ChemistryOEBuilder = () => {
   }
 
   useEffect(() => {
+    let listType: { name: string; acronymName: string }[] = [];
+
+    switch (link) {
+      case "cmp":
+        listType = [...CMPLevelList];
+        break;
+      case "bmp":
+        listType = [...CMPLevelList].slice(0, 8);
+        break;
+      case "liver":
+        listType = [...LiverLevelList];
+        break;
+      case "renal":
+        listType = [...RenalLevelList];
+        break;
+      case "lipid":
+        listType = [...LipidLevelList];
+        break;
+      case "thyroid":
+        listType = ThyroidLevelList.slice(0, 1).concat(ThyroidLevelList.slice(3, 5));
+        break;
+      case "cardiac":
+        listType = [...CardiacLevelList];
+        break;
+      case "drug":
+        listType = [...DrugLevelList];
+        break;
+      case "diabetes":
+        listType = [...DiabetesLevelList];
+        break;
+      case "special_thyroid":
+        listType = ThyroidLevelList.slice(1, 3).concat(ThyroidLevelList.slice(5));
+        break;
+      case "iron":
+        listType = [...IronLevelList];
+        break;
+      case "sex_hormone":
+        listType = [...HormoneLevelList];
+        break;
+      case "vitamin":
+        listType = [...VitaminsLevelList];
+        break;
+      case "cancer":
+        listType = [...CancerLevelList];
+        break;
+      case "pancreatic":
+        listType = [...PancreaticLevelList];
+        break
+      default:
+        listType = [];
+        break;
+    } 
+
     setPanelItems(
-      CMPLevelList.map((item) => ({
+      listType.map((item) => ({
         analyteName: item.name,
         analyteAcronym: item.acronymName,
         unitOfMeasure: "",

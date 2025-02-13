@@ -18,10 +18,11 @@ const FacultyHomeScreen = () => {
 
   async function validateSession() {
     const status = await checkSession();
+    const userType = await checkUserType();
 
     console.log("Session state: ", status);
 
-    if (!status || checkUserType() === 'Student') navigate('/unauthorized');
+    if (!status || userType === 'Student') navigate('/unauthorized');
   }
 
   useEffect(() => {
@@ -32,7 +33,7 @@ const FacultyHomeScreen = () => {
     <>
       <NavBar name="MIS Home Screen" />
       <div
-        className=" bg-[#fff] relative flex flex-wrap justify-center px-24 py-12 sm:gap-x-6 sm:max-w-[1460px] my-0 mx-auto"
+        className=" bg-[#fff] relative flex flex-wrap justify-center sm:py-12 sm:gap-x-6 sm:max-w-[1460px] my-0 mx-auto"
         style={{ minHeight: "90svh" }}
       >
         <img src="(MIS)-MidiSims-Main-Logo_Login top left.png" alt="" className="absolute sm:w-48 sm:-left-24 sm:bottom-0"/>
@@ -42,7 +43,10 @@ const FacultyHomeScreen = () => {
         <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`} onClick={() => navigate("/admin-order-entry")}>
           <div className="button-text font-bold text-2xl">Order Entry</div>
         </ButtonBase>
-        <DropDown name="Results In Progress" options={dropdownOptions} />
+        <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`} onClick={() => navigate("/faculty-results")}>
+          <div className="button-text font-bold text-2xl">Results In Progress</div>
+        </ButtonBase>
+        {/* <DropDown name="Results In Progress" options={dropdownOptions} /> */}
         <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
           <div className="button-text font-bold text-2xl">Patient Reports</div>
         </ButtonBase>

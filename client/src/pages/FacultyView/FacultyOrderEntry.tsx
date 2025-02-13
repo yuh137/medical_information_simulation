@@ -14,7 +14,7 @@ const FacultyOrderEntry = () => {
 
   return (
     <>
-      <NavBar name="Quality Control" />
+      <NavBar name="Order Entry" />
       <div
         className=" flex items-center justify-center gap-36 *:-translate-y-16"
         style={{ minWidth: "100svw", minHeight: "90svh" }}  

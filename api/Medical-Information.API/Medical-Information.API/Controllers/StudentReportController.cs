@@ -53,6 +53,17 @@ namespace Medical_Information.API.Controllers
         }
 
         [HttpGet]
+        [Route("ByAdminId/{adminId:Guid}")]
+        public async Task<IActionResult> GetReportsByAdminId([FromRoute] Guid adminId)
+        {
+            var studentReportsModels = await studentReportRepository.GetStudentReportsByAdminIdAsync(adminId);
+
+            var studentReportDTOs = mapper.Map<List<StudentReportDTO>>(studentReportsModels);
+
+            return Ok(studentReportDTOs);
+        }
+
+        [HttpGet]
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetStudentReportById(Guid id)
         {

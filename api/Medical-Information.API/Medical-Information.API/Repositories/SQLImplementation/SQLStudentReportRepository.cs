@@ -27,19 +27,39 @@ namespace Medical_Information.API.Repositories.SQLImplementation
 
             var student = await dbContext.Students.FirstOrDefaultAsync(item => item.StudentID == reports[0].StudentID);
 
-            if (!adminQCLots.Any() || student == null)
+            var admin = await dbContext.Admins.FirstOrDefaultAsync(item => item.AdminID == reports[0].AdminID);
+
+            if (!adminQCLots.Any() || (student == null && admin == null))
             {
                 return new List<StudentReport>();
             }
 
-            foreach ( var report in reports )
+            if (student != null && admin == null)
             {
-                student.Reports.Add(report);
-                foreach ( var qclot in adminQCLots )
+                foreach ( var report in reports )
                 {
-                    if (report.AdminQCLotID == qclot.AdminQCLotID) qclot.Reports.Add(report);
+                    student.Reports.Add(report);
+                    foreach ( var qclot in adminQCLots )
+                    {
+                        if (report.AdminQCLotID == qclot.AdminQCLotID) qclot.Reports.Add(report);
+                    }
+                    await dbContext.StudentReports.AddAsync(report);
                 }
-                await dbContext.StudentReports.AddAsync(report);
+            } 
+            else if (admin != null && student == null)
+            {
+                foreach (var report in reports)
+                {
+                    admin.Reports.Add(report);
+                    foreach (var qclot in adminQCLots)
+                    {
+                        if (report.AdminQCLotID == qclot.AdminQCLotID) qclot.Reports.Add(report);
+                    }
+                    await dbContext.StudentReports.AddAsync(report);
+                }
+            } else
+            {
+                return reports;
             }
             await dbContext.SaveChangesAsync();
             return reports;
@@ -53,6 +73,11 @@ namespace Medical_Information.API.Repositories.SQLImplementation
         public async Task<StudentReport?> GetStudentReportByIdAsync(Guid id)
         {
             return await dbContext.StudentReports.Include(item => item.AnalyteInputs).FirstOrDefaultAsync(item => item.ReportID == id);
+        }
+
+        public async Task<List<StudentReport>> GetStudentReportsByAdminIdAsync(Guid adminId)
+        {
+            return await dbContext.StudentReports.Where(item => item.AdminID == adminId).ToListAsync();
         }
 
         public async Task<List<StudentReport>> GetStudentReportsByStudentIdAsync(Guid studentId)

@@ -85,7 +85,7 @@ const NavBar = (props: NavBarPropsTypes) => {
         <div className="user-info group absolute sm:top-[55%] sm:-translate-y-[55%] sm:right-[1.25svw] sm:p-3 flex sm:gap-x-2 sm:py-2 sm:px-3 border-2 border-solid border-white rounded-xl drop-shadow-xl hover:bg-[#2F528F] hover:cursor-pointer transition delay-75">
           <div className="text-white">
             <div className="sm:max-w-1/2 truncate">User Initials: {initials}</div>
-            <div className="text-right">{checkUserType() === "Admin" ? "Admin" : "Student"}</div>
+            <div className="text-right">{userRole.charAt(0).toUpperCase() + userRole.slice(1)}</div>
           </div>
           <img src="/user.png" alt="" className="sm:w-[42px] sm:h-[42px]"/>
           <Icon icon="bxs:left-arrow" className="text-white self-center group-hover:-rotate-90 transition duration-150"/>

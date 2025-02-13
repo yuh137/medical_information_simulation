@@ -9,10 +9,11 @@ import {
 } from "react-beautiful-dnd";
 import { Backdrop, Button, ButtonBase } from "@mui/material"
 import { AdminQCLot } from "../../../utils/indexedDB/IDBSchema";
-import { AuthToken, useAuth } from "../../../context/AuthContext";
+import { AuthToken, useAuth, UserType } from "../../../context/AuthContext";
 import dayjs from "dayjs";
 import { Icon } from "@iconify/react";
 import { useTheme } from "../../../context/ThemeContext";
+import { useNavigate } from "react-router-dom";
 
 enum NotiType {
   QCNotFoundOrExpired,
@@ -21,7 +22,8 @@ enum NotiType {
 };
 
 const ChemistryOrderControls = () => {
-  const { userId } = useAuth();
+  const { userId, type } = useAuth();
+  const navigate = useNavigate();
   const { theme } = useTheme();
   const [SelectedQCItems, setSelectedQCItems] = useState<string[]>([]);
   const [OrderControlsItems, setOrderControlsItems] = useState<string[]>(
@@ -93,11 +95,21 @@ const ChemistryOrderControls = () => {
           return;
         }
 
-        const reportsToSave = savedQCItems.map(item => ({
-          studentID: userId,
-          adminQCLotID: item.adminQCLotID,
-          createdDate: dayjs().toISOString(),
-        }));
+        const reportsToSave = savedQCItems.map(item => {
+          if (type === UserType.Admin) {
+            return {
+              adminID: userId,
+              adminQCLotID: item.adminQCLotID,
+              createdDate: dayjs().toISOString(),
+            };
+          } else if (type === UserType.Student) {
+            return {
+              studentID: userId,
+              adminQCLotID: item.adminQCLotID,
+              createdDate: dayjs().toISOString(),
+            };
+          }
+        });
 
         const createRes = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/Create`, {
           method: "POST",
@@ -136,7 +148,7 @@ const ChemistryOrderControls = () => {
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
-        <NavBar name="Chesmistry Order Controls" />
+        <NavBar name="Chemistry Order Controls" />
         <div
           className="flex justify-center gap-32 items-center"
           style={{ minWidth: "100svw", minHeight: "90svh" }}
@@ -276,7 +288,7 @@ const ChemistryOrderControls = () => {
                 </div>
               ) }
 
-              {/* WARNING QC NOT FOUND OR EXPIRED */}
+              {/* NOTIFYING ORDER CREATED */}
               { notiType === NotiType.OrderCreated && (
                 <div className="flex flex-col sm:gap-y-2 items-center">
                   <div className="text-2xl font-semibold">Order Successfully Created</div>
@@ -285,6 +297,7 @@ const ChemistryOrderControls = () => {
                     variant="contained"
                     onClick={() => {
                       setIsFeedbackNotiOpen(false);
+                      navigate("/admin-home");
                     }}
                     className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
                   >
@@ -293,7 +306,7 @@ const ChemistryOrderControls = () => {
                 </div>
               ) }
 
-              {/* WARNING QC NOT FOUND OR EXPIRED */}
+              {/* OTHER ERRORS */}
               { notiType === NotiType.SomethingWrong && (
                 <div className="flex flex-col sm:gap-y-2 items-center">
                   <div className="text-2xl font-semibold">Something Went Wrong</div>

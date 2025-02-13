@@ -33,6 +33,7 @@ import ChemistryPanel from "./pages/General/Chemistry/ChemistryPanel";
 import FacultyOrderEntry from "./pages/FacultyView/FacultyOrderEntry";
 import ChemistryOEBuilder from "./pages/General/Chemistry/ChemistryOEBuilder";
 import ChemistryCustomQC from "./pages/General/Chemistry/ChemistryCustomQC";
+import FacultyResultsInProgress from "./pages/FacultyView/FacultyResultsInProgress";
 
 function App() {
   initIDB();
@@ -85,6 +86,8 @@ function AppWithRouter() {
           },
           
           { path: 'student-results', element: <StudentResultsInProgress /> },
+
+          { path: 'faculty-results', element: <FacultyResultsInProgress /> },
           
           // CHEMISTRY PATHS
           { 
@@ -95,12 +98,8 @@ function AppWithRouter() {
                 element: <ChemistryQCResult />,
               },
               {
-                path: 'simple-analyte-input-page',
-                element: <SimpleAnalyteInputPage name="Chemistry" />,  
-              },
-              {
                 path: "qc_results/:link",
-                element: <ChemistryAnalyteInputPage name="" />,
+                element: <ChemistryAnalyteInputPage />,
                 loader: async ({ params }) => {
                   const { link } = params;
 
@@ -108,19 +107,25 @@ function AppWithRouter() {
                   if (!tokenString) {
                     return null;
                   }
-                  const token: AuthToken = JSON.parse(tokenString);
+                  // const token: AuthToken = JSON.parse(tokenString);
 
-                  if (token.roles.includes("Admin")) {
-                    const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminAnalyteReport/${link}`);
-                    if (res.ok) {
-                      return res.json();
-                    }
-                  } else if (token.roles.includes("Student")) {
-                    const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/${link}`);
-                    if (res.ok) {
-                      return res.json();
-                    }
+                  // Return StudentReport by Id
+                  const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/${link}`);
+                  if (res.ok) {
+                    return res.json();
                   }
+
+                  // if (token.roles.includes("Admin")) {
+                  //   const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminAnalyteReport/${link}`);
+                  //   if (res.ok) {
+                  //     return res.json();
+                  //   }
+                  // } else if (token.roles.includes("Student")) {
+                  //   const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/${link}`);
+                  //   if (res.ok) {
+                  //     return res.json();
+                  //   }
+                  // }
 
                   return null;
                 }

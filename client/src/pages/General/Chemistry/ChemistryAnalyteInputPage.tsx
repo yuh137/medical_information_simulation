@@ -3,7 +3,7 @@ import Analyte from "../../../components/Analyte";
 import NavBar from "../../../components/NavBar";
 import { Button, ButtonBase, Modal } from "@mui/material";
 import { useTheme } from "../../../context/ThemeContext";
-import { AnalyteInput, renderSubString, StudentReport } from "../../../utils/utils";
+import { Admin, AnalyteInput, renderSubString, StudentReport } from "../../../utils/utils";
 import { AdminQCLot } from "../../../utils/indexedDB/IDBSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
@@ -15,14 +15,15 @@ import {
   pdf,
 } from "@react-pdf/renderer";
 import { createTw } from "react-pdf-tailwind";
-import { useAuth } from "../../../context/AuthContext";
+import { AuthToken, useAuth, UserType } from "../../../context/AuthContext";
 import { useLoaderData, useParams } from "react-router-dom";
 import { Skeleton } from "antd";
+import dayjs from "dayjs";
 
-const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
+const ChemistryAnalyteInputPage = () => {
   
   // Function to print out the report pdf file
-  const reportPDF = (analyteValues?: string[], QCData?: AdminQCLot) => {
+  const reportPDF = (analyteValues?: number[], QCData?: AdminQCLot | null) => {
     const currentDate = new Date();
 
     const tw = createTw({
@@ -37,17 +38,17 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
 
     return (
       <>
-        <Document style={tw("border border-sold border-black")}>
-          <Page style={tw("py-8 px-16 border border-sold border-black")}>
+        <Document style={tw("border border-solid border-black")}>
+          <Page style={tw("py-8 px-16 border border-solid border-black")}>
             <Text style={tw("sm:text-[24px] text-center")}>Quality Controls Report</Text>
             <Text style={tw("mt-8 mb-2 text-[13px]")}>Date: {monthNames[currentDate.getMonth()]} {currentDate.getDate()}, {currentDate.getFullYear()}</Text>
             <Text style={tw("mb-2 text-[13px]")}>Lot Number: {QCData?.lotNumber || "error"}</Text>
-            <Text style={tw("mb-8 text-[13px]")}>QC Duration: {QCData?.openDate || "undetermined"} - {QCData?.closedDate || "undetermined"}</Text>
-            <Text style={tw("text-[22px] mb-8 text-center")}>{props.name} QC</Text>
+            <Text style={tw("mb-8 text-[13px]")}>QC Duration: {dayjs(QCData?.openDate).format("MM/DD/YYYY") || "undetermined"} - {QCData?.closedDate ? dayjs(QCData?.closedDate).format("MM/DD/YYYY") : dayjs(QCData?.expirationDate).format("MM/DD/YYYY") || "undetermined"}</Text>
+            <Text style={tw("text-[22px] mb-8 text-center")}>{QCData?.qcName} QC</Text>
             <View style={tw("flex-row justify-around")}>
               <Text style={tw("font-[700] text-[15px]")}>Analytes</Text>
               <Text style={tw("font-[700] text-[15px]")}>Value</Text>
-              <Text style={tw("font-[700] text-[15px]")}>Level {detectLevel(props.name) === 1 ? "I" : "II"} Range</Text>
+              <Text style={tw("font-[700] text-[15px]")}>Level {QCData?.qcName ? detectLevel(QCData?.qcName) === 1 ? "I" : "II" : "I"} Range</Text>
             </View>
             <View style={tw("w-full h-[1px] bg-black mt-2")}/>
             <View style={tw("flex-row justify-between p-5")}>
@@ -58,7 +59,7 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
               </View>
               <View>
                 {analyteValues?.map((value, index) => (
-                  <Text style={tw(`mb-2 text-[13px] ${invalidIndexArray?.includes(index) ? "text-red-500" : ""}`)} key={index}>{parseFloat(value)} {QCData?.analytes[index].unitOfMeasure}</Text>
+                  <Text style={tw(`mb-2 text-[13px] ${invalidIndexArray?.includes(index) ? "text-red-500" : ""}`)} key={index}>{value} {QCData?.analytes[index].unitOfMeasure}</Text>
                 ))}
               </View>
               <View>
@@ -77,7 +78,7 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
                 </View>
               ))}
             </View>
-            <Text style={tw("mt-8 text-[13px]")}>Approved by: {}</Text>
+            <Text style={tw("mt-8 text-[13px]")}>Approved by: {userFullname}</Text>
             <Text style={tw("mt-2 text-[13px]")}>Date: {currentDate.getMonth() + 1}/{currentDate.getDate()}/{currentDate.getFullYear()}</Text>
             <Text style={tw("mt-2 text-[13px]")}>Time: {currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</Text>
           </Page>
@@ -102,17 +103,22 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
     }
   }
 
- /*const openPDF = async () => {
-    const blob = await pdf(reportPDF(analyteValues, QCData)).toBlob();
+  const openPDF = async () => {
+    const analyteInputs = analyteValues.map(val => val.analyteValue);
+
+    const blob = await pdf(reportPDF(analyteInputs, QCData)).toBlob();
     const pdfUrl = URL.createObjectURL(blob);
     window.open(pdfUrl, "_blank");
-  }*/
+  }
+
   const { link } = useParams();
   const { theme } = useTheme();
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const analyteNameRefs = useRef<HTMLDivElement[]>([]);
+  const { userId, type } = useAuth();
 
   const [isInputFull, setIsInputFull] = useState<boolean>(false);
+  const [userFullname, setUserFullname] = useState<string>("");
   const [analyteValues, setAnalyteValues] = useState<AnalyteInput[]>([]);
   const [invalidIndexes, setInvalidIndexes] = useState<Set<number> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -153,7 +159,6 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
       index < inputRefs.current.length - 1 &&
       inputRefs.current[index + 1]
     ) {
-      console.log("entetred")
       inputRefs.current[index + 1]?.focus();
     }
   }
@@ -186,8 +191,6 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
     // console.log("Data to save:", qcDataToSave); // Debug log
 
     try {
-        // await saveToDB("qc_store", qcDataToSave);
-        // console.log("QC data saved successfully.");
 
         // Optionally, you might want to reset or clear the form after saving
         setAnalyteValues([]);
@@ -242,6 +245,39 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
     }
     setIsInputFull(newValues.length === QCData?.analytes.length && newValues.length > 0);
   }
+
+  // Get the current user's name for the pdf report
+  useEffect(() => {
+    async function getUser(): Promise<string> {
+      const tokenString = localStorage.getItem('token');
+      let token: AuthToken = { jwtToken: "", userID: "", roles: [] };
+      if (tokenString && tokenString !== "") {
+        token = JSON.parse(tokenString);
+      }
+      if (type === UserType.Admin) {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/Admins/${userId}`, {
+          headers: {
+            "Authorization": `Bearer ${token.jwtToken}`
+          }
+        });
+        if (res.ok) {
+          const user: Admin = await res.json();
+          return `${user.firstname} ${user.lastname}`;
+        }
+      } else if (type === UserType.Student) {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/Students/${userId}`);
+        if (res.ok) {
+          const user = await res.json();
+          return `${user.firstname} ${user.lastname}`;
+        }
+      }
+
+      return ""
+    }
+
+    console.log("User type: ", type);
+    getUser().then(name => setUserFullname(name));
+  }, [])
 
   useEffect(() => {
     const storedQCData = localStorage.getItem('selectedQCData');
@@ -340,7 +376,10 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
                   : "!bg-[#AFABAB] !text-white"
               }`}
               disabled={!isValidManual && !isValid}
-            //  onClick={() => openPDF()}
+              onClick={() => {
+                console.log(userFullname);
+                openPDF();
+              }}
             >
               Print QC
             </Button>
@@ -379,6 +418,7 @@ const ChemistryAnalyteInputPage = (props: { name: string, link?: string }) => {
                     e.preventDefault()
                     // console.log(modalData)
                     setIsValidManual(modalData.every(item => item.comment !== ""))
+                    setIsModalOpen(false)
                   })}>Apply Comments</ButtonBase>
                 </div>
               </>

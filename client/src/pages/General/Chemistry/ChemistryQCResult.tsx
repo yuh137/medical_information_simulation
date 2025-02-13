@@ -14,7 +14,7 @@ import {
   getPaginationRowModel,
   CellContext
 } from "@tanstack/react-table";
-import { AdminAnalyteReport, StudentReport } from "../../../utils/utils";
+import { StudentReport } from "../../../utils/utils";
 import { AuthToken } from "../../../context/AuthContext";
 import { Skeleton } from "antd";
 import dayjs from "dayjs";
@@ -72,10 +72,10 @@ const ChemistryQCResult = () => {
     const token: AuthToken = JSON.parse(tokenString);
 
     if (token.roles.includes("Admin")) {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminAnalyteReport/ByAdminId/${token.userID}`);
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/ByAdminId/${token.userID}`);
 
       if (res.ok) {
-        const reports: AdminAnalyteReport[] = await res.json();
+        const reports: StudentReport[] = await res.json();
         const qcLotIds = Array.from(new Set(reports.map(report => report.adminQCLotID))); 
 
         const queryParams = new URLSearchParams();
@@ -133,6 +133,8 @@ const ChemistryQCResult = () => {
   
   useEffect(() => {
     fetchQCData();
+
+    console.log("QC Data:", qcData);
   }, []);
   
   

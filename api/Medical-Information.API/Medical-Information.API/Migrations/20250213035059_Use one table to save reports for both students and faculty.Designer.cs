@@ -4,6 +4,7 @@ using Medical_Information.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical_Information.API.Migrations
 {
     [DbContext(typeof(MedicalInformationDbContext))]
-    partial class MedicalInformationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250213035059_Use one table to save reports for both students and faculty")]
+    partial class Useonetabletosavereportsforbothstudentsandfaculty
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,10 +134,10 @@ namespace Medical_Information.API.Migrations
                             AdminQCLotID = new Guid("bbb59aca-6c27-424c-852f-21656a88f449"),
                             Department = 0,
                             ExpirationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FileDate = new DateTime(2025, 2, 13, 11, 56, 47, 151, DateTimeKind.Local).AddTicks(575),
+                            FileDate = new DateTime(2025, 2, 13, 10, 50, 58, 166, DateTimeKind.Local).AddTicks(9982),
                             IsActive = false,
                             LotNumber = "888888888888",
-                            OpenDate = new DateTime(2025, 2, 13, 11, 56, 47, 151, DateTimeKind.Local).AddTicks(595),
+                            OpenDate = new DateTime(2025, 2, 13, 10, 50, 58, 167, DateTimeKind.Local).AddTicks(5),
                             QCName = "CMP Level I"
                         });
                 });
@@ -358,10 +361,6 @@ namespace Medical_Information.API.Migrations
                     b.Property<Guid?>("AdminAnalyteReportReportID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AnalyteAcronym")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("AnalyteName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -375,9 +374,6 @@ namespace Medical_Information.API.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("InRange")
-                        .HasColumnType("bit");
 
                     b.Property<Guid>("ReportID")
                         .HasColumnType("uniqueidentifier");
