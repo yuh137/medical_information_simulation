@@ -1,6 +1,4 @@
-﻿using Medical_Information.API.Models.Domain;
-
-namespace Medical_Information.API.Models.DTO
+﻿namespace Medical_Information.API.Models.DTO
 {
     public class AnalyteDTO
     {
