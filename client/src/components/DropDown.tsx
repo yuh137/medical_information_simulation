@@ -41,12 +41,12 @@ const DropDown = (props: DropDownProps) => {
       onMouseLeave={() => setOpen(false)}
     >
       <ButtonBase
-        className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] relative !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[4px]`}
+        className={`!rounded-lg sm:w-[24svw] sm:h-[20svh] !bg-[${theme.secondaryColor}] relative !border-[1px] !border-solid !border-[#47669C] transition ease-in-out hover:!bg-[#8faadc] hover:!border-[#2F528F] hover:!border-[4px]`}
       >
         <div className="button-text font-bold text-2xl">{props.name}</div>
       </ButtonBase>
       {isOpen && (
-        <div className="dropdown-content absolute sm:w-80 flex flex-col rounded-lg z-10">
+        <div className="dropdown-content absolute sm:w-[24svw] flex flex-col rounded-lg z-10">
           {props.options.map((option, index) => (
             <div
               key={index}

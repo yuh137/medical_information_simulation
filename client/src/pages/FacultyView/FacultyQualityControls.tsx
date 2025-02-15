@@ -28,7 +28,7 @@ const FacultyQualityControls = () => {
     <>
       <NavBar name="Quality Control" />
       <div
-        className=" flex items-center justify-center gap-36 *:-translate-y-16"
+        className="flex items-center justify-center sm:gap-x-[10svw] *:-translate-y-16"
         style={{ minWidth: "100svw", minHeight: "90svh" }}  
       >
         <DropDown name="Order Controls" options={OC_options} />

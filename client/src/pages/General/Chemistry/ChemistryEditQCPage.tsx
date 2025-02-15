@@ -47,9 +47,9 @@ const ChemistryEditQC = () => {
   return (
     <>
       <NavBar name={`Edit Chemistry QC`} />
-      <div className="basic-container relative">
+      <div className="basic-container relative sm:h-[150svh] sm:w-[100svw]">
         <div
-          className={`edit-qc-options flex flex-wrap sm:justify-center sm:p-24 sm:h-[150svh] sm:w-[100svw] sm:gap-x-4 mx-auto`}
+          className={`edit-qc-options flex flex-wrap sm:justify-center sm:p-[10svw] sm:gap-x-4 sm:gap-y-2 mx-auto`}
         >
           {qcTypeLinkList.map((item) => (
             <ButtonBase
@@ -67,7 +67,7 @@ const ChemistryEditQC = () => {
             </ButtonBase>
           ))}
         </div>  
-        <div className="button-container sticky -bottom-12 flex justify-center sm:-translate-y-12 sm:space-x-36 z-2 bg-white sm:py-6">
+        <div className="button-container sticky sm:-bottom-12 flex justify-center sm:-translate-y-12 sm:space-x-36 z-2 bg-white sm:py-6">
           <ButtonBase
             className="sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold"
             onClick={() => {
