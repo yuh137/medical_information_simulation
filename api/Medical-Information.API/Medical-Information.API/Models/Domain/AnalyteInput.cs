@@ -16,5 +16,6 @@ namespace Medical_Information.API.Models.Domain
         public DateTime CreatedDate { get; set; }
         public float AnalyteValue { get; set; }
         public bool InRange { get; set; }
+        public bool IsActive { get; set; }
     }
 }

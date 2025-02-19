@@ -36,7 +36,7 @@ import ChemistryCustomQC from "./pages/General/Chemistry/ChemistryCustomQC";
 import FacultyResultsInProgress from "./pages/FacultyView/FacultyResultsInProgress";
 
 function App() {
-  initIDB();
+  // initIDB();
   return (
     // <AuthProvider>
     // </AuthProvider>

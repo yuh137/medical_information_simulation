@@ -4,10 +4,9 @@ import { renderSubString } from "../utils/utils";
 export interface AnalyteProps {
   name: string;
   acronym: string;
-  electro?: boolean;
-  // level: number;
   minLevel: number;
   maxLevel: number;
+  inRange: boolean;
   measUnit: string;
   value: string;
   handleInputChange: (value: string) => void;
@@ -19,7 +18,13 @@ const Analyte = forwardRef((props: AnalyteProps, ref) => {
 
   useEffect(() => {
     setInputValue(props.value);
-  }, [])
+
+    if (props.inRange) {
+      inputRef.current?.classList.add("bg-[#00FF00]");
+    } else {
+      inputRef.current?.classList.add("bg-[#FF0000]");
+    }
+  }, []);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const nameRef = useRef<HTMLDivElement>(null);

@@ -26,27 +26,49 @@ namespace Medical_Information.API.Controllers
         [Route("{reportId:Guid}")]
         public async Task<IActionResult> GetInputsByStudentReport([FromRoute] Guid reportId)
         {
-            var analyteInputs = await inputRepository.GetInputFromStudentReportId(reportId);
+            var analyteInputs = await inputRepository.GetAllInputFromStudentReportId(reportId);
 
             if (analyteInputs == null)
             {
                 return NotFound(new RequestErrorObject
                 {
                     ErrorCode = ErrorCode.NotFound,
-                    Message = "Student Do Not Exist!"
+                    Message = "Report Does Not Exist!"
                 });
             }
 
-            return Ok(analyteInputs);
+            var analyteInputDTOs = mapper.Map<List<AnalyteInputDTO>>(analyteInputs);
+
+            return Ok(analyteInputDTOs);
+        }
+
+        [HttpGet]
+        [Route("ActiveInputs/{reportId:Guid}")]
+        public async Task<IActionResult> GetActiveInputsFromReport([FromRoute] Guid reportId)
+        {
+            var analyteInputs = await inputRepository.GetActiveInputFromStudentReport(reportId);
+
+            if (analyteInputs == null)
+            {
+                return NotFound(new RequestErrorObject
+                {
+                    ErrorCode = ErrorCode.NotFound,
+                    Message = "Report Does Not Exist!"
+                });
+            }
+
+            var analyteInputDTOs = mapper.Map<List<AnalyteInputDTO>>(analyteInputs);
+
+            return Ok(analyteInputDTOs);
         }
 
         [HttpPost]
-        [Route("StudentCreate/{reportId:Guid}")]
+        [Route("Create/{reportId:Guid}")]
         public async Task<IActionResult> CreateInputsForStudent([FromBody] List<AnalyteInputDTO> inputList, [FromRoute] Guid reportId)
         {
             var inputListModel = mapper.Map<List<AnalyteInput>>(inputList);
 
-            await inputRepository.CreateAnalyteInputForStudent(inputListModel, reportId);
+            await inputRepository.UpdateOrCreateAnalyteInput(inputListModel, reportId);
 
             return Ok(inputListModel);
         }

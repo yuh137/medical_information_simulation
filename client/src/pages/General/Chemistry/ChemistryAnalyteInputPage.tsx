@@ -103,6 +103,25 @@ const ChemistryAnalyteInputPage = () => {
     }
   }
 
+  async function fetchAnalyteInputs() {
+    setIsFetchingData(true);
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/AnalyteInput/ActiveInputs/${loaderData.reportID}`);
+
+      if (res.ok) {
+        const data: AnalyteInput[] = await res.json();
+
+        console.log("From fetch input function: ", data);
+        setAnalyteValues(data);
+        // data.map(item => item)
+      }
+    } catch (e) {
+
+    } finally {
+      setIsFetchingData(false);
+    }
+  }
+
   const openPDF = async () => {
     const analyteInputs = analyteValues.map(val => val.analyteValue);
 
@@ -118,13 +137,15 @@ const ChemistryAnalyteInputPage = () => {
   const { userId, type } = useAuth();
 
   const [isInputFull, setIsInputFull] = useState<boolean>(false);
+  const [isFetchingData, setIsFetchingData] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isValidManual, setIsValidManual] = useState<boolean>(false);
+
+  const [modalData, setModalData] = useState<{ invalidIndex: number, comment: string }[]>([]);
+  const [QCData, setQCData] = useState<AdminQCLot | null>(null);
   const [userFullname, setUserFullname] = useState<string>("");
   const [analyteValues, setAnalyteValues] = useState<AnalyteInput[]>([]);
   const [invalidIndexes, setInvalidIndexes] = useState<Set<number> | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [modalData, setModalData] = useState<{ invalidIndex: number, comment: string }[]>([]);
-  const [QCData, setQCData] = useState<AdminQCLot | null>(null);
-  const [isFetchingData, setIsFetchingData] = useState<boolean>(false);
 
   const loaderData = useLoaderData() as StudentReport;
 
@@ -139,7 +160,6 @@ const ChemistryAnalyteInputPage = () => {
     if ((!invalidIndexes || invalidIndexes.size === 0) && analyteValues.length === QCData?.analytes.length) return true;
     else return false;
   }, [analyteValues])
-  const [isValidManual, setIsValidManual] = useState<boolean>(false);
 
   function detectLevel(str: string): number {
       if (str.endsWith("I")) {
@@ -152,7 +172,6 @@ const ChemistryAnalyteInputPage = () => {
   }
 
   function handleKeyPress(event: React.KeyboardEvent, index: number) {
-    // console.log("From handleKeyPress function: ", inputRefs.current[index]);
     console.log("From handleKeyPress function: ", index);
     if (
       event.key === "Enter" &&
@@ -171,6 +190,12 @@ const ChemistryAnalyteInputPage = () => {
       updatedValues[index].invalidIndex = invalidIndex;
       updatedValues[index].comment = value;
       return updatedValues;
+    });
+
+    setAnalyteValues(prevValues => {
+      const updatedValues = [...prevValues];
+      updatedValues[invalidIndex].comment = value;
+      return updatedValues;
     })
   }
   
@@ -180,26 +205,44 @@ const ChemistryAnalyteInputPage = () => {
         return;
     }
 
-    // Prepare the data to be saved
-    // const qcDataToSave: AdminQCLot = {
-    //   ...QCData,
-    //   analytes: QCData.analytes.map((analyte, index) => ({
-    //       ...analyte,
-    //       value: analyteValues[index], // Ensure this is the correct format and key
-    //   })),
-    // };
-    // console.log("Data to save:", qcDataToSave); // Debug log
-
     try {
+        let analyteInputsToSave = QCData.analytes.map((analyte, index) => {
+            return {
+                analyteName: analyte.analyteName,
+                analyteAcronym: analyte.analyteAcronym,
+                analyteValue: analyteValues[index].analyteValue,
+                inRange: !invalidIndexArray?.includes(index),
+                isActive: true,
+                createdDate: new Date().toISOString(),
+                comment: analyteValues[index].comment,
+            }
+        });
 
-        // Optionally, you might want to reset or clear the form after saving
-        setAnalyteValues([]);
-        setInvalidIndexes(null);
-        setModalData([]);
-        setIsModalOpen(false);
-    } catch (error) {
-        console.error("Error saving QC data:", error);
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/AnalyteInput/Create/${loaderData.reportID}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify(analyteInputsToSave),
+        });
+
+        if (res.ok) {
+            console.log("QC data saved successfully.", await res.json());
+        }
+    } catch (e) {
+        console.error("Error saving QC data:", e);
     }
+
+    // try {
+    //     // Optionally, you might want to reset or clear the form after saving
+    //     setAnalyteValues([]);
+    //     setInvalidIndexes(null);
+    //     setModalData([]);
+    //     setIsModalOpen(false);
+    // } catch (error) {
+    //     console.error("Error saving QC data:", error);
+    // }
   };
   
   function handleInputChange(
@@ -210,16 +253,21 @@ const ChemistryAnalyteInputPage = () => {
   ) {
     const newValues: AnalyteInput[] = [...analyteValues];
     newValues[index] = {
-      analyteInputID: "",
-      reportID: "",
+      // analyteInputID: "",
+      // reportID: "",
       analyteName: "",
+      analyteAcronym: "",
       analyteValue: 0,
+      inRange: false,
+      isActive: true,
       createdDate: "",
       comment: "",
     }
+
     newValues[index].analyteName = "";
     newValues[index].analyteValue = parseFloat(value);
     newValues[index].createdDate = new Date().toISOString();
+
     setAnalyteValues(newValues);
     if (
       isNaN(parseFloat(value)) ||
@@ -275,21 +323,13 @@ const ChemistryAnalyteInputPage = () => {
       return ""
     }
 
-    console.log("User type: ", type);
+    // console.log("User type: ", type);
     getUser().then(name => setUserFullname(name));
-  }, [])
-
-  useEffect(() => {
-    const storedQCData = localStorage.getItem('selectedQCData');
-    if (storedQCData) {
-      setQCData(JSON.parse(storedQCData));
-    } else {
-      console.error("No QC data found.");
-    }
   }, []);
 
   useEffect(() => {
     fetchQCData();
+    fetchAnalyteInputs();
   }, []);
 
   useEffect(() => {
@@ -297,7 +337,7 @@ const ChemistryAnalyteInputPage = () => {
   }, [inputRefs])
 
   useEffect(() => {
-    console.log(invalidIndexes, invalidIndexArray, isValid)
+    // console.log("From analyteValues: ", analyteValues, invalidIndexes, invalidIndexArray, isValid)
   }, [analyteValues])
 
   return (
@@ -328,6 +368,7 @@ const ChemistryAnalyteInputPage = () => {
                 acronym={item.analyteAcronym}
                 minLevel={+item.minLevel}
                 maxLevel={+item.maxLevel}
+                inRange={analyteValues[index]?.inRange}
                 value={analyteValues[index]?.analyteValue.toString() || ""}
                 // level={detectLevel(props.name)}
                 measUnit={item.unitOfMeasure}
@@ -377,7 +418,7 @@ const ChemistryAnalyteInputPage = () => {
               }`}
               disabled={!isValidManual && !isValid}
               onClick={() => {
-                console.log(userFullname);
+                // console.log(userFullname);
                 openPDF();
               }}
             >
@@ -385,11 +426,11 @@ const ChemistryAnalyteInputPage = () => {
             </Button>
             <Button
               className={`sm:w-32 sm:h-[50px] !font-semibold !border !border-solid !border-[#6781AF] max-sm:w-full ${
-                isValid
+                isValid || isValidManual
                   ? "!bg-[#DAE3F3] !text-black"
                   : "!bg-[#AFABAB] !text-white"
               }`}
-              disabled={!isValid}
+              disabled={!isValidManual && !isValid}
               onClick= {() => handleAcceptQC()}
              >
               Accept QC

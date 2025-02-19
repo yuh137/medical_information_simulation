@@ -222,6 +222,7 @@ const SimpleAnalyteInputPage = (props: { name: string }) => {
                 acronym={item.analyteAcronym}
                 minLevel={+item.minLevel}
                 maxLevel={+item.maxLevel}
+                inRange={true}
                 // level={detectLevel(props.name)}
                 measUnit={item.unitOfMeasure}
                 value=''

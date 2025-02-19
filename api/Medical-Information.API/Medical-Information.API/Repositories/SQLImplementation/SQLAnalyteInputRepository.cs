@@ -19,23 +19,30 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             throw new NotImplementedException();
         }
 
-        public async Task<List<AnalyteInput>?> CreateAnalyteInputForStudent(List<AnalyteInput> reports, Guid studentId)
+        public async Task<StudentReport?> UpdateOrCreateAnalyteInput(List<AnalyteInput> values, Guid studentId)
         {
-            var studentReport = await dbContext.StudentReports.FirstOrDefaultAsync(item => item.ReportID == studentId);
+            var studentReport = await dbContext.StudentReports.Include(item => item.AnalyteInputs).FirstOrDefaultAsync(item => item.ReportID == studentId);
 
             if (studentReport == null)
             {
                 return null;
             }
 
-            foreach ( var report in reports )
+            foreach ( var value in values )
             {
-                studentReport.AnalyteInputs.Add(report);
-                await dbContext.AnalyteInputs.AddAsync(report);
+                var existingAnalyteInput = studentReport.AnalyteInputs.FirstOrDefault(item => item.AnalyteName == value.AnalyteName && item.IsActive);
+
+                if (existingAnalyteInput != null)
+                {
+                    existingAnalyteInput.IsActive = false;
+                }
+
+                studentReport.AnalyteInputs.Add(value);
+                //await dbContext.AnalyteInputs.AddAsync(value);
             }
             await dbContext.SaveChangesAsync();
 
-            return reports;
+            return studentReport;
         }
 
         public Task<List<AnalyteInput>?> GetInputFromAdminReportId(Guid reportId)
@@ -43,9 +50,9 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             throw new NotImplementedException();
         }
 
-        public async Task<List<AnalyteInput>?> GetInputFromStudentReportId(Guid reportId)
+        public async Task<List<AnalyteInput>?> GetAllInputFromStudentReportId(Guid reportId)
         {
-            var studentReport = await dbContext.StudentReports.FirstOrDefaultAsync(item => item.ReportID == reportId);
+            var studentReport = await dbContext.StudentReports.Include(item => item.AnalyteInputs).FirstOrDefaultAsync(item => item.ReportID == reportId);
 
             if (studentReport == null)
             {
@@ -53,6 +60,51 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             }
 
             return studentReport.AnalyteInputs.ToList();
+        }
+
+        public async Task<StudentReport?> UpdateAnalyteInput(List<AnalyteInput> inputs, Guid reportId)
+        {
+            var studentReport = await dbContext.StudentReports.Include(item => item.AnalyteInputs).FirstOrDefaultAsync(item => item.ReportID == reportId);
+
+            if (studentReport == null)
+            {
+                return null;
+            }
+
+            foreach (var input in inputs)
+            {
+                var existingAnalyteInput = studentReport.AnalyteInputs.FirstOrDefault(item => item.AnalyteName == input.AnalyteName && item.IsActive);
+
+                if (existingAnalyteInput != null)
+                {
+                    existingAnalyteInput.IsActive = false;
+                }
+
+                studentReport.AnalyteInputs.Add(input);
+                //await dbContext.AnalyteInputs.AddAsync(input);
+            }
+
+            await dbContext.SaveChangesAsync();
+            return studentReport;
+        }
+
+        public async Task<List<AnalyteInput>?> GetActiveInputFromStudentReport(Guid reportId)
+        {
+            var studentReport = await dbContext.StudentReports.Include(item => item.AnalyteInputs).FirstOrDefaultAsync(item => item.ReportID == reportId);
+
+            if (studentReport == null)
+            {
+                return null;
+            }
+
+            var activeAnalyteInputs = new List<AnalyteInput>();
+
+            foreach (var analyteInput in studentReport.AnalyteInputs)
+            {
+                if (analyteInput.IsActive) activeAnalyteInputs.Add(analyteInput);
+            }
+
+            return activeAnalyteInputs;
         }
     }
 }

@@ -239,10 +239,13 @@ export interface StudentReport {
 }
 
 export interface AnalyteInput {
-  analyteInputID: string;
-  reportID: string;
+  // analyteInputID: string;
+  // reportID: string;
   analyteName: string;
+  analyteAcronym: string;
   analyteValue: number;
+  inRange: boolean;
+  isActive: boolean;
   createdDate: string;
   comment: string;
 }
