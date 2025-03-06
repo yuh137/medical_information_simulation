@@ -65,6 +65,21 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             return reports;
         }
 
+        public async Task<StudentReport?> DeleteStudentReportByID(Guid reportId)
+        {
+            var existingReport = await dbContext.StudentReports.FirstOrDefaultAsync(item => item.ReportID == reportId);
+
+            if (existingReport == null)
+            {
+                return null;
+            }
+
+            dbContext.StudentReports.Remove(existingReport);
+            await dbContext.SaveChangesAsync();
+
+            return existingReport;
+        }
+
         public async Task<List<StudentReport>> GetAllStudentReportsAsync()
         {
             return await dbContext.StudentReports.Include(item => item.AnalyteInputs).ToListAsync();

@@ -1,7 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
-import { getAllDataFromStore } from '../../../utils/indexedDB/getData';
-import { AdminQCLot } from '../../../utils/indexedDB/IDBSchema';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
+import { useLoaderData, useParams } from 'react-router-dom';
 import NavBar from '../../../components/NavBar';
 
 import { Modal, Radio, RadioGroup, FormControlLabel, TextField } from '@mui/material';
@@ -18,9 +16,12 @@ import {
   getPaginationRowModel
 } from '@tanstack/react-table';
 import * as d3 from 'd3';
+import { ReportProvider, useReport } from '../../../context/ReportContext';
+import { AdminQCLot, Analyte, AnalyteInput } from '../../../utils/utils';
+import dayjs from 'dayjs';
 
 interface AnalyteData {
-  closedDate: string;
+  createdDate: string;
   value: number;
   mean: number;
   stdDevi: number;
@@ -37,6 +38,7 @@ interface TableData {
 }
 
 const ChemistryLeveyJennings = () => {
+  const { reportId } = useReport();
   const { fileName, lotNumber, analyteName } = useParams<{ fileName: string; lotNumber: string; analyteName: string }>();
   const [analyteData, setAnalyteData] = useState<AnalyteData[]>([]);
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -44,43 +46,99 @@ const ChemistryLeveyJennings = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [qcStatus, setQcStatus] = useState<string | null>(null);
   const [qcComment, setQcComment] = useState<string>('');
+
+  const qcLot = useLoaderData() as AdminQCLot;
+  console.log("From loader function: ", qcLot);
+  const currentAnalyte = useMemo(() => {
+    return qcLot.analytes.find((item) => item.analyteName === analyteName);
+  }, [qcLot])
+  
   useEffect(() => {
     const fetchAnalyteData = async () => {
-      try {
-        const data = (await getAllDataFromStore('qc_store')) as unknown as AdminQCLot[];
+      // try {
+      //   const data = (await getAllDataFromStore('qc_store')) as unknown as AdminQCLot[];
 
-        const matchingRecords = data.filter(
-          (item) => item.qcName === fileName && item.lotNumber === lotNumber
-        );
+      //   const matchingRecords = data.filter(
+      //     (item) => item.qcName === fileName && item.lotNumber === lotNumber
+      //   );
 
-        const analyteValues = matchingRecords.map((record) => {
-          const analyte = record.analytes.find((a) => a.analyteName === analyteName);
-          if (analyte) {
-            return {
-              closedDate: record.closedDate,
-              value: analyte.value ? parseFloat(analyte.value) : parseFloat(analyte.mean),
-              mean: parseFloat(analyte.mean),
-              stdDevi: parseFloat(analyte.stdDevi),
-              analyteName: analyte.analyteName,
-              minLevel: parseFloat(analyte.minLevel),  
-              maxLevel: parseFloat(analyte.maxLevel),  
-            };
-          }
-          return null;
-        }).filter((d): d is AnalyteData => d !== null); 
+      //   const analyteValues = matchingRecords.map((record) => {
+      //     const analyte = record.analytes.find((a) => a.analyteName === analyteName);
+      //     if (analyte) {
+      //       return {
+      //         closedDate: record.closedDate,
+      //         value: analyte.value ? parseFloat(analyte.value) : parseFloat(analyte.mean),
+      //         mean: parseFloat(analyte.mean),
+      //         stdDevi: parseFloat(analyte.stdDevi),
+      //         analyteName: analyte.analyteName,
+      //         minLevel: parseFloat(analyte.minLevel),  
+      //         maxLevel: parseFloat(analyte.maxLevel),  
+      //       };
+      //     }
+      //     return null;
+      //   }).filter((d): d is AnalyteData => d !== null); 
 
-        setAnalyteData(analyteValues);
+      //   setAnalyteData(analyteValues);
 
-        const tableRows = analyteValues.map((analyte) => ({
-            runDateTime: analyte.closedDate, 
-            result: analyte.value.toFixed(2), 
-            tech: '', 
-            comments: '', 
-          }));
+      //   const tableRows = analyteValues.map((analyte) => ({
+      //       runDateTime: analyte.closedDate, 
+      //       result: analyte.value.toFixed(2), 
+      //       tech: '', 
+      //       comments: '', 
+      //     }));
   
-          setTableData(tableRows);
-        } catch (error) {
-          console.error("Error fetching analyte data:", error);
+      //     setTableData(tableRows);
+      //   } catch (error) {
+      //     console.error("Error fetching analyte data:", error);
+      //   }
+
+        try {
+          if (!reportId) {
+            alert("Report not found");
+            return;
+          }
+          
+          const res = await fetch(`${process.env.REACT_APP_API_URL}/AnalyteInput/${reportId}`);
+          if (res.ok) {
+            const analyteInputs: AnalyteInput[] = await res.json();
+
+            const matchingRecords = analyteInputs.filter(
+              item => item.analyteName === analyteName
+            );
+      
+            const analyteValues = matchingRecords.map(record => {
+              // const analyte = record.analytes.find((a: any) => a.analyteName === analyteName);
+              if (record.analyteName === analyteName) {
+                return {
+                  createdDate: record.createdDate,
+                  value: record.analyteValue,
+                  mean: currentAnalyte?.mean,
+                  stdDevi: currentAnalyte?.stdDevi,
+                  analyteName: record.analyteName,
+                  minLevel: currentAnalyte?.minLevel,  
+                  maxLevel: currentAnalyte?.maxLevel,  
+                  comments: record.comment,
+                };
+              };
+
+              return null;
+            }).filter((d: any): d is AnalyteData => d !== null); 
+      
+            // setAnalyteData(analyteValues);
+            console.log("From first useEffect: ", analyteValues);
+      
+            const tableRows = analyteValues.map((analyte) => ({
+                // runDateTime: analyte.closedDate, 
+                runDateTime: dayjs(analyte?.createdDate).format("MM/DD/YYYY - hh:mm:ss") || "", 
+                result: analyte?.value.toFixed(2) || "", 
+                tech: '', 
+                comments: analyte?.comments || '', 
+              }));
+      
+              setTableData(tableRows);
+          }
+        } catch (e) {
+
         }
       };
   
@@ -222,7 +280,7 @@ const ChemistryLeveyJennings = () => {
       .data(analyteData)
       .enter()
       .append("circle")
-      .attr("cx", (d) => xScale(parseDate(d.closedDate) as Date))
+      .attr("cx", (d) => xScale(parseDate(d.createdDate) as Date))
       .attr("cy", (d) => yScale(d.value))
       .attr("r", 4)
       .attr("fill", (d) => (d.value > d.mean + 2 * d.stdDevi || d.value < d.mean - 2 * d.stdDevi) ? "red" : "blue"); // Red if outside ±2 SD, else blue
@@ -258,7 +316,7 @@ const ChemistryLeveyJennings = () => {
   const columns: ColumnDef<TableData>[] = [
     {
       accessorKey: 'runDateTime',
-      header: 'Run Date/Time',
+      header: 'Created Date',
       cell: (info) => info.getValue(),
       minSize: 50, 
       maxSize: 50,
@@ -295,9 +353,8 @@ const ChemistryLeveyJennings = () => {
   });
 
   return (
-    <div>
-      <NavBar name={`Review Controls: ${fileName}`} />
-
+    <>
+      <NavBar name={`Chemistry Review Controls`} />
       <h2 style={{ textAlign: 'center', marginTop: '40px', marginBottom: '20px' }}>
         Levey Jennings: {analyteName}
       </h2>
@@ -305,12 +362,12 @@ const ChemistryLeveyJennings = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', marginLeft: '10px', marginRight: '10px' }}>
         <div style={{ flex: '0 0 180px', marginRight: '20px' }}>
           <div style={{ fontWeight: 'bold', marginTop: '30px' }}>
-            <div>QC Panel: {fileName}</div>
+            <div>QC Panel: {qcLot.qcName}</div>
             <div >Lot #: {lotNumber}</div>
-            <div style = {{fontWeight: 'normal'}}>Closed Date: {analyteData.length > 0 ? analyteData[0].closedDate : ''}</div>
+            <div style = {{fontWeight: 'normal'}}>Closed Date: {qcLot.closedDate ? dayjs(qcLot.closedDate).format("MM/DD/YYYY") : dayjs(qcLot.expirationDate).format("MM/DD/YYYY")}</div>
             <div>Analyte: {analyteName}</div>
-            <div style = {{fontWeight: 'normal'}}>Minimum Range: {analyteData.length > 0 ? analyteData[0].minLevel : ''}</div>
-            <div style = {{fontWeight: 'normal'}} >Maximum : {analyteData.length > 0 ? analyteData[0].maxLevel : ''}</div>
+            <div style = {{fontWeight: 'normal'}}>Min Range: {currentAnalyte?.minLevel}</div>
+            <div style = {{fontWeight: 'normal'}} >Max Range: {currentAnalyte?.maxLevel}</div>
           </div>
         </div>
 
@@ -411,7 +468,7 @@ const ChemistryLeveyJennings = () => {
           </Button>
         </div>
       </Modal>
-    </div>
+    </>
   );
 };
 

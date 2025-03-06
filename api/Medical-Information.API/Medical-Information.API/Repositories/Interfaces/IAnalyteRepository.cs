@@ -7,5 +7,6 @@ namespace Medical_Information.API.Repositories.Interfaces
         Task<List<Analyte>> GetAllAnalytesAsync();
         Task<Analyte?> CreateAnalyteAsync(Analyte analyte);
         Task<List<Analyte>> GetAllAnalytesFromQCLotAsync(Guid QCLotID);
+        Task<List<Analyte>> GetAllAnalytesFromQCLotByLotNumber(string lotNum);
     }
 }

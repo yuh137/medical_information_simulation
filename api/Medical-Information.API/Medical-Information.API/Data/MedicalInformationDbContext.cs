@@ -237,9 +237,9 @@ namespace Medical_Information.API.Data
                 },
             };
 
-            modelBuilder.Entity<AdminQCLot>().HasData(mockQCLot);
+            //modelBuilder.Entity<AdminQCLot>().HasData(mockQCLot);
 
-            modelBuilder.Entity<Analyte>().HasData(analytes);
+            //modelBuilder.Entity<Analyte>().HasData(analytes);
         }
     }
 }

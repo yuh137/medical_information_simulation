@@ -9,5 +9,6 @@ namespace Medical_Information.API.Repositories.Interfaces
         Task<List<StudentReport>> CreateStudentReportAsync(List<StudentReport> reports);
         Task<List<StudentReport>> GetStudentReportsByStudentIdAsync(Guid studentId);
         Task<List<StudentReport>> GetStudentReportsByAdminIdAsync(Guid adminId);
+        Task<StudentReport?> DeleteStudentReportByID(Guid reportId);
     }
 }

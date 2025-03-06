@@ -29,5 +29,17 @@ namespace Medical_Information.API.Repositories.SQLImplementation
         {
             return await dbContext.Analytes.Where(e => e.AdminQCLotID == QCLotID).ToListAsync();
         }
+
+        public async Task<List<Analyte>> GetAllAnalytesFromQCLotByLotNumber(string lotNum)
+        {
+            var qcLot = await dbContext.AdminQCLots.Include(e => e.Analytes).FirstOrDefaultAsync(e => e.LotNumber == lotNum);
+
+            if (qcLot == null)
+            {
+                return new List<Analyte>();
+            }
+
+            return qcLot.Analytes.ToList();
+        }
     }
 }

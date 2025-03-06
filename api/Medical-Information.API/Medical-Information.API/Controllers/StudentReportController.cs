@@ -69,15 +69,35 @@ namespace Medical_Information.API.Controllers
         {
             var studentReportModel = await studentReportRepository.GetStudentReportByIdAsync(id);
 
-            var studentReportDTO = mapper.Map<StudentReportDTO>(studentReportModel);
-
-            if (studentReportDTO == null)
+            if (studentReportModel == null)
             {
                 return BadRequest(new {
                     ErrorCode = ErrorCode.NotFound,
                     Message = "Student Report Not Found"
                 });
             }
+
+            var studentReportDTO = mapper.Map<StudentReportDTO>(studentReportModel);
+
+            return Ok(studentReportDTO);
+        }
+
+        [HttpDelete]
+        [Route("Delete/{reportId:Guid}")]
+        public async Task<IActionResult> DeleteStudentReportById([FromRoute] Guid reportId)
+        {
+            var studentReportModel = await studentReportRepository.DeleteStudentReportByID(reportId);
+
+            if (studentReportModel == null)
+            {
+                return BadRequest(new
+                {
+                    ErrorCode = ErrorCode.NotFound,
+                    Message = "Student Report Not Found"
+                });
+            }
+
+            var studentReportDTO = mapper.Map<StudentReportDTO>(studentReportModel);
 
             return Ok(studentReportDTO);
         }

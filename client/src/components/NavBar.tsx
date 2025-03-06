@@ -91,7 +91,7 @@ const NavBar = (props: NavBarPropsTypes) => {
           <Icon icon="bxs:left-arrow" className="text-white self-center group-hover:-rotate-90 transition duration-150"/>
           <div className="user-info-actions absolute sm:w-full sm:h-fit bg-white sm:py-2 sm:px-3 hidden group-hover:flex hover:flex group-focus:flex flex-col top-full left-0 sm:gap-y-2 rounded-lg sm:translate-y-2 before:content-[''] before:absolute before:left-0 before:-top-3 before:w-full sm:before:h-4">
             <div className="flex sm:gap-x-2 text-black items-center justify-center hover:bg-black/30 hover:cursor-pointer transition delay-75 sm:min-h-8 rounded-lg" onClick={() => {
-              navigate("/home");
+              navigate("/login");
             }}>
               <div>Home</div>
               <Icon icon="material-symbols:home" />

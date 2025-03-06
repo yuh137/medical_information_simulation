@@ -24,16 +24,15 @@ import Faculty_QC_Review from "./pages/FacultyView/FacultyReviewControls";
 import ChemistryQCTypeButtonsPage from "./pages/General/Chemistry/ChemistryQCTypeSelection";
 import Layout from "./utils/Layout";
 import ChemistryLeveyJennings from "./pages/General/Chemistry/ChemistryLeveyJennings";
-import SimpleAnalyteInputPage from "./pages/General/Chemistry/SimpleAnalyteInputPage";
 import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
 import { qcTypeLinkList, StudentReport } from "./utils/utils";
 import { AuthToken } from "./context/AuthContext";
-import { AdminQCLot } from "./utils/indexedDB/IDBSchema";
 import ChemistryPanel from "./pages/General/Chemistry/ChemistryPanel";
 import FacultyOrderEntry from "./pages/FacultyView/FacultyOrderEntry";
 import ChemistryOEBuilder from "./pages/General/Chemistry/ChemistryOEBuilder";
 import ChemistryCustomQC from "./pages/General/Chemistry/ChemistryCustomQC";
 import FacultyResultsInProgress from "./pages/FacultyView/FacultyResultsInProgress";
+import ChemistryReviewControls from "./pages/General/Chemistry/ChemistryReviewControls";
 
 function App() {
   // initIDB();
@@ -45,8 +44,6 @@ function App() {
 }
 
 function AppWithRouter() {
-  // const { checkSession, checkUserType } = useAuth();
-
   const router = useMemo(() => {
     return createBrowserRouter([
       {
@@ -115,18 +112,6 @@ function AppWithRouter() {
                     return res.json();
                   }
 
-                  // if (token.roles.includes("Admin")) {
-                  //   const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminAnalyteReport/${link}`);
-                  //   if (res.ok) {
-                  //     return res.json();
-                  //   }
-                  // } else if (token.roles.includes("Student")) {
-                  //   const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/${link}`);
-                  //   if (res.ok) {
-                  //     return res.json();
-                  //   }
-                  // }
-
                   return null;
                 }
               },
@@ -135,12 +120,36 @@ function AppWithRouter() {
                 element: <ChemistryOrderControls /> 
               },
               {
+                path: 'review_controls',
+                element: <ChemistryReviewControls />
+              },
+              {
                 path: "qc_builder",
                 element: <ChemistryQCBuilder />,
               },
               {
-                path: 'levey-jennings/:fileName/:lotNumber/:analyteName',
+                path: 'levey-jennings/:lotNumber/:filename/:analyteName',
                 element: <ChemistryLeveyJennings />,
+                loader: async ({ params }) => {
+                  const { lotNumber } = params;
+
+                  try {
+                    if (!lotNumber) {
+                      return null;
+                    }
+
+                    const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByLotNumber/${lotNumber}`);
+                    if (res.ok) {
+                      const data = await res.json();
+                      // console.log("Before going to component: ", data);
+                      return data;
+                    }
+                  } catch (e) {
+                    console.error("Error fetching QC data", e);
+                  }
+
+                  return null;
+                }
               },
               {
                 path: "edit_qc",

@@ -29,9 +29,8 @@ import {
   Vitamins,
   Diabetes,
 } from "../../../utils/MOCK_DATA";
-import { DefinedRequestError, Department, ErrorCode, qcTypeLinkList, renderSubString } from "../../../utils/utils";
+import { AdminQCLot, DefinedRequestError, Department, ErrorCode, qcTypeLinkList, renderSubString } from "../../../utils/utils";
 import { Backdrop, Button, ButtonBase } from "@mui/material";
-import { AdminQCLot } from "../../../utils/indexedDB/IDBSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
 import NavBar from "../../../components/NavBar";
 import { DatePicker } from "antd";

@@ -1,23 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { Button } from "@mui/material";
+import { Backdrop, Button } from "@mui/material";
 import { Icon } from "@iconify/react";
 import NavBar from "../../../components/NavBar";
 import { Table, TableBody, TableCell, TableHead, TableRow, TableHeader } from "../../../components/ui/table";
 import { getQCRangeByDetails } from "../../../utils/indexedDB/getData";
-import { AdminQCLot } from "../../../utils/indexedDB/IDBSchema";
 import {
   ColumnDef,
   useReactTable,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
-  CellContext
 } from "@tanstack/react-table";
-import { StudentReport } from "../../../utils/utils";
+import { AdminQCLot, StudentReport } from "../../../utils/utils";
 import { AuthToken } from "../../../context/AuthContext";
 import { Skeleton } from "antd";
 import dayjs from "dayjs";
+import { useTheme } from "../../../context/ThemeContext";
 
 interface QCItem {
   reportId: string;
@@ -25,6 +24,12 @@ interface QCItem {
   lotNumber: string;
   expDate: string;
   createdDate: string;
+}
+
+enum NotiType {
+  Default,
+  NotSelected,
+  ReportDeleted
 }
 
 const columns: ColumnDef<QCItem>[] = [
@@ -58,10 +63,13 @@ const columns: ColumnDef<QCItem>[] = [
 
 const ChemistryQCResult = () => {
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const [qcData, setQcData] = useState<QCItem[]>([]);
   const [selectedQC, setSelectedQC] = useState<QCItem | null>(null);
 
   const [isFetchingData, setIsFetchingData] = useState<boolean>(false);
+  const [isFeedbackNotiOpen, setIsFeedbackNotiOpen] = useState<boolean>(false);
+  const [notiType, setNotiType] = useState<NotiType>(NotiType.Default);
 
   async function fetchQCData() {
     setIsFetchingData(true);
@@ -139,15 +147,48 @@ const ChemistryQCResult = () => {
   
   
   const handleSelectQC = async () => {
-    if (selectedQC) {
-      console.log("Selected QC:", selectedQC);  
-      try {
-        navigate(`/chemistry/qc_results/${selectedQC.reportId}`)
-      } catch (error) {
-        console.error("Error fetching QC data:", error);
+    if (selectedQC === null) {
+      setNotiType(NotiType.NotSelected);
+      setIsFeedbackNotiOpen(true);
+      return;
+    }
+
+    // console.log("Selected QC:", selectedQC);  
+    try {
+      navigate(`/chemistry/qc_results/${selectedQC.reportId}`)
+    } catch (error) {
+      console.error("Error fetching QC data:", error);
+    }
+  };
+
+  const handleDeleteQC = async () => {
+    if (selectedQC === null) {
+      setNotiType(NotiType.NotSelected);
+      setIsFeedbackNotiOpen(true);
+      return;
+    }
+    
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/Delete/${selectedQC.reportId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (res.ok) {
+        console.log("QC deleted successfully.", await res.json());
+        setQcData(preValue => {
+          const updatedValues = preValue.filter(item => item !== selectedQC);
+          return updatedValues;
+        });
+        setSelectedQC(null);
+        setNotiType(NotiType.ReportDeleted);
+        setIsFeedbackNotiOpen(true);
       }
-    } else {
-      alert('Please select a QC record to proceed.');
+    } catch (e) {
+      console.error("Error deleting QC:", e);
     }
   };
   
@@ -228,16 +269,89 @@ const ChemistryQCResult = () => {
                 </Button>
               </div>
             </div>
-            <Button
-              className="sm:!absolute sm:w-36 sm:h-12 sm:!text-lg !bg-[#DAE3F3] right-3 -bottom-3 !border !border-solid !border-blue-500 font-medium !text-black"
-              onClick={handleSelectQC}
-              disabled={!selectedQC}
-            >
-              Select QC
-            </Button>
+            <div className="flex items-center justify-center sm:gap-x-2">
+              <Button
+                className={`sm:w-36 sm:h-12 sm:!text-lg font-medium ${selectedQC !== null ? "!bg-[#DAE3F3] !text-black !border !border-solid !border-blue-500" : "!bg-[#AFABAB] !text-white !border !border-solid !border-gray-500"}`}
+                onClick={handleSelectQC}
+                disabled={!selectedQC}
+              >
+                Select QC
+              </Button>
+              <Button
+                className={`sm:w-36 sm:h-12 sm:!text-lg font-medium ${selectedQC !== null ? "!bg-[#DAE3F3] !text-black !border !border-solid !border-blue-500" : "!bg-[#AFABAB] !text-white !border !border-solid !border-gray-500"}`}
+                onClick={handleDeleteQC}
+                disabled={!selectedQC}
+              >
+                Delete QC
+              </Button>
+            </div>
           </>
         )}
       </div>
+
+      {/* Notification Popup */}
+      <Backdrop
+        open={isFeedbackNotiOpen}
+        onClick={() => {
+          setIsFeedbackNotiOpen(false);
+        }}
+      >
+        <div className="bg-white rounded-xl z-3">
+          <div className="sm:p-8 flex flex-col sm:gap-4">
+            {/* WARNING NO CHANGES MADE */}
+            { notiType === NotiType.Default && (
+                <div className="flex flex-col sm:gap-y-2 items-center sm:max-w-[480px]">
+                  <div className="text-2xl font-semibold">Notification Error</div>
+                  <Icon icon="hugeicons:sad-dizzy" className="text-2xl text-yellow-500 sm:w-20 sm:h-20"/>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setIsFeedbackNotiOpen(false);
+                    }}
+                    className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                  >
+                    OK
+                  </Button>
+                </div>
+              ) }
+
+              {/* NOTIFYING ORDER CREATED */}
+              { notiType === NotiType.NotSelected && (
+                <div className="flex flex-col sm:gap-y-2 items-center">
+                  <div className="text-2xl font-semibold">Please Select a Report</div>
+                  <Icon icon="ph:warning-octagon-bold" className="text-2xl text-yellow-500 sm:w-20 sm:h-20"/>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setIsFeedbackNotiOpen(false);
+                      // navigate("/admin-home");
+                    }}
+                    className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                  >
+                    OK
+                  </Button>
+                </div>
+              ) }
+
+              {/* OTHER ERRORS */}
+              { notiType === NotiType.ReportDeleted && (
+                <div className="flex flex-col sm:gap-y-2 items-center">
+                  <div className="text-2xl font-semibold">Report Successfully Deleted</div>
+                  <Icon icon="clarity:success-standard-line" className="text-2xl text-green-500 sm:w-20 sm:h-20"/>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setIsFeedbackNotiOpen(false);
+                    }}
+                    className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                  >
+                    OK
+                  </Button>
+                </div>
+              ) }
+          </div>
+        </div>
+      </Backdrop>
     </>
   );
 };

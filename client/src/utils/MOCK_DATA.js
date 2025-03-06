@@ -474,7 +474,7 @@ export const Liver = [
     electrolyte: true,
   },
   {
-    analyteName: "Gamma Glutamyl transferase",
+    analyteName: "Gamma Glutamyl Transferase",
     analyteAcronym: "GGT",
     unitOfMeasure: "U/L",
     minLevel: "0",

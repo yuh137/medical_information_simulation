@@ -1,4 +1,5 @@
-import { Admin, AdminQCLot, Student } from "./IDBSchema";
+import { AdminQCLot } from "../utils";
+import { Admin, Student } from "./IDBSchema";
 
 export function getAllDataFromStore<T>(storeName: string): Promise<T[] | string | null> {
     return new Promise((resolve) => {

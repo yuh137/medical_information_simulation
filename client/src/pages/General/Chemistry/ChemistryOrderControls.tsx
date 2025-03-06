@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NavBar from "../../../components/NavBar";
-import { qcTypeLinkList } from "../../../utils/utils"; 
+import { AdminQCLot, qcTypeLinkList } from "../../../utils/utils"; 
 import {
   DragDropContext,
   Draggable,
@@ -8,7 +8,6 @@ import {
   Droppable,
 } from "react-beautiful-dnd";
 import { Backdrop, Button, ButtonBase } from "@mui/material"
-import { AdminQCLot } from "../../../utils/indexedDB/IDBSchema";
 import { AuthToken, useAuth, UserType } from "../../../context/AuthContext";
 import dayjs from "dayjs";
 import { Icon } from "@iconify/react";

@@ -17,7 +17,7 @@ const Analyte = forwardRef((props: AnalyteProps, ref) => {
   const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {
-    setInputValue(props.value);
+    setInputValue((+props.value).toFixed(2).replace(/^0+(?!\.|$)/, ""));
 
     if (props.inRange) {
       inputRef.current?.classList.add("bg-[#00FF00]");

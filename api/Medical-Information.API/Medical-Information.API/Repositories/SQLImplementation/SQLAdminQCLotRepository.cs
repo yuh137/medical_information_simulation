@@ -50,6 +50,11 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             return await dbContext.AdminQCLots.FirstOrDefaultAsync(item => item.LotNumber == qcLot.LotNumber);
         }
 
+        public async Task<AdminQCLot?> GetAdminQCLotByLotNumber(string lotNumber)
+        {
+            return await dbContext.AdminQCLots.Include(item => item.Analytes).FirstOrDefaultAsync(item => item.LotNumber ==  lotNumber);
+        }
+
         public async Task<AdminQCLot?> GetAdminQCLotByNameAsync(string? name, Department? dep)
         {
             var QCLot = dbContext.AdminQCLots.AsQueryable();
@@ -64,7 +69,7 @@ namespace Medical_Information.API.Repositories.SQLImplementation
 
         public async Task<List<AdminQCLot>> GetAdminQCLotsByIdListAsync(List<Guid> lotId)
         {
-            return await dbContext.AdminQCLots.Where(item => lotId.Contains(item.AdminQCLotID) && item.IsActive).ToListAsync();
+            return await dbContext.AdminQCLots.Include(item => item.Analytes).Where(item => lotId.Contains(item.AdminQCLotID) && item.IsActive).ToListAsync();
         }
 
         public async Task<List<AdminQCLot>> GetAdminQCLotsByNameListAsync(List<string> names)

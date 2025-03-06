@@ -11,7 +11,6 @@ import {
 import { Button, Modal, Box, Typography } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
-import { AdminQCLot } from "../../utils/indexedDB/IDBSchema";
 import { getAllDataFromStore } from "../../utils/indexedDB/getData";
 
 import {
@@ -21,6 +20,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { AdminQCLot } from '../../utils/utils';
 
 const modalStyle = {
   position: 'absolute' as 'absolute',

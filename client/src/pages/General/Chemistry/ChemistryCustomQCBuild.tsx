@@ -16,12 +16,11 @@ import {
   TableRow,
 } from "../../../components/ui/table";
 import { CMP, Cardiac, Thyroid, Iron, Lipid, Liver, Drug, Hormone, Pancreatic, Diabetes, Cancer, Vitamins } from "../../../utils/MOCK_DATA";
-import { renderSubString } from "../../../utils/utils";
+import { AdminQCLot, renderSubString } from "../../../utils/utils";
 import { CMPLevelList, CardiacLevelList, HormoneLevelList, ThyroidLevelList, LipidLevelList, LiverLevelList, IronLevelList, DrugLevelList, PancreaticLevelList, DiabetesLevelList, CancerLevelList, VitaminsLevelList } from "../../../utils/utils";
 import { ButtonBase, Checkbox, Drawer } from "@mui/material";
 import { useTheme } from "../../../context/ThemeContext";
 import addData from "../../../utils/indexedDB/addData";
-import { AdminQCLot } from "../../../utils/indexedDB/IDBSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { getDataByKey } from "../../../utils/indexedDB/getData";
 import { deleteData } from "../../../utils/indexedDB/deleteData";

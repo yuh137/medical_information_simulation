@@ -250,6 +250,36 @@ export interface AnalyteInput {
   comment: string;
 }
 
+export interface Analyte {
+  analyteName: string;
+  analyteAcronym: string;
+  unitOfMeasure: string;
+  minLevel: string;
+  maxLevel: string;
+  mean: string;
+  stdDevi: string;
+}
+
+export interface AdminQCLot {
+  adminQCLotID?: string;
+  qcName: string;
+  lotNumber: string;
+  openDate: string;
+  closedDate: string;
+  expirationDate: string;
+  fileDate: string;
+  analytes: {
+      analyteName: string;
+      analyteAcronym: string;
+      unitOfMeasure: string;
+      minLevel: string;
+      maxLevel: string;
+      mean: string;
+      stdDevi: string;
+      value?: string; // Optional value field, since it might not exist initially
+  }[];
+}
+
 export enum Department {
   Chemistry,
   Serology,

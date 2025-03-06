@@ -30,6 +30,17 @@ namespace Medical_Information.API.Controllers
             return Ok(analyteDTO);
         }
 
+        [HttpGet]
+        [Route("ByQCLotNumber/{lotNum}")]
+        public async Task<IActionResult> GetAllAnalytesFromQCLotByLotNumber([FromRoute] string lotNum)
+        {
+            var analyteModels = await analyteRepository.GetAllAnalytesFromQCLotByLotNumber(lotNum);
+
+            var analyteDTOs = mapper.Map<List<AnalyteDTO>>(analyteModels);
+
+            return Ok(analyteDTOs);
+        }
+
         [HttpPost]
         [Route("{lotId:Guid}")]
         public async Task<IActionResult> CreateAnalyte([FromRoute] Guid lotId, [FromBody] AddAnalyteRequestDTO dto)

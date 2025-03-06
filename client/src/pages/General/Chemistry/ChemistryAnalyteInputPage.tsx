@@ -1,15 +1,11 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
-import Analyte from "../../../components/Analyte";
 import NavBar from "../../../components/NavBar";
-import { Button, ButtonBase, Modal } from "@mui/material";
+import { Backdrop, Button, ButtonBase, Modal } from "@mui/material";
 import { useTheme } from "../../../context/ThemeContext";
-import { Admin, AnalyteInput, renderSubString, StudentReport } from "../../../utils/utils";
-import { AdminQCLot } from "../../../utils/indexedDB/IDBSchema";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { Admin, AdminQCLot, AnalyteInput, renderSubString, StudentReport } from "../../../utils/utils";
 import {
   Document,
   Page,
-  StyleSheet,
   Text,
   View,
   pdf,
@@ -19,6 +15,14 @@ import { AuthToken, useAuth, UserType } from "../../../context/AuthContext";
 import { useLoaderData, useParams } from "react-router-dom";
 import { Skeleton } from "antd";
 import dayjs from "dayjs";
+import { Icon } from "@iconify/react";
+import Analyte from "../../../components/Analyte";
+
+enum NotiType {
+  SomethingWrong,
+  NoChangesMade,
+  ReportSaved,
+}
 
 const ChemistryAnalyteInputPage = () => {
   
@@ -111,12 +115,85 @@ const ChemistryAnalyteInputPage = () => {
       if (res.ok) {
         const data: AnalyteInput[] = await res.json();
 
-        console.log("From fetch input function: ", data);
-        setAnalyteValues(data);
-        // data.map(item => item)
+        // Reindex the data
+        let newData: AnalyteInput[] = [];
+        if (QCData) {
+          newData = QCData.analytes.map((item, index) => {
+            let selectedAnalyte = data.find(input => input.analyteName === item.analyteName);
+            if (selectedAnalyte) {
+              return selectedAnalyte;
+            }
+  
+            return null;
+          }).filter((e: AnalyteInput | null): e is AnalyteInput => e !== null);
+        };
+        console.log("Formatted data: ", newData);
+
+        // console.log("From fetch input function: ", data);
+        setAnalyteValues(newData);
+        setOriginalAnalyteValues(newData);
+        let newInvalidIndexes = new Set<number>(invalidIndexes);
+        let isAllCommentsFilled = true;
+        newData.forEach(input => {
+          if (!input.inRange) {
+            if (input.comment === "") {
+              isAllCommentsFilled = false;
+            }
+
+            let invalidIndex = QCData?.analytes.findIndex(analyte => analyte.analyteName === input.analyteName);
+            // console.log("From fetch input function 1: ", invalidIndex);
+
+            if (invalidIndex !== undefined) {
+              newInvalidIndexes.add(invalidIndex);
+              // console.log("For input ", input, " invalid index: ", newInvalidIndexes);
+              let newModalData = { invalidIndex: invalidIndex, comment: input.comment };
+              console.log("New modal data: ", newModalData);
+              setModalData(prevValue => {
+                const updatedValues = [...prevValue];
+                if (invalidIndex !== undefined) {
+                  updatedValues[invalidIndex] = newModalData;
+                }
+                return updatedValues;
+              });
+              setOriginalModalData(prevValue => {
+                const updatedValues = [...prevValue];
+                if (invalidIndex !== undefined) {
+                  updatedValues[invalidIndex] = newModalData;
+                }
+                return updatedValues;
+              });
+              // console.log("From fetch input function 2: ", data.length, QCData?.analytes.length);
+              setIsInputFull(data.length === QCData?.analytes.length);
+            }
+          }
+        });
+
+        // Handle undefined data in Comments
+        setModalData(prevValue => {
+          const updatedValues = [...prevValue];
+          updatedValues.forEach((item, index) => {
+            if (item === undefined) {
+              updatedValues[index] = { invalidIndex: index, comment: "" };
+            }
+          });
+          return updatedValues;
+        });
+
+        setOriginalModalData(prevValue => {
+          const updatedValues = [...prevValue];
+          updatedValues.forEach((item, index) => {
+            if (item === undefined) {
+              updatedValues[index] = { invalidIndex: index, comment: "" };
+            }
+          });
+          return updatedValues;
+        });
+
+        setInvalidIndexes(newInvalidIndexes);
+        setIsValidManual(isAllCommentsFilled);
       }
     } catch (e) {
-
+      console.error("Error fetching analyte inputs: ", e);
     } finally {
       setIsFetchingData(false);
     }
@@ -134,30 +211,55 @@ const ChemistryAnalyteInputPage = () => {
   const { theme } = useTheme();
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const analyteNameRefs = useRef<HTMLDivElement[]>([]);
+  const firstRender = useRef(true);
   const { userId, type } = useAuth();
 
   const [isInputFull, setIsInputFull] = useState<boolean>(false);
   const [isFetchingData, setIsFetchingData] = useState<boolean>(false);
+
+  const [notiType, setNotiType] = useState<NotiType>(NotiType.SomethingWrong);
+  const [isFeedbackNotiOpen, setIsFeedbackNotiOpen] = useState<boolean>(false);
+
+  // Comment modal controlling state
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  // Have all the comments been filled
   const [isValidManual, setIsValidManual] = useState<boolean>(false);
 
+  // To be precise, comments for invalid analytes
   const [modalData, setModalData] = useState<{ invalidIndex: number, comment: string }[]>([]);
+
+  // For comparing the original with any changes made
+  const [originalModalData, setOriginalModalData] = useState<{ invalidIndex: number, comment: string }[]>([]);
+
+  // The defined Faculty Template used for this Analyte Report
   const [QCData, setQCData] = useState<AdminQCLot | null>(null);
+
+  // Used for the pdf report
   const [userFullname, setUserFullname] = useState<string>("");
+
+  // State used for input fields, can be modified
   const [analyteValues, setAnalyteValues] = useState<AnalyteInput[]>([]);
+
+  // For comparing the original with any changes made
+  const [originalAnalyteValues, setOriginalAnalyteValues] = useState<AnalyteInput[]>([]);
+
+  // A unique set to keep track of the invalid analytes indexes
   const [invalidIndexes, setInvalidIndexes] = useState<Set<number> | null>(null);
 
   const loaderData = useLoaderData() as StudentReport;
 
-  const invalidIndexArray: number[] | null = useMemo(() => {
-    if (!invalidIndexes) return null;
+  // the invalid index set converted into array
+  const invalidIndexArray: number[] = useMemo(() => {
     let newArray: number[] = [];
+    if (!invalidIndexes) return newArray;
     invalidIndexes.forEach(value => newArray.push(value));
     return newArray;
   }, [invalidIndexes])
 
   const isValid = useMemo(() => {
-    if ((!invalidIndexes || invalidIndexes.size === 0) && analyteValues.length === QCData?.analytes.length) return true;
+    // if ((!invalidIndexes || invalidIndexes.size === 0) && analyteValues.length === QCData?.analytes.length) return true;
+    if (analyteValues.length === QCData?.analytes.length) return true;
     else return false;
   }, [analyteValues])
 
@@ -172,7 +274,7 @@ const ChemistryAnalyteInputPage = () => {
   }
 
   function handleKeyPress(event: React.KeyboardEvent, index: number) {
-    console.log("From handleKeyPress function: ", index);
+    // console.log("From handleKeyPress function: ", index);
     if (
       event.key === "Enter" &&
       index < inputRefs.current.length - 1 &&
@@ -182,13 +284,18 @@ const ChemistryAnalyteInputPage = () => {
     }
   }
 
-  function handleTextareaChange(index: number, invalidIndex: number, value: string) {
+  function handleTextareaChange(invalidIndex: number, value: string) {
     setModalData(prevValues => {
       const updatedValues = [...prevValues];
-      updatedValues[index] = { invalidIndex: 0, comment: "" }
+      updatedValues[invalidIndex] = { invalidIndex: 0, comment: "" }
       // console.log(updatedValues)
-      updatedValues[index].invalidIndex = invalidIndex;
-      updatedValues[index].comment = value;
+      updatedValues[invalidIndex].invalidIndex = invalidIndex;
+      updatedValues[invalidIndex].comment = value;
+      updatedValues.forEach((item, index) => {
+        if (item === undefined) {
+          updatedValues[index] = { invalidIndex: index, comment: "" }
+        }
+      })
       return updatedValues;
     });
 
@@ -205,19 +312,69 @@ const ChemistryAnalyteInputPage = () => {
         return;
     }
 
-    try {
-        let analyteInputsToSave = QCData.analytes.map((analyte, index) => {
+    if (analyteValues === originalAnalyteValues || modalData === originalModalData) {
+      setNotiType(NotiType.NoChangesMade);
+      setIsFeedbackNotiOpen(true);
+      return;
+    }
+
+    if (originalAnalyteValues.length === 0) {
+      try {
+          let analyteInputsToSave = QCData.analytes.map((analyte, index) => {
+              return {
+                  analyteName: analyte.analyteName,
+                  analyteAcronym: analyte.analyteAcronym,
+                  analyteValue: analyteValues[index].analyteValue,
+                  inRange: !invalidIndexArray?.includes(index),
+                  isActive: true,
+                  createdDate: new Date().toISOString(),
+                  comment: analyteValues[index].comment,
+              }
+          });
+  
+          const res = await fetch(`${process.env.REACT_APP_API_URL}/AnalyteInput/Create/${loaderData.reportID}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify(analyteInputsToSave),
+          });
+  
+          if (res.ok) {
+              // console.log("QC data saved successfully.", await res.json());
+              setNotiType(NotiType.ReportSaved);
+              setIsFeedbackNotiOpen(true);
+          }
+      } catch (e) {
+          console.error("Error saving QC data:", e);
+          setNotiType(NotiType.SomethingWrong);
+          setIsFeedbackNotiOpen(true);
+      }
+    } else {
+      const updatedElements = originalAnalyteValues.map((ele, index) => {
+        if (ele.analyteValue !== analyteValues[index].analyteValue || ele.comment !== analyteValues[index].comment) {
+          console.log("entred")
+          return index;
+        }
+      }).filter((e: any): e is number => e !== undefined);
+
+      console.log("Updated elements: ", updatedElements);
+
+      try {
+        let analyteInputsToSave = updatedElements.map(item => {
             return {
-                analyteName: analyte.analyteName,
-                analyteAcronym: analyte.analyteAcronym,
-                analyteValue: analyteValues[index].analyteValue,
-                inRange: !invalidIndexArray?.includes(index),
+                analyteName: QCData.analytes[item].analyteName,
+                analyteAcronym: QCData.analytes[item].analyteAcronym,
+                analyteValue: analyteValues[item].analyteValue,
+                inRange: !invalidIndexArray?.includes(item),
                 isActive: true,
                 createdDate: new Date().toISOString(),
-                comment: analyteValues[index].comment,
+                comment: !invalidIndexArray?.includes(item) ? "" : analyteValues[item].comment,
             }
         });
 
+        console.log("Analyte inputs to update: ", analyteInputsToSave);
         const res = await fetch(`${process.env.REACT_APP_API_URL}/AnalyteInput/Create/${loaderData.reportID}`, {
           method: 'POST',
           headers: {
@@ -228,21 +385,14 @@ const ChemistryAnalyteInputPage = () => {
         });
 
         if (res.ok) {
-            console.log("QC data saved successfully.", await res.json());
+            // console.log("QC data saved successfully.", await res.json());
+            setNotiType(NotiType.ReportSaved);
+            setIsFeedbackNotiOpen(true);
         }
-    } catch (e) {
-        console.error("Error saving QC data:", e);
-    }
+      } catch (e) {
 
-    // try {
-    //     // Optionally, you might want to reset or clear the form after saving
-    //     setAnalyteValues([]);
-    //     setInvalidIndexes(null);
-    //     setModalData([]);
-    //     setIsModalOpen(false);
-    // } catch (error) {
-    //     console.error("Error saving QC data:", error);
-    // }
+      }
+    }
   };
   
   function handleInputChange(
@@ -291,7 +441,7 @@ const ChemistryAnalyteInputPage = () => {
       newInvalidIndexes.delete(index);
       setInvalidIndexes(newInvalidIndexes);
     }
-    setIsInputFull(newValues.length === QCData?.analytes.length && newValues.length > 0);
+    if (analyteValues.length !== 0) setIsInputFull(newValues.length === QCData?.analytes.length && newValues.length > 0);
   }
 
   // Get the current user's name for the pdf report
@@ -322,23 +472,39 @@ const ChemistryAnalyteInputPage = () => {
 
       return ""
     }
-
-    // console.log("User type: ", type);
     getUser().then(name => setUserFullname(name));
   }, []);
 
   useEffect(() => {
     fetchQCData();
-    fetchAnalyteInputs();
   }, []);
 
   useEffect(() => {
-    console.log(inputRefs)
-  }, [inputRefs])
+    if (firstRender.current === true) {
+      firstRender.current = false;
+      return;
+    }
+
+    fetchAnalyteInputs();
+  }, [QCData])
 
   useEffect(() => {
-    // console.log("From analyteValues: ", analyteValues, invalidIndexes, invalidIndexArray, isValid)
-  }, [analyteValues])
+    console.log("isValid: ", isValid, "\nisValidManual: ", isValidManual);
+  }, [isValid, isValidManual])
+
+  useEffect(() => {
+    if (originalAnalyteValues && originalModalData) {
+      if (analyteValues === originalAnalyteValues && modalData === originalModalData) {
+        setNotiType(NotiType.NoChangesMade);
+      }
+    }
+
+    console.log("Original data: ", originalAnalyteValues, originalModalData, "\nForm data: ", analyteValues, modalData);
+  }, [originalAnalyteValues, originalModalData, analyteValues, modalData])
+
+  useEffect(() => {
+    // console.log(originalAnalyteValues);
+  }, [originalAnalyteValues])
 
   return (
     <>
@@ -386,8 +552,10 @@ const ChemistryAnalyteInputPage = () => {
                 ref={(childRef: { inputRef: { current: HTMLInputElement | null }, nameRef: { current: HTMLDivElement | null } }) => {
                   // console.log(childRef);
                   if (childRef) {
-                    inputRefs.current.push(childRef.inputRef.current as HTMLInputElement);
-                    analyteNameRefs.current.push(childRef.nameRef.current as HTMLDivElement);
+                    // inputRefs.current.push(childRef.inputRef.current as HTMLInputElement);
+                    // analyteNameRefs.current.push(childRef.nameRef.current as HTMLDivElement);
+                    inputRefs.current[index] = childRef.inputRef.current as HTMLInputElement;
+                    analyteNameRefs.current[index] = childRef.nameRef.current as HTMLDivElement;
                   }
                 }}
               />
@@ -412,13 +580,17 @@ const ChemistryAnalyteInputPage = () => {
             </Button>
             <Button
               className={`sm:w-32 sm:h-[50px] !font-semibold !border !border-solid !border-[#6781AF] max-sm:w-full ${
-                isValid || isValidManual
+                isValid && isValidManual
                   ? "!bg-[#DAE3F3] !text-black"
                   : "!bg-[#AFABAB] !text-white"
               }`}
-              disabled={!isValidManual && !isValid}
+              disabled={!isValidManual || !isValid}
               onClick={() => {
-                // console.log(userFullname);
+                if (userFullname === "" || !userFullname) {
+                  console.log("No username: ", userFullname);
+                  return;
+                }
+
                 openPDF();
               }}
             >
@@ -426,12 +598,12 @@ const ChemistryAnalyteInputPage = () => {
             </Button>
             <Button
               className={`sm:w-32 sm:h-[50px] !font-semibold !border !border-solid !border-[#6781AF] max-sm:w-full ${
-                isValid || isValidManual
+                isValid && isValidManual
                   ? "!bg-[#DAE3F3] !text-black"
                   : "!bg-[#AFABAB] !text-white"
               }`}
-              disabled={!isValidManual && !isValid}
-              onClick= {() => handleAcceptQC()}
+              disabled={!isValidManual || !isValid}
+              onClick= {handleAcceptQC}
              >
               Accept QC
             </Button>
@@ -449,16 +621,16 @@ const ChemistryAnalyteInputPage = () => {
             {invalidIndexArray && invalidIndexArray.length > 0 && (
               <>
                 <div className="invalid-items-comments flex flex-col sm:space-y-6">
-                  {invalidIndexArray.map((invalidItem, index) => (
+                  {invalidIndexArray.map(invalidItem => (
                     <div className="comment flex sm:space-x-12 h-fit" key={invalidItem}>
                       <div className="comment-name w-[5%] sm:text-xl font-semibold self-center" dangerouslySetInnerHTML={{ __html: renderSubString(analyteNameRefs.current[invalidItem].innerHTML) }} />
-                      <textarea className="grow sm:h-16 p-1" value={modalData[index]?.comment || ""} onChange={(e) => handleTextareaChange(index, invalidItem, e.target.value)} required></textarea>
+                      <textarea className="grow sm:h-16 p-1" value={modalData[invalidItem]?.comment || ""} onChange={(e) => handleTextareaChange(invalidItem, e.target.value)} required></textarea>
                     </div>
                   ))}
                   <ButtonBase className={`!rounded-lg sm!my-10 sm:!py-6 sm:!px-10 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] sm:w-1/2 self-center`} onClick={(e => {
                     e.preventDefault()
                     // console.log(modalData)
-                    setIsValidManual(modalData.every(item => item.comment !== ""))
+                    setIsValidManual(invalidIndexArray.every(item => modalData[item].comment !== ""))
                     setIsModalOpen(false)
                   })}>Apply Comments</ButtonBase>
                 </div>
@@ -467,6 +639,70 @@ const ChemistryAnalyteInputPage = () => {
           </div>
         </div>
       </Modal>
+
+      {/* Notification Popup */}
+      <Backdrop
+        open={isFeedbackNotiOpen}
+        onClick={() => {
+          setIsFeedbackNotiOpen(false);
+        }}
+      >
+        <div className="bg-white rounded-xl z-3">
+          <div className="sm:p-8 flex flex-col sm:gap-4">
+            {/* WARNING NO CHANGES MADE */}
+            { notiType === NotiType.NoChangesMade && (
+                <div className="flex flex-col sm:gap-y-2 items-center sm:max-w-[480px]">
+                  <div className="text-2xl font-semibold">No changes made</div>
+                  <Icon icon="ph:warning-octagon-bold" className="text-2xl text-yellow-500 sm:w-20 sm:h-20"/>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setIsFeedbackNotiOpen(false);
+                    }}
+                    className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                  >
+                    OK
+                  </Button>
+                </div>
+              ) }
+
+              {/* NOTIFYING ORDER CREATED */}
+              { notiType === NotiType.ReportSaved && (
+                <div className="flex flex-col sm:gap-y-2 items-center">
+                  <div className="text-2xl font-semibold">Report Successfully Created/Updated</div>
+                  <Icon icon="clarity:success-standard-line" className="text-2xl text-green-500 sm:w-20 sm:h-20"/>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setIsFeedbackNotiOpen(false);
+                      // navigate("/admin-home");
+                    }}
+                    className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                  >
+                    OK
+                  </Button>
+                </div>
+              ) }
+
+              {/* OTHER ERRORS */}
+              { notiType === NotiType.SomethingWrong && (
+                <div className="flex flex-col sm:gap-y-2 items-center">
+                  <div className="text-2xl font-semibold">Something Went Wrong</div>
+                  <Icon icon="material-symbols:cancel-outline" className="text-2xl text-red-500 sm:w-20 sm:h-20"/>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setIsFeedbackNotiOpen(false);
+                    }}
+                    className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                  >
+                    OK
+                  </Button>
+                </div>
+              ) }
+          </div>
+        </div>
+      </Backdrop>
     </>
   );
 };

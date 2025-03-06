@@ -95,6 +95,26 @@ namespace Medical_Information.API.Controllers
             return Ok(qcLotDTO);
         }
 
+        [HttpGet]
+        [Route("ByLotNumber/{lotNum}")]
+        public async Task<IActionResult> GetQCLotByLotNumber([FromRoute] string lotNum)
+        {
+            var qcLotModel = await adminQCLotRepository.GetAdminQCLotByLotNumber(lotNum);
+
+            if (qcLotModel == null)
+            {
+                return BadRequest(new RequestErrorObject
+                {
+                    ErrorCode = ErrorCode.NotFound,
+                    Message = "QC Lot Do Not Exist!"
+                });
+            }
+
+            var qcLotDTO = mapper.Map<AdminQCLotDTO>(qcLotModel);
+
+            return Ok(qcLotDTO);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateQCLot([FromBody] AddAdminQCLotRequestDTO dto)
         {
