@@ -75,7 +75,6 @@ export const ChemistryTestInputPage = () => {
   const { theme } = useTheme();
   const { item } = useParams() as { item: string };
   const loaderData = useLoaderData() as AdminQCLot;
-  const { checkSession, checkUserType } = useAuth();
 
   // Placeholder data if the database is empty
   const mockData = item?.includes("cardiac")
@@ -103,7 +102,8 @@ export const ChemistryTestInputPage = () => {
     : CMP;
 
   // Set the initial value for QCPanel table, taken from the database. If none exist, use the mock data.
-  const [QCElements, setQCElements] = useState<QCRangeElements[]>(loaderData ? loaderData.analytes : mockData);
+  // const [QCElements, setQCElements] = useState<QCRangeElements[]>(loaderData ? loaderData.analytes : mockData);
+  const [QCElements, setQCElements] = useState<QCRangeElements[]>(loaderData.analytes);
 
   // State to manage what clicking the Save button does
   const [saveButtonActionType, setSaveButtonActionType] = useState<SaveButtonActionType>(SaveButtonActionType.Idle);
@@ -128,11 +128,20 @@ export const ChemistryTestInputPage = () => {
   const prevQCElements = useRef(QCElements);
 
   // React-hook-form states
-  const { register, handleSubmit, setValue } = useForm<AdminQCLot>();
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<AdminQCLot>();
+
+  function presetLotAndDate() {
+    console.log(loaderData);
+    if (loaderData) {
+      setQCLotInput(loaderData.lotNumber);
+      setExpDate(dayjs(loaderData.expirationDate));
+      setFileDate(dayjs(loaderData.fileDate));
+    }
+  }
 
   // Function to handle the Save QC Button
   const saveQC: SubmitHandler<AdminQCLot> = async (data) => {
-    // console.log("Entered save QC button", data);
+    console.log("Entered save QC button", data);
 
     if (loaderData && loaderData.lotNumber === data.lotNumber) {
       setFeedbackNotiType(NotiType.LotNumberTaken);
@@ -359,7 +368,9 @@ export const ChemistryTestInputPage = () => {
   useEffect(() => {
     register("lotNumber", { required: true });
     register("expirationDate", { required: true });
-    register("fileDate", { required: true })
+    register("fileDate", { required: true });
+
+    presetLotAndDate();
   }, [register])
 
   useEffect(() => {
@@ -403,14 +414,20 @@ export const ChemistryTestInputPage = () => {
 
     if (prevExpDate.current !== expDate) {
       console.log('expDate changed');
+      setValue("lotNumber", loaderData.lotNumber);
+      setValue("fileDate", loaderData.fileDate);
     }
 
     if (prevFileDate.current !== fileDate) {
       console.log('fileDate changed');
+      setValue("expirationDate", loaderData.expirationDate);
+      setValue("lotNumber", loaderData.lotNumber);
     }
 
     if (prevQCLotInput.current !== QCLotInput) {
       console.log('QCLotInput changed');
+      setValue("expirationDate", loaderData.expirationDate);
+      setValue("fileDate", loaderData.fileDate);
     }
 
     // Update the refs with the current values
@@ -940,6 +957,7 @@ export const ChemistryTestInputPage = () => {
         onClick={() => {
           setFeedbackNotiOpen(false);
         }}
+        style={{ zIndex: 1000 }}
       >
         <div className="bg-white rounded-xl">
           <div className="sm:p-8 flex flex-col sm:gap-4">
@@ -987,6 +1005,7 @@ export const ChemistryTestInputPage = () => {
                 <Icon icon="ph:warning-octagon-bold" className="text-2xl text-yellow-400 sm:w-20 sm:h-20"/>
                 <div className="flex gap-x-2">
                   <Button variant="contained" className="!bg-[#22C55E]" onClick={() => {
+                    console.log(errors)
                     handleSubmit(saveQC)();
                   }}>Confirm</Button>
                   <Button variant="contained" className="!bg-red-500" onClick={() => {
