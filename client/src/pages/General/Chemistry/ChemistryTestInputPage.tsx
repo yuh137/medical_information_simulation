@@ -102,8 +102,8 @@ export const ChemistryTestInputPage = () => {
     : CMP;
 
   // Set the initial value for QCPanel table, taken from the database. If none exist, use the mock data.
-  // const [QCElements, setQCElements] = useState<QCRangeElements[]>(loaderData ? loaderData.analytes : mockData);
-  const [QCElements, setQCElements] = useState<QCRangeElements[]>(loaderData.analytes);
+  const [QCElements, setQCElements] = useState<QCRangeElements[]>(loaderData ? loaderData.analytes : mockData);
+  // const [QCElements, setQCElements] = useState<QCRangeElements[]>(loaderData.analytes);
 
   // State to manage what clicking the Save button does
   const [saveButtonActionType, setSaveButtonActionType] = useState<SaveButtonActionType>(SaveButtonActionType.Idle);
