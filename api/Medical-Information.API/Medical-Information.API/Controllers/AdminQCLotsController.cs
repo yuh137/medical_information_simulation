@@ -57,6 +57,35 @@ namespace Medical_Information.API.Controllers
         }
 
         [HttpGet]
+        [Route("HistoryByName")]
+        public async Task<IActionResult> GetQCLotsHistoryByName([FromQuery] string? name, [FromQuery] string? dep)
+        {
+            List<AdminQCLot> qcLotModels = new List<AdminQCLot>();
+
+            if (Enum.TryParse(dep, true, out Department department))
+            {
+                qcLotModels = await adminQCLotRepository.GetQCLotsHistoryByNameAsync(name, department);
+            }
+            else
+            {
+                qcLotModels = await adminQCLotRepository.GetQCLotsHistoryByNameAsync(name);
+            }
+
+            if (qcLotModels == null)
+            {
+                return NotFound(new RequestErrorObject
+                {
+                    ErrorCode = ErrorCode.NotFound,
+                    Message = "QC Lot Do Not Exist!"
+                });
+            }
+
+            var qcLotDTO = mapper.Map<List<AdminQCLotDTO>>(qcLotModels);
+
+            return Ok(qcLotDTO);
+        }
+
+        [HttpGet]
         [Route("ByIdList")]
         public async Task<IActionResult> GetQCLotByIdList([FromQuery] List<Guid> lotId)
         {

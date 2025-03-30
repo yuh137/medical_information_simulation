@@ -86,6 +86,18 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             return await dbContext.AdminQCLots.Include(item => item.Analytes).Include(item => item.Reports).ToListAsync();
         }
 
+        public async Task<List<AdminQCLot>> GetQCLotsHistoryByNameAsync(string? name, Department? dep)
+        {
+            var QCLots = dbContext.AdminQCLots.AsQueryable();
+
+            if (!string.IsNullOrEmpty(name) && dep != null && Enum.IsDefined(typeof(Department), dep))
+            {
+                QCLots = QCLots.Where(item => item.QCName.ToLower() == name.ToLower() && item.Department == dep);
+            }
+
+            return await QCLots.Include(item => item.Analytes).ToListAsync();
+        }
+
         public async Task<AdminQCLot?> GetQCLotByIDAsync(Guid id)
         {
             return await dbContext.AdminQCLots.Include(item => item.Analytes).Include(item => item.Reports).FirstOrDefaultAsync(item => item.AdminQCLotID == id);

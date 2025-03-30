@@ -6,6 +6,7 @@ namespace Medical_Information.API.Repositories.Interfaces
     public interface IAdminQCLotRepository
     {
         Task<List<AdminQCLot>> GetAllQCLotsAsync();
+        Task<List<AdminQCLot>> GetQCLotsHistoryByNameAsync(string? name = null, Department? dep = null);
         Task<AdminQCLot?> GetQCLotByIDAsync(Guid id);
         Task<AdminQCLot?> GetAdminQCLotByNameAsync(string? name = null, Department? dep = null);
         Task<List<AdminQCLot>> GetAdminQCLotsByNameListAsync(List<string> names);
