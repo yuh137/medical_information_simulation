@@ -214,6 +214,35 @@ export const isTokenExpired = (token: string) => {
   }
 };
 
+export const getISOTexasTime = (): string => {
+  const now = new Date();
+
+  // Convert current time to Texas time (America/Chicago handles DST automatically)
+  const texasTime = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Chicago",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    fractionalSecondDigits: 3, // Preserve milliseconds
+    hourCycle: "h23", // 24-hour format
+  }).formatToParts(now);
+
+  // Extract components
+  const year = texasTime.find((part) => part.type === "year")?.value;
+  const month = texasTime.find((part) => part.type === "month")?.value;
+  const day = texasTime.find((part) => part.type === "day")?.value;
+  const hour = texasTime.find((part) => part.type === "hour")?.value;
+  const minute = texasTime.find((part) => part.type === "minute")?.value;
+  const second = texasTime.find((part) => part.type === "second")?.value;
+  const millisecond = texasTime.find((part) => part.type === "fractionalSecond")?.value;
+
+  // Convert to correct ISO 8601 format
+  return `${year}-${month}-${day}T${hour}:${minute}:${second}.${millisecond}Z`;
+}
+
 export interface Admin {
   username: string;
   firstname: string;
@@ -267,6 +296,7 @@ export interface AdminQCLot {
   openDate: string;
   closedDate: string;
   expirationDate: string;
+  isActive: boolean;
   fileDate: string;
   analytes: {
       analyteName: string;

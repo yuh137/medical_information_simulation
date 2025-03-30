@@ -98,17 +98,17 @@ const ChemistryCustomQCBuild = (props: { name: string }) => {
       })
     );
 
-    const res = await addData<AdminQCLot>("qc_store", {
-      qcName: props.name,
-      lotNumber: data.lotNumber || "",
-      openDate: data.openDate || "",
-      fileDate: data.fileDate || "",
-      closedDate: data.closedDate || "",
-      expirationDate: data.expirationDate || "",
-      analytes: [...savedAnalyte],
-    });
+    // const res = await addData<AdminQCLot>("qc_store", {
+    //   qcName: props.name,
+    //   lotNumber: data.lotNumber || "",
+    //   openDate: data.openDate || "",
+    //   fileDate: data.fileDate || "",
+    //   closedDate: data.closedDate || "",
+    //   expirationDate: data.expirationDate || "",
+    //   analytes: [...savedAnalyte],
+    // });
 
-    console.log("Save result: ", res);
+    // console.log("Save result: ", res);
   };
 
   const saveToCustomList = () => {

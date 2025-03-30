@@ -77,10 +77,10 @@ function AppWithRouter() {
             path: 'student-review_controls',
             element: <Student_QC_Review />,
           },
-          {
-            path: 'admin-review_controls',
-            element: <Simple_Faculty_QC_Review />,
-          },
+          // {
+          //   path: 'admin-review_controls',
+          //   element: <Simple_Faculty_QC_Review />,
+          // },
           
           { path: 'student-results', element: <StudentResultsInProgress /> },
 
@@ -128,7 +128,7 @@ function AppWithRouter() {
                 element: <ChemistryQCBuilder />,
               },
               {
-                path: 'levey-jennings/:lotNumber/:filename/:analyteName',
+                path: 'levey-jennings/:lotNumber/:analyteName',
                 element: <ChemistryLeveyJennings />,
                 loader: async ({ params }) => {
                   const { lotNumber } = params;
@@ -167,10 +167,12 @@ function AppWithRouter() {
 
                   if (qcName) {
                     try {
-                      const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByName?dep=${dep}&name=${qcName}`);
+                      const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/HistoryByName?dep=${dep}&name=${qcName}`);
 
                       if (res.ok) {
-                        return res.json();
+                        const data = await res.json();
+                        console.log(data);
+                        return data;
                       }
                     } catch (e) {
                       console.error("Error fetching QC data", e);

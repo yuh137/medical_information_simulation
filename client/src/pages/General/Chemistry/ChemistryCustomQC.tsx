@@ -179,7 +179,7 @@ const ChemistryCustomQC = () => {
             open={isModalOpen}
             onClose={() => setIsModalOpen(false)}
         >
-            <div className='modal-container top-1/4 left-1/2 sm:w-[60svw] sm:max-h-[50svh] bg-[#dae3f3] sm:border-2 border-solid border-[#6781AF] rounded-xl sm:-translate-x-1/2 sm:translate-y-12 flex flex-col items-center sm:py-6 relative overflow-scroll sm:space-y-8'>
+            <div className='modal-container sm:left-1/2 sm:w-[80svw] sm:max-h-[80svh] bg-[#dae3f3] sm:border-2 border-solid border-[#6781AF] rounded-xl sm:-translate-x-1/2 sm:translate-y-1/4 flex flex-col items-center sm:py-6 relative overflow-scroll sm:space-y-8'>
                 <div className="modal-title sm:text-2xl font-semibold">Create Custom QC</div>
                 <div className='flex sm:gap-x-4 justify-center sm:w-[80%]'>
                     <div className="lotname-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
@@ -192,8 +192,6 @@ const ChemistryCustomQC = () => {
                             // value={QCLotInput}
                             onChange={(e) => {
                                 e.preventDefault();
-
-                                
                             }}
                         />
                     </div>
@@ -207,8 +205,6 @@ const ChemistryCustomQC = () => {
                             // value={QCLotInput}
                             onChange={(e) => {
                                 e.preventDefault();
-
-                                
                             }}
                         />
                     </div>
@@ -218,13 +214,14 @@ const ChemistryCustomQC = () => {
                         </div>
                         <DatePicker
                             showTime
-                            popupStyle={{ color: "black" }}
+                            popupStyle={{ color: "black", zIndex: 999 }}
+                            getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
                             style={{
                                 padding: "0.25rem",
                                 border: "solid 1px #548235",
                                 width: "250px",
                                 height: "34px",
-                                zIndex: 1000
+                                // zIndex: 1000
                             }}
                             // defaultValue={loaderData ? dayjs(loaderData.expirationDate) : dayjs()}
                             // value={expDate}

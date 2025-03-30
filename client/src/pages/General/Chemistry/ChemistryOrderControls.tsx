@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NavBar from "../../../components/NavBar";
-import { AdminQCLot, qcTypeLinkList } from "../../../utils/utils"; 
+import { AdminQCLot, getISOTexasTime, qcTypeLinkList } from "../../../utils/utils"; 
 import {
   DragDropContext,
   Draggable,
@@ -74,7 +74,7 @@ const ChemistryOrderControls = () => {
     // localStorage.setItem('selectedQCItems', JSON.stringify(SelectedQCItems));
     const queryParams = new URLSearchParams();
     SelectedQCItems.forEach(item => queryParams.append("names", item));
-    console.log("QC Items ordered: ", SelectedQCItems);
+    console.log("QC Items ordered: ", SelectedQCItems, queryParams);
     setIsOrderLoading(true);
     
     try {
@@ -99,13 +99,13 @@ const ChemistryOrderControls = () => {
             return {
               adminID: userId,
               adminQCLotID: item.adminQCLotID,
-              createdDate: dayjs().toISOString(),
+              createdDate: getISOTexasTime(),
             };
-          } else if (type === UserType.Student) {
+          } else {
             return {
               studentID: userId,
               adminQCLotID: item.adminQCLotID,
-              createdDate: dayjs().toISOString(),
+              createdDate: getISOTexasTime(),
             };
           }
         });
@@ -139,10 +139,6 @@ const ChemistryOrderControls = () => {
     setOrderControlsItems(qcTypeLinkList.map(qc => qc.name));
     // localStorage.removeItem('selectedQCItems');  // Clear local storage
   };
-
-  // useEffect(() => {
-  //   console.log(SelectedQCItems);
-  // }, [SelectedQCItems])
   
   return (
     <>

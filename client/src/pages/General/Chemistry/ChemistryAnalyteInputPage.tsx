@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useMemo } from "react";
 import NavBar from "../../../components/NavBar";
 import { Backdrop, Button, ButtonBase, Modal } from "@mui/material";
 import { useTheme } from "../../../context/ThemeContext";
-import { Admin, AdminQCLot, AnalyteInput, renderSubString, StudentReport } from "../../../utils/utils";
+import { Admin, AdminQCLot, AnalyteInput, getISOTexasTime, renderSubString, StudentReport } from "../../../utils/utils";
 import {
   Document,
   Page,
@@ -319,7 +319,7 @@ const ChemistryAnalyteInputPage = () => {
     }
 
     if (originalAnalyteValues.length === 0) {
-      try {
+      try {     
           let analyteInputsToSave = QCData.analytes.map((analyte, index) => {
               return {
                   analyteName: analyte.analyteName,
@@ -327,7 +327,7 @@ const ChemistryAnalyteInputPage = () => {
                   analyteValue: analyteValues[index].analyteValue,
                   inRange: !invalidIndexArray?.includes(index),
                   isActive: true,
-                  createdDate: new Date().toISOString(),
+                  createdDate: getISOTexasTime(),
                   comment: analyteValues[index].comment,
               }
           });
@@ -369,7 +369,7 @@ const ChemistryAnalyteInputPage = () => {
                 analyteValue: analyteValues[item].analyteValue,
                 inRange: !invalidIndexArray?.includes(item),
                 isActive: true,
-                createdDate: new Date().toISOString(),
+                createdDate: getISOTexasTime(),
                 comment: !invalidIndexArray?.includes(item) ? "" : analyteValues[item].comment,
             }
         });
@@ -416,7 +416,7 @@ const ChemistryAnalyteInputPage = () => {
 
     newValues[index].analyteName = "";
     newValues[index].analyteValue = parseFloat(value);
-    newValues[index].createdDate = new Date().toISOString();
+    newValues[index].createdDate = getISOTexasTime();
 
     setAnalyteValues(newValues);
     if (

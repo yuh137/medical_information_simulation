@@ -15,7 +15,7 @@ const NavBar = (props: NavBarPropsTypes) => {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout, checkUserType } = useAuth();
+  const { logout } = useAuth();
 
   const [initials, setInitials] = useState<string>("");
   const [userRole, setUserRole] = useState<string>("");
@@ -41,6 +41,7 @@ const NavBar = (props: NavBarPropsTypes) => {
           const user = await res.json();
           // console.log(`Type: ${typeof user}`, user);
           setInitials(user.initials);
+          sessionStorage.setItem("initials", user.initials);
           return user;
         }
       } catch (e) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import NavBar from "../../../components/NavBar";
 import {
   Table,
@@ -22,7 +22,8 @@ import {
 import dayjs from 'dayjs';
 import { AuthToken } from '../../../context/AuthContext';
 import { AdminQCLot, StudentReport } from '../../../utils/utils';
-import { ReportProvider, useReport } from '../../../context/ReportContext';
+import { useReport } from '../../../context/ReportContext';
+import { DatePicker } from 'antd';
 
 const modalStyle = {
   position: 'absolute' as 'absolute',
@@ -62,6 +63,11 @@ interface QCItem {
   createdDate: string;
 }
 
+enum DateType {
+  SingleDate = "SingleDate",
+  DateRange = "DateRange",
+}
+
 const ChemistryReviewControls = () => {
   const navigate = useNavigate();
   const { changeReportId } = useReport();
@@ -71,11 +77,14 @@ const ChemistryReviewControls = () => {
   const [qcData, setQcData] = useState<QCItem[]>([]);
   const [qcLots, setQCLots] = useState<AdminQCLot[]>([]);
   const [selectedQC, setSelectedQC] = useState<QCItem | null>(null);
+  const [dateType, setDateType] = useState<DateType>(DateType.DateRange);
+  const [dateRange, setDateRange] = useState<{ startDate: string, endDate: string } | null>(null);
+  const [singleDate, setSingleDate] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
   const [isFetchingData, setIsFetchingData] = useState<boolean>(false);
 
-  // Fetch all QC items from IndexedDB
+  // Fetch all QC items from database
   useEffect(() => {
     const fetchQCData = async () => {
       try {
@@ -170,13 +179,9 @@ const ChemistryReviewControls = () => {
   function handleLeveyJenningsClick() {
     if (selectedAnalyte && selectedQC) {
       changeReportId(selectedQC.reportId);
-      navigate(`/chemistry/levey-jennings/${selectedQC.lotNumber}/${selectedQC.reportId}/${selectedAnalyte}`);
+      sessionStorage.setItem("LJReportId", selectedQC.reportId);
+      navigate(`/chemistry/levey-jennings/${selectedQC.lotNumber}/${selectedAnalyte}`, { state: { type: dateType, date: dateType === DateType.DateRange ? dateRange : singleDate } });
     }
-  }
-  
-  function handleRowClick(rowId: string, rowData: QCItem) {
-    // setSelectedRow(rowId === selectedRow ? null : rowId);
-    // setSelectedRowData(rowId === selectedRow ? undefined : rowData);
   }
 
   function handleAnalyteClick(analyteName: string) {
@@ -376,6 +381,70 @@ const ChemistryReviewControls = () => {
                     ))}
                   </TableBody>
                 </Table>
+
+                {/* Select date range */}
+                {selectedAnalyte && (
+                  dateType === DateType.DateRange ? (
+                    <>
+                      <div className='flex justify-center sm:mt-6 sm:gap-x-2 items-center'>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => setDateType(DateType.SingleDate)}
+                          className='sm:h-1/2'
+                        >Date Range</Button>
+                        <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
+                          <div className="lotnumber-label sm:text-xl font-semibold text-white">
+                            Select Date Range
+                          </div>
+                          <div>
+                            <DatePicker.RangePicker 
+                              popupStyle={{ zIndex: 999 }}
+                              format={"MM/DD/YYYY"}
+                              getPopupContainer={(triggerNode) => triggerNode.parentNode as HTMLElement}
+                              onChange={(value) => {
+                                if (value) {
+                                  let dateObject = { startDate: "", endDate: "" };
+                                  dateObject["startDate"] = value[0]?.toISOString() ?? "";
+                                  dateObject["endDate"] = value[1]?.toISOString() ?? "";
+                                  setDateRange(dateObject);
+                                }
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className='flex justify-center sm:mt-6 sm:gap-x-2 items-center'>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => setDateType(DateType.DateRange)}
+                          className='sm:h-1/2'
+                        >Single Date</Button>
+                        <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
+                          <div className="lotnumber-label sm:text-xl font-semibold text-white">
+                            Select Date
+                          </div>
+                          <div>
+                            <DatePicker
+                              popupStyle={{ zIndex: 999 }}
+                              format={"MM/DD/YYYY"}
+                              getPopupContainer={(triggerNode) => triggerNode.parentNode as HTMLElement}
+                              onChange={(value) => {
+                                if (value) {
+                                  setSingleDate(value.toISOString());
+                                }
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )
+                )}
 
                 {/* Levey Jennings and Qualitative Analysis Buttons */}
                 <div className="flex justify-center sm:mt-6 sm:gap-x-2">

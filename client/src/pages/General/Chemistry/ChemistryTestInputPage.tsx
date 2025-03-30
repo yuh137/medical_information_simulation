@@ -29,7 +29,7 @@ import {
   Vitamins,
   Diabetes,
 } from "../../../utils/MOCK_DATA";
-import { AdminQCLot, DefinedRequestError, Department, ErrorCode, qcTypeLinkList, renderSubString } from "../../../utils/utils";
+import { AdminQCLot, DefinedRequestError, Department, ErrorCode, getISOTexasTime, qcTypeLinkList, renderSubString } from "../../../utils/utils";
 import { Backdrop, Button, ButtonBase } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
 import NavBar from "../../../components/NavBar";
@@ -74,7 +74,8 @@ export const ChemistryTestInputPage = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { item } = useParams() as { item: string };
-  const loaderData = useLoaderData() as AdminQCLot;
+  const loaderData = useLoaderData() as AdminQCLot[];
+  const activeQCLot = loaderData.find(item => item.isActive);
 
   // Placeholder data if the database is empty
   const mockData = item?.includes("cardiac")
@@ -102,7 +103,7 @@ export const ChemistryTestInputPage = () => {
     : CMP;
 
   // Set the initial value for QCPanel table, taken from the database. If none exist, use the mock data.
-  const [QCElements, setQCElements] = useState<QCRangeElements[]>(loaderData ? loaderData.analytes : mockData);
+  const [QCElements, setQCElements] = useState<QCRangeElements[]>(activeQCLot ? activeQCLot.analytes : mockData);
   // const [QCElements, setQCElements] = useState<QCRangeElements[]>(loaderData.analytes);
 
   // State to manage what clicking the Save button does
@@ -115,11 +116,11 @@ export const ChemistryTestInputPage = () => {
   const [feedbackNotiType, setFeedbackNotiType] = useState<NotiType>(NotiType.NoChangesMade);
 
   // State to manage the QCLot input 
-  const [QCLotInput, setQCLotInput] = useState<string>(loaderData ? loaderData.lotNumber : "");
+  const [QCLotInput, setQCLotInput] = useState<string>(activeQCLot ? activeQCLot.lotNumber : "");
 
   // States for the Date inputs
-  const [expDate, setExpDate] = useState<Dayjs>(loaderData ? dayjs(loaderData.expirationDate) : dayjs());
-  const [fileDate, setFileDate] = useState<Dayjs>(loaderData ? dayjs(loaderData.fileDate) : dayjs());
+  const [expDate, setExpDate] = useState<Dayjs>(activeQCLot ? dayjs(activeQCLot.expirationDate) : dayjs());
+  const [fileDate, setFileDate] = useState<Dayjs>(activeQCLot ? dayjs(activeQCLot.fileDate) : dayjs());
 
   // Refs to check whether the data has changed to initiate update or creation of new QC
   const prevExpDate = useRef(expDate);
@@ -131,11 +132,11 @@ export const ChemistryTestInputPage = () => {
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<AdminQCLot>();
 
   function presetLotAndDate() {
-    console.log(loaderData);
-    if (loaderData) {
-      setQCLotInput(loaderData.lotNumber);
-      setExpDate(dayjs(loaderData.expirationDate));
-      setFileDate(dayjs(loaderData.fileDate));
+    console.log(activeQCLot);
+    if (activeQCLot) {
+      setQCLotInput(activeQCLot.lotNumber);
+      setExpDate(dayjs(activeQCLot.expirationDate));
+      setFileDate(dayjs(activeQCLot.fileDate));
     }
   }
 
@@ -143,7 +144,7 @@ export const ChemistryTestInputPage = () => {
   const saveQC: SubmitHandler<AdminQCLot> = async (data) => {
     console.log("Entered save QC button", data);
 
-    if (loaderData && loaderData.lotNumber === data.lotNumber) {
+    if (activeQCLot && activeQCLot.lotNumber === data.lotNumber) {
       setFeedbackNotiType(NotiType.LotNumberTaken);
       setFeedbackNotiOpen(true);
       return;
@@ -154,10 +155,11 @@ export const ChemistryTestInputPage = () => {
       qcName:
         qcTypeLinkList.find((qcType) => qcType.link.includes(item))?.name ?? "",
       lotNumber: data.lotNumber || "",
-      openDate: dayjs().toISOString(),
+      openDate: getISOTexasTime(),
       fileDate: data.fileDate || "",
       closedDate: data.closedDate || "",
       expirationDate: data.expirationDate || "",
+      isActive: true,
       analytes: QCElements.map(
         ({
           analyteName,
@@ -262,7 +264,7 @@ export const ChemistryTestInputPage = () => {
 
     setIsSavingQCLot(true);
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/UpdateQCLot/${loaderData.adminQCLotID}`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/UpdateQCLot/${activeQCLot?.adminQCLotID}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -400,13 +402,13 @@ export const ChemistryTestInputPage = () => {
   }, []);
 
   useEffect(() => {
-    if (!loaderData) {
+    if (!activeQCLot) {
       setSaveButtonActionType(SaveButtonActionType.Save);
       return;
     }
-    if (loaderData.lotNumber !== QCLotInput) {
+    if (activeQCLot.lotNumber !== QCLotInput) {
       setSaveButtonActionType(SaveButtonActionType.Save);
-    } else if (loaderData.lotNumber === QCLotInput && (loaderData.expirationDate === expDate.toISOString() || loaderData.fileDate === fileDate.toISOString() || prevQCElements.current !== QCElements)) {
+    } else if (activeQCLot.lotNumber === QCLotInput && (activeQCLot.expirationDate === expDate.toISOString() || activeQCLot.fileDate === fileDate.toISOString() || prevQCElements.current !== QCElements)) {
       setSaveButtonActionType(SaveButtonActionType.Update);
     } else {
       setSaveButtonActionType(SaveButtonActionType.Idle);
@@ -414,20 +416,20 @@ export const ChemistryTestInputPage = () => {
 
     if (prevExpDate.current !== expDate) {
       console.log('expDate changed');
-      setValue("lotNumber", loaderData.lotNumber);
-      setValue("fileDate", loaderData.fileDate);
+      setValue("lotNumber", activeQCLot.lotNumber);
+      setValue("fileDate", activeQCLot.fileDate);
     }
 
     if (prevFileDate.current !== fileDate) {
       console.log('fileDate changed');
-      setValue("expirationDate", loaderData.expirationDate);
-      setValue("lotNumber", loaderData.lotNumber);
+      setValue("expirationDate", activeQCLot.expirationDate);
+      setValue("lotNumber", activeQCLot.lotNumber);
     }
 
     if (prevQCLotInput.current !== QCLotInput) {
       console.log('QCLotInput changed');
-      setValue("expirationDate", loaderData.expirationDate);
-      setValue("fileDate", loaderData.fileDate);
+      setValue("expirationDate", activeQCLot.expirationDate);
+      setValue("fileDate", activeQCLot.fileDate);
     }
 
     // Update the refs with the current values
