@@ -73,10 +73,6 @@ function AppWithRouter() {
             path: 'admin-qc',
             element: <FacultyQualityControls />,
           },
-          {
-            path: 'student-review_controls',
-            element: <Student_QC_Review />,
-          },
           // {
           //   path: 'admin-review_controls',
           //   element: <Simple_Faculty_QC_Review />,

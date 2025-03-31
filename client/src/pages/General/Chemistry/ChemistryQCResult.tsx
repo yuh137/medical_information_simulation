@@ -48,7 +48,7 @@ const columns: ColumnDef<QCItem>[] = [
     header: () => <span>Created Date</span>,
     cell: info => {
       const createdDate = info.getValue() as string;
-      return dayjs(createdDate).format("MM/DD/YYYY - hh:mm:ss");
+      return dayjs(createdDate).format("MM/DD/YYYY - HH:mm:ss");
     },
   },
   {
@@ -56,7 +56,7 @@ const columns: ColumnDef<QCItem>[] = [
     header: () => <span>Expiration Date</span>,
     cell: info => {
       const expDate = info.getValue() as string;
-      return dayjs(expDate).format("MM/DD/YYYY - hh:mm:ss");
+      return dayjs(expDate).format("MM/DD/YYYY - HH:mm:ss");
     },
   },
 ];

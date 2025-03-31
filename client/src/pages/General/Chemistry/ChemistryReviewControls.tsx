@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../../components/ui/table";
-import { Button, Modal, Box, Typography } from "@mui/material";
+import { Button, Modal, Box, Typography, Backdrop } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
 
@@ -24,6 +24,7 @@ import { AuthToken } from '../../../context/AuthContext';
 import { AdminQCLot, StudentReport } from '../../../utils/utils';
 import { useReport } from '../../../context/ReportContext';
 import { DatePicker } from 'antd';
+import { useTheme } from '../../../context/ThemeContext';
 
 const modalStyle = {
   position: 'absolute' as 'absolute',
@@ -63,14 +64,22 @@ interface QCItem {
   createdDate: string;
 }
 
+enum NotiType {
+  AnalyteNotSelected,
+  DateRangeNull,
+  SingleDateNull,
+  SomethingWrong,
+};
+
 enum DateType {
   SingleDate = "SingleDate",
   DateRange = "DateRange",
-}
+};
 
 const ChemistryReviewControls = () => {
   const navigate = useNavigate();
   const { changeReportId } = useReport();
+  const { theme } = useTheme();
   // const [selectedRow, setSelectedRow] = useState<string | null>(null);
   const [selectedAnalyte, setSelectedAnalyte] = useState<string | null>(null);
   // const [selectedRowData, setSelectedRowData] = useState<QCItem | undefined>(undefined);
@@ -83,6 +92,9 @@ const ChemistryReviewControls = () => {
   const [open, setOpen] = useState(false);
 
   const [isFetchingData, setIsFetchingData] = useState<boolean>(false);
+
+  const [isFeedbackNotiOpen, setIsFeedbackNotiOpen] = useState(false);
+  const [notiType, setNotiType] = useState<NotiType>(NotiType.SomethingWrong);
 
   // Fetch all QC items from database
   useEffect(() => {
@@ -137,6 +149,7 @@ const ChemistryReviewControls = () => {
     
             if (qcDataRes.ok) {
               const qcData: AdminQCLot[] = await qcDataRes.json();
+              setQCLots(qcData);
               const returnData = reports.map(item => ({
                 reportId: item.reportID,
                 qcName: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.qcName ?? "",
@@ -177,11 +190,34 @@ const ChemistryReviewControls = () => {
   }, [selectedAnalyte])
 
   function handleLeveyJenningsClick() {
-    if (selectedAnalyte && selectedQC) {
+    try {
+      if (!selectedAnalyte || !selectedQC) {
+        setNotiType(NotiType.AnalyteNotSelected);
+        throw new Error("Undefined selectedAnalyte or selectedQC");
+      }
+
+      if (dateType === DateType.DateRange && dateRange === null) {
+        setNotiType(NotiType.DateRangeNull);
+        throw new Error("Undefined dateRange");
+      }
+
+      if (dateType === DateType.SingleDate && singleDate === null) {
+        setNotiType(NotiType.SingleDateNull);
+        throw new Error("Undefined singleDate");
+      }
+
       changeReportId(selectedQC.reportId);
       sessionStorage.setItem("LJReportId", selectedQC.reportId);
       navigate(`/chemistry/levey-jennings/${selectedQC.lotNumber}/${selectedAnalyte}`, { state: { type: dateType, date: dateType === DateType.DateRange ? dateRange : singleDate } });
+    } catch (e) {
+      console.error(e);
+      setIsFeedbackNotiOpen(true);
     }
+    // if (selectedAnalyte && selectedQC) {
+    //   changeReportId(selectedQC.reportId);
+    //   sessionStorage.setItem("LJReportId", selectedQC.reportId);
+    //   navigate(`/chemistry/levey-jennings/${selectedQC.lotNumber}/${selectedAnalyte}`, { state: { type: dateType, date: dateType === DateType.DateRange ? dateRange : singleDate } });
+    // }
   }
 
   function handleAnalyteClick(analyteName: string) {
@@ -229,7 +265,7 @@ const ChemistryReviewControls = () => {
       header: () => <span>Created Date</span>,
       cell: info => {
         const createdDate = info.getValue() as string;
-        return dayjs(createdDate).format("MM/DD/YYYY - hh:mm:ss");
+        return dayjs(createdDate).format("MM/DD/YYYY - HH:mm:ss");
       },
     },
     {
@@ -237,7 +273,7 @@ const ChemistryReviewControls = () => {
       header: () => <span>Expiration Date</span>,
       cell: info => {
         const expDate = info.getValue() as string;
-        return dayjs(expDate).format("MM/DD/YYYY - hh:mm:ss");
+        return dayjs(expDate).format("MM/DD/YYYY - HH:mm:ss");
       },
     },
   ];
@@ -344,7 +380,7 @@ const ChemistryReviewControls = () => {
         </div>
 
         {/* Modal for QC Review */}
-        <Modal open={open} onClose={() => setOpen(false)}>
+        <Modal open={open} onClose={() => setOpen(false)} style={{ zIndex: 99 }}>
           <Box sx={modalStyle}>
             <Typography variant="h5" align="center" gutterBottom>
               QC Review - Analytes
@@ -354,7 +390,7 @@ const ChemistryReviewControls = () => {
                 <Typography variant="body1" align="center">
                   <strong>File Name:</strong> {selectedQC.qcName} &nbsp; | &nbsp;
                   <strong>Lot Number:</strong> {selectedQC.lotNumber} &nbsp; | &nbsp;
-                  <strong>Created Date:</strong> {dayjs(selectedQC.createdDate).format("MM/DD/YYYY - hh:mm:ss")}
+                  <strong>Created Date:</strong> {dayjs(selectedQC.createdDate).format("MM/DD/YYYY - HH:mm:ss")}
                 </Typography>
 
                 {/* Table to display analyte names */}
@@ -472,6 +508,87 @@ const ChemistryReviewControls = () => {
           </Box>
         </Modal>
       </div>
+
+      {/* Notification Popup */}
+      <Backdrop
+        open={isFeedbackNotiOpen}
+        onClick={() => {
+          setIsFeedbackNotiOpen(false);
+        }}
+        style={{ zIndex: 999 }}
+      >
+        <div className="bg-white rounded-xl">
+          <div className="sm:p-8 flex flex-col sm:gap-4">
+            {/* WARNING QC NOT FOUND OR EXPIRED */}
+            { notiType === NotiType.AnalyteNotSelected && (
+                <div className="flex flex-col sm:gap-y-2 items-center sm:max-w-[480px]">
+                  <div className="text-2xl font-semibold">Please select an Analyte</div>
+                  <Icon icon="material-symbols:cancel-outline" className="text-2xl text-red-500 sm:w-20 sm:h-20"/>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setIsFeedbackNotiOpen(false);
+                    }}
+                    className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                  >
+                    OK
+                  </Button>
+                </div>
+              ) }
+
+              {/* NOTIFYING ORDER CREATED */}
+              { notiType === NotiType.DateRangeNull && (
+                <div className="flex flex-col sm:gap-y-2 items-center">
+                  <div className="text-2xl font-semibold">Please specify a date range</div>
+                  <Icon icon="material-symbols:cancel-outline" className="text-2xl text-red-500 sm:w-20 sm:h-20"/>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setIsFeedbackNotiOpen(false);
+                    }}
+                    className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                  >
+                    OK
+                  </Button>
+                </div>
+              ) }
+
+              {/* NOTIFYING ORDER CREATED */}
+              { notiType === NotiType.SingleDateNull && (
+                <div className="flex flex-col sm:gap-y-2 items-center">
+                  <div className="text-2xl font-semibold">Please specify a date</div>
+                  <Icon icon="material-symbols:cancel-outline" className="text-2xl text-red-500 sm:w-20 sm:h-20"/>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setIsFeedbackNotiOpen(false);
+                    }}
+                    className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                  >
+                    OK
+                  </Button>
+                </div>
+              ) }
+
+              {/* OTHER ERRORS */}
+              { notiType === NotiType.SomethingWrong && (
+                <div className="flex flex-col sm:gap-y-2 items-center">
+                  <div className="text-2xl font-semibold">Something Went Wrong</div>
+                  <Icon icon="material-symbols:cancel-outline" className="text-2xl text-red-500 sm:w-20 sm:h-20"/>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setIsFeedbackNotiOpen(false);
+                    }}
+                    className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                  >
+                    OK
+                  </Button>
+                </div>
+              ) }
+          </div>
+        </div>
+      </Backdrop>
     </>
   );
 }

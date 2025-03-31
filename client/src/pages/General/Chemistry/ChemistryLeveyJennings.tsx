@@ -217,7 +217,7 @@ const ChemistryLeveyJennings = () => {
           const tableRows = analyteValues.map((analyte) => ({
             // runDateTime: analyte.closedDate,
             runDateTime:
-              dayjs(analyte?.createdDate).format("MM/DD/YYYY hh:mm") || "",
+              dayjs(analyte?.createdDate).format("MM/DD/YYYY HH:mm") || "",
             result: analyte?.value.toFixed(2) || "",
             tech: sessionStorage.getItem("initials") || "",
             comments: analyte?.comments || "",
@@ -382,7 +382,7 @@ const ChemistryLeveyJennings = () => {
                 tickValues={xTicks}
                 tickFormat={(x: any) =>
                   dateType === "SingleDate"
-                    ? dayjs(x).format("hh:mm")
+                    ? dayjs(x).format("HH:mm")
                     : dayjs(x).format("MM/DD")
                 }
                 scale="time"
@@ -457,7 +457,7 @@ const ChemistryLeveyJennings = () => {
                 data={chartData}
                 labels={({ datum }) => {
                   return `Value: ${datum.y}\n Created At: ${dayjs(datum.x).format(
-                    "MM/DD/YYYY - hh:mm"
+                    "MM/DD/YYYY - HH:mm"
                   )}`;
                 }}
                 labelComponent={

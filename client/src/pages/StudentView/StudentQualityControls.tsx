@@ -4,7 +4,7 @@ import NavBar from "../../components/NavBar";
 import { testTypeLinkList } from "../../utils/utils";
 
 const OC_options: { name: string, link: string }[] = testTypeLinkList.map(item => Object({ name: item.name, link: item.link + "/order_controls" }));
-const RC_options: { name: string, link: string }[] = testTypeLinkList.map(item => Object({ name: item.name, link: "student-review_controls" }));
+const RC_options: { name: string, link: string }[] = testTypeLinkList.map(item => Object({ name: item.name, link: item.link + "/review_controls" }));
 
 const StudentQualityControls = () => {
   return (

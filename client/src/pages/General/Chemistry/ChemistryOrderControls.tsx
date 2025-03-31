@@ -292,7 +292,11 @@ const ChemistryOrderControls = () => {
                     variant="contained"
                     onClick={() => {
                       setIsFeedbackNotiOpen(false);
-                      navigate("/admin-home");
+
+                      const token: AuthToken = JSON.parse(localStorage.getItem("token") ?? "");
+
+                      if (token.roles.includes("Student")) navigate("/student-home");
+                      else navigate("/admin-home");
                     }}
                     className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
                   >
