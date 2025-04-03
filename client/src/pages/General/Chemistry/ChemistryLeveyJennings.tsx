@@ -120,22 +120,31 @@ const ChemistryLeveyJennings = () => {
     const minDataValue = _.minBy(chartData, (d) => d.y)?.y ?? Infinity; // Default to Infinity for min
     const maxDataValue = _.maxBy(chartData, (d) => d.y)?.y ?? -Infinity;
 
-    const yMin = Math.min(
-      0,
+    let yMin = Math.min(
       minDataValue,
       analyteLimits
         ? parseFloat(analyteLimits.minusThree?.toString() ?? "0")
-        : 0
+        : 0,
+      parseFloat(currentAnalyte?.minLevel ?? "0")
     );
 
-    const yMax = Math.max(
+    let yMax = Math.max(
       maxDataValue,
       analyteLimits
         ? parseFloat(analyteLimits.plusThree?.toString() ?? "100")
-        : 100
+        : 100,
+      parseFloat(currentAnalyte?.maxLevel ?? "100")
     );
 
     const yStep = (yMax - yMin) / 10.0;
+
+    // yMin = yMin <= (analyteLimits?.minusThree ?? Infinity) ? yMin - yStep * 2 : yMin;
+    yMin = yMin === minDataValue || yMin === analyteLimits?.minusThree ? yMin - yStep * 2 : yMin;
+
+    // yMax = yMax > (analyteLimits?.plusThree ?? -Infinity) ? yMax : yMax + yStep * 2;
+    yMax = yMax === parseFloat(currentAnalyte?.maxLevel ?? "100") ? yMax : yMax + yStep * 2;
+
+    console.log("Y Min: ", yMin, "Y Max: ", yMax, "Y Step: ", yStep);
 
     return _.concat(
       _.map(_.range(yMin, yMax, yStep), (val) => _.round(val, 2)), // Intermediate ticks
@@ -348,6 +357,7 @@ const ChemistryLeveyJennings = () => {
               <div style={{ fontWeight: "normal" }}>
                 Max Range: {currentAnalyte?.maxLevel}
               </div>
+              <div>Status: {qcLot.isActive ? (<span className="sm:p-1 font-semibold text-white bg-green-500 rounded-md">Active</span>) : (<span className="sm:p-1 font-semibold text-white bg-red-500 rounded-md">Inactive</span>)}</div>
             </div>
           </div>
 
