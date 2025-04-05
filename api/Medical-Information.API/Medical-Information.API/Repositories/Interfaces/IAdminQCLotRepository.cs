@@ -15,6 +15,7 @@ namespace Medical_Information.API.Repositories.Interfaces
         Task<AdminQCLot?> DoesLotNumberExist(AdminQCLot qcLot);
         Task<AdminQCLot> CreateQCLotAsync(AdminQCLot qclot);
         Task<AdminQCLot?> UpdateQCLotAsync(Guid lotId, AdminQCLot qcLot);
+        Task<AdminQCLot?> InactivateQCLotAsync(Guid lotId);
         Task<AdminQCLot?> DeleteQCLotAsync(Guid id);
     }
 }

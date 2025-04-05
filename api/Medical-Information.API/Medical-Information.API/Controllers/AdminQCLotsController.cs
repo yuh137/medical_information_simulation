@@ -204,6 +204,25 @@ namespace Medical_Information.API.Controllers
                 return BadRequest(new RequestErrorObject
                 {
                     ErrorCode = ErrorCode.NotFound,
+                    Message = "QC Lot Not Found"
+                });
+            }
+
+            return Ok(qclotModel);
+        }
+
+        [HttpPut]
+        [Route("DeactivateQCLot/{id:Guid}")]
+        public async Task<IActionResult> InactivateQCLot([FromRoute] Guid id)
+        {
+            var qclotModel = await adminQCLotRepository.InactivateQCLotAsync(id);
+
+            if (qclotModel == null)
+            {
+                return BadRequest(new RequestErrorObject
+                {
+                    ErrorCode = ErrorCode.NotFound,
+                    Message = "QC Lot Not Found"
                 });
             }
 

@@ -69,7 +69,7 @@ namespace Medical_Information.API.Repositories.SQLImplementation
 
         public async Task<List<AdminQCLot>> GetAdminQCLotsByIdListAsync(List<Guid> lotId)
         {
-            return await dbContext.AdminQCLots.Include(item => item.Analytes).Where(item => lotId.Contains(item.AdminQCLotID) && item.IsActive).ToListAsync();
+            return await dbContext.AdminQCLots.Include(item => item.Analytes).Where(item => lotId.Contains(item.AdminQCLotID)).ToListAsync();
         }
 
         public async Task<List<AdminQCLot>> GetAdminQCLotsByNameListAsync(List<string> names)
@@ -130,6 +130,21 @@ namespace Medical_Information.API.Repositories.SQLImplementation
                 }
             }
 
+            await dbContext.SaveChangesAsync();
+
+            return existingQCLot;
+        }
+
+        public async Task<AdminQCLot?> InactivateQCLotAsync(Guid lotId)
+        {
+            var existingQCLot = await dbContext.AdminQCLots.FirstOrDefaultAsync(item => item.AdminQCLotID == lotId);
+
+            if (existingQCLot == null)
+            {
+                return null;
+            }
+
+            existingQCLot.IsActive = false;
             await dbContext.SaveChangesAsync();
 
             return existingQCLot;
