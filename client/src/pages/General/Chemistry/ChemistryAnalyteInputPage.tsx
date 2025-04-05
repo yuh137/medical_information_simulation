@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import NavBar from "../../../components/NavBar";
-import { Backdrop, Button, ButtonBase, Modal } from "@mui/material";
+import { Backdrop, Button, ButtonBase, Modal, Typography } from "@mui/material";
 import { useTheme } from "../../../context/ThemeContext";
 import { Admin, AdminQCLot, AnalyteInput, getISOTexasTime, renderSubString, StudentReport } from "../../../utils/utils";
 import {
@@ -9,14 +9,17 @@ import {
   Text,
   View,
   pdf,
+  Font,
 } from "@react-pdf/renderer";
 import { createTw } from "react-pdf-tailwind";
 import { AuthToken, useAuth, UserType } from "../../../context/AuthContext";
-import { useLoaderData, useParams } from "react-router-dom";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import { Skeleton } from "antd";
 import dayjs from "dayjs";
 import { Icon } from "@iconify/react";
 import Analyte from "../../../components/Analyte";
+import _ from "lodash";
+// import RobotoRegular from "../../../assets/fonts/Roboto-Regular.ttf";
 
 enum NotiType {
   SomethingWrong,
@@ -25,6 +28,12 @@ enum NotiType {
 }
 
 const ChemistryAnalyteInputPage = () => {
+  Font.register({
+    family: "JuliaMono",
+    src: "/JuliaMono-Regular.ttf",
+  })
+
+  const initials = sessionStorage.getItem("initials") || "N/A";
   
   // Function to print out the report pdf file
   const reportPDF = (analyteValues?: number[], QCData?: AdminQCLot | null) => {
@@ -43,16 +52,16 @@ const ChemistryAnalyteInputPage = () => {
     return (
       <>
         <Document style={tw("border border-solid border-black")}>
-          <Page style={tw("py-8 px-16 border border-solid border-black")}>
+          <Page style={[tw("py-8 px-16 border border-solid border-black"), { fontFamily: "JuliaMono" }]}>
             <Text style={tw("sm:text-[24px] text-center")}>Quality Controls Report</Text>
             <Text style={tw("mt-8 mb-2 text-[13px]")}>Date: {monthNames[currentDate.getMonth()]} {currentDate.getDate()}, {currentDate.getFullYear()}</Text>
             <Text style={tw("mb-2 text-[13px]")}>Lot Number: {QCData?.lotNumber || "error"}</Text>
             <Text style={tw("mb-8 text-[13px]")}>QC Duration: {dayjs(QCData?.openDate).format("MM/DD/YYYY") || "undetermined"} - {QCData?.closedDate ? dayjs(QCData?.closedDate).format("MM/DD/YYYY") : dayjs(QCData?.expirationDate).format("MM/DD/YYYY") || "undetermined"}</Text>
             <Text style={tw("text-[22px] mb-8 text-center")}>{QCData?.qcName} QC</Text>
-            <View style={tw("flex-row justify-around")}>
+            <View style={tw("flex-row justify-around gap-x-2")}>
               <Text style={tw("font-[700] text-[15px]")}>Analytes</Text>
-              <Text style={tw("font-[700] text-[15px]")}>Value</Text>
-              <Text style={tw("font-[700] text-[15px]")}>Level {QCData?.qcName ? detectLevel(QCData?.qcName) === 1 ? "I" : "II" : "I"} Range</Text>
+              <Text style={tw("font-[700] text-[15px] translate-x-[12px]")}>Value</Text>
+              <Text style={tw("font-[700] text-[15px] translate-x-[12px]")}>Level {QCData?.qcName ? detectLevel(QCData?.qcName) === 1 ? "I" : "II" : "I"} Range</Text>
             </View>
             <View style={tw("w-full h-[1px] bg-black mt-2")}/>
             <View style={tw("flex-row justify-between p-5")}>
@@ -75,14 +84,14 @@ const ChemistryAnalyteInputPage = () => {
             <View style={tw("w-full h-[1px] bg-black mt-2")}/>
             <Text style={tw("mt-2")}>QC Comments:</Text>
             <View>
-              {modalData.map((item, index) => (
+              {modalData.filter(item => item.comment !== "").map((item, index) => (
                 <View style={tw("flex-row items-center")}>
                   <View style={tw("self-center w-[4px] h-[4px] bg-black rounded-full")} />
                   <Text style={tw("text-[13px] w-full px-6 text-justify text-wrap mt-2")} key={index}>{QCData?.analytes[item.invalidIndex].analyteName}: {item.comment}</Text>
                 </View>
               ))}
             </View>
-            <Text style={tw("mt-8 text-[13px]")}>Approved by: {userFullname}</Text>
+            <Text style={tw("mt-8 text-[13px]")}>Approved by: {userFullname === "" ? initials : userFullname}</Text>
             <Text style={tw("mt-2 text-[13px]")}>Date: {currentDate.getMonth() + 1}/{currentDate.getDate()}/{currentDate.getFullYear()}</Text>
             <Text style={tw("mt-2 text-[13px]")}>Time: {currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</Text>
           </Page>
@@ -127,14 +136,14 @@ const ChemistryAnalyteInputPage = () => {
             return null;
           }).filter((e: AnalyteInput | null): e is AnalyteInput => e !== null);
         };
-        console.log("Formatted data: ", newData);
+        // console.log("Formatted data: ", newData);
 
         // console.log("From fetch input function: ", data);
         setAnalyteValues(newData);
         setOriginalAnalyteValues(newData);
         let newInvalidIndexes = new Set<number>(invalidIndexes);
         let isAllCommentsFilled = true;
-        newData.forEach(input => {
+        newData.forEach((input, index) => {
           if (!input.inRange) {
             if (input.comment === "") {
               isAllCommentsFilled = false;
@@ -165,29 +174,43 @@ const ChemistryAnalyteInputPage = () => {
               // console.log("From fetch input function 2: ", data.length, QCData?.analytes.length);
               setIsInputFull(data.length === QCData?.analytes.length);
             }
+          } else {
+            setModalData(prevValue => {
+              const updatedValues = [...prevValue];
+              updatedValues[index] = { invalidIndex: index, comment: "" };
+
+              return updatedValues;
+            })
+
+            setOriginalModalData(prevValue => {
+              const updatedValues = [...prevValue];
+              updatedValues[index] = { invalidIndex: index, comment: "" };
+
+              return updatedValues;
+            })
           }
         });
 
         // Handle undefined data in Comments
-        setModalData(prevValue => {
-          const updatedValues = [...prevValue];
-          updatedValues.forEach((item, index) => {
-            if (item === undefined) {
-              updatedValues[index] = { invalidIndex: index, comment: "" };
-            }
-          });
-          return updatedValues;
-        });
+        // setModalData(prevValue => {
+        //   const updatedValues = [...prevValue];
+        //   updatedValues.forEach((item, index) => {
+        //     if (item === undefined) {
+        //       updatedValues[index] = { invalidIndex: index, comment: "" };
+        //     }
+        //   });
+        //   return updatedValues;
+        // });
 
-        setOriginalModalData(prevValue => {
-          const updatedValues = [...prevValue];
-          updatedValues.forEach((item, index) => {
-            if (item === undefined) {
-              updatedValues[index] = { invalidIndex: index, comment: "" };
-            }
-          });
-          return updatedValues;
-        });
+        // setOriginalModalData(prevValue => {
+        //   const updatedValues = [...prevValue];
+        //   updatedValues.forEach((item, index) => {
+        //     if (item === undefined) {
+        //       updatedValues[index] = { invalidIndex: index, comment: "" };
+        //     }
+        //   });
+        //   return updatedValues;
+        // });
 
         setInvalidIndexes(newInvalidIndexes);
         setIsValidManual(isAllCommentsFilled);
@@ -209,10 +232,11 @@ const ChemistryAnalyteInputPage = () => {
 
   const { link } = useParams();
   const { theme } = useTheme();
+  const navigate = useNavigate();
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const analyteNameRefs = useRef<HTMLDivElement[]>([]);
   const firstRender = useRef(true);
-  const { userId, type } = useAuth();
+  const { userId, type: userType } = useAuth();
 
   const [isInputFull, setIsInputFull] = useState<boolean>(false);
   const [isFetchingData, setIsFetchingData] = useState<boolean>(false);
@@ -312,7 +336,7 @@ const ChemistryAnalyteInputPage = () => {
         return;
     }
 
-    if (analyteValues === originalAnalyteValues || modalData === originalModalData) {
+    if (analyteValues === originalAnalyteValues && modalData === originalModalData) {
       setNotiType(NotiType.NoChangesMade);
       setIsFeedbackNotiOpen(true);
       return;
@@ -405,8 +429,8 @@ const ChemistryAnalyteInputPage = () => {
     newValues[index] = {
       // analyteInputID: "",
       // reportID: "",
-      analyteName: "",
-      analyteAcronym: "",
+      analyteName: QCData?.analytes[index].analyteName || "",
+      analyteAcronym: QCData?.analytes[index].analyteAcronym || "",
       analyteValue: 0,
       inRange: false,
       isActive: true,
@@ -414,7 +438,7 @@ const ChemistryAnalyteInputPage = () => {
       comment: "",
     }
 
-    newValues[index].analyteName = "";
+    // newValues[index].analyteName = "";
     newValues[index].analyteValue = parseFloat(value);
     newValues[index].createdDate = getISOTexasTime();
 
@@ -452,7 +476,8 @@ const ChemistryAnalyteInputPage = () => {
       if (tokenString && tokenString !== "") {
         token = JSON.parse(tokenString);
       }
-      if (type === UserType.Admin) {
+      if (userType === UserType.Admin) {
+        console.log("Entered admin");
         const res = await fetch(`${process.env.REACT_APP_API_URL}/Admins/${userId}`, {
           headers: {
             "Authorization": `Bearer ${token.jwtToken}`
@@ -461,12 +486,17 @@ const ChemistryAnalyteInputPage = () => {
         if (res.ok) {
           const user: Admin = await res.json();
           return `${user.firstname} ${user.lastname}`;
+        } else {
+          console.error("Error fetching user data: ", res.statusText);
         }
-      } else if (type === UserType.Student) {
+      } else if (userType === UserType.Student) {
+        console.log("Entered student");
         const res = await fetch(`${process.env.REACT_APP_API_URL}/Students/${userId}`);
         if (res.ok) {
           const user = await res.json();
           return `${user.firstname} ${user.lastname}`;
+        } else {
+          console.error("Error fetching user data: ", res.statusText);
         }
       }
 
@@ -489,11 +519,31 @@ const ChemistryAnalyteInputPage = () => {
   }, [QCData])
 
   useEffect(() => {
-    console.log("isValid: ", isValid, "\nisValidManual: ", isValidManual);
-  }, [isValid, isValidManual])
+    // console.log("isValid: ", isValid, "\nisValidManual: ", isValidManual);
+    setModalData(prevValue => {
+      let updatedValues = [...prevValue];
+      if (updatedValues.length === 0) {
+        updatedValues = _.range(0, QCData?.analytes.length).map(item => ({ invalidIndex: item, comment: "" }));
+        return updatedValues;
+      }
+      updatedValues.forEach((item, index) => {
+        if (!invalidIndexArray.includes(index)) {
+          updatedValues[index].comment = "";
+        }
+      });
+
+      // console.log("Updated values: ", updatedValues);
+      return updatedValues;
+    })
+    setIsValidManual(modalData.length === 0 || invalidIndexArray.every(item => modalData[item].comment !== ""));
+  }, [invalidIndexArray]);
 
   useEffect(() => {
-    if (originalAnalyteValues && originalModalData) {
+    setIsValidManual(invalidIndexArray.every(item => modalData[item].comment !== ""));
+  }, [modalData]);
+
+  useEffect(() => {
+    if (originalAnalyteValues.length && originalModalData.length) {
       if (analyteValues === originalAnalyteValues && modalData === originalModalData) {
         setNotiType(NotiType.NoChangesMade);
       }
@@ -503,8 +553,8 @@ const ChemistryAnalyteInputPage = () => {
   }, [originalAnalyteValues, originalModalData, analyteValues, modalData])
 
   useEffect(() => {
-    // console.log(originalAnalyteValues);
-  }, [originalAnalyteValues])
+    console.log(invalidIndexes, invalidIndexArray);
+  }, [invalidIndexes, invalidIndexArray])
 
   return (
     <>
@@ -516,12 +566,19 @@ const ChemistryAnalyteInputPage = () => {
           <Skeleton active />
         </div>
       )}
-      {!QCData ? <div>No data recorded</div> : <></>}
-      {QCData && !isFetchingData && <div
+      {/* {!QCData ? <div>No data recorded</div> : <></>} */}
+      {QCData && !isFetchingData && 
+      <div
         className=" flex flex-col space-y-12 pb-8 justify-center px-[100px] relative"
         style={{ minWidth: "100svw", minHeight: "100svh" }}
       >
-        <div className="analyte-list-container flex flex-wrap gap-14 sm:w-[90svw] sm:px-[149.5px] max-sm:flex-col mt-8 px-3 justify-center">
+        <Typography variant="body1" align="center" style={{ marginTop: "4svh", fontSize: "22px" }}>
+          <strong>File Name:</strong> {QCData?.qcName} &nbsp; | &nbsp;
+          <strong>Lot Number:</strong> {QCData?.lotNumber} &nbsp; | &nbsp;
+          <strong>Open Date:</strong> {dayjs(QCData?.openDate).format("MM/DD/YYYY - HH:mm:ss")} &nbsp; | &nbsp;
+          <strong>Status: </strong> {QCData?.isActive ? (<span className="sm:p-2 font-semibold text-white bg-green-500 rounded-md">Active</span>) : (<span className="sm:p-2 font-semibold text-white bg-red-500 rounded-md">Inactive</span>)}
+        </Typography>
+        <div className="analyte-list-container flex flex-wrap gap-14 sm:w-[90svw] sm:px-[149.5px] max-sm:flex-col sm:mt-[0.5rem] px-3 justify-center">
           {QCData?.analytes.map((item, index) => (
             <div
               onKeyDown={(event) => {
@@ -552,8 +609,6 @@ const ChemistryAnalyteInputPage = () => {
                 ref={(childRef: { inputRef: { current: HTMLInputElement | null }, nameRef: { current: HTMLDivElement | null } }) => {
                   // console.log(childRef);
                   if (childRef) {
-                    // inputRefs.current.push(childRef.inputRef.current as HTMLInputElement);
-                    // analyteNameRefs.current.push(childRef.nameRef.current as HTMLDivElement);
                     inputRefs.current[index] = childRef.inputRef.current as HTMLInputElement;
                     analyteNameRefs.current[index] = childRef.nameRef.current as HTMLDivElement;
                   }
@@ -586,11 +641,6 @@ const ChemistryAnalyteInputPage = () => {
               }`}
               disabled={!isValidManual || !isValid}
               onClick={() => {
-                if (userFullname === "" || !userFullname) {
-                  console.log("No username: ", userFullname);
-                  return;
-                }
-
                 openPDF();
               }}
             >
@@ -675,7 +725,7 @@ const ChemistryAnalyteInputPage = () => {
                     variant="contained"
                     onClick={() => {
                       setIsFeedbackNotiOpen(false);
-                      // navigate("/admin-home");
+                      navigate(0);
                     }}
                     className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
                   >

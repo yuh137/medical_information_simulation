@@ -62,6 +62,7 @@ interface QCItem {
   lotNumber: string;
   expDate: string;
   createdDate: string;
+  isActive: boolean;
 }
 
 enum NotiType {
@@ -127,6 +128,7 @@ const ChemistryReviewControls = () => {
                 qcName: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.qcName ?? "",
                 lotNumber: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.lotNumber ?? "",
                 expDate: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.expirationDate ?? "",
+                isActive: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.isActive ?? false,
                 createdDate: item.createdDate,
               }))
     
@@ -155,6 +157,7 @@ const ChemistryReviewControls = () => {
                 qcName: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.qcName ?? "",
                 lotNumber: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.lotNumber ?? "",
                 expDate: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.expirationDate ?? "",
+                isActive: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.isActive ?? false,
                 createdDate: item.createdDate,
               }))
     
@@ -213,11 +216,6 @@ const ChemistryReviewControls = () => {
       console.error(e);
       setIsFeedbackNotiOpen(true);
     }
-    // if (selectedAnalyte && selectedQC) {
-    //   changeReportId(selectedQC.reportId);
-    //   sessionStorage.setItem("LJReportId", selectedQC.reportId);
-    //   navigate(`/chemistry/levey-jennings/${selectedQC.lotNumber}/${selectedAnalyte}`, { state: { type: dateType, date: dateType === DateType.DateRange ? dateRange : singleDate } });
-    // }
   }
 
   function handleAnalyteClick(analyteName: string) {
@@ -276,6 +274,18 @@ const ChemistryReviewControls = () => {
         return dayjs(expDate).format("MM/DD/YYYY - HH:mm:ss");
       },
     },
+    {
+      accessorKey: "isActive",
+      header: () => <span>Status</span>,
+      cell: info => {
+        const isActive = info.getValue() as boolean;
+        return (
+          <div className='flex justify-center'>
+            {isActive ? (<Icon className='font-semibold text-lg' icon="charm:tick" />) : (<Icon icon="maki:cross" />)}
+          </div>
+        )
+      },
+    },
   ];
 
   const table = useReactTable({
@@ -289,7 +299,7 @@ const ChemistryReviewControls = () => {
     <>
       <NavBar name={`Chemistry Review Controls`} />
       <div className="relative">
-        <div className="table-container flex flex-col mt-8 sm:max-w-[75svw] sm:max-h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA]">
+        <div className="table-container flex flex-col mt-8 sm:max-w-[80svw] sm:max-h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA]">
           <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200">
             <TableHeader>
               {table.getHeaderGroups().map((group) => (
@@ -317,9 +327,11 @@ const ChemistryReviewControls = () => {
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center"
+                    className="h-24 text-center flex"
                   >
-                    No data
+                    <div>No data</div> {
+                      isFetchingData && (<div className='flex items-center'><span>...but wait a minute</span> <Icon icon="eos-icons:loading" /></div>)
+                    }
                   </TableCell>
                 </TableRow>
               ) : (
@@ -389,8 +401,9 @@ const ChemistryReviewControls = () => {
               <div>
                 <Typography variant="body1" align="center">
                   <strong>File Name:</strong> {selectedQC.qcName} &nbsp; | &nbsp;
-                  <strong>Lot Number:</strong> {selectedQC.lotNumber} &nbsp; | &nbsp;
-                  <strong>Created Date:</strong> {dayjs(selectedQC.createdDate).format("MM/DD/YYYY - HH:mm:ss")}
+                  <strong>Lot Number:</strong> {selectedQC.lotNumber} <br/>
+                  <strong>Created Date:</strong> {dayjs(selectedQC.createdDate).format("MM/DD/YYYY - HH:mm:ss")} &nbsp; | &nbsp;
+                  <strong>Status:</strong> {selectedQC?.isActive ? (<span className="sm:p-1 font-semibold text-white bg-green-500 rounded-md">Active</span>) : (<span className="sm:p-1 font-semibold text-white bg-red-500 rounded-md">Inactive</span>)}
                 </Typography>
 
                 {/* Table to display analyte names */}

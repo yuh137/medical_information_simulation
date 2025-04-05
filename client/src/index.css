@@ -177,6 +177,17 @@ html {
   background: #4096ff !important;
 }
 
+.ant-select-selection-search-input {
+  text-align: center;
+}
+
+.ant-picker-disabled, .ant-select-disabled {
+  background-color: #f0f0f0 !important; /* Change background */
+  color: #8c8c8c !important; /* Change text color */
+  border-color: #d9d9d9 !important; /* Change border */
+  cursor: not-allowed !important; /* Prevent cursor interaction */
+}
+
 /* .ant-btn-primary .css-dev-only-do-not-override-3rel02 {
   color: #fff;
   background: #4096ff;

@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useLoaderData, useNavigate, useParams } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
+import { useLoaderData, useNavigate, useNavigation, useParams, useRevalidator } from "react-router-dom";
 import {
   ColumnDef,
   flexRender,
@@ -29,11 +28,19 @@ import {
   Vitamins,
   Diabetes,
 } from "../../../utils/MOCK_DATA";
-import { AdminQCLot, DefinedRequestError, Department, ErrorCode, getISOTexasTime, qcTypeLinkList, renderSubString } from "../../../utils/utils";
-import { Backdrop, Button, ButtonBase } from "@mui/material";
+import {
+  AdminQCLot,
+  DefinedRequestError,
+  Department,
+  ErrorCode,
+  getISOTexasTime,
+  qcTypeLinkList,
+  renderSubString,
+} from "../../../utils/utils";
+import { Backdrop, Button, ButtonBase, Menu, MenuItem } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
 import NavBar from "../../../components/NavBar";
-import { DatePicker } from "antd";
+import { DatePicker, Modal, Select, Skeleton } from "antd";
 import { Icon } from "@iconify/react";
 import dayjs, { Dayjs } from "dayjs";
 import { useTheme } from "../../../context/ThemeContext";
@@ -54,28 +61,39 @@ enum NotiType {
   QCAlreadyExist,
   LotNumberTaken,
   NoChangesMade,
-  UpdateQC
-};
+  UpdateQC,
+  DeactivateQC,
+  DeactivateResponse,
+}
 
 enum SaveButtonActionType {
   Save,
   Update,
-  Idle
-};
+  Idle,
+}
+
+enum InteractionMode {
+  View,
+  Create,
+  Edit,
+}
 
 export const ChemistryTestInputPage = () => {
   // Managing states
   const [isSavingQCLot, setIsSavingQCLot] = useState<boolean>(false);
-  const [isSavingQCLotSuccessful, setIsSavingQCLotSuccessful] = useState<boolean>(false);
-  const [isUpdatingQCLotSuccessful, setIsUpdatingQCLotSuccessful] = useState<boolean>(false);
+  const [isSavingQCLotSuccessful, setIsSavingQCLotSuccessful] =
+    useState<boolean>(false);
+  const [isUpdatingQCLotSuccessful, setIsUpdatingQCLotSuccessful] =
+    useState<boolean>(false);
   const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState<boolean>(false);
-  
-  // 
+  const [didUserDeactivate, setDidUserDeactivate] = useState<boolean>(false);
+
   const navigate = useNavigate();
+  const { state: loaderState } = useNavigation();
   const { theme } = useTheme();
   const { item } = useParams() as { item: string };
   const loaderData = useLoaderData() as AdminQCLot[];
-  const activeQCLot = loaderData.find(item => item.isActive);
+  const activeQCLot: AdminQCLot | undefined = useMemo(() => loaderData.find((item) => item.isActive), [loaderData]);
 
   // Placeholder data if the database is empty
   const mockData = item?.includes("cardiac")
@@ -102,25 +120,57 @@ export const ChemistryTestInputPage = () => {
     ? Diabetes
     : CMP;
 
+  // Currently displayed QC
+  const [currentQCLot, setCurrentQCLot] = useState<AdminQCLot | null>(
+    activeQCLot ? activeQCLot : loaderData[0]
+  );
+
   // Set the initial value for QCPanel table, taken from the database. If none exist, use the mock data.
-  const [QCElements, setQCElements] = useState<QCRangeElements[]>(activeQCLot ? activeQCLot.analytes : mockData);
-  // const [QCElements, setQCElements] = useState<QCRangeElements[]>(loaderData.analytes);
+  const [QCElements, setQCElements] = useState<QCRangeElements[]>(
+    currentQCLot ? currentQCLot.analytes : mockData
+  );
 
   // State to manage what clicking the Save button does
-  const [saveButtonActionType, setSaveButtonActionType] = useState<SaveButtonActionType>(SaveButtonActionType.Idle);
+  const [saveButtonActionType, setSaveButtonActionType] =
+    useState<SaveButtonActionType>(SaveButtonActionType.Idle);
 
   // State to validate if the max and min constraints are met
   const [isValid, setIsValid] = useState<boolean>(false);
 
   // State to manage the type of notification to display
-  const [feedbackNotiType, setFeedbackNotiType] = useState<NotiType>(NotiType.NoChangesMade);
+  const [feedbackNotiType, setFeedbackNotiType] = useState<NotiType>(
+    NotiType.NoChangesMade
+  );
 
-  // State to manage the QCLot input 
-  const [QCLotInput, setQCLotInput] = useState<string>(activeQCLot ? activeQCLot.lotNumber : "");
+  // State to manage what interaction mode the user is in
+  const [interactionMode, setInteractionMode] = useState<InteractionMode>(
+    InteractionMode.View
+  );
+
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const [intModeDropdownAnchor, setIntModeDropdownAnchor] =
+    useState<null | HTMLElement>(null);
+  const isIntModeDropdownOpen = Boolean(intModeDropdownAnchor);
+
+  // State to manage the QCLot input
+  const [QCLotInput, setQCLotInput] = useState<string>(
+    currentQCLot ? currentQCLot.lotNumber : ""
+  );
+
+  // State to create a new QC Lot Number
+  const [newQCLotInput, setNewQCLotInput] = useState<string>("");
 
   // States for the Date inputs
-  const [expDate, setExpDate] = useState<Dayjs>(activeQCLot ? dayjs(activeQCLot.expirationDate) : dayjs());
-  const [fileDate, setFileDate] = useState<Dayjs>(activeQCLot ? dayjs(activeQCLot.fileDate) : dayjs());
+  const [expDate, setExpDate] = useState<Dayjs>(
+    currentQCLot ? dayjs(currentQCLot.expirationDate) : dayjs()
+  );
+  const [fileDate, setFileDate] = useState<Dayjs>(
+    currentQCLot ? dayjs(currentQCLot.fileDate) : dayjs()
+  );
+  const [fileDateRange, setFileDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(
+    currentQCLot ? currentQCLot.closedDate ? [dayjs(currentQCLot.openDate), dayjs(currentQCLot.closedDate)] : [dayjs(currentQCLot.openDate), null] : null
+  );
 
   // Refs to check whether the data has changed to initiate update or creation of new QC
   const prevExpDate = useRef(expDate);
@@ -129,22 +179,48 @@ export const ChemistryTestInputPage = () => {
   const prevQCElements = useRef(QCElements);
 
   // React-hook-form states
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<AdminQCLot>();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<AdminQCLot>();
 
   function presetLotAndDate() {
-    console.log(activeQCLot);
-    if (activeQCLot) {
-      setQCLotInput(activeQCLot.lotNumber);
-      setExpDate(dayjs(activeQCLot.expirationDate));
-      setFileDate(dayjs(activeQCLot.fileDate));
+    // console.log(currentQCLot);
+    if (currentQCLot) {
+      setQCLotInput(currentQCLot.lotNumber);
+      setExpDate(dayjs(currentQCLot.expirationDate));
+      setFileDate(dayjs(currentQCLot.fileDate));
+
+      if (currentQCLot.closedDate) {
+        setFileDateRange([
+          dayjs(currentQCLot.openDate),
+          dayjs(currentQCLot.closedDate),
+        ]);
+      } else {
+        setFileDateRange([
+          dayjs(currentQCLot.openDate),
+          null,
+        ]);
+      }
     }
+  }
+
+  function handleModeButtonClick(e: React.MouseEvent<HTMLButtonElement>) {
+    setIntModeDropdownAnchor(e.currentTarget);
+  }
+
+  function handleModeMenuClose(mode: InteractionMode) {
+    setInteractionMode(mode);
+    setIntModeDropdownAnchor(null);
   }
 
   // Function to handle the Save QC Button
   const saveQC: SubmitHandler<AdminQCLot> = async (data) => {
     console.log("Entered save QC button", data);
 
-    if (activeQCLot && activeQCLot.lotNumber === data.lotNumber) {
+    if (currentQCLot && currentQCLot.lotNumber === data.lotNumber) {
       setFeedbackNotiType(NotiType.LotNumberTaken);
       setFeedbackNotiOpen(true);
       return;
@@ -155,9 +231,9 @@ export const ChemistryTestInputPage = () => {
       qcName:
         qcTypeLinkList.find((qcType) => qcType.link.includes(item))?.name ?? "",
       lotNumber: data.lotNumber || "",
-      openDate: getISOTexasTime(),
+      openDate: data.openDate || getISOTexasTime(),
       fileDate: data.fileDate || "",
-      closedDate: data.closedDate || "",
+      closedDate: data.closedDate || null,
       expirationDate: data.expirationDate || "",
       isActive: true,
       analytes: QCElements.map(
@@ -192,23 +268,25 @@ export const ChemistryTestInputPage = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          "lotNumber": qcDataToSave.lotNumber,
-          "qcName": qcDataToSave.qcName,
-          "openDate": qcDataToSave.openDate ?? dayjs().toISOString(),
-          "expirationDate": qcDataToSave.expirationDate,
-          "fileDate": qcDataToSave.fileDate ?? dayjs().toISOString(),
-          "department": Department.Chemistry,
-          "analytes": qcDataToSave.analytes.map(analyte => ({
-            "analyteName": analyte.analyteName,
-            "analyteAcronym": analyte.analyteAcronym,
-            "unitOfMeasure": analyte.unitOfMeasure,
-            "minLevel": parseFloat(parseFloat(analyte.minLevel).toFixed(2)),
-            "maxLevel": parseFloat(parseFloat(analyte.maxLevel).toFixed(2)),
-            "mean": parseFloat(parseFloat(analyte.mean).toFixed(2)),
-            "stdDevi": parseFloat(((+analyte.maxLevel - +analyte.minLevel) / 4).toFixed(2)),
+          lotNumber: qcDataToSave.lotNumber,
+          qcName: qcDataToSave.qcName,
+          openDate: qcDataToSave.openDate ?? dayjs().toISOString(),
+          expirationDate: qcDataToSave.expirationDate,
+          fileDate: qcDataToSave.fileDate ?? dayjs().toISOString(),
+          department: Department.Chemistry,
+          analytes: qcDataToSave.analytes.map((analyte) => ({
+            analyteName: analyte.analyteName,
+            analyteAcronym: analyte.analyteAcronym,
+            unitOfMeasure: analyte.unitOfMeasure,
+            minLevel: parseFloat(parseFloat(analyte.minLevel).toFixed(2)),
+            maxLevel: parseFloat(parseFloat(analyte.maxLevel).toFixed(2)),
+            mean: parseFloat(parseFloat(analyte.mean).toFixed(2)),
+            stdDevi: parseFloat(
+              ((+analyte.maxLevel - +analyte.minLevel) / 4).toFixed(2)
+            ),
           })),
         }),
-      })
+      });
 
       if (res.ok) {
         console.log("Saved:", res.json());
@@ -218,8 +296,9 @@ export const ChemistryTestInputPage = () => {
       } else {
         const error: DefinedRequestError = await res.json();
         console.log("Failed to save data: ", error.errorCode);
+        setErrorMessage(error.message);
 
-        if (error.errorCode === ErrorCode.AlreadyExist){
+        if (error.errorCode === ErrorCode.AlreadyExist) {
           setFeedbackNotiType(NotiType.LotNumberTaken);
           setFeedbackNotiOpen(true);
           setIsSavingQCLot(false);
@@ -235,10 +314,12 @@ export const ChemistryTestInputPage = () => {
     setSaveButtonActionType(SaveButtonActionType.Idle);
   };
 
-  async function handleUpdateQC(){
+  async function handleUpdateQC() {
     const qcDataToUpdate = {
       expDate: expDate.toISOString(),
       fileDate: fileDate.toISOString(),
+      openDate: fileDateRange ? fileDateRange[0] ? fileDateRange[0].toISOString() : getISOTexasTime() : getISOTexasTime(),
+      closedDate: fileDateRange ? fileDateRange[1] ? fileDateRange[1].toISOString() : null : null,
       analytes: QCElements.map(
         ({
           analyteName,
@@ -258,31 +339,38 @@ export const ChemistryTestInputPage = () => {
           maxLevel,
         })
       ),
-    }
+    };
 
     console.log("Attempt to update data: ", qcDataToUpdate);
 
     setIsSavingQCLot(true);
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/UpdateQCLot/${activeQCLot?.adminQCLotID}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          "expirationDate": qcDataToUpdate.expDate,
-          "fileDate": qcDataToUpdate.fileDate ?? dayjs().toISOString(),
-          "analytes": qcDataToUpdate.analytes.map(analyte => ({
-            "analyteName": analyte.analyteName,
-            "analyteAcronym": analyte.analyteAcronym,
-            "unitOfMeasure": analyte.unitOfMeasure,
-            "minLevel": parseFloat(parseFloat(analyte.minLevel).toFixed(2)),
-            "maxLevel": parseFloat(parseFloat(analyte.maxLevel).toFixed(2)),
-            "mean": parseFloat(parseFloat(analyte.mean).toFixed(2)),
-            "stdDevi": parseFloat(((+analyte.maxLevel - +analyte.minLevel) / 4).toFixed(2)),
-          })),
-        }),
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}/AdminQCLots/UpdateQCLot/${activeQCLot?.adminQCLotID}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            expirationDate: qcDataToUpdate.expDate,
+            fileDate: qcDataToUpdate.fileDate ?? dayjs().toISOString(),
+            openDate: qcDataToUpdate.openDate,
+            closedDate: qcDataToUpdate.closedDate,
+            analytes: qcDataToUpdate.analytes.map((analyte) => ({
+              analyteName: analyte.analyteName,
+              analyteAcronym: analyte.analyteAcronym,
+              unitOfMeasure: analyte.unitOfMeasure,
+              minLevel: parseFloat(parseFloat(analyte.minLevel).toFixed(2)),
+              maxLevel: parseFloat(parseFloat(analyte.maxLevel).toFixed(2)),
+              mean: parseFloat(parseFloat(analyte.mean).toFixed(2)),
+              stdDevi: parseFloat(
+                ((+analyte.maxLevel - +analyte.minLevel) / 4).toFixed(2)
+              ),
+            })),
+          }),
+        }
+      );
 
       if (res.ok) {
         console.log("Saved:", res.json());
@@ -293,7 +381,7 @@ export const ChemistryTestInputPage = () => {
         const error: DefinedRequestError = await res.json();
         console.log("Failed to update data: ", error.errorCode);
 
-        if (error.errorCode === ErrorCode.NotFound){
+        if (error.errorCode === ErrorCode.NotFound) {
           setFeedbackNotiType(NotiType.UpdateQC);
           setIsUpdatingQCLotSuccessful(false);
           setFeedbackNotiOpen(true);
@@ -368,16 +456,57 @@ export const ChemistryTestInputPage = () => {
   }
 
   useEffect(() => {
+    if (!activeQCLot) {
+      setInteractionMode(InteractionMode.Create);
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log("From loaderData: ", loaderData, "\nactiveLot: ", activeQCLot, "\ncurrentQCLot: ", currentQCLot);
+  }, [loaderData, activeQCLot, currentQCLot]);
+
+  useEffect(() => {
+    async function deactivateLot() {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/DeactivateQCLot/${currentQCLot?.adminQCLotID}`, {
+        method: "PUT",
+      });
+
+      if (res.ok) {
+        console.log("Deactivated: ", await res.json());
+        setFeedbackNotiType(NotiType.DeactivateResponse);
+        setFeedbackNotiOpen(true);
+        setDidUserDeactivate(false);
+        navigate(0);
+      } else {
+        const error: DefinedRequestError = await res.json();
+        setErrorMessage(error.message);
+        setFeedbackNotiType(NotiType.DeactivateResponse);
+        setFeedbackNotiOpen(true);
+      }
+    }
+
+    if (didUserDeactivate) {
+      deactivateLot();
+    }
+  }, [didUserDeactivate]);
+
+  useEffect(() => {
     register("lotNumber", { required: true });
     register("expirationDate", { required: true });
-    register("fileDate", { required: true });
+    register("fileDate", { required: false });
+    register("openDate", { required: true });
+    register("closedDate", { required: false });
 
     presetLotAndDate();
-  }, [register])
+  }, [register]);
 
   useEffect(() => {
     //If notification is enabled, disable after 5 seconds
-    if (isFeedbackNotiOpen && (feedbackNotiType === NotiType.SaveQC || feedbackNotiType === NotiType.UpdateQC)) {
+    if (
+      isFeedbackNotiOpen &&
+      (feedbackNotiType === NotiType.SaveQC ||
+        feedbackNotiType === NotiType.UpdateQC)
+    ) {
       setTimeout(() => {
         setFeedbackNotiOpen(false);
 
@@ -386,58 +515,76 @@ export const ChemistryTestInputPage = () => {
         }
       }, 5000);
     }
-  }, [isFeedbackNotiOpen])
+  }, [isFeedbackNotiOpen]);
 
   useEffect(() => {
     validateInputRange();
-  }, []);
+  }, [QCElements]);
 
   useEffect(() => {
-    async function checkUserSession() {
-      // const check = await checkSession();
-      // if (!check || await checkUserType() === "Student") navigate("/unauthorized");
-    }
+    console.log(fileDateRange);
+  }, [fileDateRange]);
 
-    checkUserSession();
-  }, []);
+  // useEffect(() => {
+  //   if (!currentQCLot) {
+  //     setSaveButtonActionType(SaveButtonActionType.Save);
+  //     return;
+  //   }
+  //   if (currentQCLot.lotNumber !== QCLotInput) {
+  //     setSaveButtonActionType(SaveButtonActionType.Save);
+  //   } else if (
+  //     currentQCLot.lotNumber === QCLotInput &&
+  //     (currentQCLot.expirationDate !== expDate.toISOString() ||
+  //       currentQCLot.fileDate !== fileDate.toISOString() ||
+  //       prevQCElements.current !== QCElements)
+  //   ) {
+  //     setSaveButtonActionType(SaveButtonActionType.Update);
+  //   } else {
+  //     setSaveButtonActionType(SaveButtonActionType.Idle);
+  //   }
 
+  //   if (prevExpDate.current !== expDate) {
+  //     console.log("expDate changed");
+  //     setValue("lotNumber", currentQCLot.lotNumber);
+  //     setValue("fileDate", currentQCLot.fileDate);
+  //   }
+
+  //   if (prevFileDate.current !== fileDate) {
+  //     console.log("fileDate changed");
+  //     setValue("expirationDate", currentQCLot.expirationDate);
+  //     setValue("lotNumber", currentQCLot.lotNumber);
+  //   }
+
+  //   if (prevQCLotInput.current !== QCLotInput) {
+  //     console.log("QCLotInput changed");
+  //     setValue("expirationDate", currentQCLot.expirationDate);
+  //     setValue("fileDate", currentQCLot.fileDate);
+  //   }
+
+  //   // Update the refs with the current values
+  //   prevExpDate.current = expDate;
+  //   prevFileDate.current = fileDate;
+  //   prevQCLotInput.current = QCLotInput;
+  //   prevQCElements.current = QCElements;
+  // }, [expDate, fileDate, QCLotInput, QCElements]);
+
+  // useEffect to manage the change of interaction mode
   useEffect(() => {
-    if (!activeQCLot) {
+    if (interactionMode === InteractionMode.Create) {
       setSaveButtonActionType(SaveButtonActionType.Save);
-      return;
+      setQCElements(mockData);
     }
-    if (activeQCLot.lotNumber !== QCLotInput) {
-      setSaveButtonActionType(SaveButtonActionType.Save);
-    } else if (activeQCLot.lotNumber === QCLotInput && (activeQCLot.expirationDate === expDate.toISOString() || activeQCLot.fileDate === fileDate.toISOString() || prevQCElements.current !== QCElements)) {
+
+    if (interactionMode === InteractionMode.Edit) {
       setSaveButtonActionType(SaveButtonActionType.Update);
-    } else {
+      setQCElements(currentQCLot?.analytes ?? mockData);
+    }
+
+    if (interactionMode === InteractionMode.View) {
       setSaveButtonActionType(SaveButtonActionType.Idle);
+      setQCElements(currentQCLot?.analytes ?? mockData);
     }
-
-    if (prevExpDate.current !== expDate) {
-      console.log('expDate changed');
-      setValue("lotNumber", activeQCLot.lotNumber);
-      setValue("fileDate", activeQCLot.fileDate);
-    }
-
-    if (prevFileDate.current !== fileDate) {
-      console.log('fileDate changed');
-      setValue("expirationDate", activeQCLot.expirationDate);
-      setValue("lotNumber", activeQCLot.lotNumber);
-    }
-
-    if (prevQCLotInput.current !== QCLotInput) {
-      console.log('QCLotInput changed');
-      setValue("expirationDate", activeQCLot.expirationDate);
-      setValue("fileDate", activeQCLot.fileDate);
-    }
-
-    // Update the refs with the current values
-    prevExpDate.current = expDate;
-    prevFileDate.current = fileDate;
-    prevQCLotInput.current = QCLotInput;
-    prevQCElements.current = QCElements;
-  }, [expDate, fileDate, QCLotInput, QCElements])
+  }, [interactionMode])
 
   const columns: ColumnDef<QCRangeElements, string>[] = [
     {
@@ -525,43 +672,192 @@ export const ChemistryTestInputPage = () => {
           "Chemistry"
         } QC Builder`}
       />
+      {loaderState === "loading" && (<Skeleton />)}
       <div className="basic-container relative sm:space-y-4 pb-24">
         <div className="input-container flex justify-center">
-          <div className="drawer-container sm:h-full flex items-center py-4 sm:space-x-12">
+          <div className="infos-container sm:h-full flex items-center py-4 sm:space-x-12">
+            <div className="control-buttons flex flex-col sm:p-2 bg-[#3A6CC6] rounded-xl sm:space-y-2">
+              <div
+                className={`text-[#fff] ${
+                  interactionMode === InteractionMode.Create || !currentQCLot?.isActive ? "bg-red-500" : "bg-green-500"
+                } sm:text-xl font-semibold text-center rounded-md`}
+              >
+                {interactionMode === InteractionMode.Create || !currentQCLot?.isActive ? "Inactive" : "Active"}
+              </div>
+              <Button
+                variant="contained"
+                onClick={handleModeButtonClick}
+                style={{
+                  color: "black",
+                  backgroundColor: "#CFD5EA",
+                  border: "solid",
+                  borderColor: "#2F528F",
+                  borderWidth: "3px",
+                  width: "16svw",
+                }}
+              >
+                {interactionMode === InteractionMode.View && (
+                  <>
+                    <div className="flex items-center justify-center sm:gap-x-1">
+                      <Icon
+                        icon="ic:outline-remove-red-eye"
+                        className="text-xl"
+                      />
+                      <span>View Lot</span>
+                    </div>
+                  </>
+                )}
+                {interactionMode === InteractionMode.Create && (
+                  <>
+                    <div className="flex items-center justify-center sm:gap-x-1">
+                      <Icon icon="ic:outline-plus" className="text-xl" />
+                      <span>Create Lot</span>
+                    </div>
+                  </>
+                )}
+                {interactionMode === InteractionMode.Edit && (
+                  <>
+                    <div className="flex items-center justify-center sm:gap-x-1">
+                      <Icon icon="ic:baseline-create" className="text-xl" />
+                      <span>Edit Lot</span>
+                    </div>
+                  </>
+                )}
+              </Button>
+
+              <Menu
+                anchorEl={intModeDropdownAnchor}
+                open={isIntModeDropdownOpen}
+                onClose={() => handleModeMenuClose(interactionMode)}
+              >
+                <MenuItem
+                  onClick={() => handleModeMenuClose(InteractionMode.View)}
+                  className={`${loaderData.length === 0 ? "Mui-disabled" : ""}`}
+                >
+                  <Icon
+                    icon="ic:outline-remove-red-eye"
+                    className="text-xl mr-2"
+                  />
+                  View Lot
+                </MenuItem>
+                <MenuItem
+                  onClick={() => handleModeMenuClose(InteractionMode.Create)}
+                >
+                  <Icon icon="ic:outline-plus" className="text-xl mr-2" />
+                  Create Lot
+                </MenuItem>
+                <MenuItem
+                  onClick={() => handleModeMenuClose(InteractionMode.Edit)}
+                  className={`${!currentQCLot?.isActive || interactionMode === InteractionMode.Create ? "Mui-disabled" : ""}`}
+                >
+                  <Icon icon="ic:baseline-create" className="text-xl mr-2" />
+                  Edit Lot
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleModeMenuClose(interactionMode);
+                    setFeedbackNotiType(NotiType.DeactivateQC);
+                    setFeedbackNotiOpen(true);
+                  }}
+                  className={`${!currentQCLot?.isActive || interactionMode === InteractionMode.Create ? "Mui-disabled" : ""}`}
+                >
+                  <Icon icon="ic:sharp-close" className="text-xl mr-2" />
+                  Deactivate Lot
+                </MenuItem>
+              </Menu>
+            </div>
             <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
               <div className="lotnumber-label sm:text-xl font-semibold text-white">
                 QC Lot Number
               </div>
-              <input
-                type="text"
-                className="sm:p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center"
-                value={QCLotInput}
-                onChange={(e) => {
-                  e.preventDefault();
+              {interactionMode === InteractionMode.Create ? (
+                <>
+                  <input
+                    type="text"
+                    className="sm:p-1 rounded-lg border border-solid border-[#548235] sm:w-[18svw] text-center text-sm"
+                    value={newQCLotInput}
+                    onChange={(e) => {
+                      e.preventDefault();
 
-                  setQCLotInput(e.target.value);
-                  setValue("lotNumber", e.target.value);
-                }}
-              />
+                      setNewQCLotInput(e.target.value);
+                      // setValue("lotNumber", e.target.value);
+                    }}
+                  />
+                </>
+              ) : (
+                <>
+                  <Select
+                    // type="text"
+                    size="large"
+                    disabled={interactionMode === InteractionMode.Edit}
+                    // className={`${interactionMode === InteractionMode.Edit ? "Mui-disabled" : ""}`}
+                    showSearch
+                    style={{
+                      // padding: "0.25rem",
+                      border: "solid 1px #548235",
+                      borderRadius: "0.75rem",
+                      width: "18svw",
+                      height: "34px",
+                      textAlign: "center",
+                    }}
+                    value={QCLotInput}
+                    options={loaderData.map((item) => ({
+                      label: item.lotNumber,
+                      value: item.lotNumber,
+                    }))}
+                    onChange={(value) => {
+                      // console.log(value);
+                      // e.preventDefault();
+
+                      setQCLotInput(value);
+                      // setValue("lotNumber", value);
+
+                      const selectedQCLot: AdminQCLot | undefined =
+                        loaderData.find((item) => item.lotNumber === value);
+                      if (selectedQCLot) {
+                        setCurrentQCLot(selectedQCLot);
+                        setQCElements(selectedQCLot.analytes);
+                        setExpDate(dayjs(selectedQCLot.expirationDate));
+                        setFileDate(dayjs(selectedQCLot.fileDate));
+
+                        if (selectedQCLot.closedDate) {
+                          setFileDateRange([
+                            dayjs(selectedQCLot.openDate),
+                            dayjs(selectedQCLot.closedDate),
+                          ]);
+                        } else {
+                          setFileDateRange([
+                            dayjs(selectedQCLot.openDate),
+                            null,
+                          ]);
+                        }
+                      }
+                    }}
+                  />
+                </>
+              )}
             </div>
             <div className="expdate-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
               <div className="expdate-label sm:text-xl font-semibold text-white">
                 Expiration Date
               </div>
               <DatePicker
+                size="large"
                 showTime
                 popupStyle={{ color: "black" }}
+                disabled={interactionMode === InteractionMode.View}
                 style={{
                   padding: "0.25rem",
                   border: "solid 1px #548235",
-                  width: "250px",
+                  width: "18svw",
                   height: "34px",
+                  fontSize: "0.875rem",
                 }}
                 // defaultValue={loaderData ? dayjs(loaderData.expirationDate) : dayjs()}
                 value={expDate}
                 format="MM/DD/YYYY"
                 onChange={(value) => {
-                  setValue("expirationDate", value.toISOString());
+                  // setValue("expirationDate", value.toISOString());
                   setExpDate(value);
                 }}
               />
@@ -570,20 +866,25 @@ export const ChemistryTestInputPage = () => {
               <div className="filedate-label sm:text-xl font-semibold text-white">
                 File Date
               </div>
-              <DatePicker
+              <DatePicker.RangePicker
+                size="large"
+                placeholder={["Open Date", "Close Date"]}
+                disabled={interactionMode === InteractionMode.View}
+                allowEmpty={[false, true]}
                 showTime
                 style={{
                   padding: "0.25rem",
                   border: "solid 1px #548235",
-                  width: "250px",
+                  width: "18svw",
                   height: "34px",
                 }}
                 // defaultValue={loaderData ? dayjs(loaderData.fileDate) : dayjs()}
-                value={fileDate}
+                value={fileDateRange}
                 format="MM/DD/YYYY"
                 onChange={(value) => {
-                  setValue("fileDate", value.toISOString());
-                  setFileDate(value);
+                  // setValue("fileDate", value.toISOString());
+                  // setFileDate(value);
+                  setFileDateRange(value);
                 }}
               />
             </div>
@@ -675,16 +976,19 @@ export const ChemistryTestInputPage = () => {
                           ? ""
                           : row.unitOfMeasure.toString()
                       }
-
                       // Update value of the input field, use regex to test the conformity of the value
+                      readOnly={interactionMode === InteractionMode.View}
                       onChange={(e) => {
+                        if (interactionMode === InteractionMode.View) return;
                         e.preventDefault();
 
                         setQCElements((prevState) => {
                           const newState = prevState.map((item) => {
                             if (
                               item.analyteName === row.analyteName &&
-                              /^[a-zA-Z\u0370-\u03FF\/% ]+$/.test(e.target.value)
+                              /^[a-zA-Z\u0370-\u03FF\/% ]+$/.test(
+                                e.target.value
+                              )
                             )
                               return {
                                 ...item,
@@ -701,7 +1005,6 @@ export const ChemistryTestInputPage = () => {
                   <TableCell className="minLevel">
                     <input
                       type="text"
-
                       // Set the ref for the input field in ref list
                       ref={(el) => {
                         if (
@@ -713,9 +1016,10 @@ export const ChemistryTestInputPage = () => {
                       }}
                       className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
                       value={row.minLevel || ""}
-
                       // Update value of the input field, use regex to test the conformity of the value
+                      readOnly={interactionMode === InteractionMode.View}
                       onChange={(e) => {
+                        if (interactionMode === InteractionMode.View) return;
                         e.preventDefault();
 
                         setQCElements((prevState) => {
@@ -731,7 +1035,6 @@ export const ChemistryTestInputPage = () => {
                           return newState;
                         });
                       }}
-
                       // Set the value to two fixed decimal places
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
@@ -755,7 +1058,6 @@ export const ChemistryTestInputPage = () => {
                   <TableCell className="maxLevel">
                     <input
                       type="text"
-
                       // Set the ref for the input field in ref list
                       ref={(el) => {
                         if (
@@ -767,9 +1069,10 @@ export const ChemistryTestInputPage = () => {
                       }}
                       className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
                       value={row.maxLevel || ""}
-
                       // Update value of the input field, use regex to test the conformity of the value
+                      readOnly={interactionMode === InteractionMode.View}
                       onChange={(e) => {
+                        if (interactionMode === InteractionMode.View) return;
                         e.preventDefault();
 
                         setQCElements((prevState) => {
@@ -785,7 +1088,6 @@ export const ChemistryTestInputPage = () => {
                           return newState;
                         });
                       }}
-
                       // Set the value to two fixed decimal places
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
@@ -809,7 +1111,6 @@ export const ChemistryTestInputPage = () => {
                   <TableCell className="mean">
                     <input
                       type="text"
-
                       // Set the ref for the input field in ref list
                       ref={(el) => {
                         if (
@@ -821,9 +1122,10 @@ export const ChemistryTestInputPage = () => {
                       }}
                       className="sm:w-16 p-1 border border-solid border-[#548235] rounded-lg text-center"
                       value={row.mean || ""}
-
                       // Update value of the input field, use regex to test the conformity of the value
+                      readOnly={interactionMode === InteractionMode.View}
                       onChange={(e) => {
+                        if (interactionMode === InteractionMode.View) return;
                         e.preventDefault();
 
                         setQCElements((prevState) => {
@@ -839,7 +1141,6 @@ export const ChemistryTestInputPage = () => {
                           return newState;
                         });
                       }}
-
                       // Set the value to two fixed decimal places
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
@@ -926,21 +1227,26 @@ export const ChemistryTestInputPage = () => {
           </Table>
         </div>
         <ButtonBase
-          disabled={!isValid || isSavingQCLot}
-          className="save-button !absolute left-1/2 -translate-x-1/2 sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold"
+          disabled={interactionMode === InteractionMode.View || !isValid || isSavingQCLot}
+          className={`${interactionMode === InteractionMode.View || !isValid || isSavingQCLot ? "Mui-disabled" : ""} save-button !absolute left-1/2 -translate-x-1/2 sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold`}
           onClick={() => {
             if (saveButtonActionType === SaveButtonActionType.Save) {
               // Check if the QCLot already exists in the database, display warning
-              if (loaderData) {
+              if (activeQCLot) {
                 setFeedbackNotiType(NotiType.QCAlreadyExist);
                 setFeedbackNotiOpen(true);
                 return;
               }
 
+              setValue("lotNumber", newQCLotInput);
+              setValue("expirationDate", expDate.toISOString());
+              setValue("fileDate", fileDate.toISOString());
+              setValue("openDate", fileDateRange ? fileDateRange[0] ? fileDateRange[0].toISOString() : "" : "");
+              setValue("closedDate", fileDateRange ? fileDateRange[1] ? fileDateRange[1].toISOString() : null : null);
+
               // handleSubmit returns a function
               handleSubmit(saveQC)();
-            }
-            else if (saveButtonActionType === SaveButtonActionType.Update) {
+            } else if (saveButtonActionType === SaveButtonActionType.Update) {
               handleUpdateQC();
             } else {
               setFeedbackNotiType(NotiType.NoChangesMade);
@@ -949,7 +1255,11 @@ export const ChemistryTestInputPage = () => {
             }
           }}
         >
-          {isSavingQCLot ? (<Icon icon="eos-icons:three-dots-loading" />) : "Save QC File"}
+          {isSavingQCLot ? (
+            <Icon icon="eos-icons:three-dots-loading" />
+          ) : (
+            "Save QC File"
+          )}
         </ButtonBase>
       </div>
 
@@ -965,94 +1275,33 @@ export const ChemistryTestInputPage = () => {
           <div className="sm:p-8 flex flex-col sm:gap-4">
             {/* Select the type of notification to appear */}
             {/* NOTI WHEN SAVING QC */}
-            { feedbackNotiType === NotiType.SaveQC && (
+            {feedbackNotiType === NotiType.SaveQC && (
               <>
                 <div className="text-center text-gray-600 text-xl font-semibold">
-                  { isSavingQCLotSuccessful ? (
+                  {isSavingQCLotSuccessful ? (
                     <>
                       <div className="flex flex-col sm:gap-y-2">
-                        <Icon icon="clarity:success-standard-line" className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                        <Icon
+                          icon="clarity:success-standard-line"
+                          className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"
+                        />
                         <div>Saved QC Successfully</div>
-                        <div className="text-md text-gray-500">Redirecting to Homepage...</div>
+                        <div className="text-md text-gray-500">
+                          Redirecting to Homepage...
+                        </div>
                       </div>
                     </>
                   ) : (
                     <>
                       <div className="flex flex-col sm:gap-y-2">
-                        <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
+                        <Icon
+                          icon="material-symbols:cancel-outline"
+                          className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"
+                        />
                         <div>Error Occurred</div>
                       </div>
                     </>
-                  ) }
-                </div>
-                <div className="flex justify-center">
-                  <Button
-                    variant="contained"
-                    onClick={() => {
-                      setFeedbackNotiOpen(false);
-                    }}
-                    className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
-                  >
-                    OK
-                  </Button>
-                </div>
-              </>) 
-            }
-
-            {/* WARNING NOTI FOR ANOTHER EXISTING ENTRY IS IN ORDER */}
-            { feedbackNotiType === NotiType.QCAlreadyExist && (
-              <div className="flex flex-col gap-y-2 items-center">
-                <div className="text-2xl font-semibold">Another QC is in order!</div>
-                <div className="text-lg font-semibold">Proceed?</div>
-                <Icon icon="ph:warning-octagon-bold" className="text-2xl text-yellow-400 sm:w-20 sm:h-20"/>
-                <div className="flex gap-x-2">
-                  <Button variant="contained" className="!bg-[#22C55E]" onClick={() => {
-                    console.log(errors)
-                    handleSubmit(saveQC)();
-                  }}>Confirm</Button>
-                  <Button variant="contained" className="!bg-red-500" onClick={() => {
-                    setFeedbackNotiOpen(false);
-                  }}>Decline</Button>
-                </div>
-              </div>
-            ) }
-
-            {/* WARNING LOT NUMBER TAKEN */}
-            { feedbackNotiType === NotiType.LotNumberTaken && (
-              <div className="flex flex-col sm:gap-y-2 items-center">
-                <div className="text-2xl font-semibold">Lot Number already exists!</div>
-                <Icon icon="ph:warning-octagon-bold" className="text-2xl text-yellow-400 sm:w-20 sm:h-20"/>
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    setFeedbackNotiOpen(false);
-                  }}
-                  className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
-                >
-                  OK
-                </Button>
-              </div>
-            ) }
-
-            {/* NOTI WHEN UPDATING QC */}
-            { feedbackNotiType === NotiType.UpdateQC && (
-              <>
-                <div className="text-center text-gray-600 text-xl font-semibold">
-                  { isUpdatingQCLotSuccessful ? (
-                    <>
-                      <div className="flex flex-col sm:gap-y-2">
-                        <Icon icon="clarity:success-standard-line" className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
-                        <div>Updated QC Successfully</div>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex flex-col sm:gap-y-2">
-                        <Icon icon="material-symbols:cancel-outline" className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"/>
-                        <div>Error Occurred</div>
-                      </div>
-                    </>
-                  ) }
+                  )}
                 </div>
                 <div className="flex justify-center">
                   <Button
@@ -1066,13 +1315,58 @@ export const ChemistryTestInputPage = () => {
                   </Button>
                 </div>
               </>
-            ) }
+            )}
 
-            {/* NOTI WHEN NO CHANGES WERE MADE */}
-            { feedbackNotiType === NotiType.NoChangesMade && (
+            {/* WARNING NOTI FOR ANOTHER EXISTING ENTRY IS IN ORDER */}
+            {feedbackNotiType === NotiType.QCAlreadyExist && (
+              <div className="flex flex-col gap-y-2 items-center">
+                <div className="text-2xl font-semibold">
+                  Another QC is in order!
+                </div>
+                <div className="text-lg font-semibold">Proceed?</div>
+                <Icon
+                  icon="ph:warning-octagon-bold"
+                  className="text-2xl text-yellow-400 sm:w-20 sm:h-20"
+                />
+                <div className="flex gap-x-2">
+                  <Button
+                    variant="contained"
+                    className="!bg-[#22C55E]"
+                    onClick={() => {
+                      console.log(errors);
+                      setValue("lotNumber", newQCLotInput);
+                      setValue("expirationDate", expDate.toISOString());
+                      setValue("fileDate", fileDate.toISOString());
+                      setValue("openDate", fileDateRange ? fileDateRange[0] ? fileDateRange[0].toISOString() : "" : "");
+                      setValue("closedDate", fileDateRange ? fileDateRange[1] ? fileDateRange[1].toISOString() : null : null);
+                      handleSubmit(saveQC)();
+                    }}
+                  >
+                    Confirm
+                  </Button>
+                  <Button
+                    variant="contained"
+                    className="!bg-red-500"
+                    onClick={() => {
+                      setFeedbackNotiOpen(false);
+                    }}
+                  >
+                    Decline
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* WARNING LOT NUMBER TAKEN */}
+            {feedbackNotiType === NotiType.LotNumberTaken && (
               <div className="flex flex-col sm:gap-y-2 items-center">
-                <div className="text-2xl font-semibold">No changes were made!</div>
-                <Icon icon="ph:warning-octagon-bold" className="text-2xl text-yellow-400 sm:w-20 sm:h-20"/>
+                <div className="text-2xl font-semibold">
+                  Lot Number already exists!
+                </div>
+                <Icon
+                  icon="ph:warning-octagon-bold"
+                  className="text-2xl text-yellow-400 sm:w-20 sm:h-20"
+                />
                 <Button
                   variant="contained"
                   onClick={() => {
@@ -1083,7 +1377,132 @@ export const ChemistryTestInputPage = () => {
                   OK
                 </Button>
               </div>
-            ) }
+            )}
+
+            {/* NOTI WHEN UPDATING QC */}
+            {feedbackNotiType === NotiType.UpdateQC && (
+              <>
+                <div className="text-center text-gray-600 text-xl font-semibold">
+                  {isUpdatingQCLotSuccessful ? (
+                    <>
+                      <div className="flex flex-col sm:gap-y-2">
+                        <Icon
+                          icon="clarity:success-standard-line"
+                          className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"
+                        />
+                        <div>Updated QC Successfully</div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex flex-col sm:gap-y-2">
+                        <Icon
+                          icon="material-symbols:cancel-outline"
+                          className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"
+                        />
+                        <div>Error Occurred</div>
+                      </div>
+                    </>
+                  )}
+                </div>
+                <div className="flex justify-center">
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setFeedbackNotiOpen(false);
+                    }}
+                    className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                  >
+                    OK
+                  </Button>
+                </div>
+              </>
+            )}
+
+            {/* NOTI WHEN NO CHANGES WERE MADE */}
+            {feedbackNotiType === NotiType.NoChangesMade && (
+              <div className="flex flex-col sm:gap-y-2 items-center">
+                <div className="text-2xl font-semibold">
+                  No changes were made!
+                </div>
+                <Icon
+                  icon="ph:warning-octagon-bold"
+                  className="text-2xl text-yellow-400 sm:w-20 sm:h-20"
+                />
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    setFeedbackNotiOpen(false);
+                  }}
+                  className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                >
+                  OK
+                </Button>
+              </div>
+            )}
+
+            {/* NOTI WHEN USER DEACTIVATES LOT */}
+            {feedbackNotiType === NotiType.DeactivateQC && (
+              <div className="flex flex-col gap-y-2 items-center">
+                <div className="text-2xl font-semibold">
+                  Deactivate QC?
+                </div>
+                <div className="text-red-500 font-semibold">Note: This action is permanent, you cannot reactivate this QC</div>
+                
+                <Icon
+                  icon="ph:warning-octagon-bold"
+                  className="text-2xl text-yellow-400 sm:w-20 sm:h-20"
+                />
+                <div className="text-lg font-semibold">Proceed?</div>
+                <div className="flex gap-x-2">
+                  <Button
+                    variant="contained"
+                    className="!bg-[#22C55E]"
+                    onClick={() => {
+                      setDidUserDeactivate(true);
+                      setFeedbackNotiOpen(false);
+                    }}
+                  >
+                    Confirm
+                  </Button>
+                  <Button
+                    variant="contained"
+                    className="!bg-red-500"
+                    onClick={() => {
+                      setFeedbackNotiOpen(false);
+                    }}
+                  >
+                    Decline
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* NOTI WHEN DEACTIVATING QC */}
+            {feedbackNotiType === NotiType.DeactivateResponse && (
+              <>
+                <div className="text-center text-gray-600 text-xl font-semibold">
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon
+                      icon="clarity:success-standard-line"
+                      className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"
+                    />
+                    <div>Deactivated QC Successfully</div>
+                  </div>
+                </div>
+                <div className="flex justify-center">
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setFeedbackNotiOpen(false);
+                    }}
+                    className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                  >
+                    OK
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </Backdrop>

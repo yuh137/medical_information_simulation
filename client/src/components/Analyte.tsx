@@ -55,20 +55,20 @@ const Analyte = forwardRef((props: AnalyteProps, ref) => {
               const newInput = (+inputValue).toFixed(2).replace(/^0+(?!\.|$)/, "");
 
               // console.log(+event.currentTarget.value);
-              if (
-                isNaN(+event.currentTarget.value) ||
-                +event.currentTarget.value < +props.minLevel ||
-                +event.currentTarget.value > +props.maxLevel
-              ) {
-                event.currentTarget.classList.remove("bg-[#00FF00]");
-                event.currentTarget.classList.add("bg-[#FF0000]");
-              } else {
-                event.currentTarget.classList.remove("bg-[#FF0000]");
-                event.currentTarget.classList.add("bg-[#00FF00]");
-              }
+              // if (
+              //   isNaN(+event.currentTarget.value) ||
+              //   +event.currentTarget.value < +props.minLevel ||
+              //   +event.currentTarget.value > +props.maxLevel
+              // ) {
+              //   event.currentTarget.classList.remove("bg-[#00FF00]");
+              //   event.currentTarget.classList.add("bg-[#FF0000]");
+              // } else {
+              //   event.currentTarget.classList.remove("bg-[#FF0000]");
+              //   event.currentTarget.classList.add("bg-[#00FF00]");
+              // }
 
               setInputValue(newInput);
-              props.handleInputChange(event.currentTarget.value);
+              // props.handleInputChange(event.currentTarget.value);
             }
           }}
           // onChange={(event) => props.handleInputChange(event.target.value)}
@@ -78,7 +78,20 @@ const Analyte = forwardRef((props: AnalyteProps, ref) => {
 
             const isValid = /^\d*\.?\d*$/.test(newValue);
             if (isValid) {
+              if (
+                isNaN(+event.target.value) ||
+                +event.target.value < +props.minLevel ||
+                +event.target.value > +props.maxLevel
+              ) {
+                event.target.classList.remove("bg-[#00FF00]");
+                event.target.classList.add("bg-[#FF0000]");
+              } else {
+                event.target.classList.remove("bg-[#FF0000]");
+                event.target.classList.add("bg-[#00FF00]");
+              }
+
               setInputValue(newValue);
+              props.handleInputChange(newValue);
             }
           }}
         />

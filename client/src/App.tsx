@@ -113,7 +113,12 @@ function AppWithRouter() {
               },
               { 
                 path: 'order_controls', 
-                element: <ChemistryOrderControls /> 
+                element: <ChemistryOrderControls />,
+                // loader: async () => {
+                //   await new Promise((resolve) => setTimeout(resolve, 5000));
+
+                //   return null;
+                // }
               },
               {
                 path: 'review_controls',
@@ -176,7 +181,7 @@ function AppWithRouter() {
                   }
 
                   return null; 
-                }
+                },
               },
               {
                 path: "custom_qc",

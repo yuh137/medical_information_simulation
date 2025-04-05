@@ -9,7 +9,6 @@ import {
 } from "react-beautiful-dnd";
 import { Backdrop, Button, ButtonBase } from "@mui/material"
 import { AuthToken, useAuth, UserType } from "../../../context/AuthContext";
-import dayjs from "dayjs";
 import { Icon } from "@iconify/react";
 import { useTheme } from "../../../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
@@ -142,8 +141,8 @@ const ChemistryOrderControls = () => {
   
   return (
     <>
+      <NavBar name="Chemistry Order Controls" />
       <DragDropContext onDragEnd={onDragEnd}>
-        <NavBar name="Chemistry Order Controls" />
         <div
           className="flex justify-center gap-32 items-center"
           style={{ minWidth: "100svw", minHeight: "90svh" }}

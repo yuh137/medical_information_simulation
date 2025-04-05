@@ -86,13 +86,18 @@ const ChemistryQCResult = () => {
         const reports: StudentReport[] = await res.json();
         const qcLotIds = Array.from(new Set(reports.map(report => report.adminQCLotID))); 
 
+        // console.log("Reports:", reports, qcLotIds);
+
         const queryParams = new URLSearchParams();
         qcLotIds.forEach(item => queryParams.append("lotId", item));
+
+        console.log("Query Params: ", queryParams.toString());
 
         const qcDataRes = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByIdList?${queryParams.toString()}`);
 
         if (qcDataRes.ok) {
           const qcData: AdminQCLot[] = await qcDataRes.json();
+          console.log("QC Data: ", qcData);
           const returnData = reports.map(item => ({
             reportId: item.reportID,
             qcName: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.qcName ?? "",
@@ -100,6 +105,7 @@ const ChemistryQCResult = () => {
             expDate: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.expirationDate ?? "",
             createdDate: item.createdDate,
           }))
+          console.log("Return data: ", returnData);
 
           setQcData(returnData);
         } 

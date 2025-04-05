@@ -294,7 +294,7 @@ export interface AdminQCLot {
   qcName: string;
   lotNumber: string;
   openDate: string;
-  closedDate: string;
+  closedDate: string | null;
   expirationDate: string;
   isActive: boolean;
   fileDate: string;
