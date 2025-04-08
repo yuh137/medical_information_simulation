@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Backdrop, Button } from "@mui/material";
 import { Icon } from "@iconify/react";
 import NavBar from "../../../components/NavBar";
@@ -80,7 +80,7 @@ const ChemistryQCResult = () => {
     const token: AuthToken = JSON.parse(tokenString);
 
     if (token.roles.includes("Admin")) {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/ByAdminId/${token.userID}`);
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/GetUnfilledByAdminId/${token.userID}`);
 
       if (res.ok) {
         const reports: StudentReport[] = await res.json();
@@ -91,7 +91,7 @@ const ChemistryQCResult = () => {
         const queryParams = new URLSearchParams();
         qcLotIds.forEach(item => queryParams.append("lotId", item));
 
-        console.log("Query Params: ", queryParams.toString());
+        // console.log("Query Params: ", queryParams.toString());
 
         const qcDataRes = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByIdList?${queryParams.toString()}`);
 
@@ -113,7 +113,7 @@ const ChemistryQCResult = () => {
         return;
       }
     } else if (token.roles.includes("Student")) {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/ByStudentId/${token.userID}`);
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/GetUnfilledByStudentId/${token.userID}`);
 
       if (res.ok) {
         const reports: StudentReport[] = await res.json();
@@ -175,6 +175,13 @@ const ChemistryQCResult = () => {
     }
     
     try {
+      // const checkRes = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/${selectedQC.reportId}`);
+
+      // if (checkRes.ok) {
+      //   const data: StudentReport = await checkRes.json();
+        
+      // }
+
       const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/Delete/${selectedQC.reportId}`, {
         method: 'DELETE',
         headers: {
@@ -283,13 +290,13 @@ const ChemistryQCResult = () => {
               >
                 Select QC
               </Button>
-              <Button
+              {/* <Button
                 className={`sm:w-36 sm:h-12 sm:!text-lg font-medium ${selectedQC !== null ? "!bg-[#DAE3F3] !text-black !border !border-solid !border-blue-500" : "!bg-[#AFABAB] !text-white !border !border-solid !border-gray-500"}`}
                 onClick={handleDeleteQC}
                 disabled={!selectedQC}
               >
                 Delete QC
-              </Button>
+              </Button> */}
             </div>
           </>
         )}

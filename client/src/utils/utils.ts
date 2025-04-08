@@ -264,6 +264,7 @@ export interface StudentReport {
   adminID?: string;
   adminQCLotID: string;
   createdDate: string;
+  isResulted: boolean;
   analyteInputs: AnalyteInput[];
 }
 

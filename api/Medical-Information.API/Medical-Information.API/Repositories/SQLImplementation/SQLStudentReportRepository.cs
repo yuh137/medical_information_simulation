@@ -99,5 +99,30 @@ namespace Medical_Information.API.Repositories.SQLImplementation
         {
             return await dbContext.StudentReports.Where(item => item.StudentID == studentId).ToListAsync();
         }
+
+        public async Task<List<StudentReport>> GetUnFilledReportsByAdminId(Guid adminId)
+        {
+            return await dbContext.StudentReports.Where(item => item.AdminID == adminId && item.isResulted == false).ToListAsync();
+        }
+
+        public async Task<List<StudentReport>> GetUnFilledReportsByStudentId(Guid studentId)
+        {
+            return await dbContext.StudentReports.Where(item => item.StudentID == studentId && item.isResulted == false).ToListAsync();
+        }
+
+        public async Task<StudentReport?> ResultCurrentReport(Guid reportId)
+        {
+            var report = await dbContext.StudentReports.FirstOrDefaultAsync(item => item.ReportID == reportId);
+
+            if (report == null)
+            {
+                return null;
+            }
+
+            report.isResulted = true;
+            await dbContext.SaveChangesAsync();
+
+            return report;
+        }
     }
 }

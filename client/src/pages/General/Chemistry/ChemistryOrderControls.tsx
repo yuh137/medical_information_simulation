@@ -93,16 +93,18 @@ const ChemistryOrderControls = () => {
           return;
         }
 
+        const authToken: AuthToken = JSON.parse(localStorage.getItem("token") ?? "");
+
         const reportsToSave = savedQCItems.map(item => {
-          if (type === UserType.Admin) {
+          if (authToken.roles.includes("Admin")) {
             return {
-              adminID: userId,
+              adminID: authToken.userID,
               adminQCLotID: item.adminQCLotID,
               createdDate: getISOTexasTime(),
             };
           } else {
             return {
-              studentID: userId,
+              studentID: authToken.userID,
               adminQCLotID: item.adminQCLotID,
               createdDate: getISOTexasTime(),
             };

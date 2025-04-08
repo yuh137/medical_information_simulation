@@ -13,7 +13,6 @@ export interface AnalyteProps {
 }
 
 const Analyte = forwardRef((props: AnalyteProps, ref) => {
-
   const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {

@@ -367,8 +367,24 @@ const ChemistryAnalyteInputPage = () => {
   
           if (res.ok) {
               // console.log("QC data saved successfully.", await res.json());
-              setNotiType(NotiType.ReportSaved);
-              setIsFeedbackNotiOpen(true);
+              const inputValidCheck = inputRefs.current.every(input => input.classList.contains("bg-[#00FF00]"));
+              console.log("All green?", inputValidCheck);
+              if (inputValidCheck) {
+                const secondRes = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/ResultQC/${loaderData.reportID}`, {
+                  method: 'PUT',
+                });
+                if (secondRes.ok) {
+                  const data = await secondRes.json();
+                  console.log("Student report resulted: ", data);
+                  setNotiType(NotiType.ReportSaved);
+                  setIsFeedbackNotiOpen(true);
+                } else {
+                  console.error("Error fetching student report data: ", secondRes.statusText);
+                }
+              } else {
+                setNotiType(NotiType.ReportSaved);
+                setIsFeedbackNotiOpen(true);
+              }
           }
       } catch (e) {
           console.error("Error saving QC data:", e);
@@ -410,8 +426,24 @@ const ChemistryAnalyteInputPage = () => {
 
         if (res.ok) {
             // console.log("QC data saved successfully.", await res.json());
-            setNotiType(NotiType.ReportSaved);
-            setIsFeedbackNotiOpen(true);
+            const inputValidCheck = inputRefs.current.every(input => input.classList.contains("bg-[#00FF00]"));
+            console.log("All green?", inputValidCheck);
+            if (inputValidCheck) {
+              const secondRes = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/ResultQC/${loaderData.reportID}`, {
+                method: 'PUT',
+              });
+              if (secondRes.ok) {
+                const data = await secondRes.json();
+                console.log("Student report resulted: ", data);
+                setNotiType(NotiType.ReportSaved);
+                setIsFeedbackNotiOpen(true);
+              } else {
+                console.error("Error fetching student report data: ", secondRes.statusText);
+              }
+            } else {
+              setNotiType(NotiType.ReportSaved);
+              setIsFeedbackNotiOpen(true);
+            }
         }
       } catch (e) {
 
@@ -566,7 +598,7 @@ const ChemistryAnalyteInputPage = () => {
           <Skeleton active />
         </div>
       )}
-      {/* {!QCData ? <div>No data recorded</div> : <></>} */}
+      
       {QCData && !isFetchingData && 
       <div
         className=" flex flex-col space-y-12 pb-8 justify-center px-[100px] relative"
@@ -653,7 +685,10 @@ const ChemistryAnalyteInputPage = () => {
                   : "!bg-[#AFABAB] !text-white"
               }`}
               disabled={!isValidManual || !isValid}
-              onClick= {handleAcceptQC}
+              onClick= {async () => {
+                openPDF();
+                await handleAcceptQC();
+              }}
              >
               Accept QC
             </Button>
@@ -725,7 +760,7 @@ const ChemistryAnalyteInputPage = () => {
                     variant="contained"
                     onClick={() => {
                       setIsFeedbackNotiOpen(false);
-                      navigate(0);
+                      navigate('/chemistry/qc_results');
                     }}
                     className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
                   >

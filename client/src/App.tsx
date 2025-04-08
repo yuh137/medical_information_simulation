@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Navigate, createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Navigate, createBrowserRouter, RouterProvider, redirect } from "react-router-dom";
 import initIDB from "./utils/indexedDB/initIDB";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -105,7 +105,12 @@ function AppWithRouter() {
                   // Return StudentReport by Id
                   const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/${link}`);
                   if (res.ok) {
-                    return res.json();
+                    const data: StudentReport = await res.json();
+                    if (data.isResulted === true) {
+                      return redirect("/error");
+                    }
+
+                    return data;
                   }
 
                   return null;

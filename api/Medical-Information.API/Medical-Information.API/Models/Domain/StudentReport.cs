@@ -15,6 +15,7 @@ namespace Medical_Information.API.Models.Domain
         [ForeignKey("AdminQCLotID")]
         public Guid AdminQCLotID { get; set; }
         //public AdminQCLot AdminQCLot { get; set; }
+        public bool isResulted { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public ICollection<AnalyteInput> AnalyteInputs { get; set; } = [];
     }

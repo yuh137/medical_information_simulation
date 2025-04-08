@@ -65,7 +65,7 @@ namespace Medical_Information.API.Controllers
 
         [HttpGet]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> GetStudentReportById(Guid id)
+        public async Task<IActionResult> GetStudentReportById([FromRoute] Guid id)
         {
             var studentReportModel = await studentReportRepository.GetStudentReportByIdAsync(id);
 
@@ -80,6 +80,48 @@ namespace Medical_Information.API.Controllers
             var studentReportDTO = mapper.Map<StudentReportDTO>(studentReportModel);
 
             return Ok(studentReportDTO);
+        }
+
+        [HttpPut]
+        [Route("ResultQC/{reportId:Guid}")]
+        public async Task<IActionResult> ResultCurrentReport([FromRoute] Guid reportId)
+        {
+            var studentReportModel = await studentReportRepository.ResultCurrentReport(reportId);
+
+            if (studentReportModel == null)
+            {
+                return BadRequest(new
+                {
+                    ErrorCode = ErrorCode.NotFound,
+                    Message = "Student Report Not Found"
+                });
+            }
+
+            var studentReportDTO = mapper.Map<StudentReportDTO>(studentReportModel);
+
+            return Ok(studentReportDTO);
+        }
+
+        [HttpGet]
+        [Route("GetUnfilledByAdminId/{adminId:Guid}")]
+        public async Task<IActionResult> GetUnFilledReportsByAdminId([FromRoute] Guid adminId)
+        {
+            var studentReportModels = await studentReportRepository.GetUnFilledReportsByAdminId(adminId);
+
+            var studentReportDTOs = mapper.Map<List<StudentReportDTO>>(studentReportModels);
+
+            return Ok(studentReportDTOs);
+        }
+
+        [HttpGet]
+        [Route("GetUnfilledByStudentId/{studentId:Guid}")]
+        public async Task<IActionResult> GetUnFilledReportsByStudentId([FromRoute] Guid studentId)
+        {
+            var studentReportModels = await studentReportRepository.GetUnFilledReportsByStudentId(studentId);
+
+            var studentReportDTOs = mapper.Map<List<StudentReportDTO>>(studentReportModels);
+
+            return Ok(studentReportDTOs);
         }
 
         [HttpDelete]
