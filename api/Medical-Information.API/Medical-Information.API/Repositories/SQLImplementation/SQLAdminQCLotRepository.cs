@@ -25,7 +25,26 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             {
                 activeQCLot.IsActive = false;
                 activeQCLot.ClosedDate = DateTime.Now;
-                dbContext.Update(activeQCLot);
+                dbContext.AdminQCLots.Update(activeQCLot);
+            }
+
+            await dbContext.AdminQCLots.AddAsync(qclot);
+            await dbContext.SaveChangesAsync();
+            return qclot;
+        }
+
+        public async Task<AdminQCLot?> CreateCustomQCLot(AdminQCLot qclot)
+        {
+            if (!qclot.IsCustom)
+            {
+                return null;
+            }
+
+            var existingQcLot = await dbContext.AdminQCLots.Where(item => item.QCName.ToLower() == qclot.QCName.ToLower()).FirstOrDefaultAsync();
+
+            if (existingQcLot != null)
+            {
+                return null;
             }
 
             await dbContext.AdminQCLots.AddAsync(qclot);
@@ -65,6 +84,19 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             }
 
             return await QCLot.Include(item => item.Analytes).FirstOrDefaultAsync();
+        }
+        public async Task<List<string>> GetAllUniqueCustomLotsName()
+        {
+            var existingCustomLots = await GetAllCustomQCLots();
+
+            if (!existingCustomLots.Any())
+            {
+                return [];
+            }
+
+            var uniqueNameList = existingCustomLots.GroupBy(item => item.QCName).Select(group => group.Key).ToList();
+
+            return uniqueNameList;
         }
 
         public async Task<List<AdminQCLot>> GetAdminQCLotsByIdListAsync(List<Guid> lotId)
@@ -127,6 +159,7 @@ namespace Medical_Information.API.Repositories.SQLImplementation
                     existingAnalyte.MinLevel = analyte.MinLevel;
                     existingAnalyte.UnitOfMeasure = analyte.UnitOfMeasure;
                     existingAnalyte.Mean = analyte.Mean;
+                    existingAnalyte.StdDevi = analyte.StdDevi;
                 }
             }
 
@@ -148,6 +181,26 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             await dbContext.SaveChangesAsync();
 
             return existingQCLot;
+        }
+
+        public async Task<List<AdminQCLot>> GetAllCustomQCLots()
+        {
+            return await dbContext.AdminQCLots.Where(item => item.IsCustom == true).ToListAsync();
+        }
+
+        public async Task<AdminQCLot?> ActivateCustomQCLot(Guid lotId)
+        {
+            var existingCustomLot = await dbContext.AdminQCLots.FirstOrDefaultAsync(item => item.AdminQCLotID == lotId && item.IsCustom == true);
+
+            if (existingCustomLot == null)
+            {
+                return null;
+            }
+
+            existingCustomLot.IsActive = true;
+            await dbContext.SaveChangesAsync();
+
+            return existingCustomLot;
         }
     }
 }

@@ -16,6 +16,7 @@ namespace Medical_Information.API.Models.DTO
         public DateTime ExpirationDate { get; set; }
         public DateTime FileDate { get; set; }
         public bool IsActive { get; set; } = true;
+        public bool IsCustom { get; set; }
         public Department Department { get; set; }
         public ICollection<AddAnalyteWithListDTO> Analytes { get; set; } = [];
     }

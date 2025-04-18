@@ -82,7 +82,7 @@ namespace Medical_Information.API.Controllers
             return Ok(studentReportDTO);
         }
 
-        [HttpPut]
+        [HttpPatch]
         [Route("ResultQC/{reportId:Guid}")]
         public async Task<IActionResult> ResultCurrentReport([FromRoute] Guid reportId)
         {

@@ -57,6 +57,17 @@ namespace Medical_Information.API.Controllers
         }
 
         [HttpGet]
+        [Route("GetAllCustomLots")]
+        public async Task<IActionResult> GetAllCustomQCLots()
+        {
+            var qcLotModels = await adminQCLotRepository.GetAllCustomQCLots();
+
+            var qcLotDTOs = mapper.Map<List<AdminQCLotDTO>>(qcLotModels);
+
+            return Ok(qcLotDTOs);
+        }
+
+        [HttpGet]
         [Route("HistoryByName")]
         public async Task<IActionResult> GetQCLotsHistoryByName([FromQuery] string? name, [FromQuery] string? dep)
         {
@@ -125,6 +136,15 @@ namespace Medical_Information.API.Controllers
         }
 
         [HttpGet]
+        [Route("GetAllCustomNames")]
+        public async Task<IActionResult> GetAllCustomNames()
+        {
+            var names = await adminQCLotRepository.GetAllUniqueCustomLotsName();
+
+            return Ok(names);
+        }
+
+        [HttpGet]
         [Route("ByLotNumber/{lotNum}")]
         public async Task<IActionResult> GetQCLotByLotNumber([FromRoute] string lotNum)
         {
@@ -154,7 +174,8 @@ namespace Medical_Information.API.Controllers
                 OpenDate = dto.OpenDate,
                 ClosedDate = dto.ClosedDate,
                 ExpirationDate = dto.ExpirationDate,
-                IsActive = true,
+                IsActive = dto.IsActive,
+                IsCustom = dto.IsCustom,
                 FileDate = dto.FileDate,
                 Department = dto.Department,
                 Analytes = new List<Analyte>(),
@@ -190,7 +211,52 @@ namespace Medical_Information.API.Controllers
             return Ok(qclotDTO);
         }
 
-        [HttpPut]
+        [HttpPost]
+        [Route("CreateCustomLot")]
+        public async Task<IActionResult> CreateCustomQCLot([FromBody] AddAdminQCLotRequestDTO dto)
+        {
+            var qclotModel = new AdminQCLot
+            {
+                QCName = dto.QCName,
+                LotNumber = dto.LotNumber,
+                OpenDate = dto.OpenDate,
+                ClosedDate = dto.ClosedDate,
+                ExpirationDate = dto.ExpirationDate,
+                IsActive = dto.IsActive,
+                IsCustom = dto.IsCustom,
+                FileDate = dto.FileDate,
+                Department = dto.Department,
+                Analytes = new List<Analyte>(),
+                Reports = new List<StudentReport>()
+            };
+
+            foreach (var analyteDTO in dto.Analytes)
+            {
+                if (analyteDTO != null)
+                {
+                    var analyteModel = mapper.Map<Analyte>(analyteDTO);
+
+                    qclotModel.Analytes.Add(analyteModel);
+                }
+            }
+
+            var returnResult = await adminQCLotRepository.CreateCustomQCLot(qclotModel);
+
+            if (returnResult == null)
+            {
+                return BadRequest(new RequestErrorObject
+                {
+                    ErrorCode = ErrorCode.AlreadyExist,
+                    Message = "Name Already Exist or Not Custom Lot!",
+                });
+            }
+
+            var adminQCLotDTO = mapper.Map<AdminQCLotDTO>(returnResult);
+
+            return Ok(adminQCLotDTO);
+        }
+
+        [HttpPatch]
         [Route("UpdateQCLot/{id:Guid}")]
         public async Task<IActionResult> UpdateQCLot([FromRoute] Guid id, [FromBody] UpdateAdminQCLotDTO dto)
         {
@@ -211,7 +277,7 @@ namespace Medical_Information.API.Controllers
             return Ok(qclotModel);
         }
 
-        [HttpPut]
+        [HttpPatch]
         [Route("DeactivateQCLot/{id:Guid}")]
         public async Task<IActionResult> InactivateQCLot([FromRoute] Guid id)
         {
@@ -227,6 +293,26 @@ namespace Medical_Information.API.Controllers
             }
 
             return Ok(qclotModel);
+        }
+
+        [HttpPatch]
+        [Route("ActivateCustomQC/{id:Guid}")]
+        public async Task<IActionResult> ActivateCustomQC([FromRoute] Guid id)
+        {
+            var qcLotModel = await adminQCLotRepository.ActivateCustomQCLot(id);
+
+            if (qcLotModel == null)
+            {
+                return BadRequest(new RequestErrorObject
+                {
+                    ErrorCode = ErrorCode.NotFound,
+                    Message = "QC Lot Not Found"
+                });
+            }
+
+            var qcLotDTO = mapper.Map<AdminQCLotDTO>(qcLotModel);
+
+            return Ok(qcLotDTO);
         }
     }
 }

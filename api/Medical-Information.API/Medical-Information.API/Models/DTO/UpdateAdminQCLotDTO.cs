@@ -8,6 +8,6 @@ namespace Medical_Information.API.Models.DTO
         public DateTime? ClosedDate { get; set; }
         public DateTime? ExpirationDate { get; set; }
         public DateTime? FileDate { get; set; }
-        public List<Analyte> Analytes { get; set; }
+        public List<AddAnalyteWithListDTO> Analytes { get; set; }
     }
 }

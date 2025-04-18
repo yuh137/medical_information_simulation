@@ -13,8 +13,7 @@
       "secretStore": "AzureAppSettings",
       "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/sqlserver-medisim-southus-dev-001/databases/sqldb-medisim-southus-dev-001",
       "type": "mssql.azure",
-      "connectionId": "ConnectionStrings:MedicalInformationConnectionString",
-      "dynamicId": null
+      "connectionId": "ConnectionStrings:MedicalInformationConnectionString"
     }
   }
 }

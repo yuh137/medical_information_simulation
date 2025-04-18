@@ -12,6 +12,7 @@ namespace Medical_Information.API.Models.Domain
         public DateTime ExpirationDate { get; set; }
         public DateTime? FileDate { get; set; } = DateTime.Now;
         public bool IsActive { get; set; }
+        public bool IsCustom { get; set; }
         public Department Department { get; set; }
         public ICollection<Analyte> Analytes { get; set; } = [];
         public ICollection<StudentReport> Reports { get; set; } = [];

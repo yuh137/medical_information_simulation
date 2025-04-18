@@ -7,8 +7,7 @@
     },
     "mssql2": {
       "type": "mssql",
-      "connectionId": "ConnectionStrings:MedicalInformationConnectionString",
-      "dynamicId": null
+      "connectionId": "ConnectionStrings:MedicalInformationConnectionString"
     }
   }
 }

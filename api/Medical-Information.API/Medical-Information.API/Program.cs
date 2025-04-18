@@ -5,14 +5,12 @@ using Medical_Information.API.Repositories.Interfaces.Auth;
 using Medical_Information.API.Repositories.LocalImplementation;
 using Medical_Information.API.Repositories.SQLImplementation;
 using Medical_Information.API.Repositories.SQLImplementation.Auth;
-using Medical_Information.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Net.NetworkInformation;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
