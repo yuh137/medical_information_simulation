@@ -229,7 +229,6 @@ export const getISOTexasTime = (): string => {
     fractionalSecondDigits: 3, // Preserve milliseconds
     hourCycle: "h23", // 24-hour format
   }).formatToParts(now);
-
   // Extract components
   const year = texasTime.find((part) => part.type === "year")?.value;
   const month = texasTime.find((part) => part.type === "month")?.value;
@@ -241,6 +240,43 @@ export const getISOTexasTime = (): string => {
 
   // Convert to correct ISO 8601 format
   return `${year}-${month}-${day}T${hour}:${minute}:${second}.${millisecond}Z`;
+}
+
+const slugify = (title: string) => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-") // replace non-alphanumerics
+    .replace(/^-+|-+$/g, ""); // trim dashes
+};
+
+export const generateSlug = <T extends object>(items: T[], mainKey?: string) => {
+  const slugMap = new Map<string, number>();
+
+  if (!mainKey) {
+    // If no mainKey is provided, find the key which contains the string "name"
+    mainKey = Object.keys(items[0]).find((key) => key.includes("name"));
+
+    if (!mainKey) {
+      mainKey = Object.keys(items[0])[0]; // Fallback to the first key if no "name" key is found
+    }
+  }
+
+  return items.map(item => {
+    let baseSlug = slugify(item[mainKey as keyof T] as string);
+    let slug = baseSlug;
+    let count = slugMap.get(baseSlug) || 0;
+
+    if (count > 0) {
+      slug = `${baseSlug}-${count + 1}`;
+    }
+
+    slugMap.set(baseSlug, count + 1);
+
+    return {
+      ...item,
+      slug: slug,
+    };
+  })
 }
 
 export interface Admin {
@@ -294,11 +330,13 @@ export interface AdminQCLot {
   adminQCLotID?: string;
   qcName: string;
   lotNumber: string;
+  slug: string | null;
   openDate: string;
   closedDate: string | null;
   expirationDate: string;
   isActive: boolean;
-  fileDate: string;
+  isCustom: boolean;
+  fileDate?: string;
   analytes: {
       analyteName: string;
       analyteAcronym: string;

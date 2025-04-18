@@ -9,8 +9,6 @@ import {
   FormControlLabel,
   TextField,
 } from "@mui/material";
-import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
 import { Button } from "@mui/material";
 import _ from "lodash";
 import {
@@ -20,7 +18,6 @@ import {
   useReactTable,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-import { useReport } from "../../../context/ReportContext";
 import { AdminQCLot, AnalyteInput } from "../../../utils/utils";
 import dayjs from "dayjs";
 import {
@@ -99,7 +96,7 @@ const ChemistryLeveyJennings = () => {
 
     return null;
   }, [currentAnalyte]);
-  // console.log(analyteLimits);
+  console.log(analyteLimits);
 
   // const xTicks = _.range(xMin, xMax, xStep).map((x) => new Date(x));
   const xTicks = useMemo(() => {
@@ -253,16 +250,16 @@ const ChemistryLeveyJennings = () => {
     console.log(tableData);
   }, [tableData])
 
-  const generatePDF = async () => {
-    const input = document.getElementById("pdfContent");
-    if (input) {
-      const canvas = await html2canvas(input);
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "pt", "a4");
-      pdf.addImage(imgData, "PNG", 0, 0, 600, canvas.height * 0.75);
-      pdf.save("LeveyJenningsReport.pdf");
-    }
-  };
+  // const generatePDF = async () => {
+  //   const input = document.getElementById("pdfContent");
+  //   if (input) {
+  //     const canvas = await html2canvas(input);
+  //     const imgData = canvas.toDataURL("image/png");
+  //     const pdf = new jsPDF("p", "pt", "a4");
+  //     pdf.addImage(imgData, "PNG", 0, 0, 600, canvas.height * 0.75);
+  //     pdf.save("LeveyJenningsReport.pdf");
+  //   }
+  // };
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
 
@@ -580,7 +577,7 @@ const ChemistryLeveyJennings = () => {
             </Button>
             <Button
               variant="outlined"
-              onClick={generatePDF}
+              // onClick={generatePDF}
               style={{ marginTop: "10px", width: "100%" }}
             >
               Levey Jennings Report

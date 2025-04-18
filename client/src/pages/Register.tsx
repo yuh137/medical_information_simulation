@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Backdrop } from "@mui/material";
 import { useTheme } from "../context/ThemeContext";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -16,6 +16,7 @@ export interface CredentialsInput {
 
 const Register = () => {
   const { theme } = useTheme();
+  const navigate = useNavigate();
   const [registerOptions, setRegisterOptions] = useState<
     "Admin" | "Student" | string
   >("");
@@ -53,15 +54,16 @@ const Register = () => {
 
         if (res.ok) {
           setIsRegisterSuccessful(true);
-          console.log(res.text());
         } else {
           console.error("Failed to register");
         }
+
         setIsRegistering(false);
         setFeedbackNotiOpen(true);
       } catch (e) {
         console.error("Failed to register", e);
         setIsRegistering(false);
+        setFeedbackNotiOpen(true);
       }
     } else if (registerOptions === "Student") {
       // const check = await getStudentByName(data.username);
@@ -76,14 +78,16 @@ const Register = () => {
         })
 
         if (res.ok) {
-          setFeedbackNotiOpen(true);
-          console.log(res.text());
+          setIsRegisterSuccessful(true);
         } else {
           console.error("Failed to register");
         }
       } catch (e) {
         console.error("Failed to register", e);
       }
+
+      setIsRegistering(false);
+      setFeedbackNotiOpen(true);
     } else {
       console.log(new Error("Invalid type"));
       setFeedbackNotiOpen(true);
@@ -232,6 +236,7 @@ const Register = () => {
                 variant="contained"
                 onClick={() => {
                   setFeedbackNotiOpen(false);
+                  navigate("/login");
                 }}
                 className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
               >

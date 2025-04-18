@@ -29,15 +29,14 @@ const ChemistryQCBuilder = () => {
             <div className="button-text font-bold text-2xl">QC Panels</div>
           </ButtonBase>
         </Link>
-        {/* <Link to={`/chemistry/qc_types`}> */}
         <Link to={`/chemistry/custom_qc`}>
           <ButtonBase className={`!rounded-lg sm:w-[24svw] sm:h-[20svh] !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
-            <div className="button-text font-bold text-2xl">Custom QC Panels</div>
+            <div className="button-text font-bold text-2xl">Build Custom QC</div>
           </ButtonBase>
         </Link>
         <Link to={`/chemistry/custom_tests`}>
           <ButtonBase className={`!rounded-lg sm:w-[24svw] sm:h-[20svh] !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>
-            <div className="button-text font-bold text-2xl">Custom Tests</div>
+            <div className="button-text font-bold text-2xl">Custom QC Panels</div>
           </ButtonBase>
         </Link>
       </div>

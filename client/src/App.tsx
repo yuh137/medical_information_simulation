@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import { Navigate, createBrowserRouter, RouterProvider, redirect } from "react-router-dom";
-import initIDB from "./utils/indexedDB/initIDB";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import StudentHomeScreen from "./pages/StudentView/StudentHomeScreen";
@@ -12,21 +11,14 @@ import Unauthorized from "./pages/Unauthorized";
 import FacultyHomeScreen from "./pages/FacultyView/FacultyHomeScreen";
 import FacultyQualityControls from "./pages/FacultyView/FacultyQualityControls";
 import ChemistryQCBuilder from "./pages/General/Chemistry/ChesmistryQCBuilderPage";
-// import { qcTypeLinkList, testTypeLinkList } from "./utils/utils";
 import ChemistryEditQC from "./pages/General/Chemistry/ChemistryEditQCPage";
 import { ChemistryTestInputPage } from "./pages/General/Chemistry/ChemistryTestInputPage";
 import ErrorPage from "./pages/ErrorPage";
 import StudentResultsInProgress from "./pages/StudentView/StudentResultsInProgress";
-import ChemistryCustomQCBuild from "./pages/General/Chemistry/ChemistryCustomQCBuild";
 import ChemistryCustomTests from "./pages/General/Chemistry/ChemistryCustomTests";
-import Student_QC_Review from "./pages/StudentView/StudentReviewControls";
-import Faculty_QC_Review from "./pages/FacultyView/FacultyReviewControls";
-import ChemistryQCTypeButtonsPage from "./pages/General/Chemistry/ChemistryQCTypeSelection";
 import Layout from "./utils/Layout";
 import ChemistryLeveyJennings from "./pages/General/Chemistry/ChemistryLeveyJennings";
-import Simple_Faculty_QC_Review  from "./pages/FacultyView/Simple_Faculty_Review_Controls";
-import { qcTypeLinkList, StudentReport } from "./utils/utils";
-import { AuthToken } from "./context/AuthContext";
+import { AdminQCLot, generateSlug, StudentReport } from "./utils/utils";
 import ChemistryPanel from "./pages/General/Chemistry/ChemistryPanel";
 import FacultyOrderEntry from "./pages/FacultyView/FacultyOrderEntry";
 import ChemistryOEBuilder from "./pages/General/Chemistry/ChemistryOEBuilder";
@@ -49,6 +41,7 @@ function AppWithRouter() {
       {
         path: '/',
         element: <Layout />,
+        errorElement: <ErrorPage />,
         children: [
           { index: true, element: <Navigate to="/login" /> },
           { path: 'login', element: <Login /> },
@@ -193,16 +186,19 @@ function AppWithRouter() {
                 element: <ChemistryCustomQC />
               },
               {
-                path: "build_qc/:item",
-                element: <ChemistryCustomQCBuild name="Chemistry" />,
-              },
-              {
                 path: "custom_tests",
                 element: <ChemistryCustomTests />,
-              },
-              {
-                path: "qc_types",
-                element: <ChemistryQCTypeButtonsPage />,
+                loader: async () => {
+                  const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/GetAllCustomLots`);
+
+                  if (res.ok) {
+                    const data: AdminQCLot[] = await res.json();
+                    const dataWithSlugs = generateSlug<AdminQCLot>(data, "qcName");
+                    return dataWithSlugs;
+                  }
+
+                  return null;
+                }
               },
               {
                 path: "panel",

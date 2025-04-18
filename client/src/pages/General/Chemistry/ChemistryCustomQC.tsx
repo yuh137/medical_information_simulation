@@ -1,12 +1,28 @@
 import React, { useEffect, useState } from 'react'
 import NavBar from '../../../components/NavBar'
-import { ButtonBase, Modal } from '@mui/material';
+import { Backdrop, Button, ButtonBase, Modal } from '@mui/material';
 import { DatePicker } from 'antd';
+import { Dayjs } from 'dayjs';
+import { AdminQCLot, DefinedRequestError, ErrorCode, getISOTexasTime } from '../../../utils/utils';
+import { Icon } from '@iconify/react';
+import { useTheme } from '../../../context/ThemeContext';
+import { useNavigate } from 'react-router-dom';
+import { set } from 'lodash';
 
 interface DefinedTest {
     analyteName: string;
     analyteAcronym: string;
     unitOfMeasure: string;
+}
+
+enum NotiType {
+    Idle,
+    QCNameEmpty,
+    QCLotEmpty,
+    ExpDateEmpty,
+    OpenDateEmpty,
+    CreatedSucessfully,
+    LotNumberAlreadyExist,
 }
 
 const predefinedAnalytes = {
@@ -125,13 +141,13 @@ const QCColumn = (props: { qcTest: DefinedTest[], name: string, selectedItems: D
                         {props.qcTest.map((value, index) => (
                             <ButtonBase
                                 key={index}
-                                className={`!rounded-lg sm:w-[80%] sm:h-14 !border-solid transition ease-in-out ${
+                                className={`!rounded-lg sm:w-[80%] sm:h-14 !border-solid transition ease-in-out h-fit ${
                                     props.selectedItems && 
-                                    props.selectedItems.includes(value) ? `!border-[#2F528F] !border-[4px] !bg-[#8faadc]`
+                                    props.selectedItems.some(item => item.analyteName === value.analyteName) ? `!border-[#2F528F] !border-[4px] !bg-[#8faadc]`
                                     : `!border !bg-[#dae3f3] !border-[#47669C]`
                                 } !px-3`}
                                 onClick={() => {
-                                    if (!props.selectedItems.includes(value)) {
+                                    if (!props.selectedItems.some(item => item.analyteName === value.analyteName)) {
                                         let newSelectedItems = [...props.selectedItems];
                                         newSelectedItems.push(value);
                                         props.setSelectedItems(newSelectedItems);
@@ -152,11 +168,103 @@ const QCColumn = (props: { qcTest: DefinedTest[], name: string, selectedItems: D
 
 const ChemistryCustomQC = () => {
     const [selectedItems, setSelectedItems] = useState<DefinedTest[]>([]);
+
+    const [QCLotInput, setQCLotInput] = useState<string>("");
+    const [QCNameInput, setQCNameInput] = useState<string>("");
+    const [fileDateRange, setFileDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
+    const [expDate, setExpDate] = useState<Dayjs | null>(null);
+
+    const [feedbackNotiType, setFeedbackNotiType] = useState<NotiType>(NotiType.Idle);
+    const [isFeedbackNotiOpen, setFeedbackNotiOpen] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState<string>("Something wrong!");
+
+    const [isCreatingCustomQC, setIsCreatingCustomQC] = useState<boolean>(false);
+
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+    const { theme } = useTheme();
+    const navigate = useNavigate();
     
     useEffect(() => {
-        console.log(selectedItems);
+        // console.log(selectedItems);
     }, [selectedItems])
+
+    async function handleCreateCustomQC() {
+        setIsCreatingCustomQC(true);
+        if (QCLotInput === "") {
+            setFeedbackNotiType(NotiType.QCLotEmpty);
+            setFeedbackNotiOpen(true);
+            return;
+        }
+
+        if (QCNameInput === "") {
+            setFeedbackNotiType(NotiType.QCNameEmpty);
+            setFeedbackNotiOpen(true);
+            setIsCreatingCustomQC(false);
+            return;
+        }
+
+        if (expDate === null) {
+            setFeedbackNotiType(NotiType.ExpDateEmpty);
+            setFeedbackNotiOpen(true);
+            setIsCreatingCustomQC(false);
+            return;
+        }
+
+        if (fileDateRange === null || fileDateRange[0] === null) {
+            setFeedbackNotiType(NotiType.OpenDateEmpty);
+            setFeedbackNotiOpen(true);
+            setIsCreatingCustomQC(false);
+            return;
+        }
+
+        const customQCToSave = {
+            qcName: QCNameInput,
+            lotNumber: QCLotInput,
+            expirationDate: expDate ? expDate.toISOString() : "",
+            openDate: fileDateRange && fileDateRange[0] ? fileDateRange[0].toISOString() : getISOTexasTime(),
+            closedDate: fileDateRange && fileDateRange[1] ? fileDateRange[1].toISOString() : null,
+            isActive: true,
+            isCustom: true,
+            analytes: selectedItems.map(
+                ({
+                    analyteName,
+                    analyteAcronym,
+                    unitOfMeasure,
+                }) => ({
+                    analyteName,
+                    analyteAcronym,
+                    unitOfMeasure,
+                    mean: 0,
+                    stdDevi: 0,
+                    minLevel: 0,
+                    maxLevel: 0,
+                })
+            ),
+        }
+
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/CreateCustomLot`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(customQCToSave),
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            console.log(data);
+            setFeedbackNotiType(NotiType.CreatedSucessfully);
+            setFeedbackNotiOpen(true);
+            setIsCreatingCustomQC(false);
+        } else {
+            const data: DefinedRequestError = await res.json();
+            setErrorMessage(data.message);
+            setFeedbackNotiType(NotiType.LotNumberAlreadyExist);
+            setFeedbackNotiOpen(true);
+            setIsCreatingCustomQC(false);
+        }
+    }
 
   return (
     <>
@@ -164,7 +272,7 @@ const ChemistryCustomQC = () => {
         <div className="basic-container relative flex flex-wrap sm:gap-y-4 sm:gap-x-8 justify-center sm:py-8">
             {Object.entries(predefinedAnalytes).map(([key, value]) => (
                 <>
-                    <QCColumn qcTest={value} name={key} selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
+                    <QCColumn key={key} qcTest={value} name={key} selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
                 </>
             ))}
         </div>
@@ -175,23 +283,26 @@ const ChemistryCustomQC = () => {
                 Save Custom QC
             </ButtonBase>
         </div>
+
         <Modal
             open={isModalOpen}
             onClose={() => setIsModalOpen(false)}
         >
-            <div className='modal-container sm:left-1/2 sm:w-[80svw] sm:max-h-[80svh] bg-[#dae3f3] sm:border-2 border-solid border-[#6781AF] rounded-xl sm:-translate-x-1/2 sm:translate-y-1/4 flex flex-col items-center sm:py-6 relative overflow-scroll sm:space-y-8'>
+            <div className='modal-container sm:left-1/2 sm:px-4 sm:max-w-[90svw] overflow-y-auto bg-[#dae3f3] sm:border-2 border-solid border-[#6781AF] rounded-xl sm:-translate-x-1/2 sm:translate-y-1/4 flex flex-col items-center sm:py-6 relative overflow-scroll sm:space-y-8'>
                 <div className="modal-title sm:text-2xl font-semibold">Create Custom QC</div>
-                <div className='flex sm:gap-x-4 justify-center sm:w-[80%]'>
+                <div className='flex sm:gap-x-4 justify-center'>
                     <div className="lotname-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
                         <div className="lotname-label sm:text-xl font-semibold text-white">
                             QC Lot Name
                         </div>
                         <input
                             type="text"
-                            className="sm:p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center"
-                            // value={QCLotInput}
+                            className="sm:p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center sm:h-[34px]"
+                            value={QCNameInput}
                             onChange={(e) => {
                                 e.preventDefault();
+
+                                setQCNameInput(e.target.value);
                             }}
                         />
                     </div>
@@ -201,10 +312,12 @@ const ChemistryCustomQC = () => {
                         </div>
                         <input
                             type="text"
-                            className="sm:p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center"
-                            // value={QCLotInput}
+                            className="sm:p-1 rounded-lg border border-solid border-[#548235] sm:w-[250px] text-center sm:h-[34px]"
+                            value={QCLotInput}
                             onChange={(e) => {
                                 e.preventDefault();
+
+                                setQCLotInput(e.target.value);
                             }}
                         />
                     </div>
@@ -213,33 +326,196 @@ const ChemistryCustomQC = () => {
                             Expiration Date
                         </div>
                         <DatePicker
+                            size="large"
+                            // getPopupContainer={() => document.body}
+                            getPopupContainer={(triggerNode) => {
+                                // console.log("Node: ", triggerNode, "\nParent Node: ", triggerNode.parentNode);
+                                return triggerNode.parentNode as HTMLElement;
+                            }}
                             showTime
-                            popupStyle={{ color: "black", zIndex: 999 }}
-                            getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
+                            popupStyle={{ color: "black", zIndex: 9999 }}
+                            // disabled={interactionMode === InteractionMode.View}
                             style={{
+                                color: "black",
                                 padding: "0.25rem",
                                 border: "solid 1px #548235",
-                                width: "250px",
+                                width: "18svw",
                                 height: "34px",
-                                // zIndex: 1000
+                                fontSize: "0.875rem",
                             }}
                             // defaultValue={loaderData ? dayjs(loaderData.expirationDate) : dayjs()}
-                            // value={expDate}
+                            value={expDate}
                             format="MM/DD/YYYY"
-                            // onChange={(value) => {
-                            //     setValue("expirationDate", value.toISOString());
-                            //     setExpDate(value);
-                            // }}
+                            onChange={(value) => {
+                                setExpDate(value);
+                            }}
+                        />
+                    </div>
+                    <div className="filedate-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
+                        <div className="filedate-label sm:text-xl font-semibold text-white">
+                        File Date
+                        </div>
+                        <DatePicker.RangePicker
+                            size="large"
+                            placeholder={["Open Date", "Close Date"]}
+                            // disabled={interactionMode === InteractionMode.View}
+                            getPopupContainer={(triggerNode) => triggerNode.parentNode as HTMLElement}
+                            placement='bottomLeft'
+                            allowEmpty={[false, true]}
+                            showTime
+                            style={{
+                                color: "black",
+                                padding: "0.25rem",
+                                border: "solid 1px #548235",
+                                width: "18svw",
+                                height: "34px",
+                            }}
+                            // defaultValue={loaderData ? dayjs(loaderData.fileDate) : dayjs()}
+                            value={fileDateRange}
+                            format="MM/DD/YYYY"
+                            onChange={(value) => {
+                                // setValue("fileDate", value.toISOString());
+                                // setFileDate(value);
+                                setFileDateRange(value);
+                            }}
                         />
                     </div>
                 </div>
                 <ButtonBase className="sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold"
-                    onClick={() => setIsModalOpen(false)}
+                    onClick={() => {
+                        handleCreateCustomQC();
+                        setIsModalOpen(false);
+                    }}
                 >
-                    Create
+                    { isCreatingCustomQC ? <Icon icon="eos-icons:three-dots-loading" /> : "Create Custom QC"}
                 </ButtonBase>
             </div>
         </Modal>
+
+        <Backdrop
+            open={isFeedbackNotiOpen}
+            onClick={() => setFeedbackNotiOpen(false)}
+            style={{ zIndex: 1000 }}
+        >
+            <div className='bg-white rounded-xl'>
+                <div className='sm:p-8 flex flex-col sm:gap-4'>
+                    {/* QC Name empty notification */}
+                    {feedbackNotiType === NotiType.QCNameEmpty && (
+                    <div className="flex flex-col sm:gap-y-2 items-center">
+                        <div className="text-2xl font-semibold">
+                            QC Name is empty!
+                        </div>
+                        <Icon
+                            icon="material-symbols:cancel-outline"
+                            className="text-2xl text-red-500 sm:w-20 sm:h-20"
+                        />
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                setFeedbackNotiOpen(false);
+                            }}
+                            className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                        >
+                            OK
+                        </Button>
+                    </div>
+                    )}
+
+                    {/* QC Lot empty notification */}
+                    {feedbackNotiType === NotiType.QCLotEmpty && (
+                    <div className="flex flex-col sm:gap-y-2 items-center">
+                        <div className="text-2xl font-semibold">
+                            QC Lot is empty!
+                        </div>
+                        <Icon
+                            icon="material-symbols:cancel-outline"
+                            className="text-2xl text-red-500 sm:w-20 sm:h-20"
+                        />
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                setIsCreatingCustomQC(false);
+                                setFeedbackNotiOpen(false);
+                            }}
+                            className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                        >
+                            OK
+                        </Button>
+                    </div>
+                    )}
+
+                    {/* Expiration date empty notification */}
+                    {feedbackNotiType === NotiType.ExpDateEmpty && (
+                    <div className="flex flex-col sm:gap-y-2 items-center">
+                        <div className="text-2xl font-semibold">
+                            Expiration date is empty!
+                        </div>
+                        <Icon
+                            icon="material-symbols:cancel-outline"
+                            className="text-2xl text-red-500 sm:w-20 sm:h-20"
+                        />
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                setIsCreatingCustomQC(false);
+                                setFeedbackNotiOpen(false);
+                            }}
+                            className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                        >
+                            OK
+                        </Button>
+                    </div>
+                    )}
+
+                    {/* Created successfully */}
+                    {feedbackNotiType === NotiType.CreatedSucessfully && (
+                    <div className="flex flex-col sm:gap-y-2 items-center">
+                        <div className="text-2xl font-semibold">
+                            Custom QC successfully created!
+                        </div>
+                        <Icon
+                            icon="clarity:success-standard-line"
+                            className="text-2xl text-green-500 sm:w-20 sm:h-20"
+                        />
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                setIsCreatingCustomQC(false);
+                                setFeedbackNotiOpen(false);
+                                navigate(0);
+                            }}
+                            className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                        >
+                            OK
+                        </Button>
+                    </div>
+                    )}
+
+                    {/* Lot number already exist */}
+                    {feedbackNotiType === NotiType.LotNumberAlreadyExist && (
+                    <div className="flex flex-col sm:gap-y-2 items-center">
+                        <div className="text-2xl font-semibold">
+                            Lot Number Already Exist!
+                        </div>
+                        <Icon
+                            icon="material-symbols:cancel-outline"
+                            className="text-2xl text-red-500 sm:w-20 sm:h-20"
+                        />
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                setIsCreatingCustomQC(false);
+                                setFeedbackNotiOpen(false);
+                            }}
+                            className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                        >
+                            OK
+                        </Button>
+                    </div>
+                    )}
+                </div>
+            </div>
+        </Backdrop>
     </>
   )
 }

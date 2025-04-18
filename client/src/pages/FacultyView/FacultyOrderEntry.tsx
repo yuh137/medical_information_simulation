@@ -16,7 +16,7 @@ const FacultyOrderEntry = () => {
     <>
       <NavBar name="Order Entry" />
       <div
-        className=" flex items-center justify-center gap-36 *:-translate-y-16"
+        className="flex items-center justify-center gap-36 *:-translate-y-16 sm:px-4"
         style={{ minWidth: "100svw", minHeight: "90svh" }}  
       >
         <ButtonBase className={`!rounded-lg sm:w-80 sm:h-36 !bg-[${theme.secondaryColor}] !border-[1px] !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F] hover:!border-[4px] !px-3`}>

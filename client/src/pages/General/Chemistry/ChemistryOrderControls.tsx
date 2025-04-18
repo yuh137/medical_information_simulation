@@ -8,7 +8,7 @@ import {
   Droppable,
 } from "react-beautiful-dnd";
 import { Backdrop, Button, ButtonBase } from "@mui/material"
-import { AuthToken, useAuth, UserType } from "../../../context/AuthContext";
+import { AuthToken } from "../../../context/AuthContext";
 import { Icon } from "@iconify/react";
 import { useTheme } from "../../../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
@@ -20,7 +20,6 @@ enum NotiType {
 };
 
 const ChemistryOrderControls = () => {
-  const { userId, type } = useAuth();
   const navigate = useNavigate();
   const { theme } = useTheme();
   const [SelectedQCItems, setSelectedQCItems] = useState<string[]>([]);
@@ -33,6 +32,22 @@ const ChemistryOrderControls = () => {
   const [notiType, setNotiType] = useState<NotiType>(NotiType.SomethingWrong);
 
   const [isOrderLoading, setIsOrderLoading] = useState(false);
+
+  useEffect(() => {
+    async function fetchCustomQCNames() {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/GetAllCustomNames`);
+
+      if (res.ok) {
+        const customQCNames: string[] = await res.json();
+        console.log("Custom QC Names: ", customQCNames);
+        setOrderControlsItems(prevItems => [...prevItems, ...customQCNames]);
+      } else {
+        console.error("the hell bruh");
+      }
+    }
+
+    fetchCustomQCNames();
+  }, []);
 
   const onDragEnd = (results: DropResult) => {
     // console.log(results);

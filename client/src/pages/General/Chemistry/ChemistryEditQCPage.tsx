@@ -31,10 +31,6 @@ const ChemistryEditQC = () => {
   }, []);
 
   useEffect(() => {
-    console.log(selectedItem);
-  }, [selectedItem]);
-
-  useEffect(() => {
     //If notification is enabled, disable after 3 seconds
     if (isFeedbackNotiOpen && (notiType === NotiType.NotSelected)) {
       setTimeout(() => {
@@ -46,10 +42,10 @@ const ChemistryEditQC = () => {
 
   return (
     <>
-      <NavBar name={`Edit Chemistry QC`} />
+      <NavBar name="Edit Chemistry QC" />
       <div className="basic-container relative sm:h-[150svh] sm:w-[100svw]">
         <div
-          className={`edit-qc-options flex flex-wrap sm:justify-center sm:px-[10svw] sm:py-[5svw] sm:gap-x-4 sm:gap-y-2`}
+          className="edit-qc-options flex flex-wrap sm:justify-center sm:px-[10svw] sm:py-[5svw] sm:gap-x-4 sm:gap-y-2"
         >
           {qcTypeLinkList.map((item) => (
             <ButtonBase
@@ -87,9 +83,6 @@ const ChemistryEditQC = () => {
           >
             Edit QC File
           </ButtonBase>
-          {/* <ButtonBase className="sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold">
-            Delete QC File
-          </ButtonBase> */}
         </div>
       </div>
 

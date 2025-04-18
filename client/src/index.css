@@ -188,10 +188,27 @@ html {
   cursor: not-allowed !important; /* Prevent cursor interaction */
 }
 
+.ant-picker-panel-container {
+  z-index: 1001 !important;
+}
+
 /* .ant-btn-primary .css-dev-only-do-not-override-3rel02 {
   color: #fff;
   background: #4096ff;
 } */
+
+
+@media (min-height: 700px) {
+  .modal-container {
+    height: 41svh;
+  }
+}
+
+@media (max-height: 700px) {
+  .modal-container {
+    height: 61svh;
+  }
+}
 
 @keyframes ripple-animation {
   to {

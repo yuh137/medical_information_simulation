@@ -371,7 +371,7 @@ const ChemistryAnalyteInputPage = () => {
               console.log("All green?", inputValidCheck);
               if (inputValidCheck) {
                 const secondRes = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/ResultQC/${loaderData.reportID}`, {
-                  method: 'PUT',
+                  method: 'PATCH',
                 });
                 if (secondRes.ok) {
                   const data = await secondRes.json();
@@ -430,7 +430,7 @@ const ChemistryAnalyteInputPage = () => {
             console.log("All green?", inputValidCheck);
             if (inputValidCheck) {
               const secondRes = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/ResultQC/${loaderData.reportID}`, {
-                method: 'PUT',
+                method: 'PATCH',
               });
               if (secondRes.ok) {
                 const data = await secondRes.json();
@@ -665,7 +665,7 @@ const ChemistryAnalyteInputPage = () => {
             >
               Apply QC Comment
             </Button>
-            <Button
+            {/* <Button
               className={`sm:w-32 sm:h-[50px] !font-semibold !border !border-solid !border-[#6781AF] max-sm:w-full ${
                 isValid && isValidManual
                   ? "!bg-[#DAE3F3] !text-black"
@@ -674,10 +674,10 @@ const ChemistryAnalyteInputPage = () => {
               disabled={!isValidManual || !isValid}
               onClick={() => {
                 openPDF();
-              }}
+              }} 
             >
               Print QC
-            </Button>
+            </Button> */}
             <Button
               className={`sm:w-32 sm:h-[50px] !font-semibold !border !border-solid !border-[#6781AF] max-sm:w-full ${
                 isValid && isValidManual

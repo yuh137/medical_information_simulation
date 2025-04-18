@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useLoaderData, useNavigate, useNavigation, useParams, useRevalidator } from "react-router-dom";
+import { useLoaderData, useNavigate, useNavigation, useParams } from "react-router-dom";
 import {
   ColumnDef,
   flexRender,
@@ -229,13 +229,16 @@ export const ChemistryTestInputPage = () => {
     // Map the input data to AdminQCLot
     const qcDataToSave: AdminQCLot = {
       qcName:
-        qcTypeLinkList.find((qcType) => qcType.link.includes(item))?.name ?? "",
+        // currentQCLot?.isCustom ? currentQCLot.qcName : qcTypeLinkList.find((qcType) => qcType.link.includes(item))?.name ?? "",
+        currentQCLot ? currentQCLot?.qcName : qcTypeLinkList.find((qcType) => qcType.link.includes(item))?.name ?? "",
       lotNumber: data.lotNumber || "",
       openDate: data.openDate || getISOTexasTime(),
       fileDate: data.fileDate || "",
       closedDate: data.closedDate || null,
       expirationDate: data.expirationDate || "",
       isActive: true,
+      isCustom: false,
+      slug: null,
       analytes: QCElements.map(
         ({
           analyteName,
@@ -257,7 +260,25 @@ export const ChemistryTestInputPage = () => {
       ),
     };
 
-    console.log("Attempt to save data: ", qcDataToSave);
+    const createObject = {
+      lotNumber: qcDataToSave.lotNumber,
+      qcName: qcDataToSave.qcName,
+      openDate: qcDataToSave.openDate ?? dayjs().toISOString(),
+      expirationDate: qcDataToSave.expirationDate,
+      fileDate: qcDataToSave.fileDate ?? dayjs().toISOString(),
+      department: Department.Chemistry,
+      analytes: qcDataToSave.analytes.map((analyte) => ({
+        analyteName: analyte.analyteName,
+        analyteAcronym: analyte.analyteAcronym,
+        unitOfMeasure: analyte.unitOfMeasure,
+        minLevel: parseFloat(parseFloat(analyte.minLevel).toFixed(2)),
+        maxLevel: parseFloat(parseFloat(analyte.maxLevel).toFixed(2)),
+        mean: parseFloat(parseFloat(analyte.mean).toFixed(2)),
+        stdDevi: parseFloat(
+          ((+analyte.maxLevel - +analyte.minLevel) / 4).toFixed(2)
+        ),
+      })),
+    }
 
     // Send request to the server to save the data
     setIsSavingQCLot(true);
@@ -267,25 +288,7 @@ export const ChemistryTestInputPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          lotNumber: qcDataToSave.lotNumber,
-          qcName: qcDataToSave.qcName,
-          openDate: qcDataToSave.openDate ?? dayjs().toISOString(),
-          expirationDate: qcDataToSave.expirationDate,
-          fileDate: qcDataToSave.fileDate ?? dayjs().toISOString(),
-          department: Department.Chemistry,
-          analytes: qcDataToSave.analytes.map((analyte) => ({
-            analyteName: analyte.analyteName,
-            analyteAcronym: analyte.analyteAcronym,
-            unitOfMeasure: analyte.unitOfMeasure,
-            minLevel: parseFloat(parseFloat(analyte.minLevel).toFixed(2)),
-            maxLevel: parseFloat(parseFloat(analyte.maxLevel).toFixed(2)),
-            mean: parseFloat(parseFloat(analyte.mean).toFixed(2)),
-            stdDevi: parseFloat(
-              ((+analyte.maxLevel - +analyte.minLevel) / 4).toFixed(2)
-            ),
-          })),
-        }),
+        body: JSON.stringify(createObject),
       });
 
       if (res.ok) {
@@ -341,34 +344,36 @@ export const ChemistryTestInputPage = () => {
       ),
     };
 
-    console.log("Attempt to update data: ", qcDataToUpdate);
+    const updateObject = {
+      expirationDate: qcDataToUpdate.expDate,
+      fileDate: qcDataToUpdate.fileDate ?? dayjs().toISOString(),
+      openDate: qcDataToUpdate.openDate,
+      closedDate: qcDataToUpdate.closedDate,
+      analytes: qcDataToUpdate.analytes.map((analyte) => ({
+        analyteName: analyte.analyteName,
+        analyteAcronym: analyte.analyteAcronym,
+        unitOfMeasure: analyte.unitOfMeasure,
+        minLevel: parseFloat(parseFloat(analyte.minLevel).toFixed(2)),
+        maxLevel: parseFloat(parseFloat(analyte.maxLevel).toFixed(2)),
+        mean: parseFloat(parseFloat(analyte.mean).toFixed(2)),
+        stdDevi: parseFloat(
+          ((+analyte.maxLevel - +analyte.minLevel) / 4).toFixed(2)
+        ),
+      })),
+    };
+
+    console.log("Update Object: ", updateObject);
 
     setIsSavingQCLot(true);
     try {
       const res = await fetch(
         `${process.env.REACT_APP_API_URL}/AdminQCLots/UpdateQCLot/${activeQCLot?.adminQCLotID}`,
         {
-          method: "PUT",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            expirationDate: qcDataToUpdate.expDate,
-            fileDate: qcDataToUpdate.fileDate ?? dayjs().toISOString(),
-            openDate: qcDataToUpdate.openDate,
-            closedDate: qcDataToUpdate.closedDate,
-            analytes: qcDataToUpdate.analytes.map((analyte) => ({
-              analyteName: analyte.analyteName,
-              analyteAcronym: analyte.analyteAcronym,
-              unitOfMeasure: analyte.unitOfMeasure,
-              minLevel: parseFloat(parseFloat(analyte.minLevel).toFixed(2)),
-              maxLevel: parseFloat(parseFloat(analyte.maxLevel).toFixed(2)),
-              mean: parseFloat(parseFloat(analyte.mean).toFixed(2)),
-              stdDevi: parseFloat(
-                ((+analyte.maxLevel - +analyte.minLevel) / 4).toFixed(2)
-              ),
-            })),
-          }),
+          body: JSON.stringify(updateObject),
         }
       );
 
@@ -455,6 +460,8 @@ export const ChemistryTestInputPage = () => {
     );
   }
 
+  useEffect(() => { console.log("Current QC Lot: ", currentQCLot) }, [currentQCLot])
+
   useEffect(() => {
     if (!activeQCLot) {
       setInteractionMode(InteractionMode.Create);
@@ -468,7 +475,7 @@ export const ChemistryTestInputPage = () => {
   useEffect(() => {
     async function deactivateLot() {
       const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/DeactivateQCLot/${currentQCLot?.adminQCLotID}`, {
-        method: "PUT",
+        method: "PATCH",
       });
 
       if (res.ok) {
@@ -572,7 +579,7 @@ export const ChemistryTestInputPage = () => {
   useEffect(() => {
     if (interactionMode === InteractionMode.Create) {
       setSaveButtonActionType(SaveButtonActionType.Save);
-      setQCElements(mockData);
+      setQCElements(currentQCLot?.isCustom ? currentQCLot.analytes : mockData);
     }
 
     if (interactionMode === InteractionMode.Edit) {
@@ -1410,6 +1417,7 @@ export const ChemistryTestInputPage = () => {
                     variant="contained"
                     onClick={() => {
                       setFeedbackNotiOpen(false);
+                      navigate(0);
                     }}
                     className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
                   >
