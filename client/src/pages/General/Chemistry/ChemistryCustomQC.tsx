@@ -191,11 +191,11 @@ const ChemistryCustomQC = () => {
 
     async function handleCreateCustomQC() {
         setIsCreatingCustomQC(true);
-        if (QCLotInput === "") {
-            setFeedbackNotiType(NotiType.QCLotEmpty);
-            setFeedbackNotiOpen(true);
-            return;
-        }
+        // if (QCLotInput === "") {
+        //     setFeedbackNotiType(NotiType.QCLotEmpty);
+        //     setFeedbackNotiOpen(true);
+        //     return;
+        // }
 
         if (QCNameInput === "") {
             setFeedbackNotiType(NotiType.QCNameEmpty);
@@ -204,29 +204,29 @@ const ChemistryCustomQC = () => {
             return;
         }
 
-        if (expDate === null) {
-            setFeedbackNotiType(NotiType.ExpDateEmpty);
-            setFeedbackNotiOpen(true);
-            setIsCreatingCustomQC(false);
-            return;
-        }
+        // if (expDate === null) {
+        //     setFeedbackNotiType(NotiType.ExpDateEmpty);
+        //     setFeedbackNotiOpen(true);
+        //     setIsCreatingCustomQC(false);
+        //     return;
+        // }
 
-        if (fileDateRange === null || fileDateRange[0] === null) {
-            setFeedbackNotiType(NotiType.OpenDateEmpty);
-            setFeedbackNotiOpen(true);
-            setIsCreatingCustomQC(false);
-            return;
-        }
+        // if (fileDateRange === null || fileDateRange[0] === null) {
+        //     setFeedbackNotiType(NotiType.OpenDateEmpty);
+        //     setFeedbackNotiOpen(true);
+        //     setIsCreatingCustomQC(false);
+        //     return;
+        // }
 
         const customQCToSave = {
             qcName: QCNameInput,
-            lotNumber: QCLotInput,
-            expirationDate: expDate ? expDate.toISOString() : "",
-            openDate: fileDateRange && fileDateRange[0] ? fileDateRange[0].toISOString() : getISOTexasTime(),
-            closedDate: fileDateRange && fileDateRange[1] ? fileDateRange[1].toISOString() : null,
-            isActive: true,
+            // lotNumber: QCLotInput,
+            // expirationDate: expDate ? expDate.toISOString() : "",
+            // openDate: fileDateRange && fileDateRange[0] ? fileDateRange[0].toISOString() : getISOTexasTime(),
+            // closedDate: fileDateRange && fileDateRange[1] ? fileDateRange[1].toISOString() : null,
+            // isActive: true,
             isCustom: true,
-            analytes: selectedItems.map(
+            analyteTemplates: selectedItems.map(
                 ({
                     analyteName,
                     analyteAcronym,
@@ -235,15 +235,11 @@ const ChemistryCustomQC = () => {
                     analyteName,
                     analyteAcronym,
                     unitOfMeasure,
-                    mean: 0,
-                    stdDevi: 0,
-                    minLevel: 0,
-                    maxLevel: 0,
                 })
             ),
         }
 
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/CreateCustomLot`, {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/CreateTemplate`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -288,12 +284,12 @@ const ChemistryCustomQC = () => {
             open={isModalOpen}
             onClose={() => setIsModalOpen(false)}
         >
-            <div className='modal-container sm:left-1/2 sm:px-4 sm:max-w-[90svw] overflow-y-auto bg-[#dae3f3] sm:border-2 border-solid border-[#6781AF] rounded-xl sm:-translate-x-1/2 sm:translate-y-1/4 flex flex-col items-center sm:py-6 relative overflow-scroll sm:space-y-8'>
+            <div className='modal-container sm:left-1/2 sm:px-8 sm:w-fit sm:max-w-[90svw] overflow-y-auto bg-[#dae3f3] sm:border-2 border-solid border-[#6781AF] rounded-xl sm:-translate-x-1/2 sm:translate-y-1/4 flex flex-col items-center sm:py-6 relative overflow-scroll sm:space-y-8'>
                 <div className="modal-title sm:text-2xl font-semibold">Create Custom QC</div>
                 <div className='flex sm:gap-x-4 justify-center'>
                     <div className="lotname-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
                         <div className="lotname-label sm:text-xl font-semibold text-white">
-                            QC Lot Name
+                            QC Name
                         </div>
                         <input
                             type="text"
@@ -306,7 +302,7 @@ const ChemistryCustomQC = () => {
                             }}
                         />
                     </div>
-                    <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
+                    {/* <div className="lotnumber-input flex flex-col items-center py-2 bg-[#3A6CC6] rounded-xl sm:space-y-2 sm:px-2">
                         <div className="lotnumber-label sm:text-xl font-semibold text-white">
                             QC Lot Number
                         </div>
@@ -374,12 +370,10 @@ const ChemistryCustomQC = () => {
                             value={fileDateRange}
                             format="MM/DD/YYYY"
                             onChange={(value) => {
-                                // setValue("fileDate", value.toISOString());
-                                // setFileDate(value);
                                 setFileDateRange(value);
                             }}
                         />
-                    </div>
+                    </div> */}
                 </div>
                 <ButtonBase className="sm:w-48 !text-lg !border !border-solid !border-[#6A89A0] !rounded-lg sm:h-16 !bg-[#C5E0B4] transition ease-in-out duration-75 hover:!bg-[#00B050] hover:!border-4 hover:!border-[#385723] hover:font-semibold"
                     onClick={() => {

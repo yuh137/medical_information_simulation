@@ -30,6 +30,7 @@ import {
 } from "../../../utils/MOCK_DATA";
 import {
   AdminQCLot,
+  AdminQCTemplate,
   DefinedRequestError,
   Department,
   ErrorCode,
@@ -40,10 +41,11 @@ import {
 import { Backdrop, Button, ButtonBase, Menu, MenuItem } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
 import NavBar from "../../../components/NavBar";
-import { DatePicker, Modal, Select, Skeleton } from "antd";
+import { DatePicker, Modal, Select, Skeleton, Switch } from "antd";
 import { Icon } from "@iconify/react";
 import dayjs, { Dayjs } from "dayjs";
 import { useTheme } from "../../../context/ThemeContext";
+import { set } from "lodash";
 
 interface QCRangeElements {
   analyteName: string;
@@ -89,45 +91,47 @@ export const ChemistryTestInputPage = () => {
   const [didUserDeactivate, setDidUserDeactivate] = useState<boolean>(false);
 
   const navigate = useNavigate();
-  const { state: loaderState } = useNavigation();
   const { theme } = useTheme();
   const { item } = useParams() as { item: string };
-  const loaderData = useLoaderData() as AdminQCLot[];
-  const activeQCLot: AdminQCLot | undefined = useMemo(() => loaderData.find((item) => item.isActive), [loaderData]);
+  const loaderData = useLoaderData() as { qcLotList: AdminQCLot[], qcTemplate: AdminQCTemplate };
+  const activeQCLot: AdminQCLot | undefined = useMemo(() => loaderData.qcLotList.find((item) => item.isActive), [loaderData]);
 
   // Placeholder data if the database is empty
-  const mockData = item?.includes("cardiac")
-    ? Cardiac
-    : item?.includes("lipid")
-    ? Lipid
-    : item?.includes("thyroid")
-    ? Thyroid
-    : item?.includes("liver")
-    ? Liver
-    : item?.includes("iron")
-    ? Iron
-    : item?.includes("drug")
-    ? Drug
-    : item?.includes("hormone")
-    ? Hormone
-    : item?.includes("cancer")
-    ? Cancer
-    : item?.includes("pancreatic")
-    ? Pancreatic
-    : item?.includes("vitamins")
-    ? Vitamins
-    : item?.includes("diabetes")
-    ? Diabetes
-    : CMP;
+  // const mockData = item?.includes("cardiac")
+  //   ? Cardiac
+  //   : item?.includes("lipid")
+  //   ? Lipid
+  //   : item?.includes("thyroid")
+  //   ? Thyroid
+  //   : item?.includes("liver")
+  //   ? Liver
+  //   : item?.includes("iron")
+  //   ? Iron
+  //   : item?.includes("drug")
+  //   ? Drug
+  //   : item?.includes("hormone")
+  //   ? Hormone
+  //   : item?.includes("cancer")
+  //   ? Cancer
+  //   : item?.includes("pancreatic")
+  //   ? Pancreatic
+  //   : item?.includes("vitamins")
+  //   ? Vitamins
+  //   : item?.includes("diabetes")
+  //   ? Diabetes
+  //   : CMP;
 
   // Currently displayed QC
   const [currentQCLot, setCurrentQCLot] = useState<AdminQCLot | null>(
-    activeQCLot ? activeQCLot : loaderData[0]
+    activeQCLot ? activeQCLot : loaderData.qcLotList[0]
   );
+
+  // State to manage if the QCLot is orderable
+  const [isOrderable, setIsOrderable] = useState<boolean>(loaderData.qcTemplate.isOrderable);
 
   // Set the initial value for QCPanel table, taken from the database. If none exist, use the mock data.
   const [QCElements, setQCElements] = useState<QCRangeElements[]>(
-    currentQCLot ? currentQCLot.analytes : mockData
+    currentQCLot ? currentQCLot.analytes : loaderData.qcTemplate.analyteTemplates.map(item => ({ ...item, minLevel: "", maxLevel: "", mean: "", stdDevi: "" }))
   );
 
   // State to manage what clicking the Save button does
@@ -162,8 +166,8 @@ export const ChemistryTestInputPage = () => {
   const [newQCLotInput, setNewQCLotInput] = useState<string>("");
 
   // States for the Date inputs
-  const [expDate, setExpDate] = useState<Dayjs>(
-    currentQCLot ? dayjs(currentQCLot.expirationDate) : dayjs()
+  const [expDate, setExpDate] = useState<Dayjs | null>(
+    currentQCLot ? dayjs(currentQCLot.expirationDate) : null
   );
   const [fileDate, setFileDate] = useState<Dayjs>(
     currentQCLot ? dayjs(currentQCLot.fileDate) : dayjs()
@@ -230,7 +234,8 @@ export const ChemistryTestInputPage = () => {
     const qcDataToSave: AdminQCLot = {
       qcName:
         // currentQCLot?.isCustom ? currentQCLot.qcName : qcTypeLinkList.find((qcType) => qcType.link.includes(item))?.name ?? "",
-        currentQCLot ? currentQCLot?.qcName : qcTypeLinkList.find((qcType) => qcType.link.includes(item))?.name ?? "",
+        // currentQCLot ? currentQCLot?.qcName : qcTypeLinkList.find((qcType) => qcType.link.includes(item))?.name ?? "",
+        loaderData.qcTemplate.qcName,
       lotNumber: data.lotNumber || "",
       openDate: data.openDate || getISOTexasTime(),
       fileDate: data.fileDate || "",
@@ -238,6 +243,7 @@ export const ChemistryTestInputPage = () => {
       expirationDate: data.expirationDate || "",
       isActive: true,
       isCustom: false,
+      isOrderable: true,
       slug: null,
       analytes: QCElements.map(
         ({
@@ -266,6 +272,7 @@ export const ChemistryTestInputPage = () => {
       openDate: qcDataToSave.openDate ?? dayjs().toISOString(),
       expirationDate: qcDataToSave.expirationDate,
       fileDate: qcDataToSave.fileDate ?? dayjs().toISOString(),
+      isCustom: loaderData.qcTemplate.isCustom,
       department: Department.Chemistry,
       analytes: qcDataToSave.analytes.map((analyte) => ({
         analyteName: analyte.analyteName,
@@ -279,6 +286,8 @@ export const ChemistryTestInputPage = () => {
         ),
       })),
     }
+
+    // console.log("Create Object: ", createObject);
 
     // Send request to the server to save the data
     setIsSavingQCLot(true);
@@ -319,7 +328,7 @@ export const ChemistryTestInputPage = () => {
 
   async function handleUpdateQC() {
     const qcDataToUpdate = {
-      expDate: expDate.toISOString(),
+      expDate: expDate?.toISOString(),
       fileDate: fileDate.toISOString(),
       openDate: fileDateRange ? fileDateRange[0] ? fileDateRange[0].toISOString() : getISOTexasTime() : getISOTexasTime(),
       closedDate: fileDateRange ? fileDateRange[1] ? fileDateRange[1].toISOString() : null : null,
@@ -429,7 +438,7 @@ export const ChemistryTestInputPage = () => {
     minInputArray.forEach((item) => {
       if (
         +inputRefs.current[inputRefs.current.indexOf(item) + 1].value <
-          +item.value ||
+        +item.value ||
         item.value === "" ||
         (inputRefs.current[inputRefs.current.indexOf(item) + 1].value === "0" &&
           item.value === "0")
@@ -460,7 +469,38 @@ export const ChemistryTestInputPage = () => {
     );
   }
 
-  useEffect(() => { console.log("Current QC Lot: ", currentQCLot) }, [currentQCLot])
+  async function handleChangeOrderableOption() {
+    setIsSavingQCLot(true);
+
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/SetIsOrderable`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          templateId: loaderData.qcTemplate.adminQCLotID,
+          isOrderable,
+        }),
+      })
+
+      if (res.ok) {
+        console.log("Changed orderable: ", await res.json());
+        setIsUpdatingQCLotSuccessful(true);
+        setFeedbackNotiType(NotiType.UpdateQC);
+        setFeedbackNotiOpen(true);
+      }
+
+      setIsSavingQCLot(false);
+    } catch (e) {
+      console.error("Failed to change orderable: ", e);
+      setIsSavingQCLot(false);
+    }
+  }
+
+  useEffect(() => {
+    console.log("Loader data: ", loaderData);
+  }, []);
 
   useEffect(() => {
     if (!activeQCLot) {
@@ -468,8 +508,22 @@ export const ChemistryTestInputPage = () => {
     }
   }, []);
 
+  // useEffect(() => {
+  //   if (interactionMode === InteractionMode.Create) {
+  //     setExpDate(null);
+  //     setFileDateRange([null, null]);
+  //     setQCElements(loaderData.qcTemplate.analyteTemplates.map(item => ({ ...item, minLevel: "", maxLevel: "", mean: "", stdDevi: "" })));
+  //   } else {
+  //     setExpDate(dayjs(currentQCLot?.expirationDate));
+  //     setFileDateRange([
+  //       dayjs(currentQCLot?.openDate),
+  //       currentQCLot?.closedDate ? dayjs(currentQCLot.closedDate) : null,
+  //     ]);
+  //   }
+  // }, [interactionMode]);
+
   useEffect(() => {
-    console.log("From loaderData: ", loaderData, "\nactiveLot: ", activeQCLot, "\ncurrentQCLot: ", currentQCLot);
+    // console.log("From loaderData: ", loaderData, "\nactiveLot: ", activeQCLot, "\ncurrentQCLot: ", currentQCLot);
   }, [loaderData, activeQCLot, currentQCLot]);
 
   useEffect(() => {
@@ -532,66 +586,35 @@ export const ChemistryTestInputPage = () => {
     console.log(fileDateRange);
   }, [fileDateRange]);
 
-  // useEffect(() => {
-  //   if (!currentQCLot) {
-  //     setSaveButtonActionType(SaveButtonActionType.Save);
-  //     return;
-  //   }
-  //   if (currentQCLot.lotNumber !== QCLotInput) {
-  //     setSaveButtonActionType(SaveButtonActionType.Save);
-  //   } else if (
-  //     currentQCLot.lotNumber === QCLotInput &&
-  //     (currentQCLot.expirationDate !== expDate.toISOString() ||
-  //       currentQCLot.fileDate !== fileDate.toISOString() ||
-  //       prevQCElements.current !== QCElements)
-  //   ) {
-  //     setSaveButtonActionType(SaveButtonActionType.Update);
-  //   } else {
-  //     setSaveButtonActionType(SaveButtonActionType.Idle);
-  //   }
-
-  //   if (prevExpDate.current !== expDate) {
-  //     console.log("expDate changed");
-  //     setValue("lotNumber", currentQCLot.lotNumber);
-  //     setValue("fileDate", currentQCLot.fileDate);
-  //   }
-
-  //   if (prevFileDate.current !== fileDate) {
-  //     console.log("fileDate changed");
-  //     setValue("expirationDate", currentQCLot.expirationDate);
-  //     setValue("lotNumber", currentQCLot.lotNumber);
-  //   }
-
-  //   if (prevQCLotInput.current !== QCLotInput) {
-  //     console.log("QCLotInput changed");
-  //     setValue("expirationDate", currentQCLot.expirationDate);
-  //     setValue("fileDate", currentQCLot.fileDate);
-  //   }
-
-  //   // Update the refs with the current values
-  //   prevExpDate.current = expDate;
-  //   prevFileDate.current = fileDate;
-  //   prevQCLotInput.current = QCLotInput;
-  //   prevQCElements.current = QCElements;
-  // }, [expDate, fileDate, QCLotInput, QCElements]);
-
   // useEffect to manage the change of interaction mode
   useEffect(() => {
     if (interactionMode === InteractionMode.Create) {
       setSaveButtonActionType(SaveButtonActionType.Save);
-      setQCElements(currentQCLot?.isCustom ? currentQCLot.analytes : mockData);
+      setExpDate(null);
+      setFileDateRange([null, null]);
+      setQCElements(loaderData.qcTemplate.analyteTemplates.map(item => ({ ...item, minLevel: "", maxLevel: "", mean: "", stdDevi: "" })));
     }
 
     if (interactionMode === InteractionMode.Edit) {
       setSaveButtonActionType(SaveButtonActionType.Update);
-      setQCElements(currentQCLot?.analytes ?? mockData);
+      setExpDate(dayjs(currentQCLot?.expirationDate));
+      setFileDateRange([
+        dayjs(currentQCLot?.openDate),
+        currentQCLot?.closedDate ? dayjs(currentQCLot.closedDate) : null,
+      ]);
+      setQCElements(currentQCLot?.analytes ?? loaderData.qcTemplate.analyteTemplates.map(item => ({ ...item, minLevel: "", maxLevel: "", mean: "", stdDevi: "" })));
     }
 
     if (interactionMode === InteractionMode.View) {
       setSaveButtonActionType(SaveButtonActionType.Idle);
-      setQCElements(currentQCLot?.analytes ?? mockData);
+      setExpDate(dayjs(currentQCLot?.expirationDate));
+      setFileDateRange([
+        dayjs(currentQCLot?.openDate),
+        currentQCLot?.closedDate ? dayjs(currentQCLot.closedDate) : null,
+      ]);
+      setQCElements(currentQCLot?.analytes ?? loaderData.qcTemplate.analyteTemplates.map(item => ({ ...item, minLevel: "", maxLevel: "", mean: "", stdDevi: "" })));
     }
-  }, [interactionMode])
+  }, [interactionMode]);
 
   const columns: ColumnDef<QCRangeElements, string>[] = [
     {
@@ -674,20 +697,18 @@ export const ChemistryTestInputPage = () => {
   return (
     <>
       <NavBar
-        name={`${
-          qcTypeLinkList.find((qcType) => qcType.link.includes(item))?.name ??
-          "Chemistry"
-        } QC Builder`}
+        name={`${qcTypeLinkList.find((qcType) => qcType.link.includes(item))?.name ??
+          "Custom"
+          } QC Builder`}
       />
-      {loaderState === "loading" && (<Skeleton />)}
       <div className="basic-container relative sm:space-y-4 pb-24">
         <div className="input-container flex justify-center">
-          <div className="infos-container sm:h-full flex items-center py-4 sm:space-x-12">
+          <div className={`infos-container sm:h-full flex items-center py-4 ${loaderData.qcTemplate.isCustom ? "sm:space-x-4" : "sm:space-x-12"}`}>
+            
             <div className="control-buttons flex flex-col sm:p-2 bg-[#3A6CC6] rounded-xl sm:space-y-2">
               <div
-                className={`text-[#fff] ${
-                  interactionMode === InteractionMode.Create || !currentQCLot?.isActive ? "bg-red-500" : "bg-green-500"
-                } sm:text-xl font-semibold text-center rounded-md`}
+                className={`text-[#fff] ${interactionMode === InteractionMode.Create || !currentQCLot?.isActive ? "bg-red-500" : "bg-green-500"
+                  } sm:text-xl font-semibold text-center rounded-md`}
               >
                 {interactionMode === InteractionMode.Create || !currentQCLot?.isActive ? "Inactive" : "Active"}
               </div>
@@ -739,7 +760,7 @@ export const ChemistryTestInputPage = () => {
               >
                 <MenuItem
                   onClick={() => handleModeMenuClose(InteractionMode.View)}
-                  className={`${loaderData.length === 0 ? "Mui-disabled" : ""}`}
+                  className={`${loaderData.qcLotList.length === 0 ? "Mui-disabled" : ""}`}
                 >
                   <Icon
                     icon="ic:outline-remove-red-eye"
@@ -808,7 +829,7 @@ export const ChemistryTestInputPage = () => {
                       textAlign: "center",
                     }}
                     value={QCLotInput}
-                    options={loaderData.map((item) => ({
+                    options={loaderData.qcLotList.map((item) => ({
                       label: item.lotNumber,
                       value: item.lotNumber,
                     }))}
@@ -820,7 +841,7 @@ export const ChemistryTestInputPage = () => {
                       // setValue("lotNumber", value);
 
                       const selectedQCLot: AdminQCLot | undefined =
-                        loaderData.find((item) => item.lotNumber === value);
+                        loaderData.qcLotList.find((item) => item.lotNumber === value);
                       if (selectedQCLot) {
                         setCurrentQCLot(selectedQCLot);
                         setQCElements(selectedQCLot.analytes);
@@ -895,8 +916,22 @@ export const ChemistryTestInputPage = () => {
                 }}
               />
             </div>
+            {loaderData.qcTemplate.isCustom && (
+              <div className="flex flex-col items-center sm:p-2 bg-[#3A6CC6] rounded-xl sm:space-y-2">
+                <div className="sm:text-xl font-semibold text-white">Orderable: <Switch checked={isOrderable} onChange={() => setIsOrderable(prevValue => !prevValue)} /></div>
+                <Button variant="contained" disabled={isSavingQCLot} style={{
+                  color: "black", backgroundColor: "#CFD5EA", border: "solid",
+                  borderColor: "#2F528F",
+                  borderWidth: "3px",
+                  width: "100%",
+                }} onClick={handleChangeOrderableOption}>{ isSavingQCLot ? (<Icon icon="eos-icons:three-dots-loading" />) : <>Save</>}</Button>
+              </div>
+            )}
           </div>
         </div>
+        {loaderData.qcTemplate.isCustom && <div className="info-container text-center">
+          <strong>File Name:</strong> {loaderData.qcTemplate.qcName}
+        </div>}
         <div className="table-container flex flex-col sm:mt-8 sm:w-[94svw] sm:max-h-[75svh] sm:mx-auto w-100svw bg-[#CFD5EA] relative">
           <Table className="p-8 rounded-lg border-solid border-[1px] border-slate-200">
             <TableHeader>
@@ -1245,8 +1280,14 @@ export const ChemistryTestInputPage = () => {
                 return;
               }
 
+              if (expDate === null) {
+                setFeedbackNotiType(NotiType.QCAlreadyExist);
+                setFeedbackNotiOpen(true);
+                return;
+              }
+
               setValue("lotNumber", newQCLotInput);
-              setValue("expirationDate", expDate.toISOString());
+              setValue("expirationDate", expDate ? expDate?.toISOString() : "");
               setValue("fileDate", fileDate.toISOString());
               setValue("openDate", fileDateRange ? fileDateRange[0] ? fileDateRange[0].toISOString() : "" : "");
               setValue("closedDate", fileDateRange ? fileDateRange[1] ? fileDateRange[1].toISOString() : null : null);
@@ -1340,7 +1381,12 @@ export const ChemistryTestInputPage = () => {
                     variant="contained"
                     className="!bg-[#22C55E]"
                     onClick={() => {
-                      console.log(errors);
+                      if (expDate === null) {
+                        setFeedbackNotiType(NotiType.QCAlreadyExist);
+                        setFeedbackNotiOpen(true);
+                        return;
+                      }
+
                       setValue("lotNumber", newQCLotInput);
                       setValue("expirationDate", expDate.toISOString());
                       setValue("fileDate", fileDate.toISOString());
@@ -1456,7 +1502,7 @@ export const ChemistryTestInputPage = () => {
                   Deactivate QC?
                 </div>
                 <div className="text-red-500 font-semibold">Note: This action is permanent, you cannot reactivate this QC</div>
-                
+
                 <Icon
                   icon="ph:warning-octagon-bold"
                   className="text-2xl text-yellow-400 sm:w-20 sm:h-20"

@@ -4,6 +4,7 @@ using Medical_Information.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical_Information.API.Migrations
 {
     [DbContext(typeof(MedicalInformationDbContext))]
-    partial class MedicalInformationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250418100400_restructure AdminQCLots into AdminQCTemplate")]
+    partial class restructureAdminQCLotsintoAdminQCTemplate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,9 +81,6 @@ namespace Medical_Information.API.Migrations
                     b.Property<bool>("IsCustom")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsOrderable")
-                        .HasColumnType("bit");
-
                     b.Property<string>("QCName")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -101,6 +101,46 @@ namespace Medical_Information.API.Migrations
                     b.HasDiscriminator<string>("TemplateType").HasValue("Template");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Medical_Information.API.Models.Domain.Analyte", b =>
+                {
+                    b.Property<Guid>("AnalyteID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AdminQCLotID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AnalyteAcronym")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AnalyteName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("MaxLevel")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Mean")
+                        .HasColumnType("real");
+
+                    b.Property<float>("MinLevel")
+                        .HasColumnType("real");
+
+                    b.Property<float>("StdDevi")
+                        .HasColumnType("real");
+
+                    b.Property<string>("UnitOfMeasure")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AnalyteID");
+
+                    b.HasIndex("AdminQCLotID");
+
+                    b.ToTable("Analytes");
                 });
 
             modelBuilder.Entity("Medical_Information.API.Models.Domain.AnalyteInput", b =>
@@ -141,43 +181,6 @@ namespace Medical_Information.API.Migrations
                     b.HasIndex("ReportID");
 
                     b.ToTable("AnalyteInputs");
-                });
-
-            modelBuilder.Entity("Medical_Information.API.Models.Domain.AnalyteTemplate", b =>
-                {
-                    b.Property<Guid>("AnalyteID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AdminQCTemplateID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AnalyteAcronym")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AnalyteName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
-
-                    b.Property<string>("UnitOfMeasure")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("AnalyteID");
-
-                    b.HasIndex("AdminQCTemplateID");
-
-                    b.ToTable("AnalyteTemplates");
-
-                    b.HasDiscriminator().HasValue("Template");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Medical_Information.API.Models.Domain.Images", b =>
@@ -249,7 +252,7 @@ namespace Medical_Information.API.Migrations
                     b.Property<Guid?>("AdminID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AdminQCLotID")
+                    b.Property<Guid>("AdminQCLotID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedDate")
@@ -302,30 +305,6 @@ namespace Medical_Information.API.Migrations
                     b.HasDiscriminator().HasValue("Lot");
                 });
 
-            modelBuilder.Entity("Medical_Information.API.Models.Domain.Analyte", b =>
-                {
-                    b.HasBaseType("Medical_Information.API.Models.Domain.AnalyteTemplate");
-
-                    b.Property<Guid?>("AdminQCLotID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<float>("MaxLevel")
-                        .HasColumnType("real");
-
-                    b.Property<float>("Mean")
-                        .HasColumnType("real");
-
-                    b.Property<float>("MinLevel")
-                        .HasColumnType("real");
-
-                    b.Property<float>("StdDevi")
-                        .HasColumnType("real");
-
-                    b.HasIndex("AdminQCLotID");
-
-                    b.HasDiscriminator().HasValue("Analyte");
-                });
-
             modelBuilder.Entity("AdminStudent", b =>
                 {
                     b.HasOne("Medical_Information.API.Models.Domain.Admin", null)
@@ -341,6 +320,15 @@ namespace Medical_Information.API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Medical_Information.API.Models.Domain.Analyte", b =>
+                {
+                    b.HasOne("Medical_Information.API.Models.Domain.AdminQCTemplate", null)
+                        .WithMany("Analytes")
+                        .HasForeignKey("AdminQCLotID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Medical_Information.API.Models.Domain.AnalyteInput", b =>
                 {
                     b.HasOne("Medical_Information.API.Models.Domain.StudentReport", null)
@@ -348,15 +336,6 @@ namespace Medical_Information.API.Migrations
                         .HasForeignKey("ReportID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Medical_Information.API.Models.Domain.AnalyteTemplate", b =>
-                {
-                    b.HasOne("Medical_Information.API.Models.Domain.AdminQCTemplate", "AdminQCTemplate")
-                        .WithMany("AnalyteTemplates")
-                        .HasForeignKey("AdminQCTemplateID");
-
-                    b.Navigation("AdminQCTemplate");
                 });
 
             modelBuilder.Entity("Medical_Information.API.Models.Domain.StudentReport", b =>
@@ -369,22 +348,13 @@ namespace Medical_Information.API.Migrations
                     b.HasOne("Medical_Information.API.Models.Domain.AdminQCLot", null)
                         .WithMany("Reports")
                         .HasForeignKey("AdminQCLotID")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Medical_Information.API.Models.Domain.Student", null)
                         .WithMany("Reports")
                         .HasForeignKey("StudentID")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Medical_Information.API.Models.Domain.Analyte", b =>
-                {
-                    b.HasOne("Medical_Information.API.Models.Domain.AdminQCLot", "AdminQCLot")
-                        .WithMany("Analytes")
-                        .HasForeignKey("AdminQCLotID")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("AdminQCLot");
                 });
 
             modelBuilder.Entity("Medical_Information.API.Models.Domain.Admin", b =>
@@ -394,7 +364,7 @@ namespace Medical_Information.API.Migrations
 
             modelBuilder.Entity("Medical_Information.API.Models.Domain.AdminQCTemplate", b =>
                 {
-                    b.Navigation("AnalyteTemplates");
+                    b.Navigation("Analytes");
                 });
 
             modelBuilder.Entity("Medical_Information.API.Models.Domain.Student", b =>
@@ -409,8 +379,6 @@ namespace Medical_Information.API.Migrations
 
             modelBuilder.Entity("Medical_Information.API.Models.Domain.AdminQCLot", b =>
                 {
-                    b.Navigation("Analytes");
-
                     b.Navigation("Reports");
                 });
 #pragma warning restore 612, 618

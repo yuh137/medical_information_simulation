@@ -5,21 +5,27 @@ namespace Medical_Information.API.Repositories.Interfaces
 {
     public interface IAdminQCLotRepository
     {
-        Task<List<AdminQCLot>> GetAllQCLotsAsync();
-        Task<List<AdminQCLot>> GetQCLotsHistoryByNameAsync(string? name = null, Department? dep = null);
-        Task<AdminQCLot?> GetQCLotByIDAsync(Guid id);
+        Task<List<AdminQCLot>> GetAllQCLots();
+        Task<List<AdminQCTemplate>> GetAllQCTemplates();
+        Task<List<AdminQCLot>> GetQCLotsHistoryByName(string? name = null, Department? dep = null);
+        Task<AdminQCLot?> GetQCLotByID(Guid id);
         Task<List<AdminQCLot>> GetAllCustomQCLots();
-        Task<AdminQCLot?> GetAdminQCLotByNameAsync(string? name = null, Department? dep = null);
+        Task<List<AdminQCTemplate>> GetAllCustomTemplates();
+        Task<AdminQCLot?> GetAdminQCLotByName(string? name = null, Department? dep = null);
+        Task<AdminQCTemplate?> GetTemplateByName(string? name = null, Department? dep = null);
         Task<List<string>> GetAllUniqueCustomLotsName();
-        Task<List<AdminQCLot>> GetAdminQCLotsByNameListAsync(List<string> names);
-        Task<List<AdminQCLot>> GetAdminQCLotsByIdListAsync(List<Guid> lotId);
+        Task<List<AdminQCLot>> GetAdminQCLotsByNameList(List<string> names);
+        Task<List<AdminQCLot>> GetAdminQCLotsByIdList(List<Guid> lotId);
         Task<AdminQCLot?> GetAdminQCLotByLotNumber(string lotNumber);
         Task<AdminQCLot?> DoesLotNumberExist(AdminQCLot qcLot);
-        Task<AdminQCLot> CreateQCLotAsync(AdminQCLot qclot);
-        Task<AdminQCLot?> CreateCustomQCLot(AdminQCLot qclot);
-        Task<AdminQCLot?> UpdateQCLotAsync(Guid lotId, AdminQCLot qcLot);
-        Task<AdminQCLot?> InactivateQCLotAsync(Guid lotId);
-        Task<AdminQCLot?> ActivateCustomQCLot(Guid lotId);
-        Task<AdminQCLot?> DeleteQCLotAsync(Guid id);
+        Task<AdminQCLot> CreateQCLot(AdminQCLot qclot);
+        Task<AdminQCTemplate?> CreateQCTemplate(AdminQCTemplate qcTemplate);
+        //Task<AdminQCLot?> CreateCustomQCLot(AdminQCLot qclot);
+        Task<AdminQCLot?> UpdateQCLot(Guid lotId, AdminQCLot qcLot);
+        Task<AdminQCTemplate?> SetIsOrderable(Guid lotId, bool isOrderable);
+        Task<AdminQCLot?> InactivateQCLot(Guid lotId);
+        //Task<AdminQCLot?> ActivateCustomQCLot(Guid lotId);
+        Task<AdminQCLot?> DeleteQCLot(Guid id);
+        Task<AdminQCTemplate?> DeleteCustomTemplate(Guid id);
     }
 }

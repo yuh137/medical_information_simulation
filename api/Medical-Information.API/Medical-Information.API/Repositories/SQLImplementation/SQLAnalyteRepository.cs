@@ -13,26 +13,26 @@ namespace Medical_Information.API.Repositories.SQLImplementation
         {
             this.dbContext = dbContext;
         }
-        public async Task<Analyte?> CreateAnalyteAsync(Analyte analyte)
+        public async Task<Analyte?> CreateAnalyte(Analyte analyte)
         {
-            await dbContext.Analytes.AddAsync(analyte);
+            await dbContext.AnalyteTemplates.AddAsync(analyte);
             await dbContext.SaveChangesAsync();
             return analyte;
         }
 
-        public async Task<List<Analyte>> GetAllAnalytesAsync()
+        public async Task<List<Analyte>> GetAllAnalytes()
         {
-            return await dbContext.Analytes.ToListAsync();
+            return await dbContext.AnalyteTemplates.OfType<Analyte>().ToListAsync();
         }
 
-        public async Task<List<Analyte>> GetAllAnalytesFromQCLotAsync(Guid QCLotID)
+        public async Task<List<Analyte>> GetAllAnalytesFromQCLot(Guid QCLotID)
         {
-            return await dbContext.Analytes.Where(e => e.AdminQCLotID == QCLotID).ToListAsync();
+            return await dbContext.AnalyteTemplates.OfType<Analyte>().Where(e => e.AdminQCLotID == QCLotID).ToListAsync();
         }
 
         public async Task<List<Analyte>> GetAllAnalytesFromQCLotByLotNumber(string lotNum)
         {
-            var qcLot = await dbContext.AdminQCLots.Include(e => e.Analytes).FirstOrDefaultAsync(e => e.LotNumber == lotNum);
+            var qcLot = await dbContext.AdminQCTemplates.OfType<AdminQCLot>().Include(e => e.Analytes).FirstOrDefaultAsync(e => e.LotNumber == lotNum);
 
             if (qcLot == null)
             {
@@ -40,6 +40,11 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             }
 
             return qcLot.Analytes.ToList();
+        }
+
+        public async Task<List<AnalyteTemplate>> GetAllAnalyteTemplates()
+        {
+            return await dbContext.AnalyteTemplates.OfType<AnalyteTemplate>().ToListAsync();
         }
     }
 }

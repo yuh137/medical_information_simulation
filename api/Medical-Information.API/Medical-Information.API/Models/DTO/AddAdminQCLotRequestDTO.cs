@@ -17,7 +17,18 @@ namespace Medical_Information.API.Models.DTO
         public DateTime FileDate { get; set; }
         public bool IsActive { get; set; } = true;
         public bool IsCustom { get; set; }
+        public bool IsOrderable { get; set; }
         public Department Department { get; set; }
         public ICollection<AddAnalyteWithListDTO> Analytes { get; set; } = [];
+    }
+
+    public class AddAdminQCTemplateDTO
+    {
+        [Required]
+        public string QCName { get; set; }
+        public bool IsCustom { get; set; }
+        public bool IsOrderable { get; set; }
+        public Department Department { get; set; }
+        public ICollection<AddAnalyteTemplateWithListDTO> AnalyteTemplates { get; set; } = [];
     }
 }

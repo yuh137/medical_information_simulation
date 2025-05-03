@@ -1,13 +1,11 @@
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useLoaderData, useLocation, useParams } from "react-router-dom";
 import NavBar from "../../../components/NavBar";
-
 import {
   Modal,
   Radio,
   RadioGroup,
   FormControlLabel,
-  TextField,
 } from "@mui/material";
 import { Button } from "@mui/material";
 import _ from "lodash";
@@ -18,7 +16,7 @@ import {
   useReactTable,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-import { AdminQCLot, AnalyteInput } from "../../../utils/utils";
+import { AdminQCLot, AnalyteInput, getUser } from "../../../utils/utils";
 import dayjs from "dayjs";
 import {
   VictoryAxis,
@@ -27,17 +25,23 @@ import {
   VictoryTheme,
   VictoryTooltip,
 } from "victory";
-import { DatePicker, DatePickerProps } from "antd";
+import { DatePicker } from "antd";
 import { Icon } from "@iconify/react";
+import { jsPDF, TextOptionsLight } from 'jspdf'
+import 'svg2pdf.js'
+import { autoTable } from 'jspdf-autotable'
+import { createEditor, BaseEditor, Descendant, Element as SlateElement } from 'slate'
+import { Slate, Editable, withReact, ReactEditor, RenderElementProps, RenderLeafProps, } from 'slate-react'
 
-interface AnalyteData {
-  createdDate: string;
-  value: number;
-  mean: number;
-  stdDevi: number;
-  analyteName: string;
-  minLevel: number;
-  maxLevel: number;
+type CustomElement = { type: 'paragraph'; children: CustomText[] }
+type CustomText = { text: string }
+
+declare module 'slate' {
+  interface CustomTypes {
+    Editor: BaseEditor & ReactEditor
+    Element: CustomElement
+    Text: CustomText
+  }
 }
 
 interface TableData {
@@ -47,16 +51,34 @@ interface TableData {
   comments: string;
 }
 
+const LIST_TYPES = ['numbered-list', 'bulleted-list'] as const
+const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify'] as const
+
+const TextEditor = (props: { initialValue?: Descendant[] }) => {
+  const defaultValue: Descendant[] = props.initialValue ?? [
+    {
+      type: 'paragraph',
+      children: [{ text: 'A line of text in a paragraph.' }],
+    },
+  ];
+  // const renderElement = useCallback((props: RenderElementProps) => <SlateElement {...props} />, []);
+
+  const [editor] = useState(() => withReact(createEditor()));
+  return (
+    <Slate editor={editor} initialValue={defaultValue}>
+      <Editable />
+    </Slate>
+  )
+}
+
 const ChemistryLeveyJennings = () => {
-  // const { reportId } = useReport();
   const reportId = sessionStorage.getItem("LJReportId");
   const location = useLocation();
   const { lotNumber, analyteName } = useParams<{
     lotNumber: string;
     analyteName: string;
   }>();
-  // const [analyteData, setAnalyteData] = useState<AnalyteData[]>([]);
-  const svgRef = useRef<SVGSVGElement | null>(null);
+  // const [QCCommentEditor] = useState(() => withReact(createEditor()));
   const [tableData, setTableData] = useState<TableData[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [qcStatus, setQcStatus] = useState<string | null>(null);
@@ -75,8 +97,9 @@ const ChemistryLeveyJennings = () => {
     date: { startDate: string; endDate: string } | string;
   };
 
+  const { role: userRole, id: userId } = getUser() ?? { role: "", id: "" };
+
   const qcLot = useLoaderData() as AdminQCLot;
-  // console.log("From loader function: ", qcLot);
 
   const currentAnalyte = qcLot.analytes.find(
     (item) => item.analyteName === analyteName
@@ -96,7 +119,7 @@ const ChemistryLeveyJennings = () => {
 
     return null;
   }, [currentAnalyte]);
-  console.log(analyteLimits);
+  // console.log(analyteLimits);
 
   // const xTicks = _.range(xMin, xMax, xStep).map((x) => new Date(x));
   const xTicks = useMemo(() => {
@@ -157,9 +180,13 @@ const ChemistryLeveyJennings = () => {
           return;
         }
 
-        const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/AnalyteInput/${reportId}`
-        );
+        let res: Response;
+        if (userRole === "Admin") {
+          res = await fetch(`${process.env.REACT_APP_API_URL}/AnalyteInput/GetFacultyLevey/${userId}/${lotNumber}/${analyteName}`);
+        } else {
+          res = await fetch(`${process.env.REACT_APP_API_URL}/AnalyteInput/GetStudentLevey/${userId}/${lotNumber}/${analyteName}`);
+        }
+
         if (res.ok) {
           const analyteInputs: AnalyteInput[] = await res.json();
 
@@ -185,7 +212,7 @@ const ChemistryLeveyJennings = () => {
 
               return null;
             })
-            .filter((d: any): d is AnalyteData => d !== null);
+          // .filter((d): d is AnalyteInput => d !== null);
 
           // setAnalyteData(analyteValues);
           const dataForChart = analyteValues
@@ -197,11 +224,6 @@ const ChemistryLeveyJennings = () => {
             })
             .filter((d) => {
               if (dateType === "SingleDate") {
-                // console.log(
-                //   d.x.getDate() === new Date(singleDate).getDate() &&
-                //     d.x.getMonth() === new Date(singleDate).getMonth() &&
-                //     d.x.getFullYear() === new Date(singleDate).getFullYear()
-                // );
                 return (
                   d.x.getDate() === new Date(singleDate).getDate() &&
                   d.x.getMonth() === new Date(singleDate).getMonth() &&
@@ -209,18 +231,27 @@ const ChemistryLeveyJennings = () => {
                 );
               }
 
-              // console.log(
-              //   d.x >= new Date(dateRange.startDate) && d.x <= new Date(dateRange.endDate)
-              // );
               return (
                 d.x >= new Date(dateRange.startDate) &&
                 d.x <= new Date(dateRange.endDate)
               );
             });
           setChartData(dataForChart);
-          console.log("From first useEffect: ", dataForChart, currentAnalyte);
 
-          const tableRows = analyteValues.map((analyte) => ({
+          const tableRows = analyteValues.filter(v => {
+            if (dateType === "SingleDate") {
+              return (
+                new Date(v ? v.createdDate : "").getDate() === new Date(singleDate).getDate() &&
+                new Date(v ? v.createdDate : "").getMonth() === new Date(singleDate).getMonth() &&
+                new Date(v ? v.createdDate : "").getFullYear() === new Date(singleDate).getFullYear()
+              );
+            } else {
+              return (
+                new Date(v ? v.createdDate : "") >= new Date(dateRange.startDate) &&
+                new Date(v ? v.createdDate : "") <= new Date(dateRange.endDate)
+              );
+            }
+          }).map((analyte) => ({
             // runDateTime: analyte.closedDate,
             runDateTime:
               dayjs(analyte?.createdDate).format("MM/DD/YYYY HH:mm") || "",
@@ -231,7 +262,7 @@ const ChemistryLeveyJennings = () => {
 
           setTableData(tableRows);
         }
-      } catch (e) {}
+      } catch (e) { }
     };
 
     fetchAnalyteData();
@@ -247,21 +278,119 @@ const ChemistryLeveyJennings = () => {
   }, []);
 
   useEffect(() => {
-    console.log(tableData);
-  }, [tableData])
+    console.log("Table Data: ", tableData);
+  }, [tableData]);
 
-  // const generatePDF = async () => {
-  //   const input = document.getElementById("pdfContent");
-  //   if (input) {
-  //     const canvas = await html2canvas(input);
-  //     const imgData = canvas.toDataURL("image/png");
-  //     const pdf = new jsPDF("p", "pt", "a4");
-  //     pdf.addImage(imgData, "PNG", 0, 0, 600, canvas.height * 0.75);
-  //     pdf.save("LeveyJenningsReport.pdf");
-  //   }
-  // };
+  async function generatePDF() {
+    let yText = 40;
+    const defaultFontSize = 18;
+    const pageWidth = 1000;
+    const pageHeight = 1200;
+    const svgHeight = 450;
+    const tableCellHeight = 28.4;
+    const doc = new jsPDF(pageWidth > pageHeight ? 'l' : 'p', 'px', [pageWidth, pageHeight]);
+
+    function addNewLine(){
+      yText += doc.getLineHeight();
+    }
+
+    function addNewText(text: string, fontSize?: number, fontColor?: string, options?: TextOptionsLight) {
+      doc
+        .setFontSize(fontSize ?? defaultFontSize)
+        .setTextColor(fontColor ?? "#000")
+        .text(text, (pageWidth / 2) - doc.getTextWidth(text) / 2, yText, {...options});
+
+      addNewLine();
+    }
+
+    function addMixedTexts(parts: { text: string, fontStyle?: "normal" | "bold" | "italic", fontColor?: string }[], fontSize?: number) {
+      doc.setFontSize(fontSize ?? defaultFontSize);
+      let totalTextWidth = doc.getTextWidth(parts.reduce((prev, final) => final = { ...prev, text: final.text + prev.text}).text);
+      let offsetX = (pageWidth / 2) - totalTextWidth / 2
+      for (const part of parts) {
+        doc.setFont("helvetica", part.fontStyle ?? "normal").setTextColor(part.fontColor ?? "#000");
+        doc.text(part.text, offsetX, yText);
+        offsetX += doc.getTextWidth(part.text);
+      }
+
+      addNewLine();
+    }
+
+    const title = `Levey Jennings: ${analyteName}`;
+    
+    const element = document.querySelector(".VictoryContainer svg");
+    if (element) {
+      addNewText(title, 36, undefined, {
+        baseline: "middle"
+      });
+      addNewText(`Unit Of Measure: ${currentAnalyte?.unitOfMeasure}`, 24);
+      addNewLine();
+      addMixedTexts([
+        { text: "QC Panel: ", fontStyle: "bold" },
+        { text: `${qcLot.qcName}     ` },
+        { text: "Lot #: ", fontStyle: "bold" },
+        { text: `${qcLot.lotNumber}     ` },
+        { text: "Analyte: ", fontStyle: "bold" },
+        { text: `${analyteName}` }
+      ], 20);
+      addMixedTexts([
+        { text: "Closed Date: ", fontStyle: "bold" },
+        { text: `${qcLot.closedDate ? dayjs(qcLot.closedDate).format("MM/DD/YYYY - HH:mm") : "Undetermined"}     ` },
+        { text: "Min Range: ", fontStyle: "bold" },
+        { text: `${currentAnalyte?.minLevel}     ` },
+        { text: "Max Range: ", fontStyle: "bold" },
+        { text: `${currentAnalyte?.maxLevel}     ` },
+        { text: "Status: ", fontStyle: "bold" },
+        { text: `${qcLot.isActive ? "Active" : "Inactive"}`, fontColor: qcLot.isActive ? "#4CAF50" : "#F44336", fontStyle: "bold" }
+      ], 20);
+      addMixedTexts([
+        { text: "Review Date: ", fontStyle: "bold" },
+        { text: `${dateType === "DateRange" ? `${dayjs(dateRange.startDate).format("MM/DD/YYYY")} - ${dayjs(dateRange.endDate).format("MM/DD/YYYY")}` : dayjs(singleDate).format("MM/DD/YYYY")}` },
+      ], 20);
+      addNewLine();
+      doc
+        .svg(element, {
+          x: 0,
+          y: -svgHeight + yText,
+          width: pageWidth,
+          height: pageHeight,
+        })
+        .then(() => {
+          yText += svgHeight;
+          addMixedTexts([
+            { text: "Review Status: ", fontStyle: "bold" },
+            { text: `${qcStatus ? qcStatus?.toUpperCase() : "Pending"}` },
+          ], 20);
+          {qcStatus === "concern" && 
+            addMixedTexts([
+              { text: "Review Comments: ", fontStyle: "bold" },
+              { text: `${qcComment} ` },
+            ], 20);
+          }
+          autoTable(doc, {
+            horizontalPageBreak: true,
+            startY: yText,
+            styles: { fontSize: 16,  overflow: "linebreak", lineWidth: 1, fillColor: "#B0C4DE" },
+            headStyles: { halign: "center", fillColor: "#3A6CC6" },
+            bodyStyles: { halign: "center", valign: "middle" },
+            head: [['Created Date', 'Result', 'Tech', 'Comments']],
+            body: tableData.map((row) => [row.runDateTime, row.result, row.tech, row.comments]),
+          });
+          // yText += svgHeight + tableCellHeight * (tableData.length + 1) - 1000;
+          // if (yText > pageHeight) doc.addPage();
+          // console.log(yText);
+          doc.output("dataurlnewwindow", {
+            filename: "Levey Jennings Report"
+          })
+        });
+    }
+  };
+
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
+  const handleQCCommentInput = ((event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setQcComment(event.target.value);
+  })
 
   const handleQcStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQcStatus(event.target.value);
@@ -271,8 +400,6 @@ const ChemistryLeveyJennings = () => {
   };
 
   const saveComment = () => {
-    if (qcStatus === "concern") {
-    }
     handleModalClose();
   };
 
@@ -301,7 +428,6 @@ const ChemistryLeveyJennings = () => {
     {
       accessorKey: "comments",
       header: "Comments",
-
       cell: (info) => info.getValue(),
       minSize: 300,
       maxSize: 500,
@@ -363,22 +489,25 @@ const ChemistryLeveyJennings = () => {
             className="chart-container"
           >
             {/* <svg ref={svgRef}></svg> */}
-            <VictoryChart theme={VictoryTheme.clean}>
+            <VictoryChart theme={VictoryTheme.clean} style={{  }}>
               <VictoryAxis
                 dependentAxis
                 tickValues={yTicks}
                 style={{
                   axis: {
+                    // fontFamily: "Inter",
                     stroke: "black",
                     strokeWidth: 2,
                     position: "relative"
                   },
                   axisLabel: {
+                    // fontFamily: "Inter",
                     fontSize: 12,
                     angle: 0,
                     paddingBottom: 30,
                   },
                   ticks: {
+                    // fontFamily: "Inter",
                     size: 6,
                     stroke: "black",
                     strokeWidth: 2,
@@ -395,17 +524,20 @@ const ChemistryLeveyJennings = () => {
                 scale="time"
                 style={{
                   axis: {
+                    // fontFamily: "Inter",
                     stroke: "black",
                     strokeWidth: 2,
                     padding: dateType === "SingleDate" ? 30 : 40,
                   },
                   tickLabels: {
+                    // fontFamily: "Inter",
                     angle: -45,
                     textAnchor: "start",
                     verticalAnchor: "middle",
                     fontSize: 8,
                   },
                   ticks: {
+                    // fontFamily: "Inter",
                     size: 6,
                     stroke: "black",
                     strokeWidth: 2,
@@ -432,11 +564,10 @@ const ChemistryLeveyJennings = () => {
                   if (tick === analyteLimits?.minusOne)
                     return `-1SD (${analyteLimits?.minusOne.toFixed(2)})`;
                   if (tick === currentAnalyte?.mean)
-                    return `x̅ (${
-                      currentAnalyte?.mean
+                    return `x̅ (${currentAnalyte?.mean
                         ? parseFloat(currentAnalyte?.mean).toFixed(2)
                         : ""
-                    })`;
+                      })`;
                   if (tick === analyteLimits?.plusOne)
                     return `+1SD (${analyteLimits?.plusOne.toFixed(2)})`;
                   if (tick === analyteLimits?.plusTwo)
@@ -447,15 +578,18 @@ const ChemistryLeveyJennings = () => {
                 }}
                 style={{
                   axis: {
+                    // fontFamily: "Inter",
                     stroke: "black",
                     strokeWidth: 1,
                   },
                   grid: {
+                    // fontFamily: "Inter",
                     stroke: "#222",
                     strokeWidth: 0.5,
                     strokeDasharray: "5.5",
                   },
                   tickLabels: {
+                    // fontFamily: "Inter",
                     fontSize: 8,
                   },
                 }}
@@ -470,12 +604,13 @@ const ChemistryLeveyJennings = () => {
                 labelComponent={
                   <VictoryTooltip
                     flyoutStyle={{
+                      // fontFamily: "Inter",
                       fill: "white",
                       stroke: "black",
                       pointerEvents: "none",
                       width: 60,
                     }}
-                    style={{ fontSize: 7.5, fill: "black" }}
+                    // style={{ fontSize: 7.5, fill: "black", fontFamily: "Inter", }}
                   />
                 }
                 style={{
@@ -579,6 +714,7 @@ const ChemistryLeveyJennings = () => {
               variant="outlined"
               // onClick={generatePDF}
               style={{ marginTop: "10px", width: "100%" }}
+              onClick={async () => await generatePDF()}
             >
               Levey Jennings Report
             </Button>
@@ -600,6 +736,7 @@ const ChemistryLeveyJennings = () => {
               borderCollapse: "collapse",
               border: "1px solid #ccc",
             }}
+            id="history-table"
           >
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -627,14 +764,14 @@ const ChemistryLeveyJennings = () => {
               ))}
             </thead>
             <tbody>
-              {!table.getRowModel().rows.length ? 
+              {!table.getRowModel().rows.length ?
                 <>
                   <tr>
                     <td colSpan={columns.length} style={{ textAlign: "center" }}>
                       No data available
                     </td>
                   </tr>
-                </> : 
+                </> :
                 <>
                   {table.getRowModel().rows.map((row, rowIndex) => (
                     <tr
@@ -693,6 +830,8 @@ const ChemistryLeveyJennings = () => {
             marginTop: "100px",
             width: "400px",
             borderRadius: "8px",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
           <h3>REVIEW COMMENT OPTIONS:</h3>
@@ -709,16 +848,18 @@ const ChemistryLeveyJennings = () => {
             />
           </RadioGroup>
           {qcStatus === "concern" && (
-            <TextField
-              label="Concern/Corrective Action"
-              multiline
-              rows={4}
-              value={qcComment}
-              onChange={(e) => setQcComment(e.target.value)}
-              variant="outlined"
-              fullWidth
-              style={{ marginTop: "20px" }}
-            />
+            // <TextField
+            //   label="Concern/Corrective Action"
+            //   multiline
+            //   rows={4}
+            //   value={qcComment}
+            //   onChange={(e) => setQcComment(e.target.value)}
+            //   variant="outlined"
+            //   fullWidth
+            //   style={{ marginTop: "20px" }}
+            // />
+            // <TextEditor />
+            <textarea className="grow sm:h-24 sm:p-1 border border-solid border-slate-500/50 rounded-md" value={qcComment} onChange={handleQCCommentInput} name="" id="" />
           )}
           <Button
             variant="contained"

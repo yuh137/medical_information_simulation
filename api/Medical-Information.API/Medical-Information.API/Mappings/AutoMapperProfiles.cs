@@ -21,6 +21,10 @@ namespace Medical_Information.API.Mappings
             CreateMap<AdminAnalyteReport, AdminAnalyteReportDTO>().ReverseMap();
             CreateMap<AdminAnalyteReport, AddAdminReportDTO>().ReverseMap();
             CreateMap<AnalyteInput, AnalyteInputDTO>().ReverseMap();
+            CreateMap<AdminQCTemplate, AdminQCTemplateDTO>().ReverseMap();
+            CreateMap<AdminQCTemplate, AddAdminQCTemplateDTO>().ReverseMap();
+            CreateMap<AnalyteTemplate, AnalyteTemplateDTO>().ReverseMap();
+            CreateMap<AnalyteTemplate, AddAnalyteTemplateWithListDTO>().ReverseMap();
         }
     }
 }

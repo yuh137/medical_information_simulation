@@ -585,7 +585,7 @@ const ChemistryAnalyteInputPage = () => {
   }, [originalAnalyteValues, originalModalData, analyteValues, modalData])
 
   useEffect(() => {
-    console.log(invalidIndexes, invalidIndexArray);
+    // console.log(invalidIndexes, invalidIndexArray);
   }, [invalidIndexes, invalidIndexArray])
 
   return (
@@ -624,7 +624,7 @@ const ChemistryAnalyteInputPage = () => {
                 minLevel={+item.minLevel}
                 maxLevel={+item.maxLevel}
                 inRange={analyteValues[index]?.inRange}
-                value={analyteValues[index]?.analyteValue.toString() || ""}
+                value={analyteValues[index]?.analyteValue === 0 ? "" : analyteValues[index]?.analyteValue.toString()}
                 // level={detectLevel(props.name)}
                 measUnit={item.unitOfMeasure}
                 handleInputChange={(val) => {

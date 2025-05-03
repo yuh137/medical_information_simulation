@@ -4,6 +4,7 @@ using Medical_Information.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical_Information.API.Migrations
 {
     [DbContext(typeof(MedicalInformationDbContext))]
-    partial class MedicalInformationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250430041718_modify AdminQCLot model to include IsOrderable attribute")]
+    partial class modifyAdminQCLotmodeltoincludeIsOrderableattribute
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,9 +79,6 @@ namespace Medical_Information.API.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsCustom")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsOrderable")
                         .HasColumnType("bit");
 
                     b.Property<string>("QCName")
@@ -286,6 +286,9 @@ namespace Medical_Information.API.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsOrderable")
                         .HasColumnType("bit");
 
                     b.Property<string>("LotNumber")

@@ -28,7 +28,7 @@ namespace Medical_Information.API.Repositories.SQLImplementation
                 return null;
             }
 
-            foreach ( var value in values )
+            foreach (var value in values)
             {
                 var existingAnalyteInput = studentReport.AnalyteInputs.FirstOrDefault(item => item.AnalyteName == value.AnalyteName && item.IsActive);
 
@@ -105,6 +105,46 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             }
 
             return activeAnalyteInputs;
+        }
+
+        public async Task<List<AnalyteInput>> GetFacultyLeveyJenningsAnalyte(Guid userId, string lotNumber, string analyteName)
+        {
+            //return await dbContext.AdminQCTemplates
+            //    .OfType<AdminQCLot>()
+            //    .Where(lot => lot.LotNumber == lotNumber)
+            //    .SelectMany(lot => lot.Reports
+            //        .Where(report => report.AdminID == userId)
+            //        .SelectMany(report => report.AnalyteInputs
+            //            .Where(analyte => analyte.AnalyteName == analyteName)))
+            //    .ToListAsync();
+
+            var reports = await dbContext.AdminQCTemplates.OfType<AdminQCLot>().Where(lot => lot.LotNumber == lotNumber).SelectMany(lot => lot.Reports).Include(report => report.AnalyteInputs).ToListAsync();
+
+            //foreach (var report in reports)
+            //{
+            //    Console.WriteLine("first loop: " + report.AnalyteInputs.ToList().Count);
+            //}
+
+            var analyteInputs = reports.Where(report => report.AdminID == userId).SelectMany(report => report.AnalyteInputs).ToList();
+
+            //foreach (var input in analyteInputs)
+            //{
+            //    Console.WriteLine("second loop: " + input.AnalyteName);
+            //}
+
+            return analyteInputs.Where(input => input.AnalyteName.ToLower().Trim() == analyteName.ToLower().Trim()).ToList();
+        }
+
+        public async Task<List<AnalyteInput>> GetStudentLeveyJenningsAnalyte(Guid userId, string lotNumber, string analyteName)
+        {
+            return await dbContext.AdminQCTemplates
+                .OfType<AdminQCLot>()
+                .Where(lot => lot.LotNumber == lotNumber)
+                .SelectMany(lot => lot.Reports
+                    .Where(report => report.StudentID == userId)
+                    .SelectMany(report => report.AnalyteInputs
+                        .Where(analyte => analyte.AnalyteName == analyteName)))
+                .ToListAsync();
         }
     }
 }

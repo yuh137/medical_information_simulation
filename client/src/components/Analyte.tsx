@@ -16,7 +16,8 @@ const Analyte = forwardRef((props: AnalyteProps, ref) => {
   const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {
-    setInputValue((+props.value).toFixed(2).replace(/^0+(?!\.|$)/, ""));
+    // setInputValue((+props.value).toFixed(2).replace(/^0+(?!\.|$)/, ""));
+    setInputValue(props.value);
 
     if (props.inRange) {
       inputRef.current?.classList.add("bg-[#00FF00]");
@@ -53,24 +54,9 @@ const Analyte = forwardRef((props: AnalyteProps, ref) => {
               event.preventDefault();
               const newInput = (+inputValue).toFixed(2).replace(/^0+(?!\.|$)/, "");
 
-              // console.log(+event.currentTarget.value);
-              // if (
-              //   isNaN(+event.currentTarget.value) ||
-              //   +event.currentTarget.value < +props.minLevel ||
-              //   +event.currentTarget.value > +props.maxLevel
-              // ) {
-              //   event.currentTarget.classList.remove("bg-[#00FF00]");
-              //   event.currentTarget.classList.add("bg-[#FF0000]");
-              // } else {
-              //   event.currentTarget.classList.remove("bg-[#FF0000]");
-              //   event.currentTarget.classList.add("bg-[#00FF00]");
-              // }
-
               setInputValue(newInput);
-              // props.handleInputChange(event.currentTarget.value);
             }
           }}
-          // onChange={(event) => props.handleInputChange(event.target.value)}
           onChange={event => {
             event.preventDefault();
             const newValue = event.target.value;
@@ -91,6 +77,8 @@ const Analyte = forwardRef((props: AnalyteProps, ref) => {
 
               setInputValue(newValue);
               props.handleInputChange(newValue);
+            } else {
+              setInputValue("");
             }
           }}
         />

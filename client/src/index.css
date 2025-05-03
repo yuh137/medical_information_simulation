@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 @import url('https://fonts.googleapis.com/css?family=Nunito:400,700&display=swap');
+/* @import url('/client/public/Seravek.otf'); */
 
 *:focus-visible {
   outline: none;
@@ -192,10 +193,22 @@ html {
   z-index: 1001 !important;
 }
 
+.ant-switch {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.ant-switch.ant-switch-checked, .ant-switch.ant-switch-checked:hover:not(.ant-switch-disabled) {
+  background: #22C55E;
+}
+
 /* .ant-btn-primary .css-dev-only-do-not-override-3rel02 {
   color: #fff;
   background: #4096ff;
 } */
+
+.VictoryContainer svg * {
+  font-family: "Helvetica" !important;
+}
 
 
 @media (min-height: 700px) {

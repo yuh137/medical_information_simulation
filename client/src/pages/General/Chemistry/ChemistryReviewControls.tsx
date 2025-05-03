@@ -10,7 +10,7 @@ import {
 } from "../../../components/ui/table";
 import { Button, Modal, Box, Typography, Backdrop } from "@mui/material";
 import { Icon } from "@iconify/react";
-import { useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 
 import {
   ColumnDef,
@@ -21,10 +21,11 @@ import {
 } from "@tanstack/react-table";
 import dayjs from 'dayjs';
 import { AuthToken } from '../../../context/AuthContext';
-import { AdminQCLot, StudentReport } from '../../../utils/utils';
+import { Admin, AdminQCLot, StudentReport } from '../../../utils/utils';
 import { useReport } from '../../../context/ReportContext';
 import { DatePicker } from 'antd';
 import { useTheme } from '../../../context/ThemeContext';
+import { set } from 'lodash';
 
 const modalStyle = {
   position: 'absolute' as 'absolute',
@@ -57,11 +58,11 @@ const tableHeaderStyle = {
 };
 
 interface QCItem {
-  reportId: string;
+  // reportId: string;
   qcName: string;
   lotNumber: string;
   expDate: string;
-  createdDate: string;
+  // createdDate: string;
   isActive: boolean;
 }
 
@@ -69,6 +70,8 @@ enum NotiType {
   AnalyteNotSelected,
   DateRangeNull,
   SingleDateNull,
+  DeletedSuccessfully,
+  AreYouSure,
   SomethingWrong,
 };
 
@@ -79,114 +82,130 @@ enum DateType {
 
 const ChemistryReviewControls = () => {
   const navigate = useNavigate();
-  const { changeReportId } = useReport();
   const { theme } = useTheme();
+  const loaderData = useLoaderData() as AdminQCLot[] | null;
+
   // const [selectedRow, setSelectedRow] = useState<string | null>(null);
   const [selectedAnalyte, setSelectedAnalyte] = useState<string | null>(null);
   // const [selectedRowData, setSelectedRowData] = useState<QCItem | undefined>(undefined);
-  const [qcData, setQcData] = useState<QCItem[]>([]);
-  const [qcLots, setQCLots] = useState<AdminQCLot[]>([]);
+  // const [qcLots, setQCLots] = useState<AdminQCLot[]>(loaderData ?? []);
+  const [qcData, setQcData] = useState<QCItem[]>(loaderData ? loaderData.map(item => ({
+    qcName: item.qcName ?? "",
+    lotNumber: item.lotNumber ?? "",
+    expDate: item.expirationDate ?? "",
+    isActive: item.isActive ?? false,
+    // createdDate: item.createdDate,
+  })) : []);
   const [selectedQC, setSelectedQC] = useState<QCItem | null>(null);
   const [dateType, setDateType] = useState<DateType>(DateType.DateRange);
   const [dateRange, setDateRange] = useState<{ startDate: string, endDate: string } | null>(null);
   const [singleDate, setSingleDate] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
-  const [isFetchingData, setIsFetchingData] = useState<boolean>(false);
+  const [isDeletingData, setIsDeletingData] = useState<boolean>(false);
 
   const [isFeedbackNotiOpen, setIsFeedbackNotiOpen] = useState(false);
   const [notiType, setNotiType] = useState<NotiType>(NotiType.SomethingWrong);
 
+  const qcLots = loaderData ?? [];
+  // const qcData = loaderData ? loaderData.map(
+  //   item => ({
+  //     qcName: item.qcName ?? "",
+  //     lotNumber: item.lotNumber ?? "",
+  //     expDate: item.expirationDate ?? "",
+  //     isActive: item.isActive ?? false,
+  //     // createdDate: item.createdDate,
+  //   })
+  // ) : [];
+
   // Fetch all QC items from database
   useEffect(() => {
-    const fetchQCData = async () => {
-      try {
-        setIsFetchingData(true);
-        const tokenString = localStorage.getItem('token');
-        if (!tokenString) {
-          return null;
-        }
-        const token: AuthToken = JSON.parse(tokenString);
+    // const fetchQCData = async () => {
+    //   try {
+    //     setIsFetchingData(true);
+    //     const tokenString = localStorage.getItem('token');
+    //     if (!tokenString) {
+    //       return null;
+    //     }
+    //     const token: AuthToken = JSON.parse(tokenString);
     
-        if (token.roles.includes("Admin")) {
-          const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/ByAdminId/${token.userID}`);
+    //     if (token.roles.includes("Admin")) {
+    //       const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/ByAdminId/${token.userID}`);
     
-          if (res.ok) {
-            const reports: StudentReport[] = await res.json();
-            const qcLotIds = Array.from(new Set(reports.map(report => report.adminQCLotID))); 
+    //       if (res.ok) {
+    //         const reports: StudentReport[] = await res.json();
+    //         const qcLotIds = Array.from(new Set(reports.map(report => report.adminQCLotID))); 
     
-            const queryParams = new URLSearchParams();
-            qcLotIds.forEach(item => queryParams.append("lotId", item));
+    //         const queryParams = new URLSearchParams();
+    //         qcLotIds.forEach(item => queryParams.append("lotId", item));
     
-            const qcDataRes = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByIdList?${queryParams.toString()}`);
+    //         const qcDataRes = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByIdList?${queryParams.toString()}`);
     
-            if (qcDataRes.ok) {
-              const qcData: AdminQCLot[] = await qcDataRes.json();
-              setQCLots(qcData);
-              const returnData = reports.map(item => ({
-                reportId: item.reportID,
-                qcName: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.qcName ?? "",
-                lotNumber: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.lotNumber ?? "",
-                expDate: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.expirationDate ?? "",
-                isActive: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.isActive ?? false,
-                createdDate: item.createdDate,
-              }))
+    //         if (qcDataRes.ok) {
+    //           const qcData: AdminQCLot[] = await qcDataRes.json();
+    //           setQCLots(qcData);
+    //           const returnData = qcData.map(item => ({
+    //             // reportId: item.reportID,
+    //             qcName: item.qcName ?? "",
+    //             lotNumber: item.lotNumber ?? "",
+    //             expDate: item.expirationDate ?? "",
+    //             isActive: item.isActive ?? false,
+    //             // qcName: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.qcName ?? "",
+    //             // lotNumber: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.lotNumber ?? "",
+    //             // expDate: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.expirationDate ?? "",
+    //             // isActive: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.isActive ?? false,
+    //             // createdDate: item.createdDate,
+    //           }))
     
-              setQcData(returnData);
-            } 
-            setIsFetchingData(false);
-            return;
-          }
-        } else if (token.roles.includes("Student")) {
-          const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/ByStudentId/${token.userID}`);
+    //           setQcData(returnData);
+    //         } 
+    //         setIsFetchingData(false);
+    //         return;
+    //       }
+    //     } else if (token.roles.includes("Student")) {
+    //       const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/ByStudentId/${token.userID}`);
     
-          if (res.ok) {
-            const reports: StudentReport[] = await res.json();
-            const qcLotIds = Array.from(new Set(reports.map(report => report.adminQCLotID)));
+    //       if (res.ok) {
+    //         const reports: StudentReport[] = await res.json();
+    //         const qcLotIds = Array.from(new Set(reports.map(report => report.adminQCLotID)));
     
-            const queryParams = new URLSearchParams();
-            qcLotIds.forEach(item => queryParams.append("lotId", item));
+    //         const queryParams = new URLSearchParams();
+    //         qcLotIds.forEach(item => queryParams.append("lotId", item));
     
-            const qcDataRes = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByIdList?${queryParams.toString()}`);
+    //         const qcDataRes = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/ByIdList?${queryParams.toString()}`);
     
-            if (qcDataRes.ok) {
-              const qcData: AdminQCLot[] = await qcDataRes.json();
-              setQCLots(qcData);
-              const returnData = reports.map(item => ({
-                reportId: item.reportID,
-                qcName: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.qcName ?? "",
-                lotNumber: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.lotNumber ?? "",
-                expDate: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.expirationDate ?? "",
-                isActive: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.isActive ?? false,
-                createdDate: item.createdDate,
-              }))
+    //         if (qcDataRes.ok) {
+    //           const qcData: AdminQCLot[] = await qcDataRes.json();
+    //           setQCLots(qcData);
+    //           const returnData = qcData.map(item => ({
+    //             // reportId: item.reportID,
+    //             qcName: item.qcName ?? "",
+    //             lotNumber: item.lotNumber ?? "",
+    //             expDate: item.expirationDate ?? "",
+    //             isActive: item.isActive ?? false,
+    //             // qcName: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.qcName ?? "",
+    //             // lotNumber: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.lotNumber ?? "",
+    //             // expDate: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.expirationDate ?? "",
+    //             // isActive: qcData.find(qc => qc.adminQCLotID === item.adminQCLotID)?.isActive ?? false,
+    //             // createdDate: item.createdDate,
+    //           }))
     
-              setQcData(returnData);
-            } 
-            setIsFetchingData(false);
-            return;
-          }
-        }
+    //           setQcData(returnData);
+    //         } 
+    //         setIsFetchingData(false);
+    //         return;
+    //       }
+    //     }
         
-        setIsFetchingData(false);
-        return;
-      } catch (error) {
-        console.error("Error fetching QC data:", error);
-      }
-    };
-
-    fetchQCData();
-  }, []);
-
-  useEffect(() => {
-    // console.log(qcLots, qcLots.find(item => {
-    //   if (selectedQC === null) {
-    //     return false;
+    //     setIsFetchingData(false);
+    //     return;
+    //   } catch (error) {
+    //     console.error("Error fetching QC data:", error);
     //   }
+    // };
 
-    //   return item.qcName === selectedQC.qcName;
-    // }));
-  }, [qcLots, selectedQC]);
+    // fetchQCData();
+  }, []);
 
   useEffect(() => {
     console.log(selectedAnalyte);
@@ -209,8 +228,8 @@ const ChemistryReviewControls = () => {
         throw new Error("Undefined singleDate");
       }
 
-      changeReportId(selectedQC.reportId);
-      sessionStorage.setItem("LJReportId", selectedQC.reportId);
+      // changeReportId(selectedQC.reportId);
+      sessionStorage.setItem("LJReportId", selectedQC.lotNumber);
       navigate(`/chemistry/levey-jennings/${selectedQC.lotNumber}/${selectedAnalyte}`, { state: { type: dateType, date: dateType === DateType.DateRange ? dateRange : singleDate } });
     } catch (e) {
       console.error(e);
@@ -223,27 +242,41 @@ const ChemistryReviewControls = () => {
   }
 
   const handleRemoveSelected = async () => {
-    if (selectedQC) {
-      try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/StudentReport/Delete/${selectedQC.reportId}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            // 'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
+    if (!selectedQC) {
+      setNotiType(NotiType.AnalyteNotSelected);
+      setIsFeedbackNotiOpen(true);
+      return;
+    }
 
-        if (res.ok) {
-          console.log("QC deleted successfully.", await res.json());
-          setQcData(preValue => {
-            const updatedValues = preValue.filter(item => item !== selectedQC);
-            return updatedValues;
-          });
-          setSelectedQC(null);
-        }
-      } catch (e) {
-        console.error("Error deleting QC:", e);
+    const selectedQCLot = qcLots.find(item => item.qcName === selectedQC.qcName && item.lotNumber === selectedQC.lotNumber);
+    if (!selectedQCLot) {
+      setNotiType(NotiType.SomethingWrong);
+      setIsFeedbackNotiOpen(true);
+      return;
+    }
+
+    setIsDeletingData(true);
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/AdminQCLots/DeleteQCLot/${selectedQCLot.adminQCLotID}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+
+      if (res.ok) {
+        setNotiType(NotiType.DeletedSuccessfully);
+        setIsFeedbackNotiOpen(true);
+        const updatedQCData = qcData.filter(item => item.qcName !== selectedQC.qcName || item.lotNumber !== selectedQC.lotNumber);
+        setQcData(updatedQCData);
+        setSelectedQC(null);
+        // Remove the deleted QC item from the state
       }
+      setIsDeletingData(false);
+    } catch (e) {
+      console.error("Error deleting QC Lot:", e);
+      setIsDeletingData(false);
     }
   };
 
@@ -258,14 +291,14 @@ const ChemistryReviewControls = () => {
       header: () => <span>Lot Number</span>,
       cell: info => info.getValue(),
     },
-    {
-      accessorKey: "createdDate",
-      header: () => <span>Created Date</span>,
-      cell: info => {
-        const createdDate = info.getValue() as string;
-        return dayjs(createdDate).format("MM/DD/YYYY - HH:mm:ss");
-      },
-    },
+    // {
+    //   accessorKey: "createdDate",
+    //   header: () => <span>Created Date</span>,
+    //   cell: info => {
+    //     const createdDate = info.getValue() as string;
+    //     return dayjs(createdDate).format("MM/DD/YYYY - HH:mm:ss");
+    //   },
+    // },
     {
       accessorKey: "expDate",
       header: () => <span>Expiration Date</span>,
@@ -327,11 +360,9 @@ const ChemistryReviewControls = () => {
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center flex"
+                    className="h-24 text-center"
                   >
-                    <div>No data</div> {
-                      isFetchingData && (<div className='flex items-center'><span>...but wait a minute</span> <Icon icon="eos-icons:loading" /></div>)
-                    }
+                    <div>No data</div>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -384,10 +415,13 @@ const ChemistryReviewControls = () => {
           </Button>
           <Button
             className={`sm:w-36 sm:h-12 sm:!text-lg font-medium ${selectedQC !== null ? "!bg-[#DAE3F3] !text-black !border !border-solid !border-blue-500" : "!bg-[#AFABAB] !text-white !border !border-solid !border-gray-500"}`}
-            onClick={handleRemoveSelected}
-            disabled={!selectedQC}
+            onClick={() => {
+              setNotiType(NotiType.AreYouSure);
+              setIsFeedbackNotiOpen(true);
+            }}
+            disabled={!selectedQC || isDeletingData}
           >
-            Remove Selected
+            { isDeletingData ? <Icon icon="eos-icons:three-dots-loading" /> : "Remove Selected" }
           </Button>
         </div>
 
@@ -402,7 +436,7 @@ const ChemistryReviewControls = () => {
                 <Typography variant="body1" align="center">
                   <strong>File Name:</strong> {selectedQC.qcName} &nbsp; | &nbsp;
                   <strong>Lot Number:</strong> {selectedQC.lotNumber} <br/>
-                  <strong>Created Date:</strong> {dayjs(selectedQC.createdDate).format("MM/DD/YYYY - HH:mm:ss")} &nbsp; | &nbsp;
+                  {/* <strong>Created Date:</strong> {dayjs(selectedQC.createdDate).format("MM/DD/YYYY - HH:mm:ss")} &nbsp; | &nbsp; */}
                   <strong>Status:</strong> {selectedQC?.isActive ? (<span className="sm:p-1 font-semibold text-white bg-green-500 rounded-md">Active</span>) : (<span className="sm:p-1 font-semibold text-white bg-red-500 rounded-md">Inactive</span>)}
                 </Typography>
 
@@ -592,6 +626,68 @@ const ChemistryReviewControls = () => {
                     variant="contained"
                     onClick={() => {
                       setIsFeedbackNotiOpen(false);
+                    }}
+                    className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                  >
+                    OK
+                  </Button>
+                </div>
+              ) }
+
+              { notiType === NotiType.AreYouSure && (
+                <div className="flex flex-col sm:gap-y-2 items-center">
+                  <div className="text-2xl font-semibold">Do you want to delete this item?</div>
+                  <div className="text-base text-slate-500/45 font-semibold">This will permanently delete all your recorded data.</div>
+                  <Icon icon="ph:warning-octagon-bold" className="text-2xl text-yellow-500 sm:w-20 sm:h-20"/>
+                  <div className='button-container flex sm:gap-x-4'>
+                    <Button
+                      variant="contained"
+                      onClick={() => {
+                        handleRemoveSelected();
+                        setIsFeedbackNotiOpen(false);
+                      }}
+                      sx={{
+                        backgroundColor: 'green',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: 'green',
+                          color: 'white',
+                        }
+                      }}
+                      className={`transition ease-in-out`}
+                    >
+                      OK
+                    </Button>
+                    <Button
+                      variant='contained'
+                      onClick={() => {
+                        setIsFeedbackNotiOpen(false);
+                      }}
+                      sx={{
+                        backgroundColor: 'red',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: 'red',
+                          color: 'white',
+                        }
+                      }}
+                      className='transition ease-in-out'
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              ) }
+
+              { notiType === NotiType.DeletedSuccessfully && (
+                <div className="flex flex-col sm:gap-y-2 items-center">
+                  <div className="text-2xl font-semibold">Item Successfully Deleted</div>
+                  <Icon icon="clarity:success-standard-line" className="text-2xl text-green-500 sm:w-20 sm:h-20"/>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setIsFeedbackNotiOpen(false);
+                      navigate(0);
                     }}
                     className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
                   >

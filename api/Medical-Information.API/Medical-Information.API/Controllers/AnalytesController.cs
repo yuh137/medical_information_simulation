@@ -23,11 +23,22 @@ namespace Medical_Information.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAnalytes()
         {
-            var analyteModel = await analyteRepository.GetAllAnalytesAsync();
+            var analyteModel = await analyteRepository.GetAllAnalytes();
 
-            var analyteDTO = mapper.Map<List<Analyte>>(analyteModel);
+            var analyteDTO = mapper.Map<List<AnalyteDTO>>(analyteModel);
 
             return Ok(analyteDTO);
+        }
+
+        [HttpGet]
+        [Route("GetAllTemplates")]
+        public async Task<IActionResult> GetAllAnalyteTemplates()
+        {
+            var analyteTemplateModels = await analyteRepository.GetAllAnalyteTemplates();
+
+            var analyteTemplateDTOs = mapper.Map<List<AnalyteTemplateDTO>>(analyteTemplateModels);
+
+            return Ok(analyteTemplateDTOs);
         }
 
         [HttpGet]
@@ -47,7 +58,7 @@ namespace Medical_Information.API.Controllers
         {
             var analyteModel = mapper.Map<Analyte>(dto);
 
-            await analyteRepository.CreateAnalyteAsync(analyteModel);
+            await analyteRepository.CreateAnalyte(analyteModel);
 
             var analyteDTO = mapper.Map<AnalyteDTO>(analyteModel);
 
@@ -58,7 +69,7 @@ namespace Medical_Information.API.Controllers
         [Route("{lotId:Guid}")]
         public async Task<IActionResult> GetAllAnalytesFromQCLot([FromRoute] Guid lotId)
         {
-            var analyteModels = await analyteRepository.GetAllAnalytesFromQCLotAsync(lotId);
+            var analyteModels = await analyteRepository.GetAllAnalytesFromQCLot(lotId);
 
             var analyteDTO = mapper.Map<List<AnalyteDTO>>(analyteModels);
 

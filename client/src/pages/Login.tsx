@@ -44,6 +44,9 @@ const Login = () => {
           console.log(localStorage.getItem('token'));
           setIsLoggingIn(false);
           navigate('/admin-home');
+        } else {
+          console.warn("Invalid credentials");
+          setIsLoggingIn(false);
         }
       } catch(e) {
         console.log("Error in login ", e);
@@ -74,6 +77,9 @@ const Login = () => {
           console.log(localStorage.getItem('token'));
           setIsLoggingIn(false);
           navigate('/student-home');
+        } else {
+          console.warn("Invalid credentials");
+          setIsLoggingIn(false);
         }
       } catch (e) {
         console.log("Error logging in: ", e);
@@ -175,6 +181,7 @@ const Login = () => {
             <Button
               variant="outlined"
               onClick={handleSubmit(onSubmit)}
+              disabled={isLoggingIn}
               className={`!text-black !bg-[${theme.secondaryColor}] !border !border-solid !border-[${theme.primaryBorderColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!border-[#2F528F]`}
             >
               { isLoggingIn ? (<Icon icon="eos-icons:three-dots-loading" />) : "Login" }

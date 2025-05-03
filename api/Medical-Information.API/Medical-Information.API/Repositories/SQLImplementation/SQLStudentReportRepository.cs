@@ -20,10 +20,16 @@ namespace Medical_Information.API.Repositories.SQLImplementation
 
             foreach ( var report in reports )
             {
-                adminQCLotIdList.Add(report.AdminQCLotID);
+                if (report.AdminQCLotID.HasValue)
+                {
+                    adminQCLotIdList.Add(report.AdminQCLotID.Value);
+                } else
+                {
+                    continue;
+                }
             }
 
-            var adminQCLots = await dbContext.AdminQCLots.Where(item => adminQCLotIdList.Contains(item.AdminQCLotID)).ToListAsync();
+            var adminQCLots = await dbContext.AdminQCTemplates.OfType<AdminQCLot>().Where(item => adminQCLotIdList.Contains(item.AdminQCLotID)).ToListAsync();
 
             var student = await dbContext.Students.FirstOrDefaultAsync(item => item.StudentID == reports[0].StudentID);
 

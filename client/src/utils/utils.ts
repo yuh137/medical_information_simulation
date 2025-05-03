@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx"
 import { jwtDecode } from "jwt-decode";
 import { Component, MonitorCheck } from "lucide-react";
 import { twMerge } from "tailwind-merge"
+import { AuthToken } from "../context/AuthContext";
 
 export const testTypeLinkList = [
   {link: "chemistry", name: "Chemistry"},
@@ -277,7 +278,42 @@ export const generateSlug = <T extends object>(items: T[], mainKey?: string) => 
       slug: slug,
     };
   })
+};
+
+export function getUser(): { role: string; id: string } | null {
+  const tokenString = localStorage.getItem("token");
+
+  if (!tokenString) return null;
+
+  const decodedToken: AuthToken = JSON.parse(tokenString);
+
+  return { role: decodedToken.roles[0], id: decodedToken.userID };
 }
+
+const formatStringToCamelCase = (str: string) => {
+  const splitted = str.split("-");
+  if (splitted.length === 1) return splitted[0];
+  return (
+    splitted[0] +
+    splitted
+      .slice(1)
+      .map(word => word[0].toUpperCase() + word.slice(1))
+      .join("")
+  );
+};
+
+export const getStyleObjectFromString = (str: string) => {
+  const style: Record<string, string> = {};
+  str.split(";").forEach(el => {
+    const [property, value] = el.split(":");
+    if (!property) return;
+
+    const formattedProperty = formatStringToCamelCase(property.trim());
+    style[formattedProperty] = value.trim();
+  });
+
+  return style;
+};
 
 export interface Admin {
   username: string;
@@ -336,6 +372,7 @@ export interface AdminQCLot {
   expirationDate: string;
   isActive: boolean;
   isCustom: boolean;
+  isOrderable: boolean;
   fileDate?: string;
   analytes: {
       analyteName: string;
@@ -346,6 +383,19 @@ export interface AdminQCLot {
       mean: string;
       stdDevi: string;
       value?: string; // Optional value field, since it might not exist initially
+  }[];
+}
+
+export interface AdminQCTemplate {
+  adminQCLotID?: string;
+  qcName: string;
+  isCustom: boolean;
+  isOrderable: boolean;
+  slug: string | null;
+  analyteTemplates: {
+    analyteName: string;
+    analyteAcronym: string;
+    unitOfMeasure: string;
   }[];
 }
 

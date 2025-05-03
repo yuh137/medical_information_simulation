@@ -62,6 +62,46 @@ namespace Medical_Information.API.Controllers
             return Ok(analyteInputDTOs);
         }
 
+        [HttpGet]
+        [Route("GetStudentLevey/{userId:Guid}/{lotNum}/{analyteName}")]
+        public async Task<IActionResult> GetStudentLeveyJenningsAnalyte([FromRoute] Guid userId, [FromRoute] string lotNum, [FromRoute] string analyteName)
+        {
+            var analyteInputModels = await inputRepository.GetStudentLeveyJenningsAnalyte(userId, lotNum, analyteName);
+
+            //if (analyteInputModels.Count == 0)
+            //{
+            //    return BadRequest(new RequestErrorObject
+            //    {
+            //        ErrorCode = ErrorCode.NotFound,
+            //        Message = "Analytes not found!"
+            //    });
+            //}
+
+            var analyteInputDTOs = mapper.Map<List<AnalyteInputDTO>>(analyteInputModels);
+
+            return Ok(analyteInputDTOs);
+        }
+
+        [HttpGet]
+        [Route("GetFacultyLevey/{userId:Guid}/{lotNum}/{analyteName}")]
+        public async Task<IActionResult> GetFacultyLeveyJenningsAnalyte([FromRoute] Guid userId, [FromRoute] string lotNum, [FromRoute] string analyteName)
+        {
+            var analyteInputModels = await inputRepository.GetFacultyLeveyJenningsAnalyte(userId, lotNum, analyteName);
+
+            //if (analyteInputModels.Count == 0)
+            //{
+            //    return BadRequest(new RequestErrorObject
+            //    {
+            //        ErrorCode = ErrorCode.NotFound,
+            //        Message = "Analytes not found!"
+            //    });
+            //}
+
+            var analyteInputDTOs = mapper.Map<List<AnalyteInputDTO>>(analyteInputModels);
+
+            return Ok(analyteInputDTOs);
+        }
+
         [HttpPost]
         [Route("Create/{reportId:Guid}")]
         public async Task<IActionResult> CreateInputsForStudent([FromBody] List<AnalyteInputDTO> inputList, [FromRoute] Guid reportId)

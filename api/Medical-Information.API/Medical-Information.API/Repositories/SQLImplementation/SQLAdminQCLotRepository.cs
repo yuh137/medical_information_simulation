@@ -10,73 +10,99 @@ namespace Medical_Information.API.Repositories.SQLImplementation
     public class SQLAdminQCLotRepository : IAdminQCLotRepository
     {
         private readonly MedicalInformationDbContext dbContext;
-        private readonly MedicalInformationAuthDbContext authContext;
 
-        public SQLAdminQCLotRepository(MedicalInformationDbContext dbContext, MedicalInformationAuthDbContext authContext)
+        public SQLAdminQCLotRepository(MedicalInformationDbContext dbContext)
         {
             this.dbContext = dbContext;
-            this.authContext = authContext;
         }
-        public async Task<AdminQCLot> CreateQCLotAsync(AdminQCLot qclot)
+        public async Task<AdminQCLot> CreateQCLot(AdminQCLot qclot)
         {
-            var activeQCLot = await dbContext.AdminQCLots.Where(item => item.Department == qclot.Department && item.QCName.ToLower() == qclot.QCName.ToLower() && item.IsActive).FirstOrDefaultAsync();
+            var activeQCLot = await dbContext.AdminQCTemplates.OfType<AdminQCLot>().Where(item => item.Department == qclot.Department && item.QCName.ToLower() == qclot.QCName.ToLower() && item.IsActive).FirstOrDefaultAsync();
 
             if (activeQCLot != null)
             {
                 activeQCLot.IsActive = false;
                 activeQCLot.ClosedDate = DateTime.Now;
-                dbContext.AdminQCLots.Update(activeQCLot);
+                dbContext.AdminQCTemplates.Update(activeQCLot);
             }
 
-            await dbContext.AdminQCLots.AddAsync(qclot);
+            await dbContext.AdminQCTemplates.AddAsync(qclot);
             await dbContext.SaveChangesAsync();
             return qclot;
         }
 
-        public async Task<AdminQCLot?> CreateCustomQCLot(AdminQCLot qclot)
+        public async Task<AdminQCTemplate?> CreateQCTemplate(AdminQCTemplate qcTemplate)
         {
-            if (!qclot.IsCustom)
-            {
-                return null;
-            }
+            //var existingTemplate = await dbContext.AdminQCTemplates.FirstOrDefaultAsync(item => item.QCName == qcTemplate.QCName);
 
-            var existingQcLot = await dbContext.AdminQCLots.Where(item => item.QCName.ToLower() == qclot.QCName.ToLower()).FirstOrDefaultAsync();
+            //if (existingTemplate != null)
+            //{
+            //    return null;
+            //}
 
-            if (existingQcLot != null)
-            {
-                return null;
-            }
-
-            await dbContext.AdminQCLots.AddAsync(qclot);
+            await dbContext.AdminQCTemplates.AddAsync(qcTemplate);
             await dbContext.SaveChangesAsync();
-            return qclot;
+            return qcTemplate;
         }
 
-        public async Task<AdminQCLot?> DeleteQCLotAsync(Guid id)
+        //public async Task<AdminQCLot?> CreateCustomQCLot(AdminQCLot qclot)
+        //{
+        //    if (!qclot.IsCustom)
+        //    {
+        //        return null;
+        //    }
+
+        //    var existingQcLot = await dbContext.AdminQCTemplates.Where(item => item.QCName.ToLower() == qclot.QCName.ToLower()).FirstOrDefaultAsync();
+
+        //    if (existingQcLot != null)
+        //    {
+        //        return null;
+        //    }
+
+        //    await dbContext.AdminQCTemplates.AddAsync(qclot);
+        //    await dbContext.SaveChangesAsync();
+        //    return qclot;
+        //}
+
+        public async Task<AdminQCLot?> DeleteQCLot(Guid id)
         {
-            var exisitingQCLot = await dbContext.AdminQCLots.FirstOrDefaultAsync(item => item.AdminQCLotID == id);
+            var existingQCLot = await dbContext.AdminQCTemplates.OfType<AdminQCLot>().Include(s => s.Analytes).Include(s => s.Reports).ThenInclude(c => c.AnalyteInputs).FirstOrDefaultAsync(item => EF.Property<string>(item, "TemplateType") == "Lot" && item.AdminQCLotID == id);
 
-            if (exisitingQCLot == null) { return null; }
+            if (existingQCLot == null) { return null; }
 
-            dbContext.AdminQCLots.Remove(exisitingQCLot);
+            dbContext.AnalyteInputs.RemoveRange(existingQCLot.Reports.SelectMany(r => r.AnalyteInputs));
+            dbContext.StudentReports.RemoveRange(existingQCLot.Reports);
+
+            var existingTemplate = await GetTemplateByName(existingQCLot.QCName, existingQCLot.Department);
+
+            if (existingQCLot.IsCustom && existingTemplate == null)
+            {
+                dbContext.AnalyteTemplates.RemoveRange(existingQCLot.Analytes);
+                dbContext.AdminQCTemplates.Remove(existingQCLot);
+            }
+
+
+            //dbContext.AnalyteTemplates.RemoveRange(existingQCLot.Analytes);
+            //dbContext.AdminQCTemplates.Remove(existingQCLot);
             await dbContext.SaveChangesAsync();
-
-            return exisitingQCLot;
+            return existingQCLot;
         }
+
+        
 
         public async Task<AdminQCLot?> DoesLotNumberExist(AdminQCLot qcLot)
         {
-            return await dbContext.AdminQCLots.FirstOrDefaultAsync(item => item.LotNumber == qcLot.LotNumber);
+            return await dbContext.AdminQCTemplates.OfType<AdminQCLot>().FirstOrDefaultAsync(item => item.LotNumber == qcLot.LotNumber);
         }
 
         public async Task<AdminQCLot?> GetAdminQCLotByLotNumber(string lotNumber)
         {
-            return await dbContext.AdminQCLots.Include(item => item.Analytes).FirstOrDefaultAsync(item => item.LotNumber ==  lotNumber);
+            return await dbContext.AdminQCTemplates.OfType<AdminQCLot>().Include(item => item.Analytes).FirstOrDefaultAsync(item => item.LotNumber == lotNumber);
         }
 
-        public async Task<AdminQCLot?> GetAdminQCLotByNameAsync(string? name, Department? dep)
+        public async Task<AdminQCLot?> GetAdminQCLotByName(string? name, Department? dep)
         {
-            var QCLot = dbContext.AdminQCLots.AsQueryable();
+            var QCLot = dbContext.AdminQCTemplates.OfType<AdminQCLot>().AsQueryable();
 
             if (!string.IsNullOrEmpty(name) && dep != null && Enum.IsDefined(typeof(Department), dep))
             {
@@ -87,40 +113,40 @@ namespace Medical_Information.API.Repositories.SQLImplementation
         }
         public async Task<List<string>> GetAllUniqueCustomLotsName()
         {
-            var existingCustomLots = await GetAllCustomQCLots();
+            var existingCustomLots = await GetAllCustomTemplates();
 
             if (!existingCustomLots.Any())
             {
                 return [];
             }
 
-            var uniqueNameList = existingCustomLots.GroupBy(item => item.QCName).Select(group => group.Key).ToList();
+            var uniqueNameList = existingCustomLots.Where(item => item.IsOrderable).GroupBy(item => item.QCName).Select(group => group.Key).ToList();
 
             return uniqueNameList;
         }
 
-        public async Task<List<AdminQCLot>> GetAdminQCLotsByIdListAsync(List<Guid> lotId)
+        public async Task<List<AdminQCLot>> GetAdminQCLotsByIdList(List<Guid> lotId)
         {
-            return await dbContext.AdminQCLots.Include(item => item.Analytes).Where(item => lotId.Contains(item.AdminQCLotID)).ToListAsync();
+            return await dbContext.AdminQCTemplates.OfType<AdminQCLot>().Include(item => item.Analytes).Where(item => lotId.Contains(item.AdminQCLotID)).ToListAsync();
         }
 
-        public async Task<List<AdminQCLot>> GetAdminQCLotsByNameListAsync(List<string> names)
+        public async Task<List<AdminQCLot>> GetAdminQCLotsByNameList(List<string> names)
         {
-            foreach ( var name in names)
+            foreach (var name in names)
             {
                 name.ToLower();
             }
-            return await dbContext.AdminQCLots.Include(item => item.Analytes).Include(item => item.Reports).Where(item => names.Contains(item.QCName.ToLower()) && item.IsActive).ToListAsync();
+            return await dbContext.AdminQCTemplates.OfType<AdminQCLot>().Include(item => item.Analytes).Include(item => item.Reports).Where(item => names.Contains(item.QCName.ToLower()) && item.IsActive).ToListAsync();
         }
 
-        public async Task<List<AdminQCLot>> GetAllQCLotsAsync()
+        public async Task<List<AdminQCLot>> GetAllQCLots()
         {
-            return await dbContext.AdminQCLots.Include(item => item.Analytes).Include(item => item.Reports).ToListAsync();
+            return await dbContext.AdminQCTemplates.OfType<AdminQCLot>().Include(item => item.Analytes).Include(item => item.Reports).ToListAsync();
         }
 
-        public async Task<List<AdminQCLot>> GetQCLotsHistoryByNameAsync(string? name, Department? dep)
+        public async Task<List<AdminQCLot>> GetQCLotsHistoryByName(string? name, Department? dep)
         {
-            var QCLots = dbContext.AdminQCLots.AsQueryable();
+            var QCLots = dbContext.AdminQCTemplates.OfType<AdminQCLot>().AsQueryable();
 
             if (!string.IsNullOrEmpty(name) && dep != null && Enum.IsDefined(typeof(Department), dep))
             {
@@ -130,14 +156,14 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             return await QCLots.Include(item => item.Analytes).ToListAsync();
         }
 
-        public async Task<AdminQCLot?> GetQCLotByIDAsync(Guid id)
+        public async Task<AdminQCLot?> GetQCLotByID(Guid id)
         {
-            return await dbContext.AdminQCLots.Include(item => item.Analytes).Include(item => item.Reports).FirstOrDefaultAsync(item => item.AdminQCLotID == id);
+            return await dbContext.AdminQCTemplates.OfType<AdminQCLot>().Include(item => item.Analytes).Include(item => item.Reports).FirstOrDefaultAsync(item => item.AdminQCLotID == id);
         }
 
-        public async Task<AdminQCLot?> UpdateQCLotAsync(Guid lotId, AdminQCLot qcLot)
+        public async Task<AdminQCLot?> UpdateQCLot(Guid lotId, AdminQCLot qcLot)
         {
-            var existingQCLot = await dbContext.AdminQCLots.Include(e => e.Analytes).Include(item => item.Reports).FirstOrDefaultAsync(item => item.AdminQCLotID == lotId);
+            var existingQCLot = await dbContext.AdminQCTemplates.OfType<AdminQCLot>().Include(e => e.Analytes).Include(item => item.Reports).FirstOrDefaultAsync(item => item.AdminQCLotID == lotId);
 
             if (existingQCLot == null)
             {
@@ -168,9 +194,9 @@ namespace Medical_Information.API.Repositories.SQLImplementation
             return existingQCLot;
         }
 
-        public async Task<AdminQCLot?> InactivateQCLotAsync(Guid lotId)
+        public async Task<AdminQCLot?> InactivateQCLot(Guid lotId)
         {
-            var existingQCLot = await dbContext.AdminQCLots.FirstOrDefaultAsync(item => item.AdminQCLotID == lotId);
+            var existingQCLot = await dbContext.AdminQCTemplates.OfType<AdminQCLot>().FirstOrDefaultAsync(item => item.AdminQCLotID == lotId);
 
             if (existingQCLot == null)
             {
@@ -185,22 +211,69 @@ namespace Medical_Information.API.Repositories.SQLImplementation
 
         public async Task<List<AdminQCLot>> GetAllCustomQCLots()
         {
-            return await dbContext.AdminQCLots.Where(item => item.IsCustom == true).ToListAsync();
+            return await dbContext.AdminQCTemplates.OfType<AdminQCLot>().Where(item => EF.Property<string>(item, "TemplateType") == "Lot" && item.IsCustom == true).ToListAsync();
         }
 
-        public async Task<AdminQCLot?> ActivateCustomQCLot(Guid lotId)
+        public async Task<List<AdminQCTemplate>> GetAllQCTemplates()
         {
-            var existingCustomLot = await dbContext.AdminQCLots.FirstOrDefaultAsync(item => item.AdminQCLotID == lotId && item.IsCustom == true);
+            return await dbContext.AdminQCTemplates.Where(e => EF.Property<string>(e, "TemplateType") == "Template").Include(item => item.AnalyteTemplates).ToListAsync();
+        }
 
-            if (existingCustomLot == null)
+        public async Task<AdminQCTemplate?> GetTemplateByName(string? name = null, Department? dep = null)
+        {
+            var QCTemplate = dbContext.AdminQCTemplates.Where(e => EF.Property<string>(e, "TemplateType") == "Template").Include(item => item.AnalyteTemplates).AsQueryable();
+
+            if (!string.IsNullOrEmpty(name) && dep != null && Enum.IsDefined(typeof(Department), dep))
+            {
+                QCTemplate = QCTemplate.Where(item => item.QCName.ToLower() == name.ToLower() && item.Department == dep);
+            }
+
+            return await QCTemplate.FirstOrDefaultAsync();
+        }
+
+        public async Task<List<AdminQCTemplate>> GetAllCustomTemplates()
+        {
+            return await dbContext.AdminQCTemplates.Where(e => EF.Property<string>(e, "TemplateType") == "Template" && e.IsCustom).Include(item => item.AnalyteTemplates).ToListAsync();
+        }
+
+        public async Task<AdminQCTemplate?> SetIsOrderable(Guid lotId, bool isOrderable)
+        {
+            var qcLot = await dbContext.AdminQCTemplates.FirstOrDefaultAsync(item => EF.Property<string>(item, "TemplateType") == "Template" && item.AdminQCLotID == lotId && item.IsCustom == true);
+
+            if (qcLot == null)
             {
                 return null;
             }
 
-            existingCustomLot.IsActive = true;
+            qcLot.IsOrderable = isOrderable;
             await dbContext.SaveChangesAsync();
 
-            return existingCustomLot;
+            return qcLot;
+        }
+
+        public async Task<AdminQCTemplate?> DeleteCustomTemplate(Guid id)
+        {
+            var existingTemplate = await dbContext.AdminQCTemplates.Include(item => item.AnalyteTemplates).FirstOrDefaultAsync(item => EF.Property<string>(item, "TemplateType") == "Template" && item.AdminQCLotID == id && item.IsCustom);
+
+            if (existingTemplate == null)
+            {
+                return null;
+            }
+
+            var existingLots = await dbContext.AdminQCTemplates.OfType<AdminQCLot>().Where(item => EF.Property<string>(item, "TemplateType") == "Lot" && item.QCName == existingTemplate.QCName && item.IsCustom).ToListAsync();
+
+            foreach (var lot in existingLots)
+            {
+                lot.IsActive = false;
+                lot.IsOrderable = false;
+                dbContext.Update(lot);
+            }
+
+            dbContext.RemoveRange(existingTemplate.AnalyteTemplates);
+            dbContext.Remove(existingTemplate);
+            await dbContext.SaveChangesAsync();
+
+            return existingTemplate;
         }
     }
 }

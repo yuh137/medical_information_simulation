@@ -4,6 +4,7 @@ using Medical_Information.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical_Information.API.Migrations
 {
     [DbContext(typeof(MedicalInformationDbContext))]
-    partial class MedicalInformationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250420180027_restructured Analyte Models with Table Per Inheritance")]
+    partial class restructuredAnalyteModelswithTablePerInheritance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,9 +79,6 @@ namespace Medical_Information.API.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsCustom")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsOrderable")
                         .HasColumnType("bit");
 
                     b.Property<string>("QCName")
@@ -164,10 +164,6 @@ namespace Medical_Information.API.Migrations
                         .IsRequired()
                         .HasMaxLength(8)
                         .HasColumnType("nvarchar(8)");
-
-                    b.Property<string>("UnitOfMeasure")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AnalyteID");
 
@@ -320,6 +316,10 @@ namespace Medical_Information.API.Migrations
 
                     b.Property<float>("StdDevi")
                         .HasColumnType("real");
+
+                    b.Property<string>("UnitOfMeasure")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasIndex("AdminQCLotID");
 
