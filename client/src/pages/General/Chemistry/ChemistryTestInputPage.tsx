@@ -64,6 +64,8 @@ enum NotiType {
   LotNumberTaken,
   NoChangesMade,
   UpdateQC,
+  UpdateOrderOptionSuccess,
+  UpdateOrderOptionFailure,
   DeactivateQC,
   DeactivateResponse,
 }
@@ -487,13 +489,15 @@ export const ChemistryTestInputPage = () => {
       if (res.ok) {
         console.log("Changed orderable: ", await res.json());
         setIsUpdatingQCLotSuccessful(true);
-        setFeedbackNotiType(NotiType.UpdateQC);
+        setFeedbackNotiType(NotiType.UpdateOrderOptionSuccess);
         setFeedbackNotiOpen(true);
       }
 
       setIsSavingQCLot(false);
     } catch (e) {
       console.error("Failed to change orderable: ", e);
+      setFeedbackNotiType(NotiType.UpdateOrderOptionSuccess);
+      setFeedbackNotiOpen(true);
       setIsSavingQCLot(false);
     }
   }
@@ -1542,6 +1546,56 @@ export const ChemistryTestInputPage = () => {
                       className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"
                     />
                     <div>Deactivated QC Successfully</div>
+                  </div>
+                </div>
+                <div className="flex justify-center">
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setFeedbackNotiOpen(false);
+                    }}
+                    className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                  >
+                    OK
+                  </Button>
+                </div>
+              </>
+            )}
+
+            {feedbackNotiType === NotiType.UpdateOrderOptionSuccess && (
+              <>
+                <div className="text-center text-gray-600 text-xl font-semibold">
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon
+                      icon="clarity:success-standard-line"
+                      className="text-green-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"
+                    />
+                    <div>Update Order Option Successfully</div>
+                  </div>
+                </div>
+                <div className="flex justify-center">
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setFeedbackNotiOpen(false);
+                    }}
+                    className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
+                  >
+                    OK
+                  </Button>
+                </div>
+              </>
+            )}
+
+            {feedbackNotiType === NotiType.UpdateOrderOptionFailure && (
+              <>
+                <div className="text-center text-gray-600 text-xl font-semibold">
+                  <div className="flex flex-col sm:gap-y-2">
+                    <Icon
+                      icon="material-symbols:cancel-outline"
+                      className="text-red-500 sm:text-xl sm:w-20 sm:h-20 sm:self-center"
+                    />
+                    <div>Update Order Option Failed</div>
                   </div>
                 </div>
                 <div className="flex justify-center">

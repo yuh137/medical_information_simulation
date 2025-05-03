@@ -86,13 +86,13 @@ namespace Medical_Information.API.Migrations
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2");
 
-            //migrationBuilder.AddColumn<string>(
-            //    name: "TemplateType",
-            //    table: "AdminQCTemplates",
-            //    type: "nvarchar(8)",
-            //    maxLength: 8,
-            //    nullable: false,
-            //    defaultValue: "Lot");
+            migrationBuilder.AddColumn<string>(
+                name: "TemplateType",
+                table: "AdminQCTemplates",
+                type: "nvarchar(8)",
+                maxLength: 8,
+                nullable: false,
+                defaultValue: "Lot");
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_AdminQCTemplates",

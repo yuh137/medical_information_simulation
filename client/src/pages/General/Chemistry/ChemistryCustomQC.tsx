@@ -476,7 +476,7 @@ const ChemistryCustomQC = () => {
                             onClick={() => {
                                 setIsCreatingCustomQC(false);
                                 setFeedbackNotiOpen(false);
-                                navigate(0);
+                                navigate("/chemistry/custom_tests");
                             }}
                             className={`!text-white !bg-[${theme.primaryColor}] transition ease-in-out hover:!bg-[${theme.primaryHoverColor}] hover:!text-white`}
                         >

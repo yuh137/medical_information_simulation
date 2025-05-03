@@ -572,8 +572,6 @@ export const Hormone = [
   },
 ];
 
-
-
 export const Pancreatic = [
   {
     "analyteName": "Amylase",
