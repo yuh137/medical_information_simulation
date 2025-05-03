@@ -320,18 +320,21 @@ const ChemistryLeveyJennings = () => {
     
     const element = document.querySelector(".VictoryContainer svg");
 
-    // replace x̅ with x in the SVG text nodes
+
+
     if (element) {
-      const textNodes = element.querySelectorAll("tspan");
+      // Deep clone the SVG element
+      const clonedElement = element.cloneNode(true) as SVGSVGElement;
+
+      // replace x̅ with x in the SVG text nodes
+      const textNodes = clonedElement.querySelectorAll("tspan");
     
       textNodes.forEach((node) => {
         if (node.textContent?.includes("x\u0305")) {
           node.textContent = node.textContent.replace(/x\u0305/g, "x");
         }
       });
-    }
 
-    if (element) {
       addNewText(title, 36, undefined, {
         baseline: "middle"
       });
@@ -361,7 +364,7 @@ const ChemistryLeveyJennings = () => {
       ], 20);
       addNewLine();
       doc
-        .svg(element, {
+        .svg(clonedElement, {
           x: 0,
           y: -svgHeight + yText,
           width: pageWidth,
@@ -576,8 +579,8 @@ const ChemistryLeveyJennings = () => {
                   if (tick === analyteLimits?.minusOne)
                     return `-1SD (${analyteLimits?.minusOne.toFixed(2)})`;
                   if (tick === currentAnalyte?.mean)
-                    // return `x̅ (${currentAnalyte?.mean
-                    return `x\u0305 (${currentAnalyte?.mean
+                    return `x̅ (${currentAnalyte?.mean
+                    // return `x\u0305 (${currentAnalyte?.mean
                         ? parseFloat(currentAnalyte?.mean).toFixed(2)
                         : ""
                       })`;
